@@ -1,0 +1,2802 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PC Tycoon - v4.0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;user-select:none;-webkit-tap-highlight-color:transparent}
+        html,body{width:100%;height:100%;overflow:hidden;background:#0a0b12;color:#fff}
+        #particles-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+        
+        .status-bar{height:44px;padding:0 16px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;z-index:10;background:rgba(0,0,0,0.7);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.05)}
+        .status-bar .time{font-weight:bold;font-size:13px;color:#fff}
+        .status-bar .status-icons{display:flex;gap:6px;align-items:center;font-size:12px;color:#8e94a8}
+        .game-time{font-size:11px;color:#f1c40f;font-weight:bold}
+        .city-badge{font-size:9px;color:#8e94a8}
+        .sync-status{font-size:8px;color:#2ecc71;display:flex;align-items:center;gap:4px;cursor:pointer}
+        .sync-status.offline{color:#e74c3c}
+        .sync-status:active{opacity:0.7}
+        
+        .home-screen{flex:1;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:max-content;gap:16px 8px;padding:16px 12px;width:100%;height:100%;overflow-y:auto;z-index:1;position:relative}
+        .app-item{display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .15s ease}
+        .app-item:active{transform:scale(.85)}
+        .app-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.06)}
+        .app-icon.orange{background:linear-gradient(135deg,#ff6b35,#ff4500)}
+        .app-icon.blue{background:linear-gradient(135deg,#3498db,#2980b9)}
+        .app-icon.green{background:linear-gradient(135deg,#2ecc71,#27ae60)}
+        .app-icon.purple{background:linear-gradient(135deg,#9b59b6,#8e44ad)}
+        .app-icon.gold{background:linear-gradient(135deg,#f1c40f,#d4ac0d)}
+        .app-icon.pink{background:linear-gradient(135deg,#e74c3c,#c0392b)}
+        .app-icon.teal{background:linear-gradient(135deg,#1abc9c,#16a085)}
+        .app-icon.gray{background:linear-gradient(135deg,#7f8c8d,#2c3e50)}
+        .app-label{margin-top:6px;font-size:9px;font-weight:500;color:#fff;text-align:center;text-shadow:0 2px 8px rgba(0,0,0,0.9)}
+        
+        .dock-wrapper{padding:0 12px 12px 12px;width:100%;z-index:5}
+        .dock{background:rgba(255,255,255,0.05);backdrop-filter:blur(30px);border:1px solid rgba(255,255,255,0.06);border-radius:24px;padding:6px 12px;display:flex;justify-content:space-around;box-shadow:0 10px 40px rgba(0,0,0,0.5)}
+        .dock .app-icon{width:44px;height:44px;font-size:18px;border-radius:12px}
+        
+        .app-window{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(10,11,18,0.98);backdrop-filter:blur(30px);z-index:999;display:none;flex-direction:column;animation:slideUp .3s cubic-bezier(.2,.9,.3,1)}
+        @keyframes slideUp{from{transform:translateY(30px)scale(.95);opacity:0}to{transform:translateY(0)scale(1);opacity:1}}
+        .window-header{height:50px;background:rgba(20,22,36,0.9);display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid rgba(255,255,255,0.05);flex-shrink:0}
+        .window-title{font-size:14px;font-weight:bold;color:#fff;display:flex;align-items:center;gap:8px}
+        .window-title i{color:#f1c40f}
+        .back-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);color:#fff;padding:6px 14px;border-radius:10px;font-weight:600;cursor:pointer;font-size:11px}
+        .back-btn:active{transform:scale(.9)}
+        .window-body{flex:1;overflow-y:auto;padding:12px;width:100%;position:relative}
+        
+        .ad-card{background:rgba(24,27,40,0.7);border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.05);cursor:pointer;overflow:hidden}
+        .ad-card:active{transform:scale(.98)}
+        .ad-card .ad-image{width:100%;height:200px;border-radius:10px;object-fit:cover;background:rgba(255,255,255,0.05);margin-bottom:10px}
+        .ad-card .ad-image-placeholder{width:100%;height:200px;border-radius:10px;background:linear-gradient(135deg,#1a1a2e,#2d2d44);display:flex;align-items:center;justify-content:center;font-size:64px;color:#5a6070;margin-bottom:10px}
+        .ad-card .ad-price{font-size:22px;font-weight:bold;color:#f1c40f}
+        .ad-card .ad-title{font-size:14px;font-weight:bold;margin-top:4px}
+        .ad-card .ad-specs{font-size:10px;color:#8e94a8;margin-top:4px;display:flex;gap:8px;flex-wrap:wrap}
+        .ad-card .ad-specs span{background:rgba(255,255,255,0.05);padding:3px 10px;border-radius:12px}
+        .ad-card .ad-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.05);flex-wrap:wrap;gap:4px}
+        .ad-card .ad-seller{display:flex;align-items:center;gap:8px;font-size:10px;color:#8e94a8}
+        .ad-card .ad-seller .seller-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.05)}
+        .ad-card .ad-seller .seller-name{color:#fff;font-weight:600}
+        .ad-card .ad-seller .seller-rating{color:#f1c40f;font-size:9px}
+        .ad-card .ad-city{font-size:9px;color:#5a6070;display:flex;align-items:center;gap:4px}
+        .ad-card .ad-actions{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+        .ad-card .ad-actions .action-btn{font-size:8px;padding:5px 12px;border-radius:10px}
+        .ad-card .ad-status{font-size:8px;padding:3px 10px;border-radius:12px;background:rgba(46,204,113,0.15);color:#2ecc71}
+        .ad-card .ad-status.sold{background:rgba(231,76,60,0.15);color:#e74c3c}
+        .ad-card .ad-views{font-size:8px;color:#5a6070}
+        .ad-card .ad-date{font-size:8px;color:#5a6070}
+        .ad-card .ad-delete{font-size:7px;padding:2px 8px;background:rgba(231,76,60,0.15);color:#e74c3c;border:none;border-radius:8px;cursor:pointer}
+        .ad-card .ad-delete:active{transform:scale(.9)}
+        
+        .favorite-btn{background:none;border:none;color:#5a6070;font-size:20px;cursor:pointer}
+        .favorite-btn.active{color:#e74c3c}
+        .favorite-btn:active{transform:scale(.9)}
+        
+        .action-btn{background:linear-gradient(135deg,#f1c40f,#d4ac0d);color:#000;border:none;padding:6px 14px;border-radius:10px;font-weight:600;font-size:9px;cursor:pointer;transition:all .2s ease;white-space:nowrap}
+        .action-btn:active{transform:scale(.9)}
+        .action-btn.warn{background:linear-gradient(135deg,#f39c12,#e67e22);color:#fff}
+        .action-btn.success{background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff}
+        .action-btn.danger{background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff}
+        .action-btn.gold{background:linear-gradient(135deg,#f1c40f,#d4ac0d);color:#000}
+        .action-btn.blue{background:linear-gradient(135deg,#3498db,#2980b9);color:#fff}
+        .action-btn.purple{background:linear-gradient(135deg,#9b59b6,#8e44ad);color:#fff}
+        
+        .pc-tag{font-size:8px;padding:2px 10px;border-radius:12px;display:inline-block}
+        .pc-tag.budget{background:rgba(46,204,113,0.15);color:#2ecc71}
+        .pc-tag.mid{background:rgba(52,152,219,0.15);color:#3498db}
+        .pc-tag.high{background:rgba(155,89,182,0.15);color:#9b59b6}
+        .pc-tag.premium{background:rgba(241,196,15,0.15);color:#f1c40f}
+        .pc-tag.ultimate{background:rgba(231,76,60,0.15);color:#e74c3c}
+        
+        .badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:8px;font-weight:600}
+        .badge.gold{background:rgba(241,196,15,0.2);color:#f1c40f}
+        .badge.danger{background:rgba(231,76,60,0.2);color:#e74c3c}
+        .badge.success{background:rgba(46,204,113,0.2);color:#2ecc71}
+        
+        .notification{position:fixed;bottom:80px;left:12px;right:12px;background:rgba(0,0,0,0.95);padding:14px;border-radius:12px;text-align:center;z-index:9999;border:1px solid rgba(255,255,255,0.05);animation:slideUp .3s ease;font-size:11px;backdrop-filter:blur(20px)}
+        
+        .empty-state{text-align:center;padding:40px 20px;color:#5a6070}
+        .empty-state .empty-icon{font-size:48px;opacity:0.3;margin-bottom:12px}
+        .empty-state .empty-title{font-size:13px;font-weight:bold;color:#8e94a8}
+        .empty-state .empty-text{font-size:10px;margin-top:4px}
+        
+        .chat-list{display:flex;flex-direction:column;gap:6px}
+        .chat-item{background:rgba(24,27,40,0.7);border-radius:12px;padding:12px 14px;border:1px solid rgba(255,255,255,0.05);cursor:pointer;display:flex;align-items:center;gap:12px}
+        .chat-item:active{transform:scale(.98)}
+        .chat-item .chat-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.05);flex-shrink:0}
+        .chat-item .chat-info{flex:1;min-width:0}
+        .chat-item .chat-name{font-size:11px;font-weight:bold}
+        .chat-item .chat-last-msg{font-size:9px;color:#8e94a8;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .chat-item .chat-time{font-size:8px;color:#5a6070;flex-shrink:0}
+        .chat-item .chat-unread{background:#e74c3c;color:#fff;font-size:8px;padding:2px 8px;border-radius:12px;min-width:20px;text-align:center;flex-shrink:0}
+        
+        .chat-window{display:none;flex-direction:column;height:100%;background:rgba(10,11,18,0.98);position:absolute;top:0;left:0;width:100%;z-index:20;border-radius:0}
+        .chat-window.show{display:flex}
+        .chat-window .chat-header{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:10px;background:rgba(20,22,36,0.9)}
+        .chat-window .chat-header .chat-back{font-size:16px;cursor:pointer;padding:4px 8px;color:#fff}
+        .chat-window .chat-header .chat-user{flex:1}
+        .chat-window .chat-header .chat-user .name{font-size:13px;font-weight:bold}
+        .chat-window .chat-header .chat-user .status{font-size:9px;color:#2ecc71}
+        .chat-window .chat-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px}
+        .chat-window .chat-messages .msg{max-width:80%;padding:10px 14px;border-radius:14px;font-size:10px;animation:slideUp .2s ease}
+        .chat-window .chat-messages .msg.sent{align-self:flex-end;background:rgba(52,152,219,0.2);border:1px solid rgba(52,152,219,0.2)}
+        .chat-window .chat-messages .msg.received{align-self:flex-start;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.05)}
+        .chat-window .chat-messages .msg.system{background:rgba(241,196,15,0.1);border-color:rgba(241,196,15,0.2);align-self:center;max-width:90%;text-align:center;font-style:italic;font-size:9px}
+        .chat-window .chat-messages .msg .msg-time{font-size:7px;color:#5a6070;margin-top:3px;display:block}
+        .chat-window .chat-input{display:flex;gap:8px;padding:10px 12px;border-top:1px solid rgba(255,255,255,0.05);background:rgba(20,22,36,0.9)}
+        .chat-window .chat-input input{flex:1;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:#fff;font-size:10px}
+        .chat-window .chat-input input:focus{outline:none;border-color:#f1c40f}
+        .chat-window .chat-input button{padding:8px 16px;border:none;border-radius:10px;background:linear-gradient(135deg,#f1c40f,#d4ac0d);color:#000;font-weight:bold;font-size:11px;cursor:pointer}
+        .chat-window .chat-input button:active{transform:scale(.9)}
+        
+        .bank-balance-big{font-size:32px;font-weight:bold;color:#f1c40f;text-align:center;padding:16px 0}
+        .transaction-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:10px}
+        .transaction-item .trans-amount{font-weight:bold}
+        .transaction-item .trans-amount.positive{color:#2ecc71}
+        .transaction-item .trans-amount.negative{color:#e74c3c}
+        .transaction-item .trans-date{color:#5a6070;font-size:8px}
+        
+        .loan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:8px 0}
+        .loan-btn{background:rgba(24,27,40,0.7);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.05);cursor:pointer;text-align:center;transition:all .2s ease}
+        .loan-btn:active{transform:scale(.95)}
+        .loan-btn .amount{font-size:18px;font-weight:bold;color:#f1c40f}
+        .loan-btn .detail{font-size:9px;color:#8e94a8;margin-top:4px}
+        .loan-btn .detail .rate{color:#e74c3c}
+        .loan-btn:disabled{opacity:0.3;cursor:not-allowed;pointer-events:none}
+        
+        .loan-info{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:9px;border-bottom:1px solid rgba(255,255,255,0.05)}
+        .loan-info .label{color:#8e94a8}
+        .loan-info .value{font-weight:bold}
+        .loan-info .value.active{color:#e74c3c}
+        .loan-info .value.paid{color:#2ecc71}
+        
+        .sleep-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.92);backdrop-filter:blur(30px);z-index:99999;display:none;align-items:center;justify-content:center;flex-direction:column;animation:fadeIn .3s ease}
+        .sleep-overlay.show{display:flex}
+        .sleep-overlay .sleep-icon{font-size:72px;animation:floatZ 2s ease-in-out infinite}
+        @keyframes floatZ{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+        .sleep-overlay .sleep-title{font-size:24px;font-weight:bold;margin-top:16px}
+        .sleep-overlay .sleep-sub{font-size:13px;color:#8e94a8;margin-top:4px}
+        .sleep-overlay .sleep-progress{margin-top:20px;width:200px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden}
+        .sleep-overlay .sleep-progress .fill{height:100%;background:linear-gradient(90deg,#3498db,#f1c40f);width:0%;border-radius:2px;transition:width .1s linear}
+        .sleep-overlay .sleep-time{font-size:14px;color:#5a6070;margin-top:12px}
+        
+        .city-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;max-height:300px;overflow-y:auto}
+        .city-btn{padding:10px 8px;border-radius:10px;border:1px solid rgba(255,255,255,0.05);background:rgba(255,255,255,0.02);color:#8e94a8;cursor:pointer;font-size:9px;text-align:center;transition:all .2s ease}
+        .city-btn:active{transform:scale(.95)}
+        .city-btn.active{background:rgba(52,152,219,0.2);border-color:rgba(52,152,219,0.3);color:#85c1e9}
+        .city-btn .city-name{font-weight:bold;font-size:11px;color:#fff}
+        .city-btn .city-distance{font-size:8px;color:#5a6070;margin-top:2px;display:block}
+        .city-btn .city-pcs{font-size:8px;color:#2ecc71;margin-top:2px;display:block}
+        
+        .settings-group{background:rgba(24,27,40,0.7);border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.05)}
+        .settings-group .group-title{font-size:11px;font-weight:bold;color:#8e94a8;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+        .settings-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:4px 0}
+        .settings-row label{font-size:9px;color:#8e94a8;min-width:80px}
+        .settings-row input[type="range"]{flex:1;min-width:80px;height:4px;-webkit-appearance:none;background:rgba(255,255,255,0.1);border-radius:2px;outline:none}
+        .settings-row input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#f1c40f;cursor:pointer}
+        .settings-row .value{font-size:10px;font-weight:bold;color:#f1c40f;min-width:30px;text-align:center}
+        .theme-btn{width:32px;height:32px;border-radius:50%;border:2px solid rgba(255,255,255,0.1);cursor:pointer}
+        .theme-btn.active{border-color:#f1c40f;box-shadow:0 0 16px rgba(241,196,15,0.3)}
+        
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        
+        .part-category{font-size:10px;color:#8e94a8;padding:8px 0 4px 0;border-bottom:1px solid rgba(255,255,255,0.05);margin-bottom:4px}
+        .part-item{background:rgba(24,27,40,0.7);border-radius:12px;padding:10px;margin-bottom:6px;border:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:12px}
+        .part-item .part-image{width:50px;height:50px;border-radius:8px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,0.05)}
+        .part-item .part-info{flex:1;min-width:0}
+        .part-item .part-name{font-size:11px;font-weight:bold}
+        .part-item .part-price{font-size:13px;font-weight:bold;color:#f1c40f}
+        
+        .slot-item{background:rgba(24,27,40,0.7);border-radius:10px;padding:8px 12px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;border:1px solid rgba(255,255,255,0.05)}
+        .slot-item .slot-label{font-size:8px;color:#8e94a8;text-transform:uppercase}
+        .slot-item .slot-value{font-size:10px;font-weight:bold}
+        .slot-item .slot-value.empty{color:#8e94a8}
+        .slot-item .slot-value.filled{color:#2ecc71}
+        
+        .inventory-item{background:rgba(24,27,40,0.7);border-radius:10px;padding:8px 10px;margin-bottom:4px;display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,0.05)}
+        .inventory-item .inv-icon{font-size:18px;width:30px;text-align:center}
+        .inventory-item .inv-name{font-size:10px;font-weight:bold;flex:1}
+        .inventory-item .inv-cat{font-size:8px;color:#8e94a8}
+        
+        .admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:9px}
+        .admin-grid .stat{background:rgba(255,255,255,0.03);padding:4px 8px;border-radius:4px;display:flex;justify-content:space-between}
+        .admin-grid .stat .val{color:#2ecc71;font-weight:bold}
+        
+        .news-item{background:rgba(255,255,255,0.03);border-radius:12px;padding:12px;margin-bottom:8px;border-left:3px solid #f1c40f}
+        .news-item .news-title{font-size:11px;font-weight:bold}
+        .news-item .news-date{font-size:8px;color:#8e94a8;margin-top:2px}
+        .news-item .news-text{font-size:9px;color:#8e94a8;margin-top:4px}
+        
+        .chat-tabs{display:flex;gap:6px;margin-bottom:10px}
+        .chat-tabs .tab{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.05);color:#8e94a8;padding:4px 12px;border-radius:8px;font-size:8px;cursor:pointer;transition:all .2s ease}
+        .chat-tabs .tab.active{background:rgba(241,196,15,0.15);border-color:rgba(241,196,15,0.3);color:#f1c40f}
+        .chat-tabs .tab:active{transform:scale(.95)}
+    </style>
+</head>
+<body>
+
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- СТАТУС БАР -->
+    <div class="status-bar">
+        <span class="time" id="current-time">17:38</span>
+        <span class="game-time" id="game-time">06:00</span>
+        <span class="city-badge" id="city-badge">📍 Москва</span>
+        <span class="sync-status" id="sync-status" onclick="forceSync()"><i class="fa-solid fa-circle"></i> Онлайн</span>
+        <div class="status-icons">
+            <i class="fa-solid fa-signal"></i>
+            <i class="fa-solid fa-wifi"></i>
+            <i class="fa-solid fa-battery-three-quarters"></i>
+        </div>
+    </div>
+
+    <!-- РАБОЧИЙ СТОЛ -->
+    <div class="home-screen">
+        <div class="app-item" onclick="openApp('app-market')">
+            <div class="app-icon orange"><i class="fa-solid fa-store"></i></div>
+            <div class="app-label">Маркетплейс</div>
+        </div>
+        <div class="app-item" onclick="openApp('app-parts')">
+            <div class="app-icon blue"><i class="fa-solid fa-microchip"></i></div>
+            <div class="app-label">Запчасти</div>
+        </div>
+        <div class="app-item" onclick="openApp('app-blackmarket')">
+            <div class="app-icon pink"><i class="fa-solid fa-skull"></i></div>
+            <div class="app-label">Черный рынок</div>
+        </div>
+        <div class="app-item" onclick="openApp('app-service')">
+            <div class="app-icon gold"><i class="fa-solid fa-wrench"></i></div>
+            <div class="app-label">Сервис</div>
+        </div>
+        <div class="app-item" onclick="openApp('app-workbench')">
+            <div class="app-icon purple"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+            <div class="app-label">Сборка</div>
+        </div>
+        <div class="app-item" onclick="openApp('app-bank')">
+            <div class="app-icon gold"><i class="fa-solid fa-credit-card"></i></div>
+            <div class="app-label">Банк</div>
+        </div>
+        <div class="app-item" onclick="openApp('app-calendar')">
+            <div class="app-icon teal"><i class="fa-solid fa-calendar"></i></div>
+            <div class="app-label">Календарь</div>
+        </div>
+        <div class="app-item" onclick="openApp('app-cities')">
+            <div class="app-icon blue"><i class="fa-solid fa-map-location-dot"></i></div>
+            <div class="app-label">Города</div>
+        </div>
+        <div class="app-item" onclick="openApp('app-chats')">
+            <div class="app-icon green"><i class="fa-solid fa-comments"></i></div>
+            <div class="app-label">Чаты</div>
+        </div>
+        <div class="app-item" onclick="openApp('app-news')">
+            <div class="app-icon gray"><i class="fa-solid fa-newspaper"></i></div>
+            <div class="app-label">Новости</div>
+        </div>
+        <div class="app-item" onclick="openApp('app-sleep')">
+            <div class="app-icon purple"><i class="fa-solid fa-moon"></i></div>
+            <div class="app-label">Сон</div>
+        </div>
+        <div class="app-item" onclick="openApp('app-settings')">
+            <div class="app-icon gray"><i class="fa-solid fa-gear"></i></div>
+            <div class="app-label">Настройки</div>
+        </div>
+    </div>
+
+    <!-- ДОК -->
+    <div class="dock-wrapper">
+        <div class="dock">
+            <div class="app-icon orange"><i class="fa-solid fa-phone"></i></div>
+            <div class="app-icon blue"><i class="fa-solid fa-comment"></i></div>
+            <div class="app-icon gold"><i class="fa-solid fa-camera"></i></div>
+            <div class="app-icon teal"><i class="fa-solid fa-compass"></i></div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ОКНА ПРИЛОЖЕНИЙ -->
+    <!-- ============================================================ -->
+
+    <!-- МАРКЕТПЛЕЙС -->
+    <div class="app-window" id="app-market">
+        <div class="window-header">
+            <div class="window-title"><i class="fa-solid fa-store"></i> Маркетплейс</div>
+            <button class="back-btn" onclick="closeApp('app-market')">✕</button>
+        </div>
+        <div class="window-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px;">
+                <div style="display:flex;gap:12px;font-size:10px;color:#8e94a8;">
+                    <span>🖥️ <span id="market-count">0</span></span>
+                    <span>📍 <span id="market-city">Москва</span></span>
+                </div>
+                <button class="action-btn gold" style="font-size:8px;padding:4px 12px;" onclick="addMyAd()">➕ Создать</button>
+            </div>
+            <div style="display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;padding-bottom:4px;">
+                <button class="action-btn" style="font-size:7px;padding:4px 10px;background:rgba(255,255,255,0.05);color:#fff;" onclick="switchMarketTab('all')">Все</button>
+                <button class="action-btn" style="font-size:7px;padding:4px 10px;background:rgba(255,255,255,0.05);color:#fff;" onclick="switchMarketTab('cheap')">💰 Дешевле</button>
+                <button class="action-btn" style="font-size:7px;padding:4px 10px;background:rgba(255,255,255,0.05);color:#fff;" onclick="switchMarketTab('expensive')">💎 Дороже</button>
+                <button class="action-btn" style="font-size:7px;padding:4px 10px;background:rgba(255,255,255,0.05);color:#fff;" onclick="switchMarketTab('my')">📦 Мои</button>
+                <button class="action-btn" style="font-size:7px;padding:4px 10px;background:rgba(255,255,255,0.05);color:#fff;" onclick="switchMarketTab('favorites')">❤️ Избранное</button>
+                <button class="action-btn" style="font-size:7px;padding:4px 10px;background:rgba(255,255,255,0.05);color:#fff;" onclick="switchMarketTab('city')">🏙️ Город</button>
+            </div>
+            <div id="market-list"></div>
+        </div>
+    </div>
+
+    <!-- ЗАПЧАСТИ -->
+    <div class="app-window" id="app-parts">
+        <div class="window-header">
+            <div class="window-title"><i class="fa-solid fa-microchip"></i> Запчасти</div>
+            <button class="back-btn" onclick="closeApp('app-parts')">✕</button>
+        </div>
+        <div class="window-body">
+            <div style="font-size:10px;color:#8e94a8;margin-bottom:10px;">🔧 Все комплектующие для сборки ПК</div>
+            <div id="parts-shop-list"></div>
+        </div>
+    </div>
+
+    <!-- ЧЕРНЫЙ РЫНОК -->
+    <div class="app-window" id="app-blackmarket">
+        <div class="window-header">
+            <div class="window-title"><i class="fa-solid fa-skull"></i> Черный рынок</div>
+            <button class="back-btn" onclick="closeApp('app-blackmarket')">✕</button>
+        </div>
+        <div class="window-body">
+            <div style="background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.2);border-radius:10px;padding:10px;margin-bottom:12px;">
+                <p style="font-size:10px;color:#e74c3c;">⚠️ Контрафакт дешевле на 50-70%, но может сломаться!</p>
+            </div>
+            <div id="blackmarket-list"></div>
+        </div>
+    </div>
+
+    <!-- СЕРВИС -->
+    <div class="app-window" id="app-service">
+        <div class="window-header">
+            <div class="window-title"><i class="fa-solid fa-wrench"></i> Мои ПК</div>
+            <button class="back-btn" onclick="closeApp('app-service')">✕</button>
+        </div>
+        <div class="window-body">
+            <div id="service-list"></div>
+        </div>
+    </div>
+
+    <!-- СБОРКА -->
+    <div class="app-window" id="app-workbench">
+        <div class="window-header">
+            <div class="window-title"><i class="fa-solid fa-screwdriver-wrench"></i> Верстак</div>
+            <button class="back-btn" onclick="closeApp('app-workbench')">✕</button>
+        </div>
+        <div class="window-body">
+            <div id="build-slots"></div>
+            <button class="action-btn success" style="width:100%;padding:12px;margin-top:10px;font-size:12px;" onclick="sellCustomPC()">💰 Продать собранный ПК</button>
+            <h4 style="margin:12px 0 8px;font-size:12px;color:#8e94a8;">📦 Склад</h4>
+            <div id="inventory-list"></div>
+        </div>
+    </div>
+
+    <!-- БАНК -->
+    <div class="app-window" id="app-bank">
+        <div class="window-header">
+            <div class="window-title"><i class="fa-solid fa-credit-card"></i> Банк</div>
+            <button class="back-btn" onclick="closeApp('app-bank')">✕</button>
+        </div>
+        <div class="window-body">
+            <div style="text-align:center;padding:8px 0;">
+                <div style="font-size:9px;color:#8e94a8;">ВАШ БАЛАНС</div>
+                <div class="bank-balance-big" id="bank-val">0 ₽</div>
+            </div>
+            
+            <div style="background:rgba(24,27,40,0.7);border-radius:12px;padding:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.05);">
+                <div class="loan-info"><span class="label">Всего кредитов:</span><span class="value" id="loan-count-display">0 / 3</span></div>
+                <div class="loan-info"><span class="label">Активных кредитов:</span><span class="value active" id="active-loans-display">0</span></div>
+                <div class="loan-info"><span class="label">Общая задолженность:</span><span class="value active" id="total-debt-display">0 ₽</span></div>
+            </div>
+            
+            <div style="background:rgba(24,27,40,0.7);border-radius:12px;padding:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.05);">
+                <div style="font-size:11px;font-weight:bold;color:#8e94a8;margin-bottom:8px;">📋 Доступные суммы</div>
+                <div class="loan-grid" id="loan-grid">
+                    <button class="loan-btn" onclick="takeLoan(10000)"><div class="amount">10 000 ₽</div><div class="detail">Ставка: <span class="rate">15%</span></div></button>
+                    <button class="loan-btn" onclick="takeLoan(25000)"><div class="amount">25 000 ₽</div><div class="detail">Ставка: <span class="rate">17%</span></div></button>
+                    <button class="loan-btn" onclick="takeLoan(50000)"><div class="amount">50 000 ₽</div><div class="detail">Ставка: <span class="rate">20%</span></div></button>
+                    <button class="loan-btn" onclick="takeLoan(100000)"><div class="amount">100 000 ₽</div><div class="detail">Ставка: <span class="rate">22%</span></div></button>
+                    <button class="loan-btn" onclick="takeLoan(250000)"><div class="amount">250 000 ₽</div><div class="detail">Ставка: <span class="rate">25%</span></div></button>
+                    <button class="loan-btn" onclick="takeLoan(500000)"><div class="amount">500 000 ₽</div><div class="detail">Ставка: <span class="rate">30%</span></div></button>
+                </div>
+            </div>
+            
+            <div style="background:rgba(24,27,40,0.7);border-radius:12px;padding:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.05);">
+                <div style="font-size:11px;font-weight:bold;color:#8e94a8;margin-bottom:8px;">💸 Погашение</div>
+                <button class="action-btn danger" style="width:100%;padding:10px;font-size:11px;" onclick="payAllLoans()">💸 Погасить все кредиты</button>
+                <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
+                    <button class="action-btn warn" style="flex:1;font-size:7px;padding:4px;" onclick="payLoanPartial(10000)">10 000 ₽</button>
+                    <button class="action-btn warn" style="flex:1;font-size:7px;padding:4px;" onclick="payLoanPartial(25000)">25 000 ₽</button>
+                    <button class="action-btn warn" style="flex:1;font-size:7px;padding:4px;" onclick="payLoanPartial(50000)">50 000 ₽</button>
+                    <button class="action-btn warn" style="flex:1;font-size:7px;padding:4px;" onclick="payLoanPartial(100000)">100 000 ₽</button>
+                </div>
+            </div>
+            
+            <div style="font-size:11px;font-weight:bold;color:#8e94a8;margin-bottom:8px;">📜 История операций</div>
+            <div id="bank-history"></div>
+        </div>
+    </div>
+
+    <!-- КАЛЕНДАРЬ -->
+    <div class="app-window" id="app-calendar">
+        <div class="window-header">
+            <div class="window-title"><i class="fa-solid fa-calendar"></i> Календарь</div>
+            <button class="back-btn" onclick="closeApp('app-calendar')">✕</button>
+        </div>
+        <div class="window-body">
+            <div style="background:rgba(255,255,255,0.05);border-radius:14px;padding:20px;text-align:center;margin-bottom:12px;">
+                <div style="font-size:32px;font-weight:bold;color:#f1c40f;" id="cal-day">1</div>
+                <div style="font-size:16px;color:#8e94a8;" id="cal-month">Январь 2026</div>
+                <div style="font-size:12px;color:#2ecc71;margin-top:6px;" id="cal-next-day">⏳ Время до следующего дня</div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font-size:9px;color:#8e94a8;text-align:center;margin-bottom:8px;">
+                <div>ПН</div><div>ВТ</div><div>СР</div><div>ЧТ</div><div>ПТ</div><div>СБ</div><div>ВС</div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font-size:11px;text-align:center;" id="calendar-grid"></div>
+            <div style="margin-top:12px;font-size:10px;color:#8e94a8;text-align:center;" id="calendar-events"></div>
+        </div>
+    </div>
+
+    <!-- ГОРОДА -->
+    <div class="app-window" id="app-cities">
+        <div class="window-header">
+            <div class="window-title"><i class="fa-solid fa-map-location-dot"></i> Города</div>
+            <button class="back-btn" onclick="closeApp('app-cities')">✕</button>
+        </div>
+        <div class="window-body">
+            <div style="background:rgba(255,255,255,0.05);border-radius:14px;padding:16px;text-align:center;margin-bottom:12px;">
+                <div style="font-size:13px;color:#8e94a8;">ВЫ СЕЙЧАС ЗДЕСЬ</div>
+                <div style="font-size:20px;font-weight:bold;color:#f1c40f;margin-top:4px;" id="city-display">Москва</div>
+                <div style="font-size:10px;color:#8e94a8;margin-top:4px;">💰 Переезд: 1000 ₽</div>
+            </div>
+            <div class="city-grid" id="city-grid"></div>
+        </div>
+    </div>
+
+    <!-- ЧАТЫ -->
+    <div class="app-window" id="app-chats">
+        <div class="window-header">
+            <div class="window-title"><i class="fa-solid fa-comments"></i> Чаты</div>
+            <button class="back-btn" onclick="closeApp('app-chats')">✕</button>
+        </div>
+        <div class="window-body">
+            <div class="chat-tabs" id="chat-tabs">
+                <button class="tab active" onclick="switchChatTab('incoming')">Входящие</button>
+                <button class="tab" onclick="switchChatTab('outgoing')">Исходящие</button>
+            </div>
+            <div id="chat-list"></div>
+            
+            <div class="chat-window" id="chat-window">
+                <div class="chat-header">
+                    <span class="chat-back" onclick="closeChatWindow()"><i class="fa-solid fa-arrow-left"></i></span>
+                    <div class="chat-user">
+                        <div class="name" id="chat-user-name">Продавец</div>
+                        <div class="status">🟢 Онлайн</div>
+                    </div>
+                    <button class="action-btn gold" style="font-size:8px;padding:4px 10px;" onclick="startHaggleFromChat()">💰 Торг</button>
+                </div>
+                <div class="chat-messages" id="chat-messages"></div>
+                <div class="chat-input">
+                    <input type="text" id="chat-input" placeholder="Напишите сообщение..." onkeydown="if(event.key==='Enter') sendMessage()">
+                    <button onclick="sendMessage()">➤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- НОВОСТИ -->
+    <div class="app-window" id="app-news">
+        <div class="window-header">
+            <div class="window-title"><i class="fa-solid fa-newspaper"></i> Новости рынка</div>
+            <button class="back-btn" onclick="closeApp('app-news')">✕</button>
+        </div>
+        <div class="window-body">
+            <div id="news-list"></div>
+        </div>
+    </div>
+
+    <!-- СОН -->
+    <div class="app-window" id="app-sleep">
+        <div class="window-header">
+            <div class="window-title"><i class="fa-solid fa-moon"></i> Сон</div>
+            <button class="back-btn" onclick="closeApp('app-sleep')">✕</button>
+        </div>
+        <div class="window-body" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
+            <div style="font-size:72px;margin-bottom:20px;">💤</div>
+            <div style="font-size:22px;font-weight:bold;margin-bottom:8px;">Сон</div>
+            <div style="font-size:13px;color:#8e94a8;text-align:center;margin-bottom:16px;" id="sleep-status-text">Время спать. Можно немного вздремнуть.</div>
+            <div style="font-size:11px;color:#5a6070;margin-bottom:20px;" id="sleep-time-info">⏰ Текущее время: 06:00</div>
+            <button class="action-btn gold" style="width:100%;padding:14px;font-size:14px;" onclick="goToSleep()">💤 Лечь спать</button>
+            <div style="font-size:10px;color:#8e94a8;margin-top:12px;text-align:center;" id="sleep-hint">🌙 Доступно с 23:00 до 06:00</div>
+        </div>
+    </div>
+
+    <!-- НАСТРОЙКИ -->
+    <div class="app-window" id="app-settings">
+        <div class="window-header">
+            <div class="window-title"><i class="fa-solid fa-gear"></i> Настройки</div>
+            <button class="back-btn" onclick="closeApp('app-settings')">✕</button>
+        </div>
+        <div class="window-body">
+            <div class="settings-group">
+                <div class="group-title"><i class="fa-regular fa-clock"></i> Время</div>
+                <div class="settings-row">
+                    <label>Скорость</label>
+                    <input type="range" min="0.5" max="5" step="0.5" value="1" oninput="changeGameSpeed(this.value)" id="speed-slider">
+                    <span class="value" id="speed-value">×1</span>
+                </div>
+            </div>
+            
+            <div class="settings-group">
+                <div class="group-title"><i class="fa-solid fa-palette"></i> Тема</div>
+                <div class="settings-row">
+                    <div id="theme-selector" style="display:flex;gap:6px;"></div>
+                </div>
+            </div>
+            
+            <div class="settings-group">
+                <div class="group-title"><i class="fa-solid fa-cloud"></i> Синхронизация</div>
+                <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                    <button class="action-btn blue" onclick="forceSync()">🔄 Синхронизировать</button>
+                    <button class="action-btn" onclick="showSyncInfo()">📊 Статус</button>
+                </div>
+                <div style="font-size:8px;color:#8e94a8;margin-top:4px;" id="sync-info">Последняя синхронизация: никогда</div>
+            </div>
+            
+            <div class="settings-group">
+                <div class="group-title"><i class="fa-solid fa-user-shield"></i> Админ-панель</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <input type="password" id="admin-password" placeholder="Пароль" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 8px;color:#fff;font-size:9px;width:100px;">
+                    <button class="action-btn gold" onclick="adminLogin()">Войти</button>
+                </div>
+                <div id="admin-panel" style="display:none;margin-top:8px;">
+                    <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                        <button class="action-btn success" onclick="adminAddMoney()">💰 +100 000</button>
+                        <button class="action-btn warn" onclick="adminAddRep()">⭐ +20 реп</button>
+                        <button class="action-btn blue" onclick="adminAddPC()">🖥️ +ПК</button>
+                        <button class="action-btn purple" onclick="adminNextDay()">⏩ +1 день</button>
+                    </div>
+                    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;">
+                        <button class="action-btn" onclick="adminAddNews()">📰 +Новость</button>
+                        <button class="action-btn danger" onclick="adminClearNews()">🗑️ Очистить новости</button>
+                    </div>
+                    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;">
+                        <button class="action-btn" onclick="adminExportSave()">📤 Экспорт</button>
+                        <button class="action-btn" onclick="adminImportSave()">📥 Импорт</button>
+                        <input type="file" id="admin-import-file" style="display:none" accept=".json" onchange="adminImportFile(event)">
+                    </div>
+                    <div id="admin-stats" style="font-size:8px;color:#8e94a8;margin-top:6px;"></div>
+                </div>
+            </div>
+            
+            <div class="settings-group">
+                <div class="group-title"><i class="fa-solid fa-circle-info"></i> О игре</div>
+                <div style="font-size:10px;color:#8e94a8;display:flex;justify-content:space-between;padding:4px 0;">
+                    <span>Версия</span>
+                    <span style="color:#f1c40f;">v4.0</span>
+                </div>
+                <div style="font-size:10px;color:#8e94a8;display:flex;justify-content:space-between;padding:4px 0;">
+                    <span>Дней в игре</span>
+                    <span style="color:#2ecc71;" id="settings-days">0</span>
+                </div>
+                <button class="action-btn danger" style="width:100%;margin-top:8px;padding:10px;" onclick="adminReset()">🗑️ Сбросить прогресс</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ОВЕРЛЕЙ СНА -->
+    <div class="sleep-overlay" id="sleep-overlay">
+        <div class="sleep-icon">💤</div>
+        <div class="sleep-title">Сон</div>
+        <div class="sleep-sub">Время отдохнуть. Сладких снов!</div>
+        <div class="sleep-progress">
+            <div class="fill" id="sleep-progress-fill"></div>
+        </div>
+        <div class="sleep-time" id="sleep-time">00:00</div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  КОНФИГУРАЦИЯ FIREBASE - ВАШИ ДАННЫЕ
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCYHmBE2PzLEoJGbs-cvNdRNW2SDLAbK_M",
+            authDomain: "pc-tycoon-dd0af.firebaseapp.com",
+            projectId: "pc-tycoon-dd0af",
+            storageBucket: "pc-tycoon-dd0af.firebasestorage.app",
+            messagingSenderId: "832841987208",
+            appId: "1:832841987208:web:acc48f88d15c529a8d9b3d"
+        };
+
+        // ============================================================
+        //  ПОЛНАЯ ИГРА - ВСЕ ФУНКЦИИ
+        // ============================================================
+        
+        // ============================================================
+        //  КОНСТАНТЫ
+        // ============================================================
+        const DAYS = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
+        const MONTHS = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+        const MONTHS_SHORT = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+        
+        const CITIES = [
+            { name: 'Москва', lat: 55.7558, lon: 37.6173 },
+            { name: 'Санкт-Петербург', lat: 59.9343, lon: 30.3351 },
+            { name: 'Новосибирск', lat: 55.0084, lon: 82.9357 },
+            { name: 'Екатеринбург', lat: 56.8389, lon: 60.6057 },
+            { name: 'Казань', lat: 55.8304, lon: 49.0661 },
+            { name: 'Самара', lat: 53.2415, lon: 50.2212 },
+            { name: 'Челябинск', lat: 55.1644, lon: 61.4368 },
+            { name: 'Омск', lat: 54.9893, lon: 73.3682 },
+            { name: 'Ростов-на-Дону', lat: 47.2357, lon: 39.7015 },
+            { name: 'Уфа', lat: 54.7388, lon: 55.9721 },
+            { name: 'Красноярск', lat: 56.0106, lon: 92.8526 },
+            { name: 'Пермь', lat: 58.0104, lon: 56.2294 },
+            { name: 'Воронеж', lat: 51.6608, lon: 39.2003 },
+            { name: 'Волгоград', lat: 48.7080, lon: 44.5133 },
+            { name: 'Краснодар', lat: 45.0393, lon: 38.9872 }
+        ];
+        
+        const SELLERS = [
+            { id: 1, name: 'Алексей', avatar: 'https://i.pravatar.cc/150?img=1', rating: 85, deals: 47 },
+            { id: 2, name: 'Игорь', avatar: 'https://i.pravatar.cc/150?img=2', rating: 72, deals: 23 },
+            { id: 3, name: 'Марина', avatar: 'https://i.pravatar.cc/150?img=3', rating: 93, deals: 89 },
+            { id: 4, name: 'Сергей', avatar: 'https://i.pravatar.cc/150?img=4', rating: 68, deals: 15 },
+            { id: 5, name: 'Елена', avatar: 'https://i.pravatar.cc/150?img=5', rating: 78, deals: 34 }
+        ];
+        
+        const PC_MODELS = [
+            { name: 'Игровой ПК i5-12400F/RTX 3060', price: 120000, cpu: 'i5-12400F', gpu: 'RTX 3060', tag: 'mid', tagName: 'Средний' },
+            { name: 'Игровой ПК Ryzen 5 5600X/RTX 3060 Ti', price: 160000, cpu: 'Ryzen 5 5600X', gpu: 'RTX 3060 Ti', tag: 'mid', tagName: 'Средний' },
+            { name: 'Игровой ПК i7-13700K/RTX 4070', price: 320000, cpu: 'i7-13700K', gpu: 'RTX 4070', tag: 'high', tagName: 'Высокий' },
+            { name: 'Игровой ПК Ryzen 7 7800X3D/RTX 4070 Ti', price: 380000, cpu: 'Ryzen 7 7800X3D', gpu: 'RTX 4070 Ti', tag: 'high', tagName: 'Высокий' },
+            { name: 'Игровой ПК i9-13900K/RTX 4080', price: 450000, cpu: 'i9-13900K', gpu: 'RTX 4080', tag: 'high', tagName: 'Высокий' },
+            { name: 'Игровой ПК Ryzen 9 7950X/RTX 4080 Super', price: 600000, cpu: 'Ryzen 9 7950X', gpu: 'RTX 4080 Super', tag: 'premium', tagName: 'Премиум' },
+            { name: 'Игровой ПК i9-14900K/RTX 4090', price: 750000, cpu: 'i9-14900K', gpu: 'RTX 4090', tag: 'premium', tagName: 'Премиум' },
+            { name: 'Игровой ПК Threadripper/RTX 4090', price: 950000, cpu: 'Threadripper', gpu: 'RTX 4090', tag: 'ultimate', tagName: 'Ультимативный' },
+            { name: 'Офисный ПК i3-10100/8GB/256GB', price: 35000, cpu: 'i3-10100', gpu: 'Встроенная', tag: 'budget', tagName: 'Бюджетный' },
+            { name: 'Игровой ПК i3-10100F/GTX 1060/16GB', price: 55000, cpu: 'i3-10100F', gpu: 'GTX 1060', tag: 'budget', tagName: 'Бюджетный' },
+            { name: 'Игровой ПК Ryzen 5 3600/GTX 1660/16GB', price: 75000, cpu: 'Ryzen 5 3600', gpu: 'GTX 1660', tag: 'budget', tagName: 'Бюджетный' }
+        ];
+
+        // ============================================================
+        //  СОСТОЯНИЕ ИГРЫ
+        // ============================================================
+        let gameState = {
+            day: 1, month: 1, year: 2026, dayOfWeek: 0,
+            balance: 65000, reputation: 50,
+            totalEarned: 0, totalSpent: 0,
+            pcsSold: 0, pcsBought: 0,
+            currentCity: 'Москва'
+        };
+        
+        let inventory = [];
+        let myBoughtPCs = [];
+        let currentBuild = { cpu: null, gpu: null, ram: null, storage: null, case: null, psu: null, cooler: null };
+        let transactionHistory = [];
+        let marketState = { ads: [], chats: [], favorites: [], currentTab: 'all', chatTab: 'incoming' };
+        let loanState = { loans: [], totalTaken: 0, maxLoans: 3 };
+        let timeState = { currentMinutes: 6 * 60, speed: 1, isSleeping: false };
+        let parts = [];
+        let fakeParts = [];
+        let newsList = [];
+        let adminLoggedIn = false;
+        let currentChatAdId = null;
+        let syncEnabled = false;
+        let syncUserId = '';
+        let syncTimestamp = Date.now();
+        let firebaseInitialized = false;
+
+        // ============================================================
+        //  ГЕНЕРАЦИЯ ФОТО
+        // ============================================================
+        function getPCImage(seed) { return `https://picsum.photos/seed/pc_${seed}/400/300`; }
+        function getPartImage(seed) { return `https://picsum.photos/seed/part_${seed}/100/100`; }
+        function getFakeImage(seed) { return `https://picsum.photos/seed/fake_${seed}/100/100`; }
+
+        // ============================================================
+        //  ИНИЦИАЛИЗАЦИЯ FIREBASE
+        // ============================================================
+        function initFirebase() {
+            try {
+                if (typeof firebase === 'undefined') {
+                    console.warn('⚠️ Firebase не загружен!');
+                    syncEnabled = false;
+                    updateSyncStatus(false);
+                    return;
+                }
+
+                firebase.initializeApp(firebaseConfig);
+                const database = firebase.database();
+
+                syncUserId = localStorage.getItem('pcTycoonUserId');
+                if (!syncUserId) {
+                    syncUserId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem('pcTycoonUserId', syncUserId);
+                }
+
+                syncEnabled = true;
+                firebaseInitialized = true;
+
+                loadFromCloud();
+
+                database.ref('users/' + syncUserId).on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        mergeCloudData(data);
+                    }
+                });
+
+                updateSyncStatus(true);
+                console.log('✅ Firebase синхронизация включена! ID: ' + syncUserId);
+
+                setInterval(() => {
+                    if (syncEnabled) pushToCloud();
+                }, 60000);
+
+            } catch (e) {
+                console.warn('⚠️ Ошибка Firebase:', e);
+                syncEnabled = false;
+                firebaseInitialized = false;
+                updateSyncStatus(false);
+            }
+        }
+
+        function updateSyncStatus(online) {
+            const statusEl = document.getElementById('sync-status');
+            if (!statusEl) return;
+
+            if (online) {
+                statusEl.innerHTML = '<i class="fa-solid fa-circle"></i> Онлайн';
+                statusEl.className = 'sync-status';
+            } else {
+                statusEl.innerHTML = '<i class="fa-solid fa-circle"></i> Офлайн';
+                statusEl.className = 'sync-status offline';
+            }
+        }
+
+        function pushToCloud() {
+            if (!syncEnabled || !firebaseInitialized) return;
+
+            try {
+                const data = {
+                    gameState: gameState,
+                    inventory: inventory.slice(0, 100),
+                    myBoughtPCs: myBoughtPCs.slice(0, 50),
+                    currentBuild: currentBuild,
+                    marketState: {
+                        ads: marketState.ads.slice(0, 100),
+                        favorites: marketState.favorites,
+                        chats: marketState.chats.slice(0, 50)
+                    },
+                    loanState: loanState,
+                    newsList: newsList.slice(0, 20),
+                    transactionHistory: transactionHistory.slice(-50),
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    device: navigator.userAgent,
+                    version: '4.0'
+                };
+
+                firebase.database().ref('users/' + syncUserId).update(data);
+
+                syncTimestamp = Date.now();
+                const syncInfo = document.getElementById('sync-info');
+                if (syncInfo) {
+                    syncInfo.textContent = 'Последняя синхронизация: ' + new Date().toLocaleString();
+                }
+                updateSyncStatus(true);
+            } catch (e) {
+                console.warn('⚠️ Ошибка синхронизации:', e);
+                updateSyncStatus(false);
+            }
+        }
+
+        function loadFromCloud() {
+            if (!syncEnabled || !firebaseInitialized) return;
+
+            try {
+                firebase.database().ref('users/' + syncUserId).once('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        mergeCloudData(data);
+                        console.log('✅ Данные загружены из облака');
+                    }
+                });
+            } catch (e) {
+                console.warn('⚠️ Ошибка загрузки:', e);
+            }
+        }
+
+        function mergeCloudData(data) {
+            let merged = false;
+
+            if (data.gameState && data.gameState.day > gameState.day) {
+                Object.assign(gameState, data.gameState);
+                merged = true;
+            }
+
+            if (data.inventory && data.inventory.length > inventory.length) {
+                inventory = data.inventory;
+                merged = true;
+            }
+
+            if (data.myBoughtPCs && data.myBoughtPCs.length > myBoughtPCs.length) {
+                myBoughtPCs = data.myBoughtPCs;
+                merged = true;
+            }
+
+            if (data.currentBuild) {
+                currentBuild = data.currentBuild;
+                merged = true;
+            }
+
+            if (data.marketState) {
+                if (data.marketState.ads && data.marketState.ads.length > marketState.ads.length) {
+                    marketState.ads = data.marketState.ads;
+                }
+                if (data.marketState.favorites) {
+                    marketState.favorites = data.marketState.favorites;
+                }
+                if (data.marketState.chats && data.marketState.chats.length > marketState.chats.length) {
+                    marketState.chats = data.marketState.chats;
+                }
+                merged = true;
+            }
+
+            if (data.loanState) {
+                loanState = data.loanState;
+                merged = true;
+            }
+
+            if (data.newsList && data.newsList.length > newsList.length) {
+                newsList = data.newsList;
+                merged = true;
+            }
+
+            if (data.transactionHistory) {
+                transactionHistory = data.transactionHistory;
+                merged = true;
+            }
+
+            if (merged) {
+                renderAll();
+                updateBankDisplay();
+                updateDayDisplay();
+                saveGame();
+                saveMarketState();
+                saveNews();
+                saveLoans();
+                showNotification('🔄 Данные синхронизированы с облака!');
+            }
+        }
+
+        function forceSync() {
+            showNotification('🔄 Синхронизация...');
+            if (syncEnabled && firebaseInitialized) {
+                pushToCloud();
+                setTimeout(() => {
+                    loadFromCloud();
+                    showNotification('✅ Синхронизация завершена!');
+                }, 1000);
+            } else {
+                showNotification('⚠️ Синхронизация недоступна. Используется локальное сохранение.');
+                saveGame();
+                saveMarketState();
+                saveNews();
+                saveLoans();
+            }
+        }
+
+        function showSyncInfo() {
+            const status = syncEnabled && firebaseInitialized ? 'Онлайн ☁️' : 'Офлайн 📴';
+            const lastSync = document.getElementById('sync-info')?.textContent || 'Неизвестно';
+            alert(
+                '📊 Синхронизация\n\n' +
+                'Статус: ' + status + '\n' +
+                'ID устройства: ' + (syncUserId || 'Не установлен') + '\n' +
+                lastSync + '\n\n' +
+                '📦 Данные:\n' +
+                'Объявлений: ' + marketState.ads.length + '\n' +
+                'Чатов: ' + marketState.chats.length + '\n' +
+                'Новостей: ' + newsList.length + '\n' +
+                'Инвентарь: ' + inventory.length
+            );
+        }
+
+        // ============================================================
+        //  ФУНКЦИИ ВРЕМЕНИ
+        // ============================================================
+        function getTimeString(minutes) {
+            const h = Math.floor(minutes / 60) % 24;
+            const m = Math.floor(minutes % 60);
+            return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+        }
+
+        function canSleep(minutes) {
+            const h = Math.floor(minutes / 60) % 24;
+            return h >= 23 || h < 6;
+        }
+
+        function updateTimeDisplay() {
+            const el = document.getElementById('game-time');
+            if (el) el.textContent = getTimeString(timeState.currentMinutes);
+            
+            const sleepInfo = document.getElementById('sleep-time-info');
+            if (sleepInfo) sleepInfo.textContent = '⏰ Текущее время: ' + getTimeString(timeState.currentMinutes);
+
+            const canSleepNow = canSleep(timeState.currentMinutes);
+            const hint = document.getElementById('sleep-hint');
+            const statusText = document.getElementById('sleep-status-text');
+
+            if (hint) {
+                if (canSleepNow) {
+                    hint.textContent = '🌙 Сейчас можно лечь спать!';
+                    hint.style.color = '#2ecc71';
+                } else {
+                    hint.textContent = '🌙 Доступно с 23:00 до 06:00';
+                    hint.style.color = '#8e94a8';
+                }
+            }
+            if (statusText) {
+                statusText.textContent = canSleepNow ? '🌙 Время спать. Хороших снов!' : '☀️ Сейчас нельзя спать. Подождите ночи.';
+            }
+        }
+
+        function updateDayDisplay() {
+            const dayName = document.getElementById('day-name');
+            const dayNum = document.getElementById('day-num');
+            const monthName = document.getElementById('month-name');
+            const yearName = document.getElementById('year-name');
+            const cityBadge = document.getElementById('city-badge');
+            const cityDisplay = document.getElementById('city-display');
+
+            if (dayName) dayName.textContent = DAYS[gameState.dayOfWeek];
+            if (dayNum) dayNum.textContent = gameState.day;
+            if (monthName) monthName.textContent = MONTHS_SHORT[gameState.month - 1];
+            if (yearName) yearName.textContent = gameState.year;
+            if (cityBadge) cityBadge.textContent = '📍 ' + gameState.currentCity;
+            if (cityDisplay) cityDisplay.textContent = gameState.currentCity;
+
+            const calDay = document.getElementById('cal-day');
+            const calMonth = document.getElementById('cal-month');
+            if (calDay) calDay.textContent = gameState.day;
+            if (calMonth) calMonth.textContent = MONTHS[gameState.month - 1] + ' ' + gameState.year;
+
+            const settingsDays = document.getElementById('settings-days');
+            if (settingsDays) settingsDays.textContent = gameState.day;
+        }
+
+        function changeGameSpeed(val) {
+            timeState.speed = parseFloat(val);
+            const speedVal = document.getElementById('speed-value');
+            if (speedVal) speedVal.textContent = '×' + timeState.speed;
+        }
+
+        function updateRealTime() {
+            const n = new Date();
+            const el = document.getElementById('current-time');
+            if (el) {
+                el.textContent = String(n.getHours()).padStart(2, '0') + ':' + String(n.getMinutes()).padStart(2, '0');
+            }
+        }
+
+        // ============================================================
+        //  БАЛАНС
+        // ============================================================
+        function updateBalance(amount, text) {
+            gameState.balance += amount;
+            if (amount > 0) gameState.totalEarned += amount;
+            else gameState.totalSpent += Math.abs(amount);
+
+            const bankVal = document.getElementById('bank-val');
+            if (bankVal) bankVal.textContent = gameState.balance.toLocaleString() + ' ₽';
+
+            const hist = document.getElementById('bank-history');
+            if (hist) {
+                const item = document.createElement('div');
+                item.className = 'transaction-item';
+                item.innerHTML = 
+                    '<span>' + text + '</span>' +
+                    '<span>' +
+                        '<span class="trans-amount ' + (amount >= 0 ? 'positive' : 'negative') + '">' + (amount >= 0 ? '+' : '') + amount.toLocaleString() + ' ₽</span>' +
+                        '<span class="trans-date">' + new Date().toLocaleDateString() + '</span>' +
+                    '</span>';
+                hist.prepend(item);
+                if (hist.children.length > 20) hist.removeChild(hist.lastChild);
+            }
+
+            transactionHistory.push({ amount, text, date: new Date().toLocaleDateString() });
+            updateReputation();
+            saveGame();
+            if (syncEnabled) pushToCloud();
+        }
+
+        function updateBankDisplay() {
+            const bankVal = document.getElementById('bank-val');
+            if (bankVal) bankVal.textContent = gameState.balance.toLocaleString() + ' ₽';
+            updateReputation();
+        }
+
+        function updateReputation() {
+            const t = document.getElementById('reputation-text');
+            if (t) {
+                t.textContent = gameState.reputation > 80 ? '⭐ Отличная' :
+                               gameState.reputation > 60 ? '👍 Хорошая' :
+                               gameState.reputation > 40 ? '📊 Средняя' :
+                               gameState.reputation > 20 ? '⚠️ Низкая' : '💀 Плохая';
+            }
+        }
+
+        // ============================================================
+        //  НОВОСТИ
+        // ============================================================
+        function initNews() {
+            if (newsList.length === 0) {
+                newsList = [
+                    { id: 1, title: 'Курс доллара вырос', text: 'Цены на импортные комплектующие могут вырасти.', date: 'Сегодня, 14:30' },
+                    { id: 2, title: 'Рынок растёт', text: 'Спрос на б/у ПК увеличился.', date: 'Сегодня, 11:15' },
+                    { id: 3, title: 'Новые процессоры', text: 'Intel анонсировала новые модели.', date: 'Вчера, 19:45' },
+                    { id: 4, title: 'Дефицит запчастей', text: 'Сборка ПК стала дороже.', date: 'Вчера, 16:20' },
+                    { id: 5, title: 'Скидки на видеокарты', text: 'AMD и NVIDIA снижают цены.', date: 'Вчера, 12:00' }
+                ];
+                saveNews();
+            }
+        }
+
+        function saveNews() {
+            try { localStorage.setItem('pcTycoonNews', JSON.stringify(newsList)); } catch(e) {}
+        }
+
+        function loadNews() {
+            try {
+                const d = localStorage.getItem('pcTycoonNews');
+                if (d) { newsList = JSON.parse(d); }
+            } catch(e) {}
+            if (newsList.length === 0) initNews();
+        }
+
+        function renderNews() {
+            const container = document.getElementById('news-list');
+            if (!container) return;
+
+            if (newsList.length === 0) {
+                container.innerHTML = 
+                    '<div class="empty-state">' +
+                        '<div class="empty-icon">📰</div>' +
+                        '<div class="empty-title">Нет новостей</div>' +
+                        '<div class="empty-text">Добавьте новости в админ-панели</div>' +
+                    '</div>';
+                return;
+            }
+
+            container.innerHTML = newsList.map(function(n) {
+                return '<div class="news-item">' +
+                    '<div class="news-title">' + n.title + '</div>' +
+                    '<div class="news-date">📅 ' + n.date + '</div>' +
+                    '<div class="news-text">' + n.text + '</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        // ============================================================
+        //  ЗАПЧАСТИ
+        // ============================================================
+        function initParts() {
+            parts = [
+                { id: 1, cat: 'cpu', name: 'Intel Core i3-10100F', price: 4500, icon: 'fa-microchip', performance: 45, image: getPartImage('cpu1') },
+                { id: 2, cat: 'cpu', name: 'Intel Core i5-12400F', price: 12000, icon: 'fa-microchip', performance: 75, image: getPartImage('cpu2') },
+                { id: 3, cat: 'cpu', name: 'Intel Core i7-13700K', price: 32000, icon: 'fa-microchip', performance: 100, image: getPartImage('cpu3') },
+                { id: 4, cat: 'cpu', name: 'AMD Ryzen 5 5600X', price: 14000, icon: 'fa-microchip', performance: 70, image: getPartImage('cpu4') },
+                { id: 5, cat: 'cpu', name: 'AMD Ryzen 7 7800X3D', price: 35000, icon: 'fa-microchip', performance: 105, image: getPartImage('cpu5') },
+                { id: 6, cat: 'gpu', name: 'GTX 1060 6GB', price: 12000, icon: 'fa-memory', performance: 45, image: getPartImage('gpu1') },
+                { id: 7, cat: 'gpu', name: 'RTX 3060 12GB', price: 28000, icon: 'fa-memory', performance: 70, image: getPartImage('gpu2') },
+                { id: 8, cat: 'gpu', name: 'RTX 4070 12GB', price: 55000, icon: 'fa-memory', performance: 100, image: getPartImage('gpu3') },
+                { id: 9, cat: 'gpu', name: 'RTX 4090 24GB', price: 150000, icon: 'fa-memory', performance: 140, image: getPartImage('gpu4') },
+                { id: 10, cat: 'ram', name: 'DDR4 16GB 3200MHz', price: 4000, icon: 'fa-server', performance: 40, image: getPartImage('ram1') },
+                { id: 11, cat: 'ram', name: 'DDR5 32GB 5200MHz', price: 9000, icon: 'fa-server', performance: 65, image: getPartImage('ram2') },
+                { id: 12, cat: 'storage', name: 'NVMe 512GB M.2', price: 3500, icon: 'fa-hard-drive', performance: 45, image: getPartImage('ssd1') },
+                { id: 13, cat: 'storage', name: 'NVMe 1TB M.2', price: 6000, icon: 'fa-hard-drive', performance: 60, image: getPartImage('ssd2') },
+                { id: 14, cat: 'case', name: 'Корпус Игровой RGB', price: 6000, icon: 'fa-computer', performance: 40, image: getPartImage('case1') },
+                { id: 15, cat: 'psu', name: 'БП 750W 80+ Gold', price: 7000, icon: 'fa-bolt', performance: 55, image: getPartImage('psu1') },
+                { id: 16, cat: 'cooler', name: 'Кулер Жидкостный 240mm', price: 6000, icon: 'fa-fan', performance: 60, image: getPartImage('cooler1') }
+            ];
+        }
+
+        function renderParts() {
+            const list = document.getElementById('parts-shop-list');
+            if (!list) return;
+            list.innerHTML = '';
+            var cats = { cpu: '🖥️ Процессоры', gpu: '🎮 Видеокарты', ram: '📊 ОЗУ', storage: '💾 Накопители', case: '📦 Корпуса', psu: '⚡ БП', cooler: '🌀 Кулеры' };
+            var cur = '';
+            parts.forEach(function(p) {
+                if (cur !== p.cat) {
+                    cur = p.cat;
+                    list.innerHTML += '<div class="part-category">' + (cats[p.cat] || p.cat.toUpperCase()) + '</div>';
+                }
+                list.innerHTML += 
+                    '<div class="part-item">' +
+                        '<img src="' + p.image + '" class="part-image" onerror="this.style.display=\'none\'">' +
+                        '<div class="part-info">' +
+                            '<div class="part-name">' + p.name + '</div>' +
+                            '<div style="font-size:8px;color:#8e94a8;">' + p.cat.toUpperCase() + ' | ⚡ ' + p.performance + '</div>' +
+                        '</div>' +
+                        '<div class="part-price">' + p.price.toLocaleString() + ' ₽</div>' +
+                        '<button class="action-btn gold" style="font-size:8px;padding:4px 10px;" onclick="buyPart(' + p.id + ')">Купить</button>' +
+                    '</div>';
+            });
+        }
+
+        function buyPart(id) {
+            var p = parts.find(function(i) { return i.id === id; });
+            if (!p) return;
+            if (gameState.balance >= p.price) {
+                updateBalance(-p.price, '🔧 ' + p.name);
+                inventory.push({ ...p, invId: Date.now() });
+                renderInventory();
+                if (syncEnabled) pushToCloud();
+            } else showNotification('❌ Недостаточно средств!');
+        }
+
+        // ============================================================
+        //  ЧЕРНЫЙ РЫНОК
+        // ============================================================
+        function initFakeParts() {
+            fakeParts = [
+                { id: 9001, cat: 'cpu', name: 'i9-11900K (Китай)', price: 8000, icon: 'fa-microchip', fake: true, breakChance: 0.35, image: getFakeImage('fake1') },
+                { id: 9002, cat: 'gpu', name: 'RTX 4090 (Китай)', price: 35000, icon: 'fa-memory', fake: true, breakChance: 0.45, image: getFakeImage('fake2') },
+                { id: 9003, cat: 'ram', name: 'DDR5 32GB (NoName)', price: 4000, icon: 'fa-server', fake: true, breakChance: 0.20, image: getFakeImage('fake3') },
+                { id: 9004, cat: 'storage', name: 'NVMe 1TB (Китай)', price: 2500, icon: 'fa-hard-drive', fake: true, breakChance: 0.28, image: getFakeImage('fake4') },
+                { id: 9005, cat: 'psu', name: 'БП 850W (Китай)', price: 2500, icon: 'fa-bolt', fake: true, breakChance: 0.35, image: getFakeImage('fake5') }
+            ];
+        }
+
+        function renderBlackMarket() {
+            var list = document.getElementById('blackmarket-list');
+            if (!list) return;
+            list.innerHTML = '';
+            fakeParts.forEach(function(p) {
+                list.innerHTML += 
+                    '<div class="part-item" style="border-color:rgba(231,76,60,0.2);">' +
+                        '<img src="' + p.image + '" class="part-image" onerror="this.style.display=\'none\'">' +
+                        '<div class="part-info">' +
+                            '<div class="part-name">' + p.name + ' <span class="badge danger">⚠️</span></div>' +
+                            '<div style="font-size:8px;color:#e74c3c;">Поломка: ' + Math.round(p.breakChance*100) + '%</div>' +
+                        '</div>' +
+                        '<div class="part-price" style="color:#e74c3c;">' + p.price.toLocaleString() + ' ₽</div>' +
+                        '<button class="action-btn danger" style="font-size:8px;padding:4px 10px;" onclick="buyFakePart(' + p.id + ')">Купить</button>' +
+                    '</div>';
+            });
+        }
+
+        function buyFakePart(id) {
+            var p = fakeParts.find(function(i) { return i.id === id; });
+            if (!p) return;
+            if (gameState.balance >= p.price) {
+                updateBalance(-p.price, '⚠️ ' + p.name);
+                inventory.push({ ...p, invId: Date.now() });
+                gameState.reputation = Math.max(0, gameState.reputation - 5);
+                renderInventory();
+                updateBankDisplay();
+                if (syncEnabled) pushToCloud();
+            } else showNotification('❌ Недостаточно средств!');
+        }
+
+        // ============================================================
+        //  КРЕДИТЫ
+        // ============================================================
+        function takeLoan(amount) {
+            if (loanState.totalTaken >= loanState.maxLoans) {
+                showNotification('❌ Вы уже взяли максимальное количество кредитов (3)');
+                return;
+            }
+
+            var active = loanState.loans.filter(function(l) { return !l.isPaid; });
+            if (active.length > 0) {
+                showNotification('⚠️ У вас есть активный кредит! Погасите его сначала');
+                return;
+            }
+
+            if (gameState.reputation < 30) {
+                showNotification('❌ Репутация ниже 30%!');
+                return;
+            }
+
+            var interestRate = 0;
+            if (amount <= 10000) interestRate = 15;
+            else if (amount <= 25000) interestRate = 17;
+            else if (amount <= 50000) interestRate = 20;
+            else if (amount <= 100000) interestRate = 22;
+            else if (amount <= 250000) interestRate = 25;
+            else interestRate = 30;
+
+            var totalToPay = Math.round(amount * (1 + interestRate / 100));
+            var loan = {
+                id: Date.now(),
+                amount: amount,
+                interestRate: interestRate,
+                totalToPay: totalToPay,
+                paid: 0,
+                isPaid: false,
+                date: new Date().toISOString()
+            };
+
+            loanState.loans.push(loan);
+            loanState.totalTaken++;
+
+            updateBalance(amount, '💰 Кредит ' + amount.toLocaleString() + ' ₽ (' + interestRate + '%)');
+            gameState.reputation = Math.max(0, gameState.reputation - 5);
+
+            saveLoans();
+            updateLoanDisplay();
+            updateBankDisplay();
+            if (syncEnabled) pushToCloud();
+
+            showNotification('✅ Кредит ' + amount.toLocaleString() + ' ₽ одобрен! Возврат: ' + totalToPay.toLocaleString() + ' ₽');
+        }
+
+        function payLoanPartial(amount) {
+            var active = loanState.loans.filter(function(l) { return !l.isPaid; });
+            if (active.length === 0) {
+                showNotification('✅ Нет активных кредитов');
+                return;
+            }
+
+            var remainingDebt = active.reduce(function(sum, l) { return sum + (l.totalToPay - l.paid); }, 0);
+            if (amount > remainingDebt) {
+                showNotification('❌ Сумма превышает задолженность (' + remainingDebt.toLocaleString() + ' ₽)');
+                return;
+            }
+
+            if (gameState.balance < amount) {
+                showNotification('❌ Недостаточно средств! Нужно ' + amount.toLocaleString() + ' ₽');
+                return;
+            }
+
+            updateBalance(-amount, '💸 Частичное погашение ' + amount.toLocaleString() + ' ₽');
+
+            var remaining = amount;
+            for (var i = 0; i < active.length; i++) {
+                var loan = active[i];
+                if (remaining <= 0) break;
+                var debt = loan.totalToPay - loan.paid;
+                if (debt <= remaining) {
+                    loan.paid = loan.totalToPay;
+                    loan.isPaid = true;
+                    remaining -= debt;
+                } else {
+                    loan.paid += remaining;
+                    remaining = 0;
+                }
+            }
+
+            gameState.reputation = Math.min(100, gameState.reputation + 2);
+            saveLoans();
+            updateLoanDisplay();
+            updateBankDisplay();
+            if (syncEnabled) pushToCloud();
+            showNotification('✅ Погашено ' + amount.toLocaleString() + ' ₽!');
+        }
+
+        function payAllLoans() {
+            var active = loanState.loans.filter(function(l) { return !l.isPaid; });
+            if (active.length === 0) {
+                showNotification('✅ Нет активных кредитов');
+                return;
+            }
+
+            var total = active.reduce(function(sum, l) { return sum + (l.totalToPay - l.paid); }, 0);
+            if (gameState.balance < total) {
+                showNotification('❌ Нужно ' + total.toLocaleString() + ' ₽');
+                return;
+            }
+
+            if (confirm('💰 Погасить все кредиты на сумму ' + total.toLocaleString() + ' ₽?')) {
+                updateBalance(-total, '💸 Погашение всех кредитов');
+                active.forEach(function(loan) {
+                    loan.paid = loan.totalToPay;
+                    loan.isPaid = true;
+                });
+                gameState.reputation = Math.min(100, gameState.reputation + 10);
+                saveLoans();
+                updateLoanDisplay();
+                updateBankDisplay();
+                if (syncEnabled) pushToCloud();
+                showNotification('✅ Все кредиты погашены!');
+            }
+        }
+
+        function updateLoanDisplay() {
+            var active = loanState.loans.filter(function(l) { return !l.isPaid; });
+            var totalDebt = active.reduce(function(sum, l) { return sum + (l.totalToPay - l.paid); }, 0);
+
+            var countDisplay = document.getElementById('loan-count-display');
+            var activeDisplay = document.getElementById('active-loans-display');
+            var debtDisplay = document.getElementById('total-debt-display');
+
+            if (countDisplay) countDisplay.textContent = loanState.totalTaken + ' / ' + loanState.maxLoans;
+            if (activeDisplay) activeDisplay.textContent = active.length;
+            if (debtDisplay) debtDisplay.textContent = totalDebt.toLocaleString() + ' ₽';
+
+            var canTake = loanState.totalTaken < loanState.maxLoans && active.length === 0 && gameState.reputation >= 30;
+            document.querySelectorAll('.loan-btn').forEach(function(btn) {
+                btn.disabled = !canTake;
+            });
+        }
+
+        function saveLoans() {
+            try { localStorage.setItem('pcTycoonLoans', JSON.stringify(loanState)); } catch(e) {}
+        }
+
+        function loadLoans() {
+            try {
+                var d = localStorage.getItem('pcTycoonLoans');
+                if (d) loanState = JSON.parse(d);
+            } catch(e) {}
+        }
+
+        // ============================================================
+        //  ГЕНЕРАЦИЯ ПК ДЛЯ ГОРОДОВ
+        // ============================================================
+        function generateCityPCs(cityName) {
+            var shuffled = PC_MODELS.slice().sort(function() { return Math.random() - 0.5; });
+            var count = 10;
+            var result = [];
+
+            for (var i = 0; i < Math.min(count, shuffled.length); i++) {
+                var base = shuffled[i];
+                var priceVariation = 0.85 + Math.random() * 0.3;
+                var price = Math.round(base.price * priceVariation);
+                var seller = SELLERS[Math.floor(Math.random() * SELLERS.length)];
+
+                result.push({
+                    id: Date.now() + i + Math.random() * 10000 + Math.random() * 1000,
+                    name: base.name,
+                    price: price,
+                    cpu: base.cpu,
+                    gpu: base.gpu,
+                    tag: base.tag,
+                    tagName: base.tagName,
+                    city: cityName,
+                    seller: { ...seller },
+                    image: getPCImage(i + Math.random() * 1000),
+                    views: Math.floor(Math.random() * 500),
+                    date: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+                    status: 'active',
+                    isMy: false,
+                    likes: Math.floor(Math.random() * 30)
+                });
+            }
+            return result;
+        }
+
+        // ============================================================
+        //  МАРКЕТПЛЕЙС
+        // ============================================================
+        function initMarket() {
+            loadMarketState();
+            if (marketState.ads.length === 0) {
+                CITIES.forEach(function(city) {
+                    var pcs = generateCityPCs(city.name);
+                    marketState.ads.push.apply(marketState.ads, pcs);
+                });
+                saveMarketState();
+            }
+            renderMarket();
+        }
+
+        function renderMarket() {
+            var list = document.getElementById('market-list');
+            if (!list) return;
+
+            var ads = marketState.ads.slice();
+
+            if (marketState.currentTab === 'favorites') {
+                ads = ads.filter(function(a) { return marketState.favorites.indexOf(a.id) !== -1; });
+            } else if (marketState.currentTab === 'my') {
+                ads = ads.filter(function(a) { return a.isMy; });
+            } else if (marketState.currentTab === 'cheap') {
+                ads.sort(function(a, b) { return a.price - b.price; });
+            } else if (marketState.currentTab === 'expensive') {
+                ads.sort(function(a, b) { return b.price - a.price; });
+            } else if (marketState.currentTab === 'city') {
+                ads = ads.filter(function(a) { return a.city === gameState.currentCity; });
+            }
+
+            var countEl = document.getElementById('market-count');
+            var cityEl = document.getElementById('market-city');
+            if (countEl) countEl.textContent = marketState.ads.length;
+            if (cityEl) cityEl.textContent = gameState.currentCity;
+
+            if (ads.length === 0) {
+                list.innerHTML = 
+                    '<div class="empty-state">' +
+                        '<div class="empty-icon">🖥️</div>' +
+                        '<div class="empty-title">Нет объявлений</div>' +
+                        '<div class="empty-text">Попробуйте изменить фильтр или создать своё</div>' +
+                    '</div>';
+                return;
+            }
+
+            list.innerHTML = ads.map(function(ad) {
+                var isFav = marketState.favorites.indexOf(ad.id) !== -1;
+                var tagClass = ad.tag || 'budget';
+                var tagName = ad.tagName || 'Бюджетный';
+                var imgSrc = ad.image || getPCImage(Math.random() * 1000);
+                var sellerAvatar = ad.seller && ad.seller.avatar ? ad.seller.avatar : 'https://i.pravatar.cc/150?img=' + Math.floor(Math.random() * 70);
+                var isInCity = ad.city === gameState.currentCity;
+
+                return '<div class="ad-card" onclick="' + (ad.isMy ? '' : 'openChatFromMarket(' + ad.id + ')') + '">' +
+                    '<img src="' + imgSrc + '" class="ad-image" onerror="this.style.display=\'none\';this.parentElement.querySelector(\'.ad-image-placeholder\').style.display=\'flex\'">' +
+                    '<div class="ad-image-placeholder" style="display:none;"><i class="fa-solid fa-desktop"></i></div>' +
+                    '<div class="ad-price">' + ad.price.toLocaleString() + ' ₽</div>' +
+                    '<div class="ad-title">' + ad.name + '</div>' +
+                    '<div class="ad-specs">' +
+                        '<span>' + ad.cpu + '</span>' +
+                        '<span>' + ad.gpu + '</span>' +
+                        '<span class="pc-tag ' + tagClass + '">' + tagName + '</span>' +
+                    '</div>' +
+                    '<div class="ad-footer">' +
+                        '<div class="ad-seller">' +
+                            '<img src="' + sellerAvatar + '" class="seller-avatar" onerror="this.style.display=\'none\'">' +
+                            '<span class="seller-name">' + (ad.seller ? ad.seller.name : 'Продавец') + '</span>' +
+                            '<span class="seller-rating">⭐ ' + (ad.seller ? ad.seller.rating : 50) + '%</span>' +
+                        '</div>' +
+                        '<div class="ad-city"><i class="fa-solid fa-location-dot"></i> ' + ad.city + '</div>' +
+                    '</div>' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;flex-wrap:wrap;gap:4px;">' +
+                        '<div style="display:flex;gap:6px;align-items:center;font-size:8px;color:#5a6070;">' +
+                            '<span>👁️ ' + (ad.views || 0) + '</span>' +
+                            '<span>❤️ ' + (ad.likes || 0) + '</span>' +
+                            (ad.isMy ? '<span style="color:#3498db;">📌 Ваше</span>' : '') +
+                            (!isInCity ? '<span style="color:#f1c40f;">🚗 В другом городе</span>' : '') +
+                        '</div>' +
+                        '<div style="display:flex;gap:4px;flex-wrap:wrap;">' +
+                            (ad.isMy ? '<button class="ad-delete" onclick="deleteMyAd(' + ad.id + '); event.stopPropagation();">🗑️</button>' : '') +
+                            (!ad.isMy && ad.status === 'active' ? 
+                                (isInCity ? 
+                                    '<button class="action-btn gold" onclick="quickBuy(' + ad.id + '); event.stopPropagation();">Купить</button>' +
+                                    '<button class="action-btn warn" onclick="startHaggle(' + ad.id + '); event.stopPropagation();">Торг</button>' :
+                                    '<button class="action-btn blue" onclick="travelToCityAndBuy(\'' + ad.city + '\', ' + ad.id + '); event.stopPropagation();">🚗 Переехать</button>'
+                                ) : '') +
+                            '<button class="favorite-btn ' + (isFav ? 'active' : '') + '" onclick="toggleFavorite(' + ad.id + '); event.stopPropagation();">' +
+                                '<i class="fa-' + (isFav ? 'solid' : 'regular') + ' fa-heart"></i>' +
+                            '</button>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        function switchMarketTab(tab) {
+            marketState.currentTab = tab;
+            renderMarket();
+        }
+
+        function toggleFavorite(id) {
+            var idx = marketState.favorites.indexOf(id);
+            if (idx > -1) marketState.favorites.splice(idx, 1);
+            else marketState.favorites.push(id);
+            renderMarket();
+            saveMarketState();
+            if (syncEnabled) pushToCloud();
+        }
+
+        function quickBuy(id) {
+            var ad = marketState.ads.find(function(a) { return a.id === id; });
+            if (!ad) return;
+
+            if (ad.city !== gameState.currentCity) {
+                showNotification('❌ ПК в городе ' + ad.city + '! Переместитесь туда');
+                return;
+            }
+
+            if (ad.isMy) {
+                showNotification('❌ Это ваше объявление!');
+                return;
+            }
+
+            if (ad.status !== 'active') {
+                showNotification('❌ Это объявление уже неактивно');
+                return;
+            }
+
+            if (gameState.balance < ad.price) {
+                showNotification('❌ Недостаточно средств! Нужно ' + ad.price.toLocaleString() + ' ₽');
+                return;
+            }
+
+            if (confirm('Купить ' + ad.name + ' за ' + ad.price.toLocaleString() + ' ₽?')) {
+                updateBalance(-ad.price, '🖥️ ' + ad.name);
+                ad.status = 'sold';
+                var newPC = {
+                    ...ad,
+                    id: Date.now(),
+                    tested: false,
+                    isBroken: Math.random() > 0.8,
+                    inRepair: false
+                };
+                myBoughtPCs.push(newPC);
+                gameState.reputation = Math.min(100, gameState.reputation + 3);
+                renderMarket();
+                renderService();
+                updateBankDisplay();
+                saveMarketState();
+                if (syncEnabled) pushToCloud();
+                showNotification('✅ ' + ad.name + ' куплен!');
+            }
+        }
+
+        function addMyAd() {
+            var myPCs = myBoughtPCs.filter(function(p) { return !p.isOnMarket; });
+            if (myPCs.length === 0) {
+                showNotification('📭 Нет доступных ПК');
+                return;
+            }
+
+            var list = myPCs.map(function(p, i) { return (i+1) + '. ' + p.name + ' (' + p.price.toLocaleString() + ' ₽)'; }).join('\n');
+            var choice = prompt('Выберите ПК:\n' + list + '\n\nВведите номер:');
+            if (!choice) return;
+
+            var idx = parseInt(choice) - 1;
+            if (isNaN(idx) || idx < 0 || idx >= myPCs.length) {
+                showNotification('❌ Неверный выбор!');
+                return;
+            }
+
+            var pc = myPCs[idx];
+            var price = prompt('💰 Цена для ' + pc.name + ':', pc.price);
+            if (!price) return;
+
+            price = parseInt(price.replace(/\D/g, ''));
+            if (isNaN(price) || price < 1000) {
+                showNotification('❌ Некорректная цена!');
+                return;
+            }
+
+            var seller = SELLERS[0];
+            marketState.ads.push({
+                id: Date.now(),
+                name: pc.name,
+                price: price,
+                cpu: pc.cpu,
+                gpu: pc.gpu,
+                tag: pc.tag || 'budget',
+                tagName: pc.tagName || 'Бюджетный',
+                city: gameState.currentCity,
+                seller: { ...seller, name: 'Вы', avatar: 'https://i.pravatar.cc/150?img=0', rating: gameState.reputation, deals: gameState.pcsSold },
+                image: getPCImage(Date.now() + Math.random() * 1000),
+                views: 0,
+                date: new Date(),
+                status: 'active',
+                isMy: true,
+                likes: 0
+            });
+            pc.isOnMarket = true;
+            renderMarket();
+            saveMarketState();
+            if (syncEnabled) pushToCloud();
+            showNotification('✅ Объявление создано!');
+        }
+
+        function deleteMyAd(id) {
+            var ad = marketState.ads.find(function(a) { return a.id === id; });
+            if (!ad || !ad.isMy) return;
+            if (confirm('🗑️ Удалить объявление?')) {
+                marketState.ads = marketState.ads.filter(function(a) { return a.id !== id; });
+                renderMarket();
+                saveMarketState();
+                if (syncEnabled) pushToCloud();
+                showNotification('✅ Объявление удалено!');
+            }
+        }
+
+        // ============================================================
+        //  ТОРГ
+        // ============================================================
+        function startHaggle(id) {
+            var ad = marketState.ads.find(function(a) { return a.id === id; });
+            if (!ad || ad.isMy) {
+                showNotification('❌ Нельзя торговаться с собой');
+                return;
+            }
+
+            var minPrice = Math.round(ad.price * 0.5);
+            var offer = prompt(
+                '💬 Торг с ' + (ad.seller ? ad.seller.name : 'продавцом') + '\n' +
+                '💰 Цена: ' + ad.price.toLocaleString() + ' ₽\n' +
+                '💡 Предложите свою цену (от ' + minPrice.toLocaleString() + ' ₽)'
+            );
+            if (!offer) return;
+
+            var offerPrice = parseInt(offer.replace(/\D/g, ''));
+            if (isNaN(offerPrice) || offerPrice < 0) {
+                showNotification('❌ Введите корректную сумму!');
+                return;
+            }
+            if (offerPrice >= ad.price) {
+                showNotification('❌ Цена не может быть выше заявленной!');
+                return;
+            }
+            if (offerPrice < minPrice) {
+                showNotification('❌ Слишком низкая цена! Минимум ' + minPrice.toLocaleString() + ' ₽');
+                return;
+            }
+
+            var priceRatio = offerPrice / ad.price;
+            var repBonus = (gameState.reputation / 100) * 0.3;
+            var priceBonus = (priceRatio - 0.4) * 0.8;
+            var chance = 0.15 + repBonus + priceBonus;
+            chance = Math.min(0.85, Math.max(0.05, chance + (Math.random() - 0.5) * 0.1));
+
+            var chat = marketState.chats.find(function(c) { return c.adId === id; });
+            if (!chat) {
+                chat = { id: Date.now(), adId: id, seller: ad.seller, messages: [], unread: 0 };
+                marketState.chats.push(chat);
+            }
+
+            if (Math.random() < chance) {
+                var oldPrice = ad.price;
+                ad.price = offerPrice;
+                gameState.reputation = Math.min(100, gameState.reputation + 2);
+                chat.messages.push({
+                    text: '✅ Продавец согласен на ' + offerPrice.toLocaleString() + ' ₽! Цена снижена с ' + oldPrice.toLocaleString() + ' ₽',
+                    sent: false,
+                    time: new Date(),
+                    type: 'system'
+                });
+                renderMarket();
+                updateBankDisplay();
+                saveMarketState();
+                if (syncEnabled) pushToCloud();
+                showNotification('✅ ' + (ad.seller ? ad.seller.name : 'Продавец') + ' согласен на ' + offerPrice.toLocaleString() + ' ₽!');
+            } else {
+                gameState.reputation = Math.max(0, gameState.reputation - 1);
+                var suggestedPrice = Math.round(ad.price * (0.85 + Math.random() * 0.1));
+                chat.messages.push({
+                    text: '❌ ' + (ad.seller ? ad.seller.name : 'Продавец') + ' отказался от ' + offerPrice.toLocaleString() + ' ₽. Попробуйте около ' + suggestedPrice.toLocaleString() + ' ₽',
+                    sent: false,
+                    time: new Date(),
+                    type: 'system'
+                });
+                updateBankDisplay();
+                saveMarketState();
+                if (syncEnabled) pushToCloud();
+                showNotification('❌ ' + (ad.seller ? ad.seller.name : 'Продавец') + ' отказался. Попробуйте больше.');
+            }
+
+            if (document.getElementById('chat-window') && document.getElementById('chat-window').classList.contains('show')) {
+                showChatMessages(chat);
+            }
+        }
+
+        // ============================================================
+        //  ЧАТЫ
+        // ============================================================
+        function openChatFromMarket(id) {
+            var ad = marketState.ads.find(function(a) { return a.id === id; });
+            if (!ad || ad.isMy) {
+                showNotification('📌 Это ваше объявление!');
+                return;
+            }
+
+            currentChatAdId = id;
+            var chat = marketState.chats.find(function(c) { return c.adId === id; });
+            if (!chat) {
+                chat = {
+                    id: Date.now(),
+                    adId: id,
+                    seller: ad.seller,
+                    messages: [
+                        { text: 'Здравствуйте! Меня заинтересовал "' + ad.name + '"', sent: true, time: new Date() },
+                        { text: 'Добрый день! Отличный выбор! Цена ' + ad.price.toLocaleString() + ' ₽', sent: false, time: new Date() }
+                    ],
+                    unread: 0
+                };
+                marketState.chats.push(chat);
+                saveMarketState();
+                if (syncEnabled) pushToCloud();
+            }
+
+            openApp('app-chats');
+            setTimeout(function() {
+                var userName = document.getElementById('chat-user-name');
+                var chatWindow = document.getElementById('chat-window');
+                if (userName) userName.textContent = chat.seller.name;
+                if (chatWindow) chatWindow.classList.add('show');
+                showChatMessages(chat);
+            }, 100);
+        }
+
+        function renderChats() {
+            var container = document.getElementById('chat-list');
+            if (!container) return;
+
+            var chats = marketState.chats.slice();
+            if (marketState.chatTab === 'incoming') {
+                chats = chats.filter(function(c) { return c.messages.some(function(m) { return !m.sent; }); });
+            } else {
+                chats = chats.filter(function(c) { return c.messages.some(function(m) { return m.sent; }); });
+            }
+
+            if (chats.length === 0) {
+                container.innerHTML = 
+                    '<div class="empty-state">' +
+                        '<div class="empty-icon">💬</div>' +
+                        '<div class="empty-title">Нет чатов</div>' +
+                        '<div class="empty-text">Начните диалог с продавцом</div>' +
+                    '</div>';
+                return;
+            }
+
+            container.innerHTML = chats.map(function(chat) {
+                var lastMsg = chat.messages[chat.messages.length - 1];
+                var ad = marketState.ads.find(function(a) { return a.id === chat.adId; });
+                var name = chat.seller ? chat.seller.name : (ad ? ad.seller.name : 'Продавец');
+                var avatar = chat.seller ? chat.seller.avatar : (ad && ad.seller ? ad.seller.avatar : 'https://i.pravatar.cc/150?img=' + Math.floor(Math.random() * 70));
+
+                return '<div class="chat-item" onclick="openChatFromChats(' + chat.adId + ')">' +
+                    '<img src="' + avatar + '" class="chat-avatar" onerror="this.src=\'https://i.pravatar.cc/150?img=0\'">' +
+                    '<div class="chat-info">' +
+                        '<div class="chat-name">' + name + '</div>' +
+                        '<div class="chat-last-msg">' + (lastMsg ? lastMsg.text : 'Нет сообщений') + '</div>' +
+                    '</div>' +
+                    '<span class="chat-time">' + (lastMsg ? new Date(lastMsg.time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '') + '</span>' +
+                    (chat.unread > 0 ? '<span class="chat-unread">' + chat.unread + '</span>' : '') +
+                '</div>';
+            }).join('');
+        }
+
+        function openChatFromChats(id) {
+            currentChatAdId = id;
+            var chat = marketState.chats.find(function(c) { return c.adId === id; });
+            if (!chat) return;
+
+            var userName = document.getElementById('chat-user-name');
+            var chatWindow = document.getElementById('chat-window');
+            if (userName) userName.textContent = chat.seller.name;
+            if (chatWindow) chatWindow.classList.add('show');
+            chat.unread = 0;
+            showChatMessages(chat);
+            saveMarketState();
+            if (syncEnabled) pushToCloud();
+        }
+
+        function showChatMessages(chat) {
+            var container = document.getElementById('chat-messages');
+            if (!container) return;
+
+            container.innerHTML = chat.messages.map(function(msg) {
+                return '<div class="msg ' + (msg.sent ? 'sent' : 'received') + (msg.type ? ' ' + msg.type : '') + '">' +
+                    msg.text +
+                    '<span class="msg-time">' + new Date(msg.time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) + '</span>' +
+                '</div>';
+            }).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function closeChatWindow() {
+            var chatWindow = document.getElementById('chat-window');
+            if (chatWindow) chatWindow.classList.remove('show');
+            currentChatAdId = null;
+            renderChats();
+        }
+
+        function switchChatTab(tab) {
+            marketState.chatTab = tab;
+            document.querySelectorAll('.chat-tabs .tab').forEach(function(t) {
+                t.classList.toggle('active', t.textContent.indexOf(tab === 'incoming' ? 'Входящие' : 'Исходящие') !== -1);
+            });
+            renderChats();
+        }
+
+        function sendMessage() {
+            var input = document.getElementById('chat-input');
+            var text = input ? input.value.trim() : '';
+            if (!text) return;
+
+            var chat = marketState.chats.find(function(c) { return c.adId === currentChatAdId; });
+            if (!chat) {
+                showNotification('❌ Чат не найден');
+                return;
+            }
+
+            chat.messages.push({ text: text, sent: true, time: new Date() });
+            if (input) input.value = '';
+            showChatMessages(chat);
+            saveMarketState();
+            if (syncEnabled) pushToCloud();
+
+            setTimeout(function() {
+                var replies = ['Интересно!', 'Давайте обсудим.', 'Хорошо, я подумаю.', 'Отличная идея!', 'Когда удобно встретиться?', 'Можно поторговаться!'];
+                chat.messages.push({
+                    text: replies[Math.floor(Math.random() * replies.length)],
+                    sent: false,
+                    time: new Date()
+                });
+                chat.unread = (chat.unread || 0) + 1;
+                showChatMessages(chat);
+                saveMarketState();
+                if (syncEnabled) pushToCloud();
+                renderChats();
+            }, 1500 + Math.random() * 1500);
+        }
+
+        function startHaggleFromChat() {
+            if (currentChatAdId) startHaggle(currentChatAdId);
+        }
+
+        // ============================================================
+        //  ПЕРЕЕЗД В ГОРОД
+        // ============================================================
+        function travelToCityAndBuy(cityName, adId) {
+            if (cityName === gameState.currentCity) {
+                quickBuy(adId);
+                return;
+            }
+
+            var ad = marketState.ads.find(function(a) { return a.id === adId; });
+            if (!ad) return;
+
+            var distance = getDistance(cityName);
+            var travelTime = Math.max(5, Math.round(distance / 100));
+            var travelCost = 1000;
+
+            if (gameState.balance < ad.price + travelCost) {
+                showNotification('❌ Нужно ' + (ad.price + travelCost).toLocaleString() + ' ₽');
+                return;
+            }
+
+            if (confirm(
+                '🚗 Переехать в ' + cityName + ' и купить ' + ad.name + '?\n\n' +
+                '💰 ПК: ' + ad.price.toLocaleString() + ' ₽\n' +
+                '🚗 Переезд: ' + travelCost + ' ₽\n' +
+                '📏 Расстояние: ' + distance + ' км\n' +
+                '⏱️ Время: ' + travelTime + ' мин\n' +
+                '💵 Итого: ' + (ad.price + travelCost).toLocaleString() + ' ₽'
+            )) {
+                updateBalance(-travelCost, '🚗 Переезд в ' + cityName);
+                showNotification('🚗 Поездка в ' + cityName + '...');
+
+                var elapsed = 0;
+                var interval = setInterval(function() {
+                    elapsed++;
+                    if (elapsed >= travelTime) {
+                        clearInterval(interval);
+                        gameState.currentCity = cityName;
+                        var cityBadge = document.getElementById('city-badge');
+                        if (cityBadge) cityBadge.textContent = '📍 ' + cityName;
+                        renderCities();
+                        quickBuy(adId);
+                        showNotification('✅ Прибыли в ' + cityName + '!');
+                        saveGame();
+                        if (syncEnabled) pushToCloud();
+                    }
+                }, 1000);
+            }
+        }
+
+        // ============================================================
+        //  ГОРОДА
+        // ============================================================
+        function getDistance(cityName) {
+            var from = CITIES.find(function(c) { return c.name === gameState.currentCity; });
+            var to = CITIES.find(function(c) { return c.name === cityName; });
+            if (!from || !to) return 0;
+            var R = 6371;
+            var dLat = (to.lat - from.lat) * Math.PI / 180;
+            var dLon = (to.lon - from.lon) * Math.PI / 180;
+            var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(from.lat * Math.PI/180) * Math.cos(to.lat * Math.PI/180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+        }
+
+        function renderCities() {
+            var grid = document.getElementById('city-grid');
+            if (!grid) return;
+
+            grid.innerHTML = CITIES.map(function(city) {
+                var isCurrent = city.name === gameState.currentCity;
+                var dist = getDistance(city.name);
+                var adsInCity = marketState.ads.filter(function(a) { return a.city === city.name && a.status === 'active' && !a.isMy; }).length;
+
+                return '<button class="city-btn ' + (isCurrent ? 'active' : '') + '" ' +
+                    'onclick="' + (isCurrent ? '' : 'travelToCity(\'' + city.name + '\')') + '" ' +
+                    (isCurrent ? 'disabled' : '') + '>' +
+                    '<div class="city-name">' + city.name + '</div>' +
+                    '<span class="city-distance">' + (isCurrent ? '📍 Текущий' : dist + ' км') + '</span>' +
+                    '<span class="city-pcs">' + (adsInCity > 0 ? '🖥️ ' + adsInCity + ' ПК' : '📭 Нет ПК') + '</span>' +
+                '</button>';
+            }).join('');
+        }
+
+        function travelToCity(cityName) {
+            if (cityName === gameState.currentCity) return;
+            if (gameState.balance < 1000) {
+                showNotification('❌ Нужно 1000 ₽');
+                return;
+            }
+            if (confirm('🚗 Переехать в ' + cityName + ' за 1000 ₽?')) {
+                updateBalance(-1000, '🚗 Переезд в ' + cityName);
+                gameState.currentCity = cityName;
+                var cityBadge = document.getElementById('city-badge');
+                if (cityBadge) cityBadge.textContent = '📍 ' + cityName;
+                renderCities();
+                renderMarket();
+                saveGame();
+                if (syncEnabled) pushToCloud();
+                showNotification('✅ Прибыли в ' + cityName + '!');
+            }
+        }
+
+        // ============================================================
+        //  СЕРВИС
+        // ============================================================
+        function renderService() {
+            var list = document.getElementById('service-list');
+            if (!list) return;
+            list.innerHTML = '';
+
+            if (myBoughtPCs.length === 0) {
+                list.innerHTML = 
+                    '<div class="empty-state">' +
+                        '<div class="empty-icon">📱</div>' +
+                        '<div class="empty-title">Нет ПК</div>' +
+                        '<div class="empty-text">Купите ПК на рынке или соберите сами</div>' +
+                    '</div>';
+                return;
+            }
+
+            myBoughtPCs.forEach(function(pc) {
+                var price = Math.round(pc.price * (1.3 + Math.random() * 0.2));
+                var status = pc.isBroken ? '❌ Сломан' : (pc.inRepair ? '🔧 В ремонте' : '✅ Работает');
+                var statusColor = pc.isBroken ? '#e74c3c' : (pc.inRepair ? '#f1c40f' : '#2ecc71');
+
+                list.innerHTML += 
+                    '<div class="part-item" style="border-color:' + (pc.isBroken ? 'rgba(231,76,60,0.2)' : 'rgba(46,204,113,0.2)') + ';">' +
+                        '<div style="font-size:32px;width:50px;text-align:center;"><i class="fa-solid fa-desktop"></i></div>' +
+                        '<div class="part-info">' +
+                            '<div class="part-name">' + pc.name + '</div>' +
+                            '<div style="font-size:8px;color:#8e94a8;">' + pc.cpu + ' | ' + pc.gpu + '</div>' +
+                            '<div style="font-size:8px;color:' + statusColor + ';margin-top:2px;">' + status + '</div>' +
+                        '</div>' +
+                        '<div style="display:flex;gap:4px;">' +
+                            (pc.isBroken ? '<button class="action-btn warn" style="font-size:8px;padding:4px 10px;" onclick="repairPC(' + pc.id + ')">Чинить</button>' : '') +
+                            (!pc.isBroken && !pc.inRepair ? '<button class="action-btn success" style="font-size:8px;padding:4px 10px;" onclick="sellPC(' + pc.id + ')">' + price.toLocaleString() + ' ₽</button>' : '') +
+                            (pc.inRepair ? '<span style="font-size:9px;color:#f1c40f;">⏳ Чинится...</span>' : '') +
+                        '</div>' +
+                    '</div>';
+            });
+        }
+
+        function repairPC(id) {
+            var pc = myBoughtPCs.find(function(p) { return p.id === id; });
+            if (!pc) return;
+
+            var cost = 1500 + Math.floor(Math.random() * 1500);
+            if (gameState.balance < cost) {
+                showNotification('❌ Нужно ' + cost.toLocaleString() + ' ₽');
+                return;
+            }
+
+            updateBalance(-cost, '🔧 Ремонт: ' + pc.name);
+            pc.inRepair = true;
+            pc.isBroken = false;
+            renderService();
+
+            setTimeout(function() {
+                pc.inRepair = false;
+                pc.tested = true;
+                showNotification('✅ ' + pc.name + ' отремонтирован!');
+                renderService();
+                if (syncEnabled) pushToCloud();
+            }, 3000);
+        }
+
+        function sellPC(id) {
+            var pc = myBoughtPCs.find(function(p) { return p.id === id; });
+            if (!pc) return;
+
+            var price = Math.round(pc.price * (1.3 + Math.random() * 0.2));
+            updateBalance(price, '💵 ' + pc.name);
+            myBoughtPCs = myBoughtPCs.filter(function(p) { return p.id !== id; });
+            gameState.pcsSold++;
+            gameState.reputation = Math.min(100, gameState.reputation + 3);
+            renderService();
+            updateBankDisplay();
+            if (syncEnabled) pushToCloud();
+            showNotification('✅ ' + pc.name + ' продан за ' + price.toLocaleString() + ' ₽');
+        }
+
+        // ============================================================
+        //  СБОРКА
+        // ============================================================
+        function renderInventory() {
+            var list = document.getElementById('inventory-list');
+            if (!list) return;
+            list.innerHTML = '';
+
+            if (inventory.length === 0) {
+                list.innerHTML = '<div style="text-align:center;padding:16px;color:#8e94a8;font-size:10px;">📦 Склад пуст</div>';
+                return;
+            }
+
+            inventory.forEach(function(item, index) {
+                list.innerHTML += 
+                    '<div class="inventory-item">' +
+                        '<div class="inv-icon"><i class="fa-solid ' + item.icon + '"></i></div>' +
+                        '<div class="inv-name">' + item.name + (item.fake ? ' ⚠️' : '') + '</div>' +
+                        '<div class="inv-cat">' + item.cat + '</div>' +
+                        '<button class="action-btn gold" style="font-size:8px;padding:3px 8px;" onclick="mountPart(' + index + ')">Установить</button>' +
+                    '</div>';
+            });
+        }
+
+        function renderBuildSlots() {
+            var container = document.getElementById('build-slots');
+            if (!container) return;
+
+            var slots = ['cpu', 'gpu', 'ram', 'storage', 'case', 'psu', 'cooler'];
+            var names = ['CPU', 'GPU', 'RAM', 'SSD', 'Корпус', 'БП', 'Кулер'];
+
+            container.innerHTML = slots.map(function(slot, i) {
+                return '<div class="slot-item">' +
+                    '<div>' +
+                        '<div class="slot-label">' + names[i] + '</div>' +
+                        '<div class="slot-value ' + (currentBuild[slot] ? 'filled' : 'empty') + '">' + (currentBuild[slot] ? currentBuild[slot].name : 'Пусто') + '</div>' +
+                    '</div>' +
+                    (currentBuild[slot] ? '<button class="action-btn warn" style="font-size:8px;padding:3px 8px;" onclick="unmount(\'' + slot + '\')">Снять</button>' : '') +
+                '</div>';
+            }).join('');
+        }
+
+        function mountPart(index) {
+            var item = inventory[index];
+            if (!item) return;
+
+            if (currentBuild[item.cat]) {
+                alert('Слот ' + item.cat + ' занят!');
+                return;
+            }
+
+            if (item.cat === 'ram' && item.name.indexOf('DDR5') !== -1) {
+                var hasDDR4 = false;
+                for (var key in currentBuild) {
+                    var p = currentBuild[key];
+                    if (p && p.cat === 'ram' && p.name.indexOf('DDR4') !== -1) { hasDDR4 = true; break; }
+                }
+                if (hasDDR4) {
+                    alert('❌ Нельзя смешивать DDR4 и DDR5!');
+                    return;
+                }
+            }
+            if (item.cat === 'ram' && item.name.indexOf('DDR4') !== -1) {
+                var hasDDR5 = false;
+                for (var key in currentBuild) {
+                    var p = currentBuild[key];
+                    if (p && p.cat === 'ram' && p.name.indexOf('DDR5') !== -1) { hasDDR5 = true; break; }
+                }
+                if (hasDDR5) {
+                    alert('❌ Нельзя смешивать DDR4 и DDR5!');
+                    return;
+                }
+            }
+
+            currentBuild[item.cat] = { ...item };
+            inventory.splice(index, 1);
+            renderBuildSlots();
+            renderInventory();
+            if (syncEnabled) pushToCloud();
+        }
+
+        function unmount(type) {
+            if (!currentBuild[type]) {
+                alert('Слот пуст!');
+                return;
+            }
+            inventory.push(currentBuild[type]);
+            currentBuild[type] = null;
+            renderBuildSlots();
+            renderInventory();
+            if (syncEnabled) pushToCloud();
+        }
+
+        function sellCustomPC() {
+            var req = ['cpu', 'gpu', 'ram', 'storage', 'case', 'psu', 'cooler'];
+            var miss = req.filter(function(t) { return !currentBuild[t]; });
+
+            if (miss.length > 0) {
+                alert('❌ Нет: ' + miss.join(', '));
+                return;
+            }
+
+            var total = 0, hasFake = false, perf = 0;
+            req.forEach(function(t) {
+                var p = currentBuild[t];
+                total += p.price;
+                if (p.fake) hasFake = true;
+                if (p.performance) perf += p.performance;
+            });
+
+            if (hasFake && Math.random() < 0.3) {
+                alert('💥 Контрафакт сломался!');
+                req.forEach(function(t) { currentBuild[t] = null; });
+                renderBuildSlots();
+                gameState.reputation = Math.max(0, gameState.reputation - 10);
+                updateBankDisplay();
+                if (syncEnabled) pushToCloud();
+                return;
+            }
+
+            var price = Math.round(total * (1.2 + (perf / 100) * 0.5 + Math.random() * 0.2));
+            updateBalance(price, '💻 Собранный ПК');
+            req.forEach(function(t) { currentBuild[t] = null; });
+            renderBuildSlots();
+            renderInventory();
+            gameState.pcsSold++;
+            gameState.reputation = Math.min(100, gameState.reputation + 5);
+            updateBankDisplay();
+            if (syncEnabled) pushToCloud();
+            alert('✅ ПК продан за ' + price.toLocaleString() + ' ₽!');
+        }
+
+        // ============================================================
+        //  КАЛЕНДАРЬ
+        // ============================================================
+        function renderCalendar() {
+            var grid = document.getElementById('calendar-grid');
+            if (!grid) return;
+
+            grid.innerHTML = '';
+            var first = (gameState.dayOfWeek - (gameState.day - 1) % 7 + 7) % 7;
+
+            for (var i = 0; i < first; i++) {
+                grid.innerHTML += '<div style="color:#2a2d3d;">-</div>';
+            }
+
+            for (var d = 1; d <= 30; d++) {
+                var isToday = d === gameState.day;
+                grid.innerHTML += '<div style="' + (isToday ? 'background:rgba(241,196,15,0.2);border-radius:6px;padding:3px;font-weight:bold;color:#f1c40f;' : '') + '">' + d + '</div>';
+            }
+
+            var weekEvents = { 0: '📈 Начало недели', 1: '📊 Средний спрос', 2: '🛒 День распродаж', 3: '💻 Новые поступления', 4: '🔥 Ажиотаж', 5: '🎉 Рынок слабый', 6: '☀️ Отдых' };
+            var calEvents = document.getElementById('calendar-events');
+            var calNextDay = document.getElementById('cal-next-day');
+
+            if (calEvents) calEvents.textContent = (weekEvents[gameState.dayOfWeek] || '📊 Обычный день') + ' | ⏰ ' + getTimeString(timeState.currentMinutes);
+            if (calNextDay) calNextDay.textContent = '⏳ Время до следующего дня: ' + getTimeString(timeState.currentMinutes);
+        }
+
+        // ============================================================
+        //  СОН
+        // ============================================================
+        function goToSleep() {
+            var h = Math.floor(timeState.currentMinutes / 60) % 24;
+
+            if (h >= 6 && h < 23) {
+                showNotification('🌙 Сейчас нельзя спать! Только с 23:00 до 06:00');
+                return;
+            }
+
+            if (timeState.isSleeping) return;
+
+            timeState.isSleeping = true;
+            var overlay = document.getElementById('sleep-overlay');
+            if (overlay) overlay.classList.add('show');
+            showNotification('💤 Вы легли спать...');
+
+            var targetMinutes = 6 * 60;
+            var sleepStart = timeState.currentMinutes;
+            var minutesToSleep = targetMinutes - (sleepStart % (24 * 60));
+            if (minutesToSleep <= 0) minutesToSleep += 24 * 60;
+
+            var totalSteps = 50;
+            var step = 0;
+            var interval = setInterval(function() {
+                step++;
+                var progress = step / totalSteps;
+
+                var fill = document.getElementById('sleep-progress-fill');
+                var sleepTime = document.getElementById('sleep-time');
+
+                if (fill) fill.style.width = (progress * 100) + '%';
+                if (sleepTime) {
+                    var currentTime = sleepStart + minutesToSleep * progress;
+                    sleepTime.textContent = getTimeString(currentTime);
+                }
+
+                if (step >= totalSteps) {
+                    clearInterval(interval);
+                    timeState.isSleeping = false;
+                    timeState.currentMinutes = targetMinutes;
+                    if (overlay) overlay.classList.remove('show');
+
+                    var repBonus = 5 + Math.floor(Math.random() * 10);
+                    gameState.reputation = Math.min(100, gameState.reputation + repBonus);
+                    showNotification('🌅 Просыпаемся! Репутация +' + repBonus + '%');
+
+                    updateTimeDisplay();
+                    updateDayDisplay();
+                    updateBankDisplay();
+
+                    if (targetMinutes < sleepStart % (24 * 60)) {
+                        onNewDay();
+                    } else {
+                        renderAll();
+                    }
+
+                    saveGame();
+                    if (syncEnabled) pushToCloud();
+                }
+            }, 100);
+        }
+
+        // ============================================================
+        //  ЕЖЕДНЕВНОЕ ОБНОВЛЕНИЕ
+        // ============================================================
+        function updateMarketPCs() {
+            var keepAds = marketState.ads.filter(function(a) { return a.status === 'sold' || a.isMy; });
+
+            marketState.ads.forEach(function(ad) {
+                if (!ad.isMy && ad.status === 'active') {
+                    var change = (Math.random() - 0.5) * 0.3;
+                    ad.price = Math.round(ad.price * (1 + change));
+                    ad.price = Math.max(5000, ad.price);
+                    ad.views = (ad.views || 0) + Math.floor(Math.random() * 10);
+                }
+            });
+
+            var newAds = [];
+            CITIES.forEach(function(city) {
+                var cityAds = marketState.ads.filter(function(a) { return a.city === city.name && !a.isMy && a.status === 'active'; });
+                if (cityAds.length < 5) {
+                    var pcs = generateCityPCs(city.name);
+                    newAds.push.apply(newAds, pcs);
+                }
+            });
+
+            marketState.ads = keepAds.concat(newAds);
+            saveMarketState();
+            if (syncEnabled) pushToCloud();
+            renderMarket();
+        }
+
+        function updatePartsPrices() {
+            parts.forEach(function(p) {
+                var change = (Math.random() - 0.5) * 0.3;
+                p.price = Math.round(p.price * (1 + change));
+                p.price = Math.max(500, p.price);
+            });
+            renderParts();
+            if (syncEnabled) pushToCloud();
+        }
+
+        function updateFakeParts() {
+            fakeParts.forEach(function(p) {
+                var change = (Math.random() - 0.5) * 0.3;
+                p.price = Math.round(p.price * (1 + change));
+                p.price = Math.max(1000, p.price);
+            });
+            renderBlackMarket();
+            if (syncEnabled) pushToCloud();
+        }
+
+        function onNewDay() {
+            gameState.day++;
+            gameState.dayOfWeek = (gameState.dayOfWeek + 1) % 7;
+
+            if (gameState.day > 30) {
+                gameState.day = 1;
+                gameState.month++;
+                if (gameState.month > 12) {
+                    gameState.month = 1;
+                    gameState.year++;
+                }
+            }
+
+            loanState.loans.forEach(function(loan) {
+                if (!loan.isPaid) {
+                    var interest = Math.round(loan.totalToPay * 0.02);
+                    loan.totalToPay += interest;
+                }
+            });
+
+            updateMarketPCs();
+            updatePartsPrices();
+            updateFakeParts();
+
+            var dayNews = {
+                id: Date.now(),
+                title: '📅 День ' + gameState.day,
+                text: 'На рынке появились новые предложения! Цены обновлены.',
+                date: 'Сегодня, ' + getTimeString(timeState.currentMinutes)
+            };
+            newsList.unshift(dayNews);
+            if (newsList.length > 20) newsList.pop();
+            saveNews();
+
+            renderAll();
+            saveGame();
+            saveMarketState();
+            saveNews();
+            saveLoans();
+            if (syncEnabled) pushToCloud();
+            showNotification('📅 День ' + gameState.day + ' начался! Рынок обновлен!');
+        }
+
+        // ============================================================
+        //  ОТКРЫТИЕ/ЗАКРЫТИЕ ОКОН
+        // ============================================================
+        function openApp(id) {
+            document.querySelectorAll('.app-window').forEach(function(a) { a.style.display = 'none'; });
+            var a = document.getElementById(id);
+            if (a) {
+                a.style.display = 'flex';
+
+                switch (id) {
+                    case 'app-market': renderMarket(); break;
+                    case 'app-parts': renderParts(); break;
+                    case 'app-blackmarket': renderBlackMarket(); break;
+                    case 'app-service': renderService(); break;
+                    case 'app-workbench': renderInventory(); renderBuildSlots(); break;
+                    case 'app-bank': loadLoans(); updateLoanDisplay(); updateBankDisplay(); break;
+                    case 'app-calendar': renderCalendar(); break;
+                    case 'app-cities': renderCities(); break;
+                    case 'app-chats': renderChats(); break;
+                    case 'app-news': renderNews(); break;
+                    case 'app-sleep': updateTimeDisplay(); break;
+                    case 'app-settings':
+                        var settingsDays = document.getElementById('settings-days');
+                        if (settingsDays) settingsDays.textContent = gameState.day;
+                        var syncInfo = document.getElementById('sync-info');
+                        if (syncInfo) syncInfo.textContent = 'Последняя синхронизация: ' + (syncTimestamp ? new Date(syncTimestamp).toLocaleString() : 'никогда');
+                        break;
+                }
+            }
+        }
+
+        function closeApp(id) {
+            var a = document.getElementById(id);
+            if (a) a.style.display = 'none';
+            if (id === 'app-chats') {
+                var chatWindow = document.getElementById('chat-window');
+                if (chatWindow) chatWindow.classList.remove('show');
+            }
+        }
+
+        // ============================================================
+        //  АДМИН-ПАНЕЛЬ
+        // ============================================================
+        function adminLogin() {
+            var pass = document.getElementById('admin-password');
+            if (!pass) return;
+
+            if (pass.value === '0511') {
+                adminLoggedIn = true;
+                var panel = document.getElementById('admin-panel');
+                if (panel) panel.style.display = 'block';
+                showNotification('✅ Админ-панель активирована!');
+                adminUpdateStats();
+            } else {
+                showNotification('❌ Неверный пароль!');
+            }
+        }
+
+        function adminUpdateStats() {
+            var stats = document.getElementById('admin-stats');
+            if (!stats) return;
+
+            stats.innerHTML = 
+                '<div class="admin-grid">' +
+                    '<div class="stat"><span>Баланс</span><span class="val">' + gameState.balance.toLocaleString() + ' ₽</span></div>' +
+                    '<div class="stat"><span>Репутация</span><span class="val">' + gameState.reputation + '%</span></div>' +
+                    '<div class="stat"><span>День</span><span class="val">' + gameState.day + '</span></div>' +
+                    '<div class="stat"><span>ПК продано</span><span class="val">' + gameState.pcsSold + '</span></div>' +
+                    '<div class="stat"><span>Объявлений</span><span class="val">' + marketState.ads.length + '</span></div>' +
+                    '<div class="stat"><span>Чатов</span><span class="val">' + marketState.chats.length + '</span></div>' +
+                    '<div class="stat"><span>Новостей</span><span class="val">' + newsList.length + '</span></div>' +
+                    '<div class="stat"><span>На складе</span><span class="val">' + inventory.length + '</span></div>' +
+                '</div>';
+        }
+
+        function adminAddMoney() {
+            updateBalance(100000, '💰 Админ-бонус');
+            adminUpdateStats();
+            showNotification('✅ +100 000 ₽');
+        }
+
+        function adminAddRep() {
+            gameState.reputation = Math.min(100, gameState.reputation + 20);
+            updateReputation();
+            adminUpdateStats();
+            showNotification('⭐ +20 репутации');
+        }
+
+        function adminAddPC() {
+            var pc = generateCityPCs(gameState.currentCity)[0];
+            pc.id = Date.now() + Math.random() * 1000;
+            pc.image = getPCImage(Date.now() + Math.random() * 1000);
+            marketState.ads.push(pc);
+            renderMarket();
+            saveMarketState();
+            if (syncEnabled) pushToCloud();
+            adminUpdateStats();
+            showNotification('🖥️ ПК добавлен на рынок');
+        }
+
+        function adminNextDay() {
+            onNewDay();
+            adminUpdateStats();
+            showNotification('⏩ День пропущен');
+        }
+
+        function adminAddNews() {
+            var title = prompt('📰 Заголовок новости:');
+            if (!title) return;
+
+            var text = prompt('📝 Текст новости:');
+            if (!text) return;
+
+            var date = new Date();
+            var dateStr = 'Сегодня, ' + String(date.getHours()).padStart(2, '0') + ':' + String(date.getMinutes()).padStart(2, '0');
+
+            newsList.unshift({ id: Date.now(), title: title, text: text, date: dateStr });
+            saveNews();
+            renderNews();
+            if (syncEnabled) pushToCloud();
+            showNotification('✅ Новость добавлена!');
+            adminUpdateStats();
+        }
+
+        function adminClearNews() {
+            if (confirm('🗑️ Очистить все новости?')) {
+                newsList = [];
+                saveNews();
+                renderNews();
+                if (syncEnabled) pushToCloud();
+                showNotification('✅ Новости очищены!');
+                adminUpdateStats();
+            }
+        }
+
+        function adminReset() {
+            if (confirm('🗑️ Сбросить игру? Всё будет потеряно!')) {
+                localStorage.removeItem('pcTycoonSave');
+                localStorage.removeItem('pcTycoonMarket');
+                localStorage.removeItem('pcTycoonLoans');
+                localStorage.removeItem('pcTycoonNews');
+                localStorage.removeItem('pcTycoonTheme');
+                location.reload();
+            }
+        }
+
+        function adminExportSave() {
+            var data = {
+                gameState: gameState,
+                inventory: inventory,
+                myBoughtPCs: myBoughtPCs,
+                currentBuild: currentBuild,
+                transactionHistory: transactionHistory.slice(-50),
+                marketState: marketState,
+                loanState: loanState,
+                newsList: newsList,
+                parts: parts,
+                fakeParts: fakeParts
+            };
+
+            var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'pctycoon_save_' + new Date().toISOString().slice(0, 10) + '.json';
+            a.click();
+            showNotification('📤 Сохранение экспортировано!');
+        }
+
+        function adminImportSave() {
+            var fileInput = document.getElementById('admin-import-file');
+            if (fileInput) fileInput.click();
+        }
+
+        function adminImportFile(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    var data = JSON.parse(e.target.result);
+
+                    if (!data.gameState || !data.marketState) {
+                        throw new Error('Неверный формат файла');
+                    }
+
+                    if (data.gameState) Object.assign(gameState, data.gameState);
+                    if (data.inventory) inventory = data.inventory;
+                    if (data.myBoughtPCs) myBoughtPCs = data.myBoughtPCs;
+                    if (data.currentBuild) currentBuild = data.currentBuild;
+                    if (data.marketState) {
+                        marketState.ads = data.marketState.ads || [];
+                        marketState.chats = data.marketState.chats || [];
+                        marketState.favorites = data.marketState.favorites || [];
+                    }
+                    if (data.loanState) loanState = data.loanState;
+                    if (data.newsList) newsList = data.newsList;
+                    if (data.parts) parts = data.parts;
+                    if (data.fakeParts) fakeParts = data.fakeParts;
+
+                    renderAll();
+                    updateBankDisplay();
+                    updateDayDisplay();
+                    saveGame();
+                    saveMarketState();
+                    saveNews();
+                    saveLoans();
+                    if (syncEnabled) pushToCloud();
+
+                    showNotification('✅ Сохранение импортировано!');
+                    adminUpdateStats();
+                } catch (err) {
+                    alert('❌ Ошибка импорта: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // ============================================================
+        //  СОХРАНЕНИЕ
+        // ============================================================
+        function saveMarketState() {
+            try {
+                localStorage.setItem('pcTycoonMarket', JSON.stringify({
+                    ads: marketState.ads,
+                    chats: marketState.chats,
+                    favorites: marketState.favorites,
+                    currentTab: marketState.currentTab
+                }));
+            } catch(e) {}
+        }
+
+        function loadMarketState() {
+            try {
+                var d = localStorage.getItem('pcTycoonMarket');
+                if (d) {
+                    var data = JSON.parse(d);
+                    marketState.ads = data.ads || [];
+                    marketState.chats = data.chats || [];
+                    marketState.favorites = data.favorites || [];
+                    marketState.currentTab = data.currentTab || 'all';
+                }
+            } catch(e) {}
+        }
+
+        function saveGame() {
+            try {
+                localStorage.setItem('pcTycoonSave', JSON.stringify({
+                    gameState: gameState,
+                    inventory: inventory,
+                    myBoughtPCs: myBoughtPCs,
+                    currentBuild: currentBuild,
+                    transactionHistory: transactionHistory.slice(-50),
+                    newsList: newsList
+                }));
+            } catch(e) {}
+        }
+
+        function loadGame() {
+            try {
+                var d = localStorage.getItem('pcTycoonSave');
+                if (d) {
+                    var data = JSON.parse(d);
+                    if (data.gameState) Object.assign(gameState, data.gameState);
+                    if (data.inventory) inventory = data.inventory;
+                    if (data.myBoughtPCs) myBoughtPCs = data.myBoughtPCs;
+                    if (data.currentBuild) currentBuild = data.currentBuild;
+                    if (data.transactionHistory) transactionHistory = data.transactionHistory;
+                    if (data.newsList) newsList = data.newsList;
+                }
+            } catch(e) {}
+        }
+
+        // ============================================================
+        //  ВРЕМЕННОЙ ЦИКЛ
+        // ============================================================
+        function startTimeLoop() {
+            var last = Date.now();
+            setInterval(function() {
+                var now = Date.now();
+                var delta = now - last;
+                last = now;
+
+                if (timeState.isSleeping) return;
+
+                var speed = timeState.speed;
+                var minutes = (delta / 1000) * speed / 60;
+
+                if (minutes > 0) {
+                    timeState.currentMinutes += minutes;
+                    if (timeState.currentMinutes >= 24 * 60) {
+                        timeState.currentMinutes = timeState.currentMinutes % (24 * 60);
+                        onNewDay();
+                    }
+                    updateTimeDisplay();
+                    updateDayDisplay();
+                }
+            }, 1000);
+        }
+
+        // ============================================================
+        //  РЕНДЕР ВСЕГО
+        // ============================================================
+        function renderAll() {
+            renderMarket();
+            renderParts();
+            renderBlackMarket();
+            renderService();
+            renderInventory();
+            renderBuildSlots();
+            renderChats();
+            renderNews();
+            renderCities();
+            renderCalendar();
+            updateBankDisplay();
+            updateDayDisplay();
+            updateTimeDisplay();
+            updateLoanDisplay();
+        }
+
+        // ============================================================
+        //  ЧАСТИЦЫ
+        // ============================================================
+        function initParticles() {
+            var c = document.getElementById('particles-canvas');
+            if (!c) return;
+
+            var ctx = c.getContext('2d');
+            c.width = window.innerWidth;
+            c.height = window.innerHeight;
+
+            var particles = [];
+            var colors = ['#2ecc71', '#3498db', '#9b59b6', '#f39c12', '#e74c3c'];
+
+            for (var i = 0; i < 30; i++) {
+                particles.push({
+                    x: Math.random() * c.width,
+                    y: Math.random() * c.height,
+                    size: 1 + Math.random() * 2,
+                    sx: (Math.random() - 0.5) * 0.3,
+                    sy: (Math.random() - 0.5) * 0.3,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    opacity: 0.15 + Math.random() * 0.25
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, c.width, c.height);
+
+                particles.forEach(function(p) {
+                    p.x += p.sx;
+                    p.y += p.sy;
+                    if (p.x < 0 || p.x > c.width) p.sx *= -1;
+                    if (p.y < 0 || p.y > c.height) p.sy *= -1;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.opacity;
+                    ctx.fill();
+                });
+
+                ctx.globalAlpha = 1;
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+
+            window.addEventListener('resize', function() {
+                c.width = window.innerWidth;
+                c.height = window.innerHeight;
+            });
+        }
+
+        // ============================================================
+        //  ТЕМЫ
+        // ============================================================
+        function renderThemes() {
+            var container = document.getElementById('theme-selector');
+            if (!container) return;
+
+            var themes = [
+                { id: 'dark', bg: '#0a0b12', color: '#fff' },
+                { id: 'light', bg: '#f0f2f5', color: '#1a1a2e' }
+            ];
+
+            var currentTheme = localStorage.getItem('pcTycoonTheme') || 'dark';
+
+            container.innerHTML = themes.map(function(t) {
+                return '<div class="theme-btn ' + (t.id === currentTheme ? 'active' : '') + '" ' +
+                    'style="background:' + t.bg + ';border-color:' + (t.id === currentTheme ? '#f1c40f' : 'rgba(255,255,255,0.1)') + '" ' +
+                    'onclick="applyTheme(\'' + t.id + '\')"></div>';
+            }).join('');
+        }
+
+        function applyTheme(id) {
+            document.body.style.background = id === 'light' ? '#f0f2f5' : '#0a0b12';
+            document.body.style.color = id === 'light' ? '#1a1a2e' : '#fff';
+            localStorage.setItem('pcTycoonTheme', id);
+            renderThemes();
+        }
+
+        // ============================================================
+        //  УВЕДОМЛЕНИЯ
+        // ============================================================
+        function showNotification(text) {
+            var old = document.querySelector('.notification');
+            if (old) old.remove();
+
+            var div = document.createElement('div');
+            div.className = 'notification';
+            div.textContent = text;
+            document.body.appendChild(div);
+
+            setTimeout(function() { div.remove(); }, 3000);
+        }
+
+        // ============================================================
+        //  ИНИЦИАЛИЗАЦИЯ
+        // ============================================================
+        function init() {
+            // Загружаем данные
+            loadGame();
+            loadMarketState();
+            loadLoans();
+            loadNews();
+            if (newsList.length === 0) initNews();
+            saveNews();
+
+            initParts();
+            initFakeParts();
+            initMarket();
+
+            // Инициализируем Firebase
+            initFirebase();
+
+            // Запускаем
+            initParticles();
+            renderThemes();
+            renderAll();
+            startTimeLoop();
+            updateTimeDisplay();
+
+            // Реальное время
+            updateRealTime();
+            setInterval(updateRealTime, 10000);
+
+            // Автосохранение
+            setInterval(function() {
+                saveGame();
+                saveMarketState();
+                saveNews();
+                saveLoans();
+            }, 30000);
+
+            // Восстановление темы
+            var savedTheme = localStorage.getItem('pcTycoonTheme');
+            if (savedTheme) applyTheme(savedTheme);
+
+            console.log('🖥️ PC Tycoon v4.0 загружен!');
+            console.log('📍 Городов: ' + CITIES.length);
+            console.log('🖥️ Объявлений: ' + marketState.ads.length);
+            console.log('☁️ Синхронизация: ' + (syncEnabled && firebaseInitialized ? 'Включена' : 'Выключена'));
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
