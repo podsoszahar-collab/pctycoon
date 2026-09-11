@@ -317,7 +317,7 @@ if(typeof firebase!=='undefined'&&!firebase.apps.length){try{firebase.initialize
 // ФОТО
 const PC_IMGS=['avatar.jpg'];
 function getPCImg(s){return PC_IMGS[Math.floor(Math.abs(s||Math.random()*1000))%PC_IMGS.length];}
-const PART_IMGS={cpu:['avatar1.jpg'};
+const PART_IMGS={cpu:['avatar1.jpg']};
 function getPartImg(c,s){const a=PART_IMGS[c]||PART_IMGS.cpu;return a[Math.floor(Math.abs(s||Math.random()*1000))%a.length];}
 
 // ГОРОДА
