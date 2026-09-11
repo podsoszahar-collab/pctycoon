@@ -341,8 +341,12 @@ function timeStr(m){const h=Math.floor(m/60)%24,mm=Math.floor(m%60);return Strin
 function canSleep(m){const h=Math.floor(m/60)%24;return h>=23||h<6;}
 function updTime(){
     const t=timeStr(time.min);el('gt',t);el('db','День '+gs.day);el('sti','⏰ '+t);
-    const cs=canSleep(time.min);el('sh',cs?'🌙 Можно спать!':'🌙 С 23:00 до 06:00');
-    el('sst',cs?'🌙 Хороших снов!':'☀️ Подождите ночи.');el('sst').style.color=cs?'#2ecc71':'#8e94a8';
+    const cs=canSleep(time.min);el('sh',cs?' 😴 Можно спать!' : ' ☀️ 23:00 до 06:00');
+    
+    // Исправленная строка: добавлена кавычка и разделено изменение текста и цвета
+    el('sst', cs ? ' 😴 Хороших снов!' : ' ⏰ Подождите ночи.');
+    const sstEl = document.getElementById('sst');
+    if (sstEl) sstEl.style.color = cs ? '#2ecc71' : '#e74c3c';
 }
 function updDay(){
     el('cb','📍 '+gs.currentCity);el('cd2',gs.currentCity);el('cd',gs.day);
