@@ -315,9 +315,9 @@ let syncEnabled=false,database=null;
 if(typeof firebase!=='undefined'&&!firebase.apps.length){try{firebase.initializeApp({apiKey:"AIzaSyAv0ChOvxUSEWjCnWWUXBml01PyTsgfGjo",authDomain:"pc-tycoon-11216.firebaseapp.com",databaseURL:"https://pc-tycoon-11216-default-rtdb.firebaseio.com",projectId:"pc-tycoon-11216",storageBucket:"pc-tycoon-11216.firebasestorage.app",messagingSenderId:"587863804885",appId:"1:587863804885:web:ab92c591d56098cd4fcb5c"});database=firebase.database();syncEnabled=true;console.log('✅ Firebase!');}catch(e){console.log('⚠️',e.message);}}
 
 // ФОТО
-const PC_IMGS=['https://avatars.mds.yandex.net/get-mpic/5233850/img_id6764874291019137053.jpeg/9','https://avatars.mds.yandex.net/get-mpic/5233850/img_id9065640799857383738.jpeg/9','https://avatars.mds.yandex.net/get-mpic/5233850/img_id2357515821934683469.jpeg/9','https://avatars.mds.yandex.net/get-mpic/5233850/img_id8774640495128153530.jpeg/9','https://avatars.mds.yandex.net/get-mpic/5233850/img_id5409978026582668757.jpeg/9'];
+const PC_IMGS=['avatar.jpg];
 function getPCImg(s){return PC_IMGS[Math.floor(Math.abs(s||Math.random()*1000))%PC_IMGS.length];}
-const PART_IMGS={cpu:['https://avatars.mds.yandex.net/get-mpic/5233850/img_id7528046349157441397.jpeg/9','https://avatars.mds.yandex.net/get-mpic/5233850/img_id8140359680908986508.jpeg/9'],gpu:['https://avatars.mds.yandex.net/get-mpic/5233850/img_id3208070122406514585.jpeg/9','https://avatars.mds.yandex.net/get-mpic/5233850/img_id6265759051048166908.jpeg/9'],ram:['https://avatars.mds.yandex.net/get-mpic/5233850/img_id1165900945758424376.jpeg/9'],storage:['https://avatars.mds.yandex.net/get-mpic/5233850/img_id7796559884282689902.jpeg/9'],case:['https://avatars.mds.yandex.net/get-mpic/5233850/img_id3829493236566858085.jpeg/9'],psu:['https://avatars.mds.yandex.net/get-mpic/5233850/img_id6608303102959967554.jpeg/9'],cooler:['https://avatars.mds.yandex.net/get-mpic/5233850/img_id7038023154516075155.jpeg/9']};
+const PART_IMGS={cpu:['avatar1.jpg'};
 function getPartImg(c,s){const a=PART_IMGS[c]||PART_IMGS.cpu;return a[Math.floor(Math.abs(s||Math.random()*1000))%a.length];}
 
 // ГОРОДА
@@ -342,7 +342,6 @@ function canSleep(m){const h=Math.floor(m/60)%24;return h>=23||h<6;}
 function updTime(){
     const t=timeStr(time.min);el('gt',t);el('db','День '+gs.day);el('sti','⏰ '+t);
     const cs=canSleep(time.min);el('sh',cs?' 😴 Можно спать!' : ' ☀️ 23:00 до 06:00');
-    
     // Исправленная строка: добавлена кавычка и разделено изменение текста и цвета
     el('sst', cs ? ' 😴 Хороших снов!' : ' ⏰ Подождите ночи.');
     const sstEl = document.getElementById('sst');
