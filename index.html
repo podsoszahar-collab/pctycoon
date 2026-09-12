@@ -159,6 +159,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0b12;color:#fff}
 .msg.sent{align-self:flex-end;background:rgba(52,152,219,.15);border:1px solid rgba(52,152,219,.1)}
 .msg.received{align-self:flex-start;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.05)}
 .msg.system{background:rgba(241,196,15,.05);border:1px solid rgba(241,196,15,.1);align-self:center;max-width:90%;text-align:center;font-style:italic;font-size:9px;color:#f1c40f}
+.msg.offer{background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.2);align-self:flex-start;font-weight:600}
 .msg-time{font-size:7px;color:#5a6070;margin-top:3px;display:block}
 .chat-input{display:flex;gap:8px;padding:8px 12px;border-top:1px solid rgba(255,255,255,.03);background:rgba(20,22,36,.9)}
 .chat-input input{flex:1;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.04);background:rgba(255,255,255,.03);color:#fff;font-size:10px}
@@ -216,7 +217,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0b12;color:#fff}
 
 <!-- ЧЕРНЫЙ РЫНОК -->
 <div class="app-window" id="w-black"><div class="window-header"><div class="window-title"><i class="fa-solid fa-skull"></i> Черный рынок</div><button class="back-btn" onclick="closeApp('black')">✕</button></div>
-<div class="window-body"><div style="background:rgba(231,76,60,.05);border:1px solid rgba(231,76,60,.1);border-radius:12px;padding:12px;margin-bottom:12px;"><p style="font-size:10px;color:#e74c3c;">⚠️ Контрафакт дешевле!</p></div><div id="blist"></div></div></div>
+<div class="window-body"><div style="background:rgba(231,76,60,.05);border:1px solid rgba(231,76,60,.1);border-radius:12px;padding:12px;margin-bottom:12px;"><p style="font-size:10px;color:#e74c3c;">⚠️ Контрафакт дешевле, но может сломаться!</p></div><div id="blist"></div></div></div>
 
 <!-- СЕРВИС -->
 <div class="app-window" id="w-service"><div class="window-header"><div class="window-title"><i class="fa-solid fa-wrench"></i> Мои ПК</div><button class="back-btn" onclick="closeApp('service')">✕</button></div>
@@ -296,15 +297,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0b12;color:#fff}
 <div class="window-body">
 <div class="settings-group"><div class="group-title"><i class="fa-regular fa-clock"></i> Время</div><div class="settings-row"><label>Скорость</label><input type="range" min="0.5" max="5" step="0.5" value="1" oninput="changeSpeed(this.value)" id="ss2"><span class="value" id="sv">×1</span></div></div>
 <div class="settings-group"><div class="group-title"><i class="fa-solid fa-palette"></i> Тема</div><div class="settings-row"><div id="tsel" style="display:flex;gap:6px;"></div></div></div>
-<div class="settings-group"><div class="group-title"><i class="fa-solid fa-user-shield"></i> Админ-панель</div>
-<div id="alog" style="display:flex;gap:6px;align-items:center;"><input type="password" id="apass" placeholder="Пароль" maxlength="6" style="flex:1;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.04);background:rgba(255,255,255,.03);color:#fff;font-size:11px;text-align:center;letter-spacing:4px;"><button class="action-btn gold" onclick="adminLogin()">🔓</button></div>
-<div id="ap" style="display:none;margin-top:8px;">
-<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;"><button class="action-btn success" onclick="aMoney()">💰 +100K</button><button class="action-btn warn" onclick="aRep()">⭐ +20</button><button class="action-btn" onclick="aPC()">🖥️ +ПК</button><button class="action-btn purple" onclick="aDay()">⏩ +1д</button></div>
-<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;"><button class="action-btn" onclick="aNews()">📰 +Новость</button><button class="action-btn danger" onclick="aClearNews()">🗑️ Очистить</button></div>
-<div style="display:flex;gap:6px;flex-wrap:wrap;"><button class="action-btn blue" onclick="aExport()">📤 Экспорт</button><button class="action-btn blue" onclick="aImport()">📥 Импорт</button><input type="file" id="aif" style="display:none" accept=".json" onchange="aImportFile(event)"></div>
-<div id="astats" style="font-size:9px;color:#8e94a8;margin-top:8px;line-height:1.6;"></div>
-</div></div>
-<div class="settings-group"><div class="group-title"><i class="fa-solid fa-circle-info"></i> О игре</div><div style="font-size:10px;color:#8e94a8;display:flex;justify-content:space-between;padding:4px 0;"><span>Версия</span><span style="color:#f1c40f;">v4.3</span></div><div style="font-size:10px;color:#8e94a8;display:flex;justify-content:space-between;padding:4px 0;"><span>Дней</span><span style="color:#2ecc71;" id="sd">0</span></div><button class="action-btn danger" style="width:100%;margin-top:8px;padding:10px;" onclick="fullReset()">🗑️ Сбросить</button></div>
+<div class="settings-group"><div class="group-title"><i class="fa-solid fa-circle-info"></i> О игре</div><div style="font-size:10px;color:#8e94a8;display:flex;justify-content:space-between;padding:4px 0;"><span>Версия</span><span style="color:#f1c40f;">v4.6</span></div><div style="font-size:10px;color:#8e94a8;display:flex;justify-content:space-between;padding:4px 0;"><span>Дней</span><span style="color:#2ecc71;" id="sd">0</span></div><button class="action-btn danger" style="width:100%;margin-top:8px;padding:10px;" onclick="fullReset()">🗑️ Сбросить</button></div>
 </div></div>
 
 <div class="sleep-overlay" id="so"><div class="sleep-icon">💤</div><div class="sleep-title">Сон</div><div class="sleep-sub">Время снести.</div><div class="sleep-progress"><div class="fill" id="spf"></div></div><div class="sleep-time" id="stm">00:00</div></div>
@@ -343,6 +336,7 @@ let loans={list:[],total:0,max:3};
 let time={min:6*60,speed:1,sleeping:false};
 let parts=[],fakeParts=[],news=[];
 let curChat=null,curInvTab='parts';
+let lastAdminModified=0;
 
 // ВРЕМЯ
 function timeStr(m){const h=Math.floor(m/60)%24,mm=Math.floor(m%60);return String(h).padStart(2,'0')+':'+String(mm).padStart(2,'0');}
@@ -374,7 +368,7 @@ function updBal(amt,txt){
 }
 function updBank(){el('bv',gs.balance.toLocaleString()+' ₽');}
 
-// ЗАПЧАСТИ (Расширенный список)
+// ЗАПЧАСТИ
 function initParts(){
     parts=[
         {id:1,cat:'cpu',name:'Intel Pentium Gold G6400',price:2500,icon:'fa-microchip',perf:25,image:getPartImg('cpu',1)},
@@ -429,11 +423,34 @@ function initParts(){
 }
 function initFake(){
     fakeParts=[
-        {id:9001,cat:'cpu',name:'i9 (Китай)',price:5000,icon:'fa-microchip',fake:true,breakChance:.35,image:getPartImg('cpu',1)},
-        {id:9002,cat:'gpu',name:'RTX 4090 (Китай)',price:20000,icon:'fa-memory',fake:true,breakChance:.45,image:getPartImg('gpu',1)},
-        {id:9003,cat:'ram',name:'DDR5 (NoName)',price:2500,icon:'fa-server',fake:true,breakChance:.20,image:getPartImg('ram',1)},
-        {id:9004,cat:'storage',name:'NVMe (Китай)',price:1500,icon:'fa-hard-drive',fake:true,breakChance:.28,image:getPartImg('storage',1)},
-        {id:9005,cat:'psu',name:'БП 850W (Китай)',price:1500,icon:'fa-bolt',fake:true,breakChance:.35,image:getPartImg('psu',1)}];
+        {id:9001,cat:'cpu',name:'Intel i9-9900K (Китай)',price:4000,icon:'fa-microchip',fake:true,breakChance:.30,image:getPartImg('cpu',1)},
+        {id:9002,cat:'cpu',name:'AMD Ryzen 9 3900X (Китай)',price:5000,icon:'fa-microchip',fake:true,breakChance:.35,image:getPartImg('cpu',2)},
+        {id:9003,cat:'cpu',name:'Intel Xeon E5-2670 (Китай)',price:2500,icon:'fa-microchip',fake:true,breakChance:.25,image:getPartImg('cpu',3)},
+        {id:9004,cat:'cpu',name:'AMD Threadripper (Китай)',price:8000,icon:'fa-microchip',fake:true,breakChance:.45,image:getPartImg('cpu',4)},
+        {id:9010,cat:'gpu',name:'GTX 1080 Ti (Китай)',price:12000,icon:'fa-memory',fake:true,breakChance:.35,image:getPartImg('gpu',1)},
+        {id:9011,cat:'gpu',name:'RTX 2080 Ti (Китай)',price:18000,icon:'fa-memory',fake:true,breakChance:.40,image:getPartImg('gpu',2)},
+        {id:9012,cat:'gpu',name:'RTX 3080 (Китай)',price:22000,icon:'fa-memory',fake:true,breakChance:.42,image:getPartImg('gpu',3)},
+        {id:9013,cat:'gpu',name:'RTX 4090 (Китай)',price:25000,icon:'fa-memory',fake:true,breakChance:.50,image:getPartImg('gpu',4)},
+        {id:9014,cat:'gpu',name:'AMD RX 580 (Китай)',price:5000,icon:'fa-memory',fake:true,breakChance:.28,image:getPartImg('gpu',1)},
+        {id:9015,cat:'gpu',name:'GTX 1660 Super (Китай)',price:9000,icon:'fa-memory',fake:true,breakChance:.32,image:getPartImg('gpu',2)},
+        {id:9020,cat:'ram',name:'DDR4 16GB (NoName)',price:2000,icon:'fa-server',fake:true,breakChance:.20,image:getPartImg('ram',1)},
+        {id:9021,cat:'ram',name:'DDR4 32GB (NoName)',price:3500,icon:'fa-server',fake:true,breakChance:.22,image:getPartImg('ram',2)},
+        {id:9022,cat:'ram',name:'DDR5 32GB (Китай)',price:4000,icon:'fa-server',fake:true,breakChance:.25,image:getPartImg('ram',1)},
+        {id:9023,cat:'ram',name:'DDR5 64GB (Китай)',price:7000,icon:'fa-server',fake:true,breakChance:.28,image:getPartImg('ram',2)},
+        {id:9030,cat:'storage',name:'SSD 1TB (Китай)',price:2000,icon:'fa-hard-drive',fake:true,breakChance:.25,image:getPartImg('storage',1)},
+        {id:9031,cat:'storage',name:'NVMe 2TB (Китай)',price:3000,icon:'fa-hard-drive',fake:true,breakChance:.30,image:getPartImg('storage',2)},
+        {id:9032,cat:'storage',name:'HDD 4TB (Б/У)',price:1500,icon:'fa-hard-drive',fake:true,breakChance:.35,image:getPartImg('storage',1)},
+        {id:9033,cat:'storage',name:'SSD 4TB (Китай)',price:5000,icon:'fa-hard-drive',fake:true,breakChance:.32,image:getPartImg('storage',2)},
+        {id:9040,cat:'psu',name:'БП 650W (Китай)',price:1200,icon:'fa-bolt',fake:true,breakChance:.30,image:getPartImg('psu',1)},
+        {id:9041,cat:'psu',name:'БП 850W (Китай)',price:1800,icon:'fa-bolt',fake:true,breakChance:.35,image:getPartImg('psu',1)},
+        {id:9042,cat:'psu',name:'БП 1000W (NoName)',price:2200,icon:'fa-bolt',fake:true,breakChance:.40,image:getPartImg('psu',1)},
+        {id:9043,cat:'psu',name:'БП 1200W (Китай)',price:3000,icon:'fa-bolt',fake:true,breakChance:.45,image:getPartImg('psu',1)},
+        {id:9050,cat:'case',name:'Корпус с AliExpress',price:1500,icon:'fa-computer',fake:true,breakChance:.15,image:getPartImg('case',1)},
+        {id:9051,cat:'case',name:'Корпус RGB (NoName)',price:2500,icon:'fa-computer',fake:true,breakChance:.20,image:getPartImg('case',1)},
+        {id:9060,cat:'cooler',name:'Кулер (Китай)',price:800,icon:'fa-fan',fake:true,breakChance:.25,image:getPartImg('cooler',1)},
+        {id:9061,cat:'cooler',name:'СЖО 240 (Китай)',price:2500,icon:'fa-fan',fake:true,breakChance:.30,image:getPartImg('cooler',1)},
+        {id:9062,cat:'cooler',name:'СЖО 360 (Китай)',price:4000,icon:'fa-fan',fake:true,breakChance:.35,image:getPartImg('cooler',1)}
+    ];
 }
 function initNews(){
     if(news.length===0){news=[
@@ -451,19 +468,52 @@ function load(){
     try{const d=localStorage.getItem('pcLoans');if(d)loans=JSON.parse(d);}catch(e){}
 }
 
-// СИНХРОНИЗАЦИЯ С FIREBASE
+// ========== СИНХРОНИЗАЦИЯ С FIREBASE ==========
 function saveToFirebase() {
     if (!syncEnabled || !database) return;
     const playerId = localStorage.getItem('pcPlayerId');
     if (!playerId) return;
-    database.ref('players/' + playerId).set({
-        name: 'Игрок ' + playerId.slice(0, 4),
-        city: gs.currentCity,
-        balance: gs.balance,
-        reputation: gs.reputation,
-        day: gs.day,
-        lastUpdate: Date.now(),
-        online: true
+    database.ref('players/' + playerId).once('value').then(snap => {
+        const ex = snap.val() || {};
+        const lastAdmin = ex.adminModified || 0;
+        const upd = {
+            name: 'Игрок ' + playerId.slice(-4),
+            city: gs.currentCity,
+            lastUpdate: Date.now(),
+            online: true
+        };
+        if (Date.now() - lastAdmin > 15000) {
+            upd.balance = gs.balance;
+            upd.reputation = gs.reputation;
+            upd.day = gs.day;
+        }
+        database.ref('players/' + playerId).update(upd);
+    }).catch(e => console.log('FB save error:', e));
+}
+
+function listenToFirebase() {
+    if (!syncEnabled || !database) return;
+    const playerId = localStorage.getItem('pcPlayerId');
+    if (!playerId) return;
+    database.ref('players/' + playerId).on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (!data) return;
+        if (!data.adminModified || data.adminModified <= lastAdminModified) return;
+        lastAdminModified = data.adminModified;
+        let changed = false;
+        if (typeof data.balance === 'number' && data.balance !== gs.balance) {
+            gs.balance = data.balance; changed = true;
+            notif('💰 Админ: баланс ' + data.balance.toLocaleString() + ' ₽');
+        }
+        if (typeof data.reputation === 'number' && data.reputation !== gs.reputation) {
+            gs.reputation = data.reputation; changed = true;
+            notif('⭐ Админ: репутация ' + data.reputation + '%');
+        }
+        if (typeof data.day === 'number' && data.day !== gs.day) {
+            gs.day = data.day; changed = true;
+            notif('📅 Админ: день ' + data.day);
+        }
+        if (changed) { updBank(); updDay(); save(); }
     });
 }
 
@@ -550,13 +600,16 @@ function addMyAd(){
     let p=prompt('💰 Цена:',pc.price);if(!p)return;
     p=parseInt(p.replace(/\D/g,''));
     if(isNaN(p)||p<1000){notif('❌ Цена');return;}
-    market.ads.push({id:Date.now(),name:pc.name,price:p,cpu:pc.cpu,gpu:pc.gpu,tag:pc.tag||'budget',tagName:pc.tagName||'Бюджетный',city:gs.currentCity,seller:{...SELLERS[0],name:'Вы',avatar:'https://i.pravatar.cc/150?img=0',rating:gs.reputation},image:getPCImg(Math.random()*1000),views:0,date:new Date(),status:'active',isMy:true,likes:0,pcId:pc.id});
+    const newAd={id:Date.now(),name:pc.name,price:p,cpu:pc.cpu,gpu:pc.gpu,tag:pc.tag||'budget',tagName:pc.tagName||'Бюджетный',city:gs.currentCity,seller:{...SELLERS[0],name:'Вы',avatar:'avatar18.jpg',rating:gs.reputation},image:getPCImg(Math.random()*1000),views:0,date:new Date(),status:'active',isMy:true,likes:0,pcId:pc.id};
+    market.ads.push(newAd);
     pc.isOnMarket=true;renderMarket();saveMarket();
-    notif('✅ Создано! '+p.toLocaleString()+' ₽');
+    startAutoOffers(newAd.id);
+    notif('✅ Выставлено за '+p.toLocaleString()+' ₽. Ждите покупателей!');
 }
 function deleteMyAd(id){
     const a=market.ads.find(x=>x.id===id);if(!a||!a.isMy)return;
     if(confirm('Снять с продажи?')){
+        if(a.offerTimer)clearTimeout(a.offerTimer);
         const pc=myPCs.find(p=>p.id===a.pcId);if(pc)pc.isOnMarket=false;
         market.ads=market.ads.filter(x=>x.id!==id);renderMarket();saveMarket();notif('✅ Снято');
     }
@@ -579,7 +632,8 @@ function renderChats(){
     if(ch.length===0){c.innerHTML='<div class="empty-state"><div class="empty-icon">💬</div><div class="empty-title">Нет чатов</div></div>';return;}
     c.innerHTML=ch.map(x=>{
         const last=x.messages[x.messages.length-1];
-        return `<div class="chat-item" onclick="openChatFromList(${x.adId})"><img src="${x.seller.avatar}" class="chat-avatar"><div class="chat-info"><div class="chat-name">${x.seller.name}</div><div class="chat-last-msg">${last?last.text:''}</div></div>${x.unread>0?'<span class="chat-unread">'+x.unread+'</span>':''}</div>`;
+        const icon = x.isBuyerOffer ? '💰 ' : '';
+        return `<div class="chat-item" onclick="openChatFromList(${x.adId})" ${x.isBuyerOffer?'style="border-color:rgba(46,204,113,.3);"':''}><img src="${x.seller.avatar}" class="chat-avatar"><div class="chat-info"><div class="chat-name">${icon}${x.seller.name}</div><div class="chat-last-msg">${last?last.text:''}</div></div>${x.unread>0?'<span class="chat-unread">'+x.unread+'</span>':''}</div>`;
     }).join('');
 }
 function openChatFromList(id){
@@ -589,7 +643,14 @@ function openChatFromList(id){
 }
 function showMsgs(c){
     const m=document.getElementById('cmsg');if(!m)return;
-    m.innerHTML=c.messages.map(x=>'<div class="msg '+(x.sent?'sent':'received')+' '+(x.type||'')+'">'+x.text+'<span class="msg-time">'+new Date(x.time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</span></div>').join('');
+    let html = c.messages.map(x=>'<div class="msg '+(x.sent?'sent':'received')+' '+(x.type||'')+'">'+x.text+'<span class="msg-time">'+new Date(x.time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</span></div>').join('');
+    if (c.isBuyerOffer && c.pendingOffer) {
+        html += '<div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;">' +
+            '<button class="action-btn success" onclick="acceptOffer('+c.adId+')">✅ Принять '+c.pendingOffer.toLocaleString()+' ₽</button>' +
+            '<button class="action-btn danger" onclick="declineOffer('+c.adId+')">❌ Отклонить</button>' +
+            '</div>';
+    }
+    m.innerHTML = html;
     m.scrollTop=m.scrollHeight;
 }
 function closeChat(){document.getElementById('cw').classList.remove('show');curChat=null;renderChats();}
@@ -626,6 +687,58 @@ function startHaggle(id){
     if(document.getElementById('cw')?.classList.contains('show'))showMsgs(c);
 }
 function startHaggleFromChat(){if(curChat)startHaggle(curChat);}
+
+// АВТО-ПРЕДЛОЖЕНИЯ ОТ ПОКУПАТЕЛЕЙ
+function startAutoOffers(adId) {
+    const ad = market.ads.find(a => a.id === adId);
+    if (!ad || !ad.isMy) return;
+    if (ad.offerTimer) clearTimeout(ad.offerTimer);
+    const delay = 15000 + Math.random() * 25000;
+    ad.offerTimer = setTimeout(() => {
+        makeBuyerOffer(adId);
+        if (market.ads.some(a => a.id === adId && a.isMy && a.status === 'active')) startAutoOffers(adId);
+    }, delay);
+}
+function makeBuyerOffer(adId) {
+    const ad = market.ads.find(a => a.id === adId);
+    if (!ad || !ad.isMy || ad.status !== 'active') return;
+    const buyer = SELLERS[Math.floor(Math.random() * SELLERS.length)];
+    const offerPrice = Math.round(ad.price * (0.7 + Math.random() * 0.35));
+    let chat = market.chats.find(c => c.adId === adId && c.isBuyerOffer);
+    if (!chat) {
+        chat = {id: Date.now(), adId: adId, isBuyerOffer: true, seller: buyer, messages: [], unread: 0, pendingOffer: null};
+        market.chats.push(chat);
+    } else { chat.seller = buyer; }
+    chat.pendingOffer = offerPrice;
+    chat.messages.push({text: '💬 ' + buyer.name + ' предлагает ' + offerPrice.toLocaleString() + ' ₽ за ваш ПК "' + ad.name + '"', sent: false, time: new Date(), type: 'offer'});
+    chat.unread = (chat.unread || 0) + 1;
+    notif('📩 ' + buyer.name + ' предлагает ' + offerPrice.toLocaleString() + ' ₽!');
+    saveMarket();
+    renderChats();
+}
+function acceptOffer(adId) {
+    const chat = market.chats.find(c => c.adId === adId && c.isBuyerOffer);
+    if (!chat || !chat.pendingOffer) return;
+    const ad = market.ads.find(a => a.id === adId);
+    if (!ad) return;
+    const price = chat.pendingOffer;
+    myPCs = myPCs.filter(p => p.id !== ad.pcId);
+    builtPCs = builtPCs.filter(p => p.id !== ad.pcId);
+    market.ads = market.ads.filter(a => a.id !== adId);
+    updBal(price, '💵 Продажа: ' + ad.name);
+    gs.pcsSold++; gs.reputation = Math.min(100, gs.reputation + 3);
+    chat.messages.push({text: '✅ Вы приняли предложение ' + price.toLocaleString() + ' ₽', sent: true, time: new Date(), type: 'system'});
+    chat.pendingOffer = null;
+    renderMarket(); renderInvItems(); renderService(); updBank(); saveMarket(); showMsgs(chat);
+    notif('✅ ПК продан за ' + price.toLocaleString() + ' ₽!');
+}
+function declineOffer(adId) {
+    const chat = market.chats.find(c => c.adId === adId && c.isBuyerOffer);
+    if (!chat) return;
+    chat.messages.push({text: '❌ Вы отклонили предложение', sent: true, time: new Date(), type: 'system'});
+    chat.pendingOffer = null;
+    saveMarket(); showMsgs(chat);
+}
 
 // ГОРОДА
 function getDist(city){
@@ -726,12 +839,16 @@ function sellFromInv(id){
     let p=prompt('💰 Цена:',pc.price);if(!p)return;
     p=parseInt(p.replace(/\D/g,''));
     if(isNaN(p)||p<1000){notif('❌ Цена');return;}
-    market.ads.push({id:Date.now(),name:pc.name,price:p,cpu:pc.cpu,gpu:pc.gpu,tag:pc.tag||'budget',tagName:pc.tagName||'Бюджетный',city:gs.currentCity,seller:{...SELLERS[0],name:'Вы',avatar:'https://i.pravatar.cc/150?img=0',rating:gs.reputation},image:getPCImg(Math.random()*1000),views:0,date:new Date(),status:'active',isMy:true,likes:0,pcId:pc.id});
-    pc.isOnMarket=true;renderMarket();renderInvItems();saveMarket();notif('✅ Выставлен!');
+    const newAd={id:Date.now(),name:pc.name,price:p,cpu:pc.cpu,gpu:pc.gpu,tag:pc.tag||'budget',tagName:pc.tagName||'Бюджетный',city:gs.currentCity,seller:{...SELLERS[0],name:'Вы',avatar:'avatar18.jpg',rating:gs.reputation},image:getPCImg(Math.random()*1000),views:0,date:new Date(),status:'active',isMy:true,likes:0,pcId:pc.id};
+    market.ads.push(newAd);
+    pc.isOnMarket=true;renderMarket();renderInvItems();saveMarket();
+    startAutoOffers(newAd.id);
+    notif('✅ Выставлен! Ждите покупателей...');
 }
 function removeFromMarket(id){
     const a=market.ads.find(x=>x.pcId===id&&x.isMy);if(!a)return;
     if(confirm('Снять?')){
+        if(a.offerTimer)clearTimeout(a.offerTimer);
         const pc=myPCs.find(p=>p.id===id);if(pc)pc.isOnMarket=false;
         const bp=builtPCs.find(p=>p.id===id);if(bp)bp.isOnMarket=false;
         market.ads=market.ads.filter(x=>x.id!==a.id);renderMarket();renderInvItems();saveMarket();notif('✅');
@@ -937,61 +1054,6 @@ function openApp(id){
 }
 function closeApp(id){const a=document.getElementById('w-'+id);if(a)a.style.display='none';if(id==='chats')document.getElementById('cw').classList.remove('show');}
 
-// АДМИН
-let adminIn=false;
-function adminLogin(){
-    const p=document.getElementById('apass').value;
-    if(p==='0511'){adminIn=true;document.getElementById('alog').style.display='none';document.getElementById('ap').style.display='block';notif('✅ Админ!');aStats();}
-    else notif('❌ Неверный пароль');
-}
-function aStats(){
-    const s=document.getElementById('astats');if(!s)return;
-    s.innerHTML='💰 '+gs.balance.toLocaleString()+' ₽<br>⭐ '+gs.reputation+'%<br>📅 День '+gs.day+'<br>🖥️ Куплено: '+gs.pcsBought+' / Продано: '+gs.pcsSold+'<br>📦 Склад: '+inv.length+'<br>📍 '+gs.currentCity;
-}
-function aMoney(){updBal(100000,'💰 Админ');aStats();notif('✅ +100K');}
-function aRep(){gs.reputation=Math.min(100,gs.reputation+20);updBank();aStats();notif('⭐ +20');}
-function aPC(){
-    const r=PC_TYPES[Math.floor(Math.random()*PC_TYPES.length)];
-    market.ads.push({id:Date.now()+Math.random()*1000,name:r.name,price:Math.round(r.price*(.9+Math.random()*.2)),cpu:r.cpu,gpu:r.gpu,tag:r.tag,tagName:r.tagName,city:gs.currentCity,seller:{...SELLERS[Math.floor(Math.random()*SELLERS.length)]},image:getPCImg(Math.random()*1000),views:0,date:new Date(),status:'active',isMy:false,likes:0});
-    renderMarket();saveMarket();aStats();notif('🖥️ +ПК');
-}
-function aDay(){newDay();aStats();notif('⏩ +1 день');}
-function aNews(){
-    const t=prompt('Заголовок:');if(!t)return;
-    const x=prompt('Текст:');if(!x)return;
-    news.unshift({id:Date.now(),title:t,text:x,date:'Сегодня, '+timeStr(time.min)});
-    if(news.length>20)news.pop();save();renderNews();aStats();notif('✅ Новость');
-}
-function aClearNews(){if(confirm('Очистить?')){news=[];save();renderNews();notif('✅');}}
-function aExport(){
-    const d={gs,inv,myPCs,builtPCs,build,market,loans,news};
-    const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(b);
-    a.download='pctycoon_'+new Date().toISOString().slice(0,10)+'.json';a.click();
-    notif('📤 Экспорт!');
-}
-function aImport(){document.getElementById('aif').click();}
-function aImportFile(e){
-    const f=e.target.files[0];if(!f)return;
-    const r=new FileReader();
-    r.onload=function(ev){
-        try{
-            const d=JSON.parse(ev.target.result);
-            if(d.gs)Object.assign(gs,d.gs);
-            if(d.inv)inv=d.inv;
-            if(d.myPCs)myPCs=d.myPCs;
-            if(d.builtPCs)builtPCs=d.builtPCs;
-            if(d.build)build=d.build;
-            if(d.market){market.ads=d.market.ads||[];market.chats=d.market.chats||[];market.favorites=d.market.favorites||[];}
-            if(d.loans)loans=d.loans;
-            if(d.news)news=d.news;
-            renderAll();updBank();aStats();notif('✅ Импорт!');
-        }catch(e){alert('❌ Ошибка!');}
-    };
-    r.readAsText(f);e.target.value='';
-}
-function fullReset(){if(confirm('Сбросить игру?')){localStorage.clear();location.reload();}}
-
 // ЦИКЛ ВРЕМЕНИ
 function startLoop(){
     let last=Date.now();
@@ -1015,7 +1077,6 @@ function renderAll(){
 
 // ИНИЦИАЛИЗАЦИЯ
 function init(){
-    // Генерируем ID игрока, если его нет
     if (!localStorage.getItem('pcPlayerId')) {
         localStorage.setItem('pcPlayerId', 'player_' + Date.now());
     }
@@ -1023,8 +1084,8 @@ function init(){
     load();initNews();
     if(news.length===0)initNews();
     initMarket();updLoans();
+    listenToFirebase();
     initParticles();renderThemes();renderAll();startLoop();updTime();
-    // Отправляем данные в Firebase каждые 10 секунд
     setInterval(() => {
         save();
         saveMarket();
@@ -1032,7 +1093,7 @@ function init(){
         saveToFirebase();
     }, 10000);
     const t=localStorage.getItem('pcTheme');if(t)applyTheme(t);
-    console.log('🖥️ PC Tycoon v4.3!');
+    console.log('🖥️ PC Tycoon v4.6!');
     console.log('✅ Готово!');
     console.log('📍 Городов: '+CITIES.length);
     console.log('🖥️ Объявлений: '+market.ads.length);

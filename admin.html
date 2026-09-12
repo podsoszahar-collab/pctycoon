@@ -10,14 +10,16 @@ h1{color:#f1c40f;font-size:20px;display:flex;align-items:center;gap:10px}
 .player{background:#181b28;padding:12px 16px;margin-bottom:8px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border:1px solid rgba(255,255,255,0.05)}
 .player-info{font-size:13px;line-height:1.5}
 .player-info span{color:#8e94a8;font-size:11px}
-.actions{display:flex;gap:6px}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
 button{background:#f1c40f;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:11px;transition:0.2s}
 button:hover{opacity:0.8}
 .danger{background:#e74c3c;color:#fff}
+.green{background:#2ecc71;color:#fff}
 </style>
 </head>
 <body>
 <h1>👑 Админ-панель PC Tycoon</h1>
+<div style="color:#8e94a8;font-size:12px;margin-bottom:20px;">Синхронизация с игрой каждые 10 секунд</div>
 <div id="players" style="margin-top:20px;">Загрузка игроков...</div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -35,7 +37,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// Слушаем изменения в базе данных
 db.ref('players').on('value', (snapshot) => {
     const data = snapshot.val();
     const container = document.getElementById('players');
@@ -50,10 +51,12 @@ db.ref('players').on('value', (snapshot) => {
         html += `<div class="player">
             <div class="player-info">
                 <b>${p.name || 'Без имени'}</b> | 📍 ${p.city}<br>
-                <span>💰 ${p.balance.toLocaleString()} ₽ | ⭐ ${p.reputation}% | 📅 День ${p.day} | 🕒 ${date}</span>
+                <span>💰 ${(p.balance||0).toLocaleString()} ₽ | ⭐ ${p.reputation||0}% | 📅 День ${p.day||1} | 🕒 ${date}</span>
             </div>
             <div class="actions">
-                <button onclick="addMoney('${key}')">+10 000 ₽</button>
+                <button class="green" onclick="addMoney('${key}',10000)">+10 000 ₽</button>
+                <button class="green" onclick="addMoney('${key}',100000)">+100 000 ₽</button>
+                <button class="green" onclick="addRep('${key}')">+20 ⭐</button>
                 <button class="danger" onclick="resetPlayer('${key}')">Сбросить</button>
             </div>
         </div>`;
@@ -61,15 +64,32 @@ db.ref('players').on('value', (snapshot) => {
     container.innerHTML = html;
 });
 
-function addMoney(id) {
+function addMoney(id, amount) {
     db.ref('players/' + id).once('value').then(snap => {
         const p = snap.val();
-        if(p) db.ref('players/' + id + '/balance').set((p.balance || 0) + 10000);
+        if(p) db.ref('players/' + id).update({
+            balance: (p.balance || 0) + amount,
+            adminModified: Date.now()
+        });
     });
 }
+
+function addRep(id) {
+    db.ref('players/' + id).once('value').then(snap => {
+        const p = snap.val();
+        if(p) db.ref('players/' + id).update({
+            reputation: Math.min(100, (p.reputation || 0) + 20),
+            adminModified: Date.now()
+        });
+    });
+}
+
 function resetPlayer(id) {
     if(confirm('Вы уверены, что хотите сбросить этого игрока?')) {
-        db.ref('players/' + id).update({balance: 30000, reputation: 50, day: 1});
+        db.ref('players/' + id).update({
+            balance: 30000, reputation: 50, day: 1,
+            adminModified: Date.now()
+        });
     }
 }
 </script>
