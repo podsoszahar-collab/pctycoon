@@ -3,95 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PC Tycoon - Админ-панель</title>
+<title>PC Tycoon v1 - Админ-панель</title>
 <style>
 body{background:#0a0b12;color:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif;padding:20px;margin:0}
 h1{color:#f1c40f;font-size:20px;display:flex;align-items:center;gap:10px}
+.sub{color:#8e94a8;font-size:12px;margin-bottom:20px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:20px}
+.stat-card{background:#181b28;border-radius:12px;padding:14px;text-align:center}
+.stat-num{font-size:22px;font-weight:800}
+.stat-lbl{font-size:10px;color:#8e94a8;margin-top:4px}
 .player{background:#181b28;padding:12px 16px;margin-bottom:8px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border:1px solid rgba(255,255,255,0.05)}
-.player-info{font-size:13px;line-height:1.5}
+.player-info{font-size:13px;line-height:1.6}
 .player-info span{color:#8e94a8;font-size:11px}
 .actions{display:flex;gap:6px;flex-wrap:wrap}
-button{background:#f1c40f;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:11px;transition:0.2s}
+button{background:#f1c40f;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:11px;color:#000}
 button:hover{opacity:0.8}
 .danger{background:#e74c3c;color:#fff}
 .green{background:#2ecc71;color:#fff}
+.purple{background:#9b59b6;color:#fff}
 </style>
 </head>
 <body>
-<h1>👑 Админ-панель PC Tycoon</h1>
-<div style="color:#8e94a8;font-size:12px;margin-bottom:20px;">Синхронизация с игрой каждые 10 секунд</div>
-<div id="players" style="margin-top:20px;">Загрузка игроков...</div>
+<h1>👑 PC Tycoon v1 — Админ-панель</h1>
+<div class="sub">Управление игроками в реальном времени</div>
+
+<div class="stats-grid">
+    <div class="stat-card" style="border:1px solid rgba(241,196,15,.2);">
+        <div class="stat-num" style="color:#f1c40f;" id="statTotal">0</div>
+        <div class="stat-lbl">Всего игроков</div>
+    </div>
+    <div class="stat-card" style="border:1px solid rgba(46,204,113,.2);">
+        <div class="stat-num" style="color:#2ecc71;" id="statOnline">0</div>
+        <div class="stat-lbl">Онлайн</div>
+    </div>
+    <div class="stat-card" style="border:1px solid rgba(52,152,219,.2);">
+        <div class="stat-num" style="color:#3498db;font-size:16px;" id="statMoney">0 ₽</div>
+        <div class="stat-lbl">Капитал мира</div>
+    </div>
+    <div class="stat-card" style="border:1px solid rgba(155,89,182,.2);">
+        <div class="stat-num" style="color:#9b59b6;font-size:16px;" id="statAvg">0 ₽</div>
+        <div class="stat-lbl">Средний баланс</div>
+    </div>
+</div>
+
+<div id="players">Загрузка игроков...</div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script>
-const firebaseConfig = {
-    apiKey: "AIzaSyAv0ChOvxUSEWjCnWWUXBml01PyTsgfGjo",
-    authDomain: "pc-tycoon-11216.firebaseapp.com",
-    databaseURL: "https://pc-tycoon-11216-default-rtdb.firebaseio.com",
-    projectId: "pc-tycoon-11216",
-    storageBucket: "pc-tycoon-11216.firebasestorage.app",
-    messagingSenderId: "587863804885",
-    appId: "1:587863804885:web:ab92c591d56098cd4fcb5c"
-};
+const firebaseConfig={apiKey:"AIzaSyAv0ChOvxUSEWjCnWWUXBml01PyTsgfGjo",authDomain:"pc-tycoon-11216.firebaseapp.com",databaseURL:"https://pc-tycoon-11216-default-rtdb.firebaseio.com",projectId:"pc-tycoon-11216",storageBucket:"pc-tycoon-11216.firebasestorage.app",messagingSenderId:"587863804885",appId:"1:587863804885:web:ab92c591d56098cd4fcb5c"};
 firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+const db=firebase.database();
 
-db.ref('players').on('value', (snapshot) => {
-    const data = snapshot.val();
-    const container = document.getElementById('players');
-    if (!data) {
-        container.innerHTML = '<div style="color:#8e94a8;">Пока нет игроков. Запустите игру и подождите 10 секунд.</div>';
-        return;
-    }
-    let html = '';
-    Object.keys(data).forEach(key => {
-        const p = data[key];
-        const date = new Date(p.lastUpdate || Date.now()).toLocaleTimeString();
-        html += `<div class="player">
+db.ref('players').on('value',(snapshot)=>{
+    const data=snapshot.val();
+    const container=document.getElementById('players');
+    if(!data){container.innerHTML='<div style="color:#8e94a8;padding:20px;text-align:center;">Пока нет игроков. Запустите игру.</div>';document.getElementById('statTotal').textContent='0';document.getElementById('statOnline').textContent='0';document.getElementById('statMoney').textContent='0 ₽';document.getElementById('statAvg').textContent='0 ₽';return;}
+    const playersArr=Object.keys(data).map(k=>({...data[k],_id:k}));
+    const now=Date.now();
+    document.getElementById('statTotal').textContent=playersArr.length;
+    document.getElementById('statOnline').textContent=playersArr.filter(p=>now-(p.lastUpdate||0)<60000).length;
+    const totalMoney=playersArr.reduce((s,p)=>s+(p.balance||0),0);
+    document.getElementById('statMoney').textContent=totalMoney.toLocaleString()+' ₽';
+    document.getElementById('statAvg').textContent=playersArr.length?Math.round(totalMoney/playersArr.length).toLocaleString()+' ₽':'0 ₽';
+
+    playersArr.sort((a,b)=>(b.balance||0)-(a.balance||0));
+    let html='';
+    playersArr.forEach(p=>{
+        const date=new Date(p.lastUpdate||Date.now()).toLocaleTimeString();
+        const isOnline=now-(p.lastUpdate||0)<60000;
+        const regBadge=p.registered?'<span style="background:rgba(46,204,113,.15);color:#2ecc71;padding:2px 8px;border-radius:8px;font-size:9px;margin-left:6px;">✅ Зарегистрирован</span>':'<span style="background:rgba(241,196,15,.15);color:#f1c40f;padding:2px 8px;border-radius:8px;font-size:9px;margin-left:6px;">⏳ Без регистрации</span>';
+        const onlineDot=isOnline?'🟢':'⚫';
+        html+=`<div class="player">
             <div class="player-info">
-                <b>${p.name || 'Без имени'}</b> | 📍 ${p.city}<br>
-                <span>💰 ${(p.balance||0).toLocaleString()} ₽ | ⭐ ${p.reputation||0}% | 📅 День ${p.day||1} | 🕒 ${date}</span>
+                <b>${onlineDot} ${p.name||'Без имени'}</b>${regBadge}<br>
+                <span>🎂 ${p.age||'?'} лет | 🏠 ${p.homeCity||'?'} | 🎮 Ур. ${p.level||1}</span><br>
+                <span>💰 ${(p.balance||0).toLocaleString()} ₽ | ⭐ ${p.reputation||0}% | 📅 День ${p.day||1} | 📍 ${p.city} | 🕒 ${date}</span>
             </div>
             <div class="actions">
-                <button class="green" onclick="addMoney('${key}',10000)">+10 000 ₽</button>
-                <button class="green" onclick="addMoney('${key}',100000)">+100 000 ₽</button>
-                <button class="green" onclick="addRep('${key}')">+20 ⭐</button>
-                <button class="danger" onclick="resetPlayer('${key}')">Сбросить</button>
+                <button class="green" onclick="addMoney('${p._id}',10000)">+10 000 ₽</button>
+                <button class="green" onclick="addMoney('${p._id}',100000)">+100 000 ₽</button>
+                <button class="purple" onclick="addMoney('${p._id}',1000000)">+1 000 000 ₽</button>
+                <button class="green" onclick="addRep('${p._id}')">+20 ⭐</button>
+                <button class="danger" onclick="resetPlayer('${p._id}')">Сбросить</button>
             </div>
         </div>`;
     });
-    container.innerHTML = html;
+    container.innerHTML=html;
 });
 
-function addMoney(id, amount) {
-    db.ref('players/' + id).once('value').then(snap => {
-        const p = snap.val();
-        if(p) db.ref('players/' + id).update({
-            balance: (p.balance || 0) + amount,
-            adminModified: Date.now()
-        });
-    });
-}
-
-function addRep(id) {
-    db.ref('players/' + id).once('value').then(snap => {
-        const p = snap.val();
-        if(p) db.ref('players/' + id).update({
-            reputation: Math.min(100, (p.reputation || 0) + 20),
-            adminModified: Date.now()
-        });
-    });
-}
-
-function resetPlayer(id) {
-    if(confirm('Вы уверены, что хотите сбросить этого игрока?')) {
-        db.ref('players/' + id).update({
-            balance: 30000, reputation: 50, day: 1,
-            adminModified: Date.now()
-        });
-    }
-}
+function addMoney(id,amount){db.ref('players/'+id).once('value').then(snap=>{const p=snap.val();if(p)db.ref('players/'+id).update({balance:(p.balance||0)+amount,adminModified:Date.now()});});}
+function addRep(id){db.ref('players/'+id).once('value').then(snap=>{const p=snap.val();if(p)db.ref('players/'+id).update({reputation:Math.min(100,(p.reputation||0)+20),adminModified:Date.now()});});}
+function resetPlayer(id){if(confirm('Сбросить игрока?')){db.ref('players/'+id).update({balance:30000,reputation:50,day:1,adminModified:Date.now()});}}
 </script>
 </body>
 </html>
