@@ -315,14 +315,22 @@ let syncEnabled=false,database=null;
 if(typeof firebase!=='undefined'&&!firebase.apps.length){try{firebase.initializeApp({apiKey:"AIzaSyAv0ChOvxUSEWjCnWWUXBml01PyTsgfGjo",authDomain:"pc-tycoon-11216.firebaseapp.com",databaseURL:"https://pc-tycoon-11216-default-rtdb.firebaseio.com",projectId:"pc-tycoon-11216",storageBucket:"pc-tycoon-11216.firebasestorage.app",messagingSenderId:"587863804885",appId:"1:587863804885:web:ab92c591d56098cd4fcb5c"});database=firebase.database();syncEnabled=true;console.log('✅ Firebase!');}catch(e){console.log('⚠️',e.message);}}
 
 // ФОТО
-const PC_IMGS=['avatar.jpg'];
+const PC_IMGS=['avatar.jpg','avatar2.jpg','avatar3.jpg','avatar4.jpg','avatar5.jpg','avatar6.jpg','avatar7.jpg'];
 function getPCImg(s){return PC_IMGS[Math.floor(Math.abs(s||Math.random()*1000))%PC_IMGS.length];}
-const PART_IMGS={cpu:['avatar1.jpg']};
+const PART_IMGS={
+    cpu:['avatar1.jpg'],
+    gpu:['avatar12.jpg'],
+    ram:['avatar13.jpg'],
+    storage:['avatar14.jpg'],
+    case:['avatar15.jpg'],
+    psu:['avatar16.jpg'],
+    cooler:['avatar17.jpg']
+};
 function getPartImg(c,s){const a=PART_IMGS[c]||PART_IMGS.cpu;return a[Math.floor(Math.abs(s||Math.random()*1000))%a.length];}
 
 // ГОРОДА
 const CITIES=[{name:'Москва',lat:55.7558,lon:37.6173},{name:'Санкт-Петербург',lat:59.9343,lon:30.3351},{name:'Новосибирск',lat:55.0084,lon:82.9357},{name:'Екатеринбург',lat:56.8389,lon:60.6057},{name:'Казань',lat:55.8304,lon:49.0661},{name:'Самара',lat:53.2415,lon:50.2212},{name:'Челябинск',lat:55.1644,lon:61.4368},{name:'Омск',lat:54.9893,lon:73.3682},{name:'Ростов-на-Дону',lat:47.2357,lon:39.7015},{name:'Уфа',lat:54.7388,lon:55.9721},{name:'Красноярск',lat:56.0106,lon:92.8526},{name:'Пермь',lat:58.0104,lon:56.2294},{name:'Воронеж',lat:51.6608,lon:39.2003},{name:'Волгоград',lat:48.7080,lon:44.5133},{name:'Краснодар',lat:45.0393,lon:38.9872}];
-const SELLERS=[{id:1,name:'Алексей',avatar:'avatar.jpg',rating:85,deals:47},{id:2,name:'Игорь',avatar:'avatar.jpg',rating:72,deals:23},{id:3,name:'Марина',avatar:'avatar.jpg',rating:93,deals:89},{id:4,name:'Сергей',avatar:'avatar.jpg',rating:68,deals:15},{id:5,name:'Елена',avatar:'avatar.jpg',rating:78,deals:34}];
+const SELLERS=[{id:1,name:'Алексей',avatar:'avatar18.jpg',rating:85,deals:47},{id:2,name:'Игорь',avatar:'avatar19.jpg',rating:72,deals:23},{id:3,name:'Марина',avatar:'avatar20.jpg',rating:93,deals:89},{id:4,name:'Сергей',avatar:'avatar21.jpg',rating:68,deals:15},{id:5,name:'Елена',avatar:'avatar22.jpg',rating:78,deals:34}];
 const PC_TYPES=[{name:'Офисный i3-10100',price:25000,cpu:'i3-10100',gpu:'Встроенная',tag:'budget',tagName:'Бюджетный'},{name:'Игровой i3-10100F/GTX 1060',price:35000,cpu:'i3-10100F',gpu:'GTX 1060',tag:'budget',tagName:'Бюджетный'},{name:'Игровой Ryzen 5 3600/GTX 1660',price:45000,cpu:'Ryzen 5 3600',gpu:'GTX 1660',tag:'budget',tagName:'Бюджетный'},{name:'Игровой i5-12400F/RTX 3060',price:65000,cpu:'i5-12400F',gpu:'RTX 3060',tag:'mid',tagName:'Средний'},{name:'Игровой Ryzen 5 5600X/RTX 3060 Ti',price:85000,cpu:'Ryzen 5 5600X',gpu:'RTX 3060 Ti',tag:'mid',tagName:'Средний'},{name:'Игровой i5-13600K/RTX 3070',price:110000,cpu:'i5-13600K',gpu:'RTX 3070',tag:'mid',tagName:'Средний'},{name:'Игровой i7-13700K/RTX 4070',price:150000,cpu:'i7-13700K',gpu:'RTX 4070',tag:'high',tagName:'Высокий'},{name:'Игровой Ryzen 7 7800X3D/RTX 4070 Ti',price:180000,cpu:'Ryzen 7 7800X3D',gpu:'RTX 4070 Ti',tag:'high',tagName:'Высокий'},{name:'Игровой i9-13900K/RTX 4080',price:220000,cpu:'i9-13900K',gpu:'RTX 4080',tag:'high',tagName:'Высокий'},{name:'Игровой Ryzen 9 7950X/RTX 4080S',price:280000,cpu:'Ryzen 9 7950X',gpu:'RTX 4080S',tag:'premium',tagName:'Премиум'},{name:'Игровой i9-14900K/RTX 4090',price:350000,cpu:'i9-14900K',gpu:'RTX 4090',tag:'premium',tagName:'Премиум'},{name:'Игровой Threadripper/RTX 4090',price:500000,cpu:'Threadripper',gpu:'RTX 4090',tag:'ultimate',tagName:'Ультимативный'}];
 const DAYS=['ПН','ВТ','СР','ЧТ','ПТ','СБ','ВС'];
 const MONTHS=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
