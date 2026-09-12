@@ -350,7 +350,6 @@ function canSleep(m){const h=Math.floor(m/60)%24;return h>=23||h<6;}
 function updTime(){
     const t=timeStr(time.min);el('gt',t);el('db','День '+gs.day);el('sti','⏰ '+t);
     const cs=canSleep(time.min);el('sh',cs?' 😴 Можно спать!' : ' ☀️ 23:00 до 06:00');
-    // Исправленная строка: добавлена кавычка и разделено изменение текста и цвета
     el('sst', cs ? ' 😴 Хороших снов!' : ' ⏰ Подождите ночи.');
     const sstEl = document.getElementById('sst');
     if (sstEl) sstEl.style.color = cs ? '#2ecc71' : '#e74c3c';
@@ -375,25 +374,58 @@ function updBal(amt,txt){
 }
 function updBank(){el('bv',gs.balance.toLocaleString()+' ₽');}
 
-// ЗАПЧАСТИ
+// ЗАПЧАСТИ (Расширенный список)
 function initParts(){
     parts=[
-        {id:1,cat:'cpu',name:'Intel i3-10100F',price:3500,icon:'fa-microchip',perf:45,image:getPartImg('cpu',1)},
-        {id:2,cat:'cpu',name:'Intel i5-12400F',price:8500,icon:'fa-microchip',perf:75,image:getPartImg('cpu',2)},
-        {id:3,cat:'cpu',name:'Intel i7-13700K',price:22000,icon:'fa-microchip',perf:100,image:getPartImg('cpu',3)},
-        {id:4,cat:'cpu',name:'AMD Ryzen 5 5600X',price:10000,icon:'fa-microchip',perf:70,image:getPartImg('cpu',4)},
-        {id:5,cat:'cpu',name:'AMD Ryzen 7 7800X3D',price:25000,icon:'fa-microchip',perf:105,image:getPartImg('cpu',5)},
-        {id:6,cat:'gpu',name:'GTX 1060 6GB',price:8000,icon:'fa-memory',perf:45,image:getPartImg('gpu',1)},
-        {id:7,cat:'gpu',name:'RTX 3060 12GB',price:18000,icon:'fa-memory',perf:70,image:getPartImg('gpu',2)},
-        {id:8,cat:'gpu',name:'RTX 4070 12GB',price:35000,icon:'fa-memory',perf:100,image:getPartImg('gpu',3)},
-        {id:9,cat:'gpu',name:'RTX 4090 24GB',price:100000,icon:'fa-memory',perf:140,image:getPartImg('gpu',4)},
-        {id:10,cat:'ram',name:'DDR4 16GB 3200',price:3000,icon:'fa-server',perf:40,image:getPartImg('ram',1)},
-        {id:11,cat:'ram',name:'DDR5 32GB 5200',price:6500,icon:'fa-server',perf:65,image:getPartImg('ram',2)},
-        {id:12,cat:'storage',name:'NVMe 512GB',price:2500,icon:'fa-hard-drive',perf:45,image:getPartImg('storage',1)},
-        {id:13,cat:'storage',name:'NVMe 1TB',price:4000,icon:'fa-hard-drive',perf:60,image:getPartImg('storage',2)},
-        {id:14,cat:'case',name:'Корпус RGB',price:4000,icon:'fa-computer',perf:40,image:getPartImg('case',1)},
-        {id:15,cat:'psu',name:'БП 750W Gold',price:5000,icon:'fa-bolt',perf:55,image:getPartImg('psu',1)},
-        {id:16,cat:'cooler',name:'Кулер 240mm',price:4000,icon:'fa-fan',perf:60,image:getPartImg('cooler',1)}];
+        {id:1,cat:'cpu',name:'Intel Pentium Gold G6400',price:2500,icon:'fa-microchip',perf:25,image:getPartImg('cpu',1)},
+        {id:2,cat:'cpu',name:'Intel Core i3-10100F',price:3500,icon:'fa-microchip',perf:45,image:getPartImg('cpu',2)},
+        {id:3,cat:'cpu',name:'AMD Ryzen 3 3200G',price:4000,icon:'fa-microchip',perf:40,image:getPartImg('cpu',3)},
+        {id:4,cat:'cpu',name:'Intel Core i5-10400F',price:7000,icon:'fa-microchip',perf:60,image:getPartImg('cpu',4)},
+        {id:5,cat:'cpu',name:'AMD Ryzen 5 3600',price:8000,icon:'fa-microchip',perf:65,image:getPartImg('cpu',5)},
+        {id:6,cat:'cpu',name:'Intel Core i5-12400F',price:8500,icon:'fa-microchip',perf:75,image:getPartImg('cpu',1)},
+        {id:7,cat:'cpu',name:'AMD Ryzen 5 5600X',price:10000,icon:'fa-microchip',perf:70,image:getPartImg('cpu',2)},
+        {id:8,cat:'cpu',name:'Intel Core i7-12700K',price:18000,icon:'fa-microchip',perf:90,image:getPartImg('cpu',3)},
+        {id:9,cat:'cpu',name:'Intel Core i7-13700K',price:22000,icon:'fa-microchip',perf:100,image:getPartImg('cpu',4)},
+        {id:10,cat:'cpu',name:'AMD Ryzen 7 7800X3D',price:25000,icon:'fa-microchip',perf:105,image:getPartImg('cpu',5)},
+        {id:11,cat:'cpu',name:'Intel Core i9-13900K',price:32000,icon:'fa-microchip',perf:120,image:getPartImg('cpu',1)},
+        {id:12,cat:'cpu',name:'AMD Ryzen 9 7950X',price:38000,icon:'fa-microchip',perf:125,image:getPartImg('cpu',2)},
+        {id:13,cat:'cpu',name:'AMD Threadripper 7960X',price:60000,icon:'fa-microchip',perf:150,image:getPartImg('cpu',3)},
+        {id:20,cat:'gpu',name:'NVIDIA GTX 1050 Ti',price:5000,icon:'fa-memory',perf:30,image:getPartImg('gpu',1)},
+        {id:21,cat:'gpu',name:'NVIDIA GTX 1650',price:7000,icon:'fa-memory',perf:38,image:getPartImg('gpu',2)},
+        {id:22,cat:'gpu',name:'NVIDIA GTX 1060 6GB',price:8000,icon:'fa-memory',perf:45,image:getPartImg('gpu',3)},
+        {id:23,cat:'gpu',name:'NVIDIA GTX 1660 Super',price:12000,icon:'fa-memory',perf:55,image:getPartImg('gpu',4)},
+        {id:24,cat:'gpu',name:'NVIDIA RTX 3050',price:15000,icon:'fa-memory',perf:60,image:getPartImg('gpu',1)},
+        {id:25,cat:'gpu',name:'NVIDIA RTX 3060 12GB',price:18000,icon:'fa-memory',perf:70,image:getPartImg('gpu',2)},
+        {id:26,cat:'gpu',name:'NVIDIA RTX 3070',price:25000,icon:'fa-memory',perf:85,image:getPartImg('gpu',3)},
+        {id:27,cat:'gpu',name:'NVIDIA RTX 4060 Ti',price:30000,icon:'fa-memory',perf:90,image:getPartImg('gpu',4)},
+        {id:28,cat:'gpu',name:'NVIDIA RTX 4070 12GB',price:35000,icon:'fa-memory',perf:100,image:getPartImg('gpu',1)},
+        {id:29,cat:'gpu',name:'NVIDIA RTX 4080',price:55000,icon:'fa-memory',perf:125,image:getPartImg('gpu',2)},
+        {id:30,cat:'gpu',name:'NVIDIA RTX 4090 24GB',price:100000,icon:'fa-memory',perf:150,image:getPartImg('gpu',3)},
+        {id:40,cat:'ram',name:'DDR4 8GB 2666',price:1500,icon:'fa-server',perf:25,image:getPartImg('ram',1)},
+        {id:41,cat:'ram',name:'DDR4 16GB 3200',price:3000,icon:'fa-server',perf:40,image:getPartImg('ram',2)},
+        {id:42,cat:'ram',name:'DDR4 32GB 3600',price:5500,icon:'fa-server',perf:55,image:getPartImg('ram',1)},
+        {id:43,cat:'ram',name:'DDR5 16GB 4800',price:5000,icon:'fa-server',perf:50,image:getPartImg('ram',2)},
+        {id:44,cat:'ram',name:'DDR5 32GB 5200',price:6500,icon:'fa-server',perf:65,image:getPartImg('ram',1)},
+        {id:45,cat:'ram',name:'DDR5 64GB 6000',price:12000,icon:'fa-server',perf:80,image:getPartImg('ram',2)},
+        {id:50,cat:'storage',name:'HDD 500GB 7200',price:1200,icon:'fa-hard-drive',perf:15,image:getPartImg('storage',1)},
+        {id:51,cat:'storage',name:'SATA SSD 256GB',price:1800,icon:'fa-hard-drive',perf:35,image:getPartImg('storage',2)},
+        {id:52,cat:'storage',name:'NVMe 512GB Gen3',price:2500,icon:'fa-hard-drive',perf:45,image:getPartImg('storage',1)},
+        {id:53,cat:'storage',name:'NVMe 1TB Gen4',price:4000,icon:'fa-hard-drive',perf:60,image:getPartImg('storage',2)},
+        {id:54,cat:'storage',name:'NVMe 2TB Gen4',price:7000,icon:'fa-hard-drive',perf:70,image:getPartImg('storage',1)},
+        {id:60,cat:'case',name:'Корпус Mini-ITX',price:2500,icon:'fa-computer',perf:20,image:getPartImg('case',1)},
+        {id:61,cat:'case',name:'Корпус Midi-Tower',price:3500,icon:'fa-computer',perf:35,image:getPartImg('case',1)},
+        {id:62,cat:'case',name:'Корпус RGB Glass',price:5000,icon:'fa-computer',perf:50,image:getPartImg('case',1)},
+        {id:63,cat:'case',name:'Корпус Full-Tower',price:8000,icon:'fa-computer',perf:65,image:getPartImg('case',1)},
+        {id:70,cat:'psu',name:'БП 450W Bronze',price:2000,icon:'fa-bolt',perf:25,image:getPartImg('psu',1)},
+        {id:71,cat:'psu',name:'БП 600W Bronze',price:3000,icon:'fa-bolt',perf:40,image:getPartImg('psu',1)},
+        {id:72,cat:'psu',name:'БП 750W Gold',price:5000,icon:'fa-bolt',perf:55,image:getPartImg('psu',1)},
+        {id:73,cat:'psu',name:'БП 850W Gold',price:7000,icon:'fa-bolt',perf:65,image:getPartImg('psu',1)},
+        {id:74,cat:'psu',name:'БП 1000W Platinum',price:12000,icon:'fa-bolt',perf:85,image:getPartImg('psu',1)},
+        {id:80,cat:'cooler',name:'Башенный кулер',price:1500,icon:'fa-fan',perf:30,image:getPartImg('cooler',1)},
+        {id:81,cat:'cooler',name:'Кулер 120mm RGB',price:2500,icon:'fa-fan',perf:45,image:getPartImg('cooler',1)},
+        {id:82,cat:'cooler',name:'Кулер 240mm СЖО',price:4000,icon:'fa-fan',perf:60,image:getPartImg('cooler',1)},
+        {id:83,cat:'cooler',name:'Кулер 360mm СЖО',price:7000,icon:'fa-fan',perf:75,image:getPartImg('cooler',1)}
+    ];
 }
 function initFake(){
     fakeParts=[
@@ -417,6 +449,22 @@ function load(){
     try{const d=localStorage.getItem('pcSave');if(d){const x=JSON.parse(d);if(x.gs)Object.assign(gs,x.gs);if(x.inv)inv=x.inv;if(x.myPCs)myPCs=x.myPCs;if(x.builtPCs)builtPCs=x.builtPCs;if(x.build)build=x.build;if(x.hist)hist=x.hist;if(x.news)news=x.news;}}catch(e){}
     try{const d=localStorage.getItem('pcMarket');if(d){const x=JSON.parse(d);market.ads=x.ads||[];market.chats=x.chats||[];market.favorites=x.favorites||[];}}catch(e){}
     try{const d=localStorage.getItem('pcLoans');if(d)loans=JSON.parse(d);}catch(e){}
+}
+
+// СИНХРОНИЗАЦИЯ С FIREBASE
+function saveToFirebase() {
+    if (!syncEnabled || !database) return;
+    const playerId = localStorage.getItem('pcPlayerId');
+    if (!playerId) return;
+    database.ref('players/' + playerId).set({
+        name: 'Игрок ' + playerId.slice(0, 4),
+        city: gs.currentCity,
+        balance: gs.balance,
+        reputation: gs.reputation,
+        day: gs.day,
+        lastUpdate: Date.now(),
+        online: true
+    });
 }
 
 // ГЕНЕРАЦИЯ
@@ -967,12 +1015,22 @@ function renderAll(){
 
 // ИНИЦИАЛИЗАЦИЯ
 function init(){
+    // Генерируем ID игрока, если его нет
+    if (!localStorage.getItem('pcPlayerId')) {
+        localStorage.setItem('pcPlayerId', 'player_' + Date.now());
+    }
     initParts();initFake();
     load();initNews();
     if(news.length===0)initNews();
     initMarket();updLoans();
     initParticles();renderThemes();renderAll();startLoop();updTime();
-    setInterval(()=>{save();saveMarket();saveLoans();},30000);
+    // Отправляем данные в Firebase каждые 10 секунд
+    setInterval(() => {
+        save();
+        saveMarket();
+        saveLoans();
+        saveToFirebase();
+    }, 10000);
     const t=localStorage.getItem('pcTheme');if(t)applyTheme(t);
     console.log('🖥️ PC Tycoon v4.3!');
     console.log('✅ Готово!');
