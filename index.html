@@ -152,7 +152,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0b12;color:#fff}
 .chat-input{display:flex;gap:8px;padding:8px 12px;border-top:1px solid rgba(255,255,255,.03);background:rgba(20,22,36,.9)}
 .chat-input input{flex:1;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.04);background:rgba(255,255,255,.03);color:#fff;font-size:10px}
 .chat-input button{padding:8px 16px;border:none;border-radius:10px;background:linear-gradient(135deg,#f1c40f,#d4ac0d);color:#000;font-weight:bold;font-size:11px;cursor:pointer}
-/* РЕГИСТРАЦИЯ */
 .reg-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);backdrop-filter:blur(30px);z-index:999999;display:none;align-items:center;justify-content:center;padding:20px}
 .reg-overlay.show{display:flex}
 .reg-box{background:rgba(24,27,40,.95);border:1px solid rgba(241,196,15,.2);border-radius:20px;padding:24px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.7)}
@@ -170,7 +169,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0b12;color:#fff}
 <body>
 <canvas id="pc"></canvas>
 
-<!-- РЕГИСТРАЦИЯ -->
 <div class="reg-overlay" id="reg">
     <div class="reg-box">
         <div class="reg-icon">🎮</div>
@@ -218,7 +216,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0b12;color:#fff}
 
 <div class="dock-wrapper"><div class="dock"><div class="app-icon orange"><i class="fa-solid fa-phone"></i></div><div class="app-icon blue"><i class="fa-solid fa-comment"></i></div><div class="app-icon gold"><i class="fa-solid fa-camera"></i></div><div class="app-icon teal"><i class="fa-solid fa-compass"></i></div></div></div>
 
-<!-- МАРКЕТПЛЕЙС -->
 <div class="app-window" id="w-market"><div class="window-header"><div class="window-title"><i class="fa-solid fa-store"></i> Маркетплейс</div><button class="back-btn" onclick="closeApp('market')">✕</button></div>
 <div class="window-body">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:6px;">
@@ -234,23 +231,18 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0b12;color:#fff}
 </div>
 <div id="mlist"></div></div></div>
 
-<!-- ЗАПЧАСТИ -->
 <div class="app-window" id="w-parts"><div class="window-header"><div class="window-title"><i class="fa-solid fa-microchip"></i> Мастерская</div><button class="back-btn" onclick="closeApp('parts')">✕</button></div>
 <div class="window-body"><div style="font-size:10px;color:#8e94a8;margin-bottom:12px;">🔧 Комплектующие</div><div id="plist"></div></div></div>
 
-<!-- ЧЕРНЫЙ РЫНОК -->
 <div class="app-window" id="w-black"><div class="window-header"><div class="window-title"><i class="fa-solid fa-skull"></i> Черный рынок</div><button class="back-btn" onclick="closeApp('black')">✕</button></div>
 <div class="window-body"><div style="background:rgba(231,76,60,.05);border:1px solid rgba(231,76,60,.1);border-radius:12px;padding:12px;margin-bottom:12px;"><p style="font-size:10px;color:#e74c3c;">⚠️ Контрафакт дешевле, но может сломаться!</p></div><div id="blist"></div></div></div>
 
-<!-- СЕРВИС -->
 <div class="app-window" id="w-service"><div class="window-header"><div class="window-title"><i class="fa-solid fa-wrench"></i> Мои ПК</div><button class="back-btn" onclick="closeApp('service')">✕</button></div>
 <div class="window-body"><div id="slist"></div></div></div>
 
-<!-- СБОРКА -->
 <div class="app-window" id="w-work"><div class="window-header"><div class="window-title"><i class="fa-solid fa-screwdriver-wrench"></i> Верстак</div><button class="back-btn" onclick="closeApp('work')">✕</button></div>
 <div class="window-body"><div id="slots"></div><button class="action-btn success" style="width:100%;padding:14px;margin-top:12px;font-size:12px;" onclick="sellBuild()">💰 Продать ПК</button><h4 style="margin:14px 0 8px;font-size:12px;color:#8e94a8;">📦 Склад</h4><div id="invlist"></div></div></div>
 
-<!-- БАНК -->
 <div class="app-window" id="w-bank"><div class="window-header"><div class="window-title"><i class="fa-solid fa-credit-card"></i> Банк</div><button class="back-btn" onclick="closeApp('bank')">✕</button></div>
 <div class="window-body">
 <div style="text-align:center;padding:8px 0;"><div style="font-size:9px;color:#8e94a8;">БАЛАНС</div><div class="bank-balance-big" id="bv">0 ₽</div></div>
@@ -266,7 +258,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0b12;color:#fff}
 <div style="font-size:11px;font-weight:bold;color:#8e94a8;margin-bottom:8px;">📜 История</div>
 <div id="hist"></div></div></div>
 
-<!-- КАЛЕНДАРЬ -->
 <div class="app-window" id="w-cal"><div class="window-header"><div class="window-title"><i class="fa-solid fa-calendar"></i> Календарь</div><button class="back-btn" onclick="closeApp('cal')">✕</button></div>
 <div class="window-body">
 <div style="background:rgba(255,255,255,.02);border-radius:16px;padding:20px;text-align:center;margin-bottom:12px;"><div style="font-size:32px;font-weight:800;color:#f1c40f;" id="cd">1</div><div style="font-size:16px;color:#8e94a8;" id="cm">Январь 2026</div></div>
@@ -274,13 +265,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0b12;color:#fff}
 <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font-size:11px;text-align:center;" id="cg"></div>
 <div style="margin-top:12px;font-size:10px;color:#8e94a8;text-align:center;" id="ce"></div></div></div>
 
-<!-- ГОРОДА -->
 <div class="app-window" id="w-cities"><div class="window-header"><div class="window-title"><i class="fa-solid fa-map-location-dot"></i> Города</div><button class="back-btn" onclick="closeApp('cities')">✕</button></div>
 <div class="window-body">
 <div style="background:rgba(255,255,255,.02);border-radius:16px;padding:16px;text-align:center;margin-bottom:12px;"><div style="font-size:12px;color:#8e94a8;">ВЫ ЗДЕСЬ</div><div style="font-size:20px;font-weight:bold;color:#f1c40f;margin-top:4px;" id="cd2">Москва</div></div>
 <div class="city-grid" id="cg2"></div></div></div>
 
-<!-- ЧАТЫ -->
 <div class="app-window" id="w-chats"><div class="window-header"><div class="window-title"><i class="fa-solid fa-comments"></i> Чаты</div><button class="back-btn" onclick="closeApp('chats')">✕</button></div>
 <div class="window-body">
 <div style="display:flex;gap:6px;margin-bottom:12px;"><button class="action-btn outline" style="font-size:7px;padding:4px 14px;" onclick="switchChatTab('incoming')">Входящие</button><button class="action-btn outline" style="font-size:7px;padding:4px 14px;" onclick="switchChatTab('outgoing')">Исходящие</button></div>
@@ -290,25 +279,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0b12;color:#fff}
 <div class="chat-messages" id="cmsg"></div>
 <div class="chat-input"><input type="text" id="cin" placeholder="Сообщение..." onkeydown="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">➤</button></div></div></div></div>
 
-<!-- ГЛОБАЛЬНЫЙ ЧАТ -->
 <div class="app-window" id="w-gchat"><div class="window-header"><div class="window-title"><i class="fa-solid fa-globe"></i> Глобальный чат</div><button class="back-btn" onclick="closeApp('gchat')">✕</button></div>
 <div class="window-body" style="display:flex;flex-direction:column;padding:0;">
 <div id="gchatMsgs" style="flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px;"></div>
 <div class="chat-input"><input type="text" id="gchatIn" placeholder="Сообщение всем..." maxlength="200" onkeydown="if(event.key==='Enter')sendGlobalMsg()"><button onclick="sendGlobalMsg()">➤</button></div></div></div>
 
-<!-- РЕЙТИНГ -->
 <div class="app-window" id="w-rank"><div class="window-header"><div class="window-title"><i class="fa-solid fa-ranking-star"></i> Рейтинг игроков</div><button class="back-btn" onclick="closeApp('rank')">✕</button></div>
 <div class="window-body"><div id="rankList"></div></div></div>
 
-<!-- ДОСТИЖЕНИЯ -->
 <div class="app-window" id="w-ach"><div class="window-header"><div class="window-title"><i class="fa-solid fa-trophy"></i> Достижения</div><button class="back-btn" onclick="closeApp('ach')">✕</button></div>
 <div class="window-body"><div id="achList"></div></div></div>
 
-<!-- НОВОСТИ -->
 <div class="app-window" id="w-news"><div class="window-header"><div class="window-title"><i class="fa-solid fa-newspaper"></i> Новости</div><button class="back-btn" onclick="closeApp('news')">✕</button></div>
 <div class="window-body"><div id="nlist"></div></div></div>
 
-<!-- СОН -->
 <div class="app-window" id="w-sleep"><div class="window-header"><div class="window-title"><i class="fa-solid fa-moon"></i> Сон</div><button class="back-btn" onclick="closeApp('sleep')">✕</button></div>
 <div class="window-body" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
 <div style="font-size:72px;margin-bottom:20px;">💤</div>
@@ -318,7 +302,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0b12;color:#fff}
 <button class="action-btn gold" style="width:100%;padding:14px;font-size:14px;" onclick="doSleep()">💤 Лечь спать</button>
 <div style="font-size:10px;color:#8e94a8;margin-top:12px;text-align:center;" id="sh">🌙 С 23:00 до 06:00</div></div></div>
 
-<!-- ИНВЕНТАРЬ -->
 <div class="app-window" id="w-inv"><div class="window-header"><div class="window-title"><i class="fa-solid fa-box"></i> Инвентарь</div><button class="back-btn" onclick="closeApp('inv')">✕</button></div>
 <div class="window-body">
 <div style="display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;">
@@ -329,13 +312,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0b12;color:#fff}
 <div class="inv-stats"><div class="inv-stat-box"><div class="num green" id="it">0</div><div class="label">Всего</div></div><div class="inv-stat-box"><div class="num gold" id="io">0</div><div class="label">Оригинал</div></div><div class="inv-stat-box"><div class="num red" id="if">0</div><div class="label">Контрафакт</div></div></div>
 <div id="invitems"></div></div></div>
 
-<!-- НАСТРОЙКИ -->
 <div class="app-window" id="w-set"><div class="window-header"><div class="window-title"><i class="fa-solid fa-gear"></i> Настройки</div><button class="back-btn" onclick="closeApp('set')">✕</button></div>
 <div class="window-body">
 <div class="settings-group"><div class="group-title"><i class="fa-solid fa-user"></i> Профиль</div><div style="font-size:12px;color:#fff;padding:4px 0;" id="profileInfo">—</div></div>
-<div class="settings-group"><div class="group-title"><i class="fa-regular fa-clock"></i> Время</div><div class="settings-row"><label>Скорость</label><input type="range" min="0.5" max="5" step="0.5" value="1" oninput="changeSpeed(this.value)" id="ss2"><span class="value" id="sv">×1</span></div></div>
+<div class="settings-group"><div class="group-title"><i class="fa-regular fa-clock"></i> Время</div><div style="font-size:10px;color:#8e94a8;padding:4px 0;">⏳ Время глобальное — оно одинаково для всех игроков в мире.</div><div style="font-size:9px;color:#5a6070;padding:4px 0;" id="timeSyncInfo">Синхронизация: —</div></div>
 <div class="settings-group"><div class="group-title"><i class="fa-solid fa-palette"></i> Тема</div><div class="settings-row"><div id="tsel" style="display:flex;gap:6px;"></div></div></div>
-<div class="settings-group"><div class="group-title"><i class="fa-solid fa-circle-info"></i> О игре</div><div style="font-size:10px;color:#8e94a8;display:flex;justify-content:space-between;padding:4px 0;"><span>Версия</span><span style="color:#f1c40f;">v1</span></div><div style="font-size:10px;color:#8e94a8;display:flex;justify-content:space-between;padding:4px 0;"><span>Дней</span><span style="color:#2ecc71;" id="sd">0</span></div><button class="action-btn danger" style="width:100%;margin-top:8px;padding:10px;" onclick="fullReset()">🗑️ Сбросить</button></div>
+<div class="settings-group"><div class="group-title"><i class="fa-solid fa-circle-info"></i> О игре</div><div style="font-size:10px;color:#8e94a8;display:flex;justify-content:space-between;padding:4px 0;"><span>Версия</span><span style="color:#f1c40f;">v1.1 (Global Time)</span></div><div style="font-size:10px;color:#8e94a8;display:flex;justify-content:space-between;padding:4px 0;"><span>Дней</span><span style="color:#2ecc71;" id="sd">0</span></div><button class="action-btn danger" style="width:100%;margin-top:8px;padding:10px;" onclick="fullReset()">🗑️ Сбросить</button></div>
 </div></div>
 
 <div class="sleep-overlay" id="so"><div class="sleep-icon">💤</div><div class="sleep-title">Сон</div><div class="sleep-sub">Время снести.</div><div class="sleep-progress"><div class="fill" id="spf"></div></div><div class="sleep-time" id="stm">00:00</div></div>
@@ -351,11 +333,9 @@ function getPCImg(s){return PC_IMGS[Math.floor(Math.abs(s||Math.random()*1000))%
 const PART_IMGS={cpu:['avatar1.jpg'],gpu:['avatar12.jpg'],ram:['avatar13.jpg'],storage:['avatar14.jpg'],case:['avatar15.jpg'],psu:['avatar16.jpg'],cooler:['avatar17.jpg']};
 function getPartImg(c,s){const a=PART_IMGS[c]||PART_IMGS.cpu;return a[Math.floor(Math.abs(s||Math.random()*1000))%a.length];}
 
-// ГОРОДА
 const CITIES=[{name:'Москва',lat:55.7558,lon:37.6173},{name:'Санкт-Петербург',lat:59.9343,lon:30.3351},{name:'Новосибирск',lat:55.0084,lon:82.9357},{name:'Екатеринбург',lat:56.8389,lon:60.6057},{name:'Казань',lat:55.8304,lon:49.0661},{name:'Самара',lat:53.2415,lon:50.2212},{name:'Челябинск',lat:55.1644,lon:61.4368},{name:'Омск',lat:54.9893,lon:73.3682},{name:'Ростов-на-Дону',lat:47.2357,lon:39.7015},{name:'Уфа',lat:54.7388,lon:55.9721},{name:'Красноярск',lat:56.0106,lon:92.8526},{name:'Пермь',lat:58.0104,lon:56.2294},{name:'Воронеж',lat:51.6608,lon:39.2003},{name:'Волгоград',lat:48.7080,lon:44.5133},{name:'Краснодар',lat:45.0393,lon:38.9872}];
 const SELLERS=[{id:1,name:'Алексей',avatar:'avatar18.jpg',rating:85,deals:47},{id:2,name:'Игорь',avatar:'avatar19.jpg',rating:72,deals:23},{id:3,name:'Марина',avatar:'avatar20.jpg',rating:93,deals:89},{id:4,name:'Сергей',avatar:'avatar21.jpg',rating:68,deals:15},{id:5,name:'Елена',avatar:'avatar22.jpg',rating:78,deals:34}];
 
-// СУПЕР-ДОРОГИЕ ПК (до 10 000 000 ₽)
 const PC_TYPES=[
 {name:'Офисный i3-10100',price:25000,cpu:'i3-10100',gpu:'Встроенная',tag:'budget',tagName:'Бюджетный'},
 {name:'Игровой i3-10100F/GTX 1060',price:35000,cpu:'i3-10100F',gpu:'GTX 1060',tag:'budget',tagName:'Бюджетный'},
@@ -384,6 +364,8 @@ let inv=[],myPCs=[],builtPCs=[],build={cpu:null,gpu:null,ram:null,storage:null,c
 let hist=[],market={ads:[],chats:[],favorites:[],currentTab:'all',chatTab:'incoming'};
 let loans={list:[],total:0,max:3};
 let time={min:6*60,speed:1,sleeping:false};
+// Глобальная синхронизация времени
+let serverTime={dayStart:null,day:1,dayOfWeek:0,synced:false,lastPush:0,initialized:false};
 let parts=[],fakeParts=[],news=[];
 let curChat=null,curInvTab='parts';
 let lastAdminModified=0;
@@ -393,7 +375,6 @@ function timeStr(m){const h=Math.floor(m/60)%24,mm=Math.floor(m%60);return Strin
 function canSleep(m){const h=Math.floor(m/60)%24;return h>=23||h<6;}
 function updTime(){const t=timeStr(time.min);el('gt',t);el('db','День '+gs.day);el('sti','⏰ '+t);const cs=canSleep(time.min);el('sh',cs?' 😴 Можно спать!':' ☀️ 23:00 до 06:00');el('sst',cs?' 😴 Хороших снов!':' ⏰ Подождите ночи.');const s=document.getElementById('sst');if(s)s.style.color=cs?'#2ecc71':'#e74c3c';}
 function updDay(){el('cb','📍 '+gs.currentCity);el('cd2',gs.currentCity);el('cd',gs.day);el('cm',MONTHS[gs.month-1]+' '+gs.year);el('sd',gs.day);}
-function changeSpeed(v){time.speed=parseFloat(v);el('sv','×'+time.speed);}
 function el(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
 
 function updBal(amt,txt){gs.balance+=amt;if(amt>0)gs.totalEarned+=amt;else gs.totalSpent+=Math.abs(amt);el('bv',gs.balance.toLocaleString()+' ₽');const h=document.getElementById('hist');if(h){const d=document.createElement('div');d.className='transaction-item';d.innerHTML='<span>'+txt+'</span><span><span class="trans-amount '+(amt>=0?'positive':'negative')+'">'+(amt>=0?'+':'')+amt.toLocaleString()+' ₽</span></span>';h.prepend(d);if(h.children.length>20)h.removeChild(h.lastChild);}hist.push({amount:amt,text:txt});save();}
@@ -453,7 +434,7 @@ function sendGlobalMsg(){const i=document.getElementById('gchatIn');const t=i?.v
 function renderRanking(){const c=document.getElementById('rankList');if(!c)return;if(!syncEnabled||!database){c.innerHTML='<div style="text-align:center;padding:20px;color:#8e94a8;">Нет соединения</div>';return;}c.innerHTML='<div style="text-align:center;padding:20px;color:#8e94a8;">Загрузка...</div>';database.ref('players').once('value').then(snap=>{const data=snap.val();if(!data){c.innerHTML='<div style="text-align:center;padding:20px;color:#8e94a8;">Пока нет игроков</div>';return;}const arr=Object.keys(data).map(k=>({...data[k],_id:k})).sort((a,b)=>(b.balance||0)-(a.balance||0)).slice(0,10);const myId=localStorage.getItem('pcPlayerId');let html='<div style="text-align:center;margin-bottom:12px;"><div style="font-size:36px;">🏆</div><div style="font-size:14px;font-weight:bold;color:#f1c40f;">ТОП-10 ИГРОКОВ</div></div>';arr.forEach((p,i)=>{const isMe=p._id===myId;const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);html+='<div class="part-item" style="border-color:'+(isMe?'rgba(241,196,15,.5)':'rgba(255,255,255,.03)')+';"><div style="font-size:24px;width:50px;text-align:center;">'+medal+'</div><div class="part-info"><div class="part-name">'+(p.name||'Аноним')+(isMe?' 👈 Ты':'')+'</div><div style="font-size:9px;color:#8e94a8;">🎂 '+(p.age||'?')+' | 🎮 Ур. '+(p.level||1)+' | ⭐ '+(p.reputation||0)+'%</div></div><div style="font-size:13px;color:#f1c40f;font-weight:bold;">'+(p.balance||0).toLocaleString()+' ₽</div></div>';});c.innerHTML=html;});}
 function trackCity(){const v=(localStorage.getItem('visitedCities')||'').split(',').filter(x=>x);if(!v.includes(gs.currentCity)){v.push(gs.currentCity);localStorage.setItem('visitedCities',v.join(','));}}
 
-// ЗАПЧАСТИ (Мастерская)
+// ЗАПЧАСТИ
 function initParts(){parts=[
 {id:1,cat:'cpu',name:'Intel Pentium Gold G6400',price:2500,icon:'fa-microchip',perf:25,image:getPartImg('cpu',1)},
 {id:2,cat:'cpu',name:'Intel Core i3-10100F',price:3500,icon:'fa-microchip',perf:45,image:getPartImg('cpu',2)},
@@ -551,7 +532,7 @@ function initFake(){fakeParts=[
 {id:9062,cat:'cooler',name:'СЖО 360 (Китай)',price:4000,icon:'fa-fan',fake:true,breakChance:.35,image:getPartImg('cooler',1)},
 {id:9063,cat:'cooler',name:'СЖО 480 (Китай)',price:7000,icon:'fa-fan',fake:true,breakChance:.50,image:getPartImg('cooler',1)}
 ];}
-function initNews(){if(news.length===0){news=[{id:1,title:'PC Tycoon v1 вышла!',text:'Добро пожаловать в мир бизнеса!',date:'Сегодня'},{id:2,title:'Курс доллара вырос',text:'Цены могут вырасти.',date:'Сегодня, 14:30'},{id:3,title:'Скидки',text:'NVIDIA снижает цены.',date:'Вчера, 12:00'}];save();}}
+function initNews(){if(news.length===0){news=[{id:1,title:'PC Tycoon v1.1 — Глобальное время!',text:'Теперь время у всех игроков идёт одинаково.',date:'Сегодня'},{id:2,title:'Курс доллара вырос',text:'Цены могут вырасти.',date:'Сегодня, 14:30'},{id:3,title:'Скидки',text:'NVIDIA снижает цены.',date:'Вчера, 12:00'}];save();}}
 function save(){try{localStorage.setItem('pcSave',JSON.stringify({gs,inv,myPCs,builtPCs,build,hist:hist.slice(-50),news}));}catch(e){}}
 function saveMarket(){try{localStorage.setItem('pcMarket',JSON.stringify({ads:market.ads,chats:market.chats,favorites:market.favorites}));}catch(e){}}
 function load(){try{const d=localStorage.getItem('pcSave');if(d){const x=JSON.parse(d);if(x.gs)Object.assign(gs,x.gs);if(x.inv)inv=x.inv;if(x.myPCs)myPCs=x.myPCs;if(x.builtPCs)builtPCs=x.builtPCs;if(x.build)build=x.build;if(x.hist)hist=x.hist;if(x.news)news=x.news;}}catch(e){}try{const d=localStorage.getItem('pcMarket');if(d){const x=JSON.parse(d);market.ads=x.ads||[];market.chats=x.chats||[];market.favorites=x.favorites||[];}}catch(e){}try{const d=localStorage.getItem('pcLoans');if(d)loans=JSON.parse(d);}catch(e){}}
@@ -575,9 +556,164 @@ function listenToFirebase(){
         lastAdminModified=data.adminModified;let changed=false;
         if(typeof data.balance==='number'&&data.balance!==gs.balance){gs.balance=data.balance;changed=true;notif('💰 Админ: '+data.balance.toLocaleString()+' ₽');}
         if(typeof data.reputation==='number'&&data.reputation!==gs.reputation){gs.reputation=data.reputation;changed=true;notif('⭐ Админ: '+data.reputation+'%');}
-        if(typeof data.day==='number'&&data.day!==gs.day){gs.day=data.day;changed=true;notif('📅 Админ: день '+data.day);}
-        if(changed){updBank();updDay();save();}
+        if(changed){updBank();save();}
     });
+}
+
+// ============= ГЛОБАЛЬНОЕ ВРЕМЯ =============
+// Логика: 1 реальная секунда = 1 игровая минута.
+// Всё время считается от единой точки старта (globalTime.dayStart).
+// Все клиенты видят одинаковое время, потому что считают от одного timestamp.
+function initGlobalTime(){
+    if(!syncEnabled||!database){
+        // Фолбэк: локальное время
+        serverTime.synced=false;
+        el('timeSyncInfo','🔌 Офлайн (локальное время)');
+        return;
+    }
+
+    database.ref('globalTime').on('value',snap=>{
+        let data=snap.val();
+        const now=Date.now();
+
+        // Если глобального времени ещё нет — создаём (первый игрок)
+        if(!data||!data.dayStart){
+            const seed={
+                dayStart:now,
+                day:1,
+                dayOfWeek:0,
+                month:1,
+                year:2026,
+                createdAt:now,
+                speed:1
+            };
+            database.ref('globalTime').set(seed);
+            el('timeSyncInfo','⏳ Создание глобального времени...');
+            return;
+        }
+
+        serverTime.dayStart=data.dayStart;
+        serverTime.day=data.day||1;
+        serverTime.dayOfWeek=data.dayOfWeek||0;
+        serverTime.synced=true;
+
+        // Первый запуск: подтягиваем день
+        if(!serverTime.initialized){
+            serverTime.initialized=true;
+            gs.day=data.day||1;
+            gs.dayOfWeek=data.dayOfWeek||0;
+            gs.month=data.month||1;
+            gs.year=data.year||2026;
+            updDay();
+            el('timeSyncInfo','🌍 Синхронизировано с сервером');
+        } else if(gs.day!==data.day){
+            // День сменился на сервере другим игроком
+            gs.day=data.day;
+            gs.dayOfWeek=data.dayOfWeek||0;
+            gs.month=data.month||1;
+            gs.year=data.year||2026;
+            updDay();
+            // Локальный пересчёт рынка, если сменился день
+            onGlobalDayChange();
+        }
+    });
+}
+
+// Тикер глобального времени
+function startGlobalTimeTick(){
+    setInterval(()=>{
+        if(time.sleeping)return;
+
+        if(serverTime.synced&&serverTime.dayStart){
+            // 1 сек = 1 игровая минута
+            const now=Date.now();
+            const elapsedMs=now-serverTime.dayStart;
+            const totalGameMinutes=elapsedMs/1000; // 1 сек = 1 минута
+            const minutesPerDay=24*60;
+
+            // Сколько дней прошло от точки старта
+            const daysPassed=Math.floor(totalGameMinutes/minutesPerDay);
+            const curMin=totalGameMinutes%minutesPerDay;
+
+            // Синхронизируем локальные часы с расчётными
+            time.min=curMin;
+            updTime();
+
+            // Если по нашим расчётам наступил новый день — пушим на сервер
+            const expectedDay=serverTime.day+daysPassed;
+            if(expectedDay>gs.day){
+                pushNewDay(expectedDay);
+            }
+        } else {
+            // Локальный фолбэк, если Firebase недоступен
+            const now=Date.now();
+            if(!startGlobalTimeTick._last)startGlobalTimeTick._last=now;
+            const d=now-startGlobalTimeTick._last;
+            startGlobalTimeTick._last=now;
+            const m=(d/1000)*time.speed/60;
+            if(m>0){
+                time.min+=m;
+                if(time.min>=24*60){time.min=time.min%(24*60);newDay();}
+                updTime();updDay();
+            }
+        }
+    },1000);
+}
+
+// Пуш нового дня на сервер (транзакция для защиты от гонок)
+function pushNewDay(newDay){
+    if(!syncEnabled||!database)return;
+    // Не пушем чаще 5 секунд
+    if(Date.now()-serverTime.lastPush<5000)return;
+    serverTime.lastPush=Date.now();
+
+    database.ref('globalTime').transaction(cur=>{
+        if(!cur)return cur;
+        const curDay=cur.day||1;
+        // Обновляем только если сервер отстал
+        if(newDay>curDay){
+            cur.day=newDay;
+            cur.dayOfWeek=((cur.dayOfWeek||0)+(newDay-curDay))%7;
+            // Новая точка отсчёта — сбрасываем dayStart
+            // Чтобы корректно считать минуты текущего дня
+            // Определяем сколько игровых минут осталось от "прошлого" перехода
+            // Проще: устанавливаем dayStart = now, чтобы текущий день начался сейчас
+            cur.dayStart=Date.now();
+            cur.month=cur.month||1;
+            cur.year=cur.year||2026;
+        }
+        return cur;
+    }).then(()=>{
+        // Локально синхронизируем сразу
+        serverTime.dayStart=Date.now();
+        serverTime.day=newDay;
+        gs.day=newDay;
+        gs.dayOfWeek=((gs.dayOfWeek||0)+1)%7;
+        time.min=0;
+        onGlobalDayChange();
+        updTime();updDay();
+        notif('📅 День '+newDay+'!');
+    });
+}
+
+// Что делать при смене глобального дня
+function onGlobalDayChange(){
+    // Локальные изменения, привязанные к дню
+    loans.list.forEach(l=>{if(!l.isPaid)l.total+=Math.round(l.total*.02);});
+    const keep=market.ads.filter(a=>a.status==='sold'||a.isMy);
+    market.ads.forEach(a=>{if(!a.isMy&&a.status==='active'){a.price=Math.max(5000,Math.round(a.price*(1+(Math.random()-.5)*.3)));}});
+    let newA=[];
+    CITIES.forEach(c=>{
+        const cnt=market.ads.filter(a=>a.city===c.name&&!a.isMy&&a.status==='active').length;
+        if(cnt<5)newA.push(...genCityPCs(c.name));
+    });
+    market.ads=[...keep,...newA];
+    parts.forEach(p=>{p.price=Math.max(500,Math.round(p.price*(1+(Math.random()-.5)*.3)));});
+    fakeParts.forEach(p=>{p.price=Math.max(1000,Math.round(p.price*(1+(Math.random()-.5)*.3)));});
+    news.unshift({id:Date.now(),title:'📅 День '+gs.day,text:'Цены обновлены!',date:'Сегодня'});
+    if(news.length>20)news.pop();
+    save();saveMarket();
+    renderAll();
 }
 
 function genCityPCs(city){
@@ -689,7 +825,6 @@ function sendMsg(){const i=document.getElementById('cin');const t=i?.value?.trim
 function startHaggle(id){const a=market.ads.find(x=>x.id===id);if(!a||a.isMy){notif('❌');return;}const min=Math.round(a.price*.5);const o=prompt('💬 Торг\n💰 Цена: '+a.price.toLocaleString()+' ₽\nВаша (от '+min.toLocaleString()+'):');if(!o)return;const op=parseInt(o.replace(/\D/g,''));if(isNaN(op)||op<min||op>=a.price){notif('❌ Цена');return;}const pr=op/a.price,rb=(gs.reputation/100)*.3,pb=(pr-.4)*.8;const ch=Math.min(.85,Math.max(.05,.15+rb+pb));let c=market.chats.find(x=>x.adId===id);if(!c){c={id:Date.now(),adId:id,seller:a.seller,messages:[],unread:0};market.chats.push(c);}if(Math.random()<ch){const old=a.price;a.price=op;gs.reputation=Math.min(100,gs.reputation+2);c.messages.push({text:'✅ Цена: '+old.toLocaleString()+' → '+op.toLocaleString()+' ₽',sent:false,time:new Date(),type:'system'});renderMarket();updBank();saveMarket();notif('✅ Согласен!');}else{gs.reputation=Math.max(0,gs.reputation-1);c.messages.push({text:'❌ Отказ. Попробуйте больше.',sent:false,time:new Date(),type:'system'});updBank();saveMarket();notif('❌ Отказ');}if(document.getElementById('cw')?.classList.contains('show'))showMsgs(c);}
 function startHaggleFromChat(){if(curChat)startHaggle(curChat);}
 
-// АВТО-ПРЕДЛОЖЕНИЯ ОТ ПОКУПАТЕЛЕЙ
 function startAutoOffers(adId){const ad=market.ads.find(a=>a.id===adId);if(!ad||!ad.isMy)return;if(ad.offerTimer)clearTimeout(ad.offerTimer);const delay=15000+Math.random()*25000;ad.offerTimer=setTimeout(()=>{makeBuyerOffer(adId);if(market.ads.some(a=>a.id===adId&&a.isMy&&a.status==='active'))startAutoOffers(adId);},delay);}
 function makeBuyerOffer(adId){const ad=market.ads.find(a=>a.id===adId);if(!ad||!ad.isMy||ad.status!=='active')return;const buyer=SELLERS[Math.floor(Math.random()*SELLERS.length)];const offerPrice=Math.round(ad.price*(0.7+Math.random()*0.35));let chat=market.chats.find(c=>c.adId===adId&&c.isBuyerOffer);if(!chat){chat={id:Date.now(),adId:adId,isBuyerOffer:true,seller:buyer,messages:[],unread:0,pendingOffer:null};market.chats.push(chat);}else{chat.seller=buyer;}chat.pendingOffer=offerPrice;chat.messages.push({text:'💬 '+buyer.name+' предлагает '+offerPrice.toLocaleString()+' ₽ за ваш ПК "'+ad.name+'"',sent:false,time:new Date(),type:'offer'});chat.unread=(chat.unread||0)+1;notif('📩 '+buyer.name+' предлагает '+offerPrice.toLocaleString()+' ₽!');saveMarket();renderChats();}
 function acceptOffer(adId){const chat=market.chats.find(c=>c.adId===adId&&c.isBuyerOffer);if(!chat||!chat.pendingOffer)return;const ad=market.ads.find(a=>a.id===adId);if(!ad)return;const price=chat.pendingOffer;myPCs=myPCs.filter(p=>p.id!==ad.pcId);builtPCs=builtPCs.filter(p=>p.id!==ad.pcId);market.ads=market.ads.filter(a=>a.id!==adId);updBal(price,'💵 Продажа: '+ad.name);gs.pcsSold++;gs.reputation=Math.min(100,gs.reputation+3);addXP(20);chat.messages.push({text:'✅ Вы приняли предложение '+price.toLocaleString()+' ₽',sent:true,time:new Date(),type:'system'});chat.pendingOffer=null;renderMarket();renderInvItems();renderService();updBank();saveMarket();showMsgs(chat);checkAchievements();notif('✅ ПК продан за '+price.toLocaleString()+' ₽!');}
@@ -728,9 +863,36 @@ function saveLoans(){try{localStorage.setItem('pcLoans',JSON.stringify(loans));}
 
 function renderCal(){const g=document.getElementById('cg');if(!g)return;g.innerHTML='';const dow=gs.dayOfWeek||0;const first=(dow-(gs.day-1)%7+7)%7;for(let i=0;i<first;i++)g.innerHTML+='<div style="color:#2a2d3d;">-</div>';for(let d=1;d<=30;d++){const t=d===gs.day;g.innerHTML+='<div style="'+(t?'background:rgba(241,196,15,.2);border-radius:6px;padding:3px;font-weight:bold;color:#f1c40f;':'')+'">'+d+'</div>';}const we={0:'📈 Начало недели',1:'📊 Средний спрос',2:'🛒 Распродажи',3:'💻 Поступления',4:'🔥 Ажиотаж',5:'🎉 Слабый',6:'☀️ Отдых'};el('ce',(we[dow]||'📊')+' | ⏰ '+timeStr(time.min));}
 
-function doSleep(){const h=Math.floor(time.min/60)%24;if(h>=6&&h<23){notif('🌙 С 23:00 до 06:00');return;}if(time.sleeping)return;time.sleeping=true;document.getElementById('so').classList.add('show');notif('💤 Спим...');const target=6*60;const start=time.min;let mts=target-(start%(24*60));if(mts<=0)mts+=24*60;let step=0;const iv=setInterval(()=>{step++;const pr=step/50;const f=document.getElementById('spf');if(f)f.style.width=(pr*100)+'%';el('stm',timeStr(start+mts*pr));if(step>=50){clearInterval(iv);time.sleeping=false;time.min=target;document.getElementById('so').classList.remove('show');const r=5+Math.floor(Math.random()*10);gs.reputation=Math.min(100,gs.reputation+r);notif('🌅 +'+r+'%');updTime();updDay();updBank();if(target<start%(24*60))newDay();else renderAll();save();}},100);}
+// СОН: в глобальном времени сон просто ускоряет локальное продвижение,
+// но не двигает глобальный dayStart, чтобы не рассинхронизировать всех.
+// Поэтому сон теперь только восстанавливает репутацию и показывает анимацию.
+function doSleep(){
+    const h=Math.floor(time.min/60)%24;
+    if(h>=6&&h<23){notif('🌙 С 23:00 до 06:00');return;}
+    if(time.sleeping)return;
+    time.sleeping=true;
+    document.getElementById('so').classList.add('show');
+    notif('💤 Спим...');
+    let step=0;
+    const iv=setInterval(()=>{
+        step++;
+        const pr=step/50;
+        const f=document.getElementById('spf');
+        if(f)f.style.width=(pr*100)+'%';
+        el('stm',timeStr(time.min));
+        if(step>=50){
+            clearInterval(iv);
+            time.sleeping=false;
+            document.getElementById('so').classList.remove('show');
+            const r=5+Math.floor(Math.random()*10);
+            gs.reputation=Math.min(100,gs.reputation+r);
+            notif('🌅 +'+r+'% репутации!');
+            updTime();updDay();updBank();save();
+        }
+    },100);
+}
 
-function newDay(){gs.day++;gs.dayOfWeek=((gs.dayOfWeek||0)+1)%7;if(gs.day>30){gs.day=1;gs.month++;if(gs.month>12){gs.month=1;gs.year++;}}loans.list.forEach(l=>{if(!l.isPaid)l.total+=Math.round(l.total*.02);});const keep=market.ads.filter(a=>a.status==='sold'||a.isMy);market.ads.forEach(a=>{if(!a.isMy&&a.status==='active'){a.price=Math.max(5000,Math.round(a.price*(1+(Math.random()-.5)*.3)));}});let newA=[];CITIES.forEach(c=>{const cnt=market.ads.filter(a=>a.city===c.name&&!a.isMy&&a.status==='active').length;if(cnt<5)newA.push(...genCityPCs(c.name));});market.ads=[...keep,...newA];parts.forEach(p=>{p.price=Math.max(500,Math.round(p.price*(1+(Math.random()-.5)*.3)));});fakeParts.forEach(p=>{p.price=Math.max(1000,Math.round(p.price*(1+(Math.random()-.5)*.3)));});news.unshift({id:Date.now(),title:'📅 День '+gs.day,text:'Цены обновлены!',date:'Сегодня, '+timeStr(time.min)});if(news.length>20)news.pop();save();saveMarket();renderAll();notif('📅 День '+gs.day+'!');}
+function newDay(){gs.day++;gs.dayOfWeek=((gs.dayOfWeek||0)+1)%7;if(gs.day>30){gs.day=1;gs.month++;if(gs.month>12){gs.month=1;gs.year++;}}onGlobalDayChange();}
 
 function initParticles(){const c=document.getElementById('pc');if(!c)return;const ctx=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;const ps=[],cols=['#2ecc71','#3498db','#9b59b6','#f39c12','#e74c3c'];for(let i=0;i<30;i++)ps.push({x:Math.random()*c.width,y:Math.random()*c.height,s:1+Math.random()*2,sx:(Math.random()-.5)*.3,sy:(Math.random()-.5)*.3,c:cols[Math.floor(Math.random()*cols.length)],o:.15+Math.random()*.25});function anim(){ctx.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.x+=p.sx;p.y+=p.sy;if(p.x<0||p.x>c.width)p.sx*=-1;if(p.y<0||p.y>c.height)p.sy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.s,0,Math.PI*2);ctx.fillStyle=p.c;ctx.globalAlpha=p.o;ctx.fill();});ctx.globalAlpha=1;requestAnimationFrame(anim);}anim();addEventListener('resize',()=>{c.width=innerWidth;c.height=innerHeight;});}
 
@@ -744,8 +906,6 @@ function notif(t){const o=document.querySelector('.notification');if(o)o.remove(
 function openApp(id){document.querySelectorAll('.app-window').forEach(a=>a.style.display='none');const a=document.getElementById('w-'+id);if(a){a.style.display='flex';if(id==='market')renderMarket();else if(id==='parts')renderParts();else if(id==='black')renderBlack();else if(id==='service')renderService();else if(id==='work'){renderInvList();renderSlots();}else if(id==='bank'){updLoans();updBank();}else if(id==='cal')renderCal();else if(id==='cities')renderCities();else if(id==='chats')renderChats();else if(id==='gchat'){const g=document.getElementById('gchatMsgs');if(g&&g.children.length===0)g.innerHTML='<div style="text-align:center;padding:20px;color:#8e94a8;">Загрузка чата...</div>';}else if(id==='rank')renderRanking();else if(id==='ach')renderAchievements();else if(id==='news')renderNews();else if(id==='sleep')updTime();else if(id==='inv')renderInvItems();else if(id==='set'){el('sd',gs.day);renderThemes();}}}
 function closeApp(id){const a=document.getElementById('w-'+id);if(a)a.style.display='none';if(id==='chats')document.getElementById('cw').classList.remove('show');}
 
-function startLoop(){let last=Date.now();setInterval(()=>{const now=Date.now(),d=now-last;last=now;if(time.sleeping)return;const m=(d/1000)*time.speed/60;if(m>0){time.min+=m;if(time.min>=24*60){time.min=time.min%(24*60);newDay();}updTime();updDay();}},1000);}
-
 function renderAll(){renderMarket();renderParts();renderBlack();renderService();renderInvList();renderSlots();renderChats();renderNews();renderCities();renderCal();renderInvItems();updBank();updDay();updTime();updLoans();}
 
 function fullReset(){if(confirm('Сбросить игру? Весь прогресс удалится!')){localStorage.clear();location.reload();}}
@@ -758,14 +918,16 @@ function init(){
     if(news.length===0)initNews();
     initMarket();updLoans();
     listenToFirebase();
-    initParticles();renderThemes();renderAll();startLoop();updTime();
+    initParticles();renderThemes();renderAll();updTime();
     initGlobalChat();
+    initGlobalTime();        // <-- глобальное время
+    startGlobalTimeTick();   // <-- тикер глобального времени
     if(playerData.name)el('profileInfo','👤 '+playerData.name+' | 🎂 '+playerData.age+' лет | 🏠 '+playerData.homeCity+' | 🎮 Ур. '+playerData.level);
     if(!playerData.name){setTimeout(()=>document.getElementById('reg').classList.add('show'),500);}
     setInterval(()=>{save();saveMarket();saveLoans();saveToFirebase();},10000);
     setInterval(checkAchievements,5000);
     const t=localStorage.getItem('pcTheme');if(t)applyTheme(t);
-    console.log('🖥️ PC Tycoon v1!');
+    console.log('🖥️ PC Tycoon v1.1 (Global Time)!');
     console.log('✅ Готово!');
     console.log('📍 Городов: '+CITIES.length);
 }
