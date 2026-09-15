@@ -2,166 +2,212 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>PC Tycoon v1</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>PC Tycoon v1.4.1</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,sans-serif;user-select:none;-webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;user-select:none;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;height:100%;overflow:hidden;background:#0a0b12;color:#fff}
 #pc{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
-.status-bar{height:48px;padding:0 20px;display:flex;justify-content:space-between;align-items:center;z-index:10;background:rgba(10,11,18,.8);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.04)}
-.status-bar .left{display:flex;align-items:center;gap:12px}
-.game-time{font-size:14px;font-weight:700;color:#f1c40f}
-.day-badge{font-size:10px;font-weight:600;color:#2ecc71;background:rgba(46,204,113,.1);padding:2px 10px;border-radius:12px}
-.status-bar .right{display:flex;align-items:center;gap:10px}
-.city-badge{font-size:9px;color:#8e94a8;background:rgba(255,255,255,.04);padding:2px 10px;border-radius:12px}
-.sync-status{font-size:8px;padding:2px 10px;border-radius:10px;display:flex;align-items:center;gap:4px}
+.status-bar{height:44px;padding:0 16px;display:flex;justify-content:space-between;align-items:center;z-index:10;background:rgba(10,11,18,.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.04);font-size:11px}
+.status-bar .left{display:flex;align-items:center;gap:10px}
+.game-time{font-size:13px;font-weight:700;color:#f1c40f}
+.day-badge{font-size:9px;font-weight:600;color:#2ecc71;background:rgba(46,204,113,.1);padding:2px 8px;border-radius:10px}
+.status-bar .right{display:flex;align-items:center;gap:8px}
+.city-badge{font-size:9px;color:#8e94a8;background:rgba(255,255,255,.04);padding:2px 8px;border-radius:10px}
+.sync-status{font-size:8px;padding:2px 8px;border-radius:8px}
 .sync-status.online{color:#2ecc71;background:rgba(46,204,113,.1)}
 .sync-status.offline{color:#e74c3c;background:rgba(231,76,60,.1)}
-.status-icons{display:flex;gap:6px;font-size:12px;color:rgba(255,255,255,.4)}
-.home-screen{flex:1;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:max-content;gap:20px 8px;padding:20px 12px;width:100%;height:100%;overflow-y:auto;z-index:1;position:relative;align-content:start}
-.app-item{display:flex;flex-direction:column;align-items:center;cursor:pointer;gap:6px}
-.app-item:active{transform:scale(.88)}
-.app-icon{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.06)}
-.orange{background:linear-gradient(135deg,#ff6b35,#ff4500)}.blue{background:linear-gradient(135deg,#3498db,#2980b9)}.green{background:linear-gradient(135deg,#2ecc71,#27ae60)}.purple{background:linear-gradient(135deg,#9b59b6,#8e44ad)}.gold{background:linear-gradient(135deg,#f1c40f,#d4ac0d)}.pink{background:linear-gradient(135deg,#e74c3c,#c0392b)}.teal{background:linear-gradient(135deg,#1abc9c,#16a085)}.gray{background:linear-gradient(135deg,#636e72,#2d3436)}.inv{background:linear-gradient(135deg,#6c5ce7,#a29bfe)}.moon{background:linear-gradient(135deg,#2d3436,#1a1a2e)}
-.app-label{font-size:9px;font-weight:500;color:#fff;text-align:center;text-shadow:0 2px 8px #000;opacity:.9;max-width:64px;line-height:1.2}
-.dock-wrapper{padding:0 16px 16px;width:100%;z-index:5}
-.dock{background:rgba(255,255,255,.04);backdrop-filter:blur(30px);border:1px solid rgba(255,255,255,.04);border-radius:28px;padding:6px 16px;display:flex;justify-content:space-around;box-shadow:0 10px 40px rgba(0,0,0,.5)}
-.dock .app-icon{width:48px;height:48px;font-size:18px;border-radius:12px}
-.app-window{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(10,11,18,.96);backdrop-filter:blur(40px);z-index:999;display:none;flex-direction:column;animation:su .35s}
-@keyframes su{from{transform:translateY(30px)scale(.96);opacity:0}to{transform:translateY(0)scale(1);opacity:1}}
-.window-header{height:54px;background:rgba(20,22,36,.9);display:flex;align-items:center;justify-content:space-between;padding:8px 18px;border-bottom:1px solid rgba(255,255,255,.04);flex-shrink:0}
-.window-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px}
-.window-title i{color:#f1c40f;font-size:18px}
-.back-btn{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.04);color:#fff;padding:6px 16px;border-radius:12px;font-weight:600;cursor:pointer;font-size:11px;opacity:.6}
-.window-body{flex:1;overflow-y:auto;padding:12px 16px;width:100%;position:relative}
-.ad-card{background:rgba(24,27,40,.7);border-radius:16px;padding:14px;margin-bottom:12px;border:1px solid rgba(255,255,255,.03);cursor:pointer;overflow:hidden}
-.ad-image{width:100%;height:200px;border-radius:12px;object-fit:cover;background:rgba(255,255,255,.03);margin-bottom:10px}
-.ad-price{font-size:22px;font-weight:800;color:#f1c40f}
-.ad-title{font-size:14px;font-weight:600;margin-top:4px}
-.ad-specs{font-size:10px;color:#8e94a8;margin-top:4px;display:flex;gap:8px;flex-wrap:wrap}
-.ad-specs span{background:rgba(255,255,255,.03);padding:3px 10px;border-radius:12px}
-.ad-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.03);flex-wrap:wrap;gap:4px}
-.ad-seller{display:flex;align-items:center;gap:8px;font-size:10px;color:#8e94a8}
-.seller-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.04)}
-.seller-name{color:#fff;font-weight:600}
-.seller-rating{color:#f1c40f;font-size:9px}
-.ad-city{font-size:9px;color:#5a6070;display:flex;align-items:center;gap:4px}
-.favorite-btn{background:none;border:none;color:#5a6070;font-size:20px;cursor:pointer}
+.home-screen{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:12px 6px;padding:14px 10px;width:100%;height:100%;overflow-y:auto;z-index:1;position:relative;align-content:start}
+.app-item{display:flex;flex-direction:column;align-items:center;cursor:pointer;gap:4px;transition:transform .15s}
+.app-item:active{transform:scale(.85)}
+.app-icon{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 6px 18px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.06);position:relative;overflow:hidden}
+.app-icon::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.2),transparent 60%);pointer-events:none}
+.ic-orange{background:linear-gradient(135deg,#ff6b35,#ff4500)}
+.ic-blue{background:linear-gradient(135deg,#3498db,#2980b9)}
+.ic-green{background:linear-gradient(135deg,#2ecc71,#27ae60)}
+.ic-purple{background:linear-gradient(135deg,#9b59b6,#8e44ad)}
+.ic-gold{background:linear-gradient(135deg,#f1c40f,#d4ac0d)}
+.ic-pink{background:linear-gradient(135deg,#e74c3c,#c0392b)}
+.ic-teal{background:linear-gradient(135deg,#1abc9c,#16a085)}
+.ic-gray{background:linear-gradient(135deg,#636e72,#2d3436)}
+.ic-inv{background:linear-gradient(135deg,#6c5ce7,#a29bfe)}
+.ic-moon{background:linear-gradient(135deg,#2d3436,#1a1a2e)}
+.ic-work{background:linear-gradient(135deg,#0984e3,#00b894)}
+.ic-auction{background:linear-gradient(135deg,#fd79a8,#e84393)}
+.ic-shop{background:linear-gradient(135deg,#a29bfe,#6c5ce7)}
+.app-label{font-size:9px;font-weight:500;color:#c5c9d4;text-align:center;max-width:60px;line-height:1.15}
+.dock-wrapper{padding:0 14px 12px;width:100%;z-index:5}
+.dock{background:rgba(255,255,255,.05);backdrop-filter:blur(30px);border:1px solid rgba(255,255,255,.05);border-radius:22px;padding:8px 12px;display:flex;justify-content:space-around;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+.dock .app-icon{width:40px;height:40px;font-size:18px;border-radius:11px}
+.app-window{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(10,11,18,.97);backdrop-filter:blur(30px);z-index:999;display:none;flex-direction:column;animation:su .3s}
+@keyframes su{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.window-header{height:50px;background:rgba(20,22,36,.95);display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);flex-shrink:0}
+.window-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.window-title .emoji{font-size:20px}
+.back-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.05);color:#fff;padding:6px 14px;border-radius:10px;font-weight:600;cursor:pointer;font-size:11px;opacity:.7}
+.back-btn:active{background:rgba(255,255,255,.1)}
+.window-body{flex:1;overflow-y:auto;padding:12px 14px;width:100%;position:relative}
+.card{background:linear-gradient(135deg,rgba(24,27,40,.9),rgba(20,22,36,.7));border-radius:14px;padding:12px 14px;margin-bottom:8px;border:1px solid rgba(255,255,255,.04)}
+.ad-card{background:linear-gradient(135deg,rgba(24,27,40,.9),rgba(20,22,36,.7));border-radius:14px;padding:12px;margin-bottom:10px;border:1px solid rgba(255,255,255,.04);cursor:pointer;overflow:hidden}
+.ad-image{width:100%;height:130px;border-radius:10px;object-fit:cover;background:rgba(255,255,255,.03);margin-bottom:8px}
+.ad-price{font-size:18px;font-weight:800;color:#f1c40f}
+.ad-title{font-size:13px;font-weight:600;margin-top:3px}
+.ad-specs{font-size:9px;color:#8e94a8;margin-top:4px;display:flex;gap:5px;flex-wrap:wrap}
+.ad-specs span{background:rgba(255,255,255,.04);padding:2px 8px;border-radius:8px}
+.ad-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.04);flex-wrap:wrap;gap:4px}
+.ad-seller{display:flex;align-items:center;gap:6px;font-size:9px;color:#8e94a8}
+.seller-avatar{width:22px;height:22px;border-radius:50%;object-fit:cover;border:1px solid rgba(255,255,255,.06)}
+.seller-name{color:#fff;font-weight:600;font-size:10px}
+.seller-rating{color:#f1c40f;font-size:8px}
+.ad-city{font-size:9px;color:#5a6070}
+.favorite-btn{background:none;border:none;color:#5a6070;font-size:18px;cursor:pointer;padding:2px}
 .favorite-btn.active{color:#e74c3c}
-.action-btn{background:linear-gradient(135deg,#f1c40f,#d4ac0d);color:#000;border:none;padding:6px 16px;border-radius:10px;font-weight:700;font-size:9px;cursor:pointer;white-space:nowrap}
+.action-btn{background:linear-gradient(135deg,#f1c40f,#d4ac0d);color:#000;border:none;padding:6px 14px;border-radius:9px;font-weight:700;font-size:9px;cursor:pointer;white-space:nowrap;font-family:inherit;transition:transform .1s;box-shadow:0 3px 10px rgba(241,196,15,.2)}
+.action-btn:active{transform:scale(.95)}
 .warn{background:linear-gradient(135deg,#f39c12,#e67e22);color:#fff}
 .success{background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff}
 .danger{background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff}
-.outline{background:transparent;border:1px solid rgba(255,255,255,.08);color:#8e94a8}
-.pc-tag{font-size:8px;padding:2px 10px;border-radius:12px;display:inline-block}
-.pc-tag.budget{background:rgba(46,204,113,.1);color:#2ecc71}
-.pc-tag.mid{background:rgba(52,152,219,.1);color:#3498db}
-.pc-tag.high{background:rgba(155,89,182,.1);color:#9b59b6}
-.pc-tag.premium{background:rgba(241,196,15,.1);color:#f1c40f}
-.pc-tag.ultimate{background:rgba(231,76,60,.1);color:#e74c3c}
-.badge-danger{background:rgba(231,76,60,.15);color:#e74c3c;padding:2px 8px;border-radius:12px;font-size:8px;font-weight:600}
-.notification{position:fixed;bottom:80px;left:16px;right:16px;background:rgba(0,0,0,.95);padding:14px 18px;border-radius:14px;text-align:center;z-index:9999;border:1px solid rgba(255,255,255,.04);font-size:11px;backdrop-filter:blur(20px);font-weight:500}
+.blue{background:linear-gradient(135deg,#3498db,#2980b9);color:#fff}
+.outline{background:transparent;border:1px solid rgba(255,255,255,.1);color:#8e94a8;box-shadow:none}
+.pc-tag{font-size:8px;padding:2px 8px;border-radius:8px;display:inline-block;font-weight:600}
+.pc-tag.budget{background:rgba(46,204,113,.15);color:#2ecc71}
+.pc-tag.mid{background:rgba(52,152,219,.15);color:#3498db}
+.pc-tag.high{background:rgba(155,89,182,.15);color:#9b59b6}
+.pc-tag.premium{background:rgba(241,196,15,.15);color:#f1c40f}
+.pc-tag.ultimate{background:rgba(231,76,60,.15);color:#e74c3c}
+.badge-danger{background:rgba(231,76,60,.15);color:#e74c3c;padding:2px 8px;border-radius:8px;font-size:8px;font-weight:600}
+.notification{position:fixed;bottom:80px;left:16px;right:16px;background:rgba(20,22,36,.98);padding:12px 16px;border-radius:12px;text-align:center;z-index:9999;border:1px solid rgba(255,255,255,.06);font-size:11px;backdrop-filter:blur(20px);font-weight:500;animation:notifIn .3s;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+@keyframes notifIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 .empty-state{text-align:center;padding:40px 20px;color:#5a6070}
-.empty-state .empty-icon{font-size:48px;opacity:.3;margin-bottom:12px}
-.empty-state .empty-title{font-size:13px;font-weight:600;color:#8e94a8}
-.slot-item{background:rgba(24,27,40,.7);border-radius:10px;padding:8px 12px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;border:1px solid rgba(255,255,255,.03)}
-.slot-label{font-size:8px;color:#8e94a8}
+.empty-state .empty-icon{font-size:42px;opacity:.4;margin-bottom:10px}
+.empty-state .empty-title{font-size:12px;font-weight:600;color:#8e94a8}
+.slot-item{background:rgba(24,27,40,.9);border-radius:10px;padding:9px 12px;margin-bottom:5px;display:flex;justify-content:space-between;align-items:center;border:1px solid rgba(255,255,255,.04)}
+.slot-label{font-size:9px;color:#8e94a8}
 .slot-value{font-size:10px;font-weight:bold}
 .slot-value.empty{color:#8e94a8}
 .slot-value.filled{color:#2ecc71}
-.inv-item{background:rgba(24,27,40,.7);border-radius:12px;padding:10px 14px;margin-bottom:6px;border:1px solid rgba(255,255,255,.03);display:flex;align-items:center;gap:12px}
-.inv-icon{font-size:24px;width:40px;text-align:center}
+.inv-item{background:rgba(24,27,40,.9);border-radius:11px;padding:9px 12px;margin-bottom:6px;border:1px solid rgba(255,255,255,.04);display:flex;align-items:center;gap:10px}
+.inv-icon{font-size:20px;width:34px;text-align:center}
 .inv-info{flex:1;min-width:0}
 .inv-name{font-size:11px;font-weight:600;color:#fff}
-.fake-badge{background:rgba(231,76,60,.15);color:#e74c3c;font-size:7px;padding:2px 8px;border-radius:8px;margin-left:4px}
-.original-badge{background:rgba(46,204,113,.15);color:#2ecc71;font-size:7px;padding:2px 8px;border-radius:8px;margin-left:4px}
-.inv-cat{font-size:8px;color:#8e94a8}
+.fake-badge{background:rgba(231,76,60,.15);color:#e74c3c;font-size:7px;padding:1px 6px;border-radius:6px;margin-left:4px}
+.original-badge{background:rgba(46,204,113,.15);color:#2ecc71;font-size:7px;padding:1px 6px;border-radius:6px;margin-left:4px}
+.inv-cat{font-size:9px;color:#8e94a8;margin-top:1px}
 .inv-actions{display:flex;gap:4px;flex-wrap:wrap}
-.inv-actions .action-btn{font-size:7px;padding:4px 10px}
-.inv-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
-.inv-stat-box{background:rgba(24,27,40,.7);border-radius:10px;padding:10px;text-align:center;border:1px solid rgba(255,255,255,.03)}
-.inv-stat-box .num{font-size:20px;font-weight:bold}
+.inv-actions .action-btn{font-size:8px;padding:4px 9px}
+.inv-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}
+.inv-stat-box{background:rgba(24,27,40,.9);border-radius:10px;padding:9px;text-align:center;border:1px solid rgba(255,255,255,.04)}
+.inv-stat-box .num{font-size:18px;font-weight:bold}
 .num.green{color:#2ecc71}.num.gold{color:#f1c40f}.num.red{color:#e74c3c}
-.inv-stat-box .label{font-size:8px;color:#8e94a8}
-.bank-balance-big{font-size:32px;font-weight:bold;color:#f1c40f;text-align:center;padding:16px 0}
-.transaction-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:10px}
+.inv-stat-box .label{font-size:8px;color:#8e94a8;margin-top:1px}
+.bank-balance-big{font-size:28px;font-weight:bold;color:#f1c40f;text-align:center;padding:12px 0;transition:transform .3s}
+.bank-balance-big.flash{animation:flash .5s}
+@keyframes flash{0%{transform:scale(1)}50%{transform:scale(1.12);color:#2ecc71}100%{transform:scale(1)}}
+.transaction-item{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:10px}
 .trans-amount.positive{color:#2ecc71}
 .trans-amount.negative{color:#e74c3c}
-.loan-info{display:flex;justify-content:space-between;padding:4px 0;font-size:9px;border-bottom:1px solid rgba(255,255,255,.03)}
+.loan-info{display:flex;justify-content:space-between;padding:4px 0;font-size:10px;border-bottom:1px solid rgba(255,255,255,.04)}
 .loan-info .label{color:#8e94a8}
 .loan-info .value{font-weight:bold}
 .loan-info .value.active{color:#e74c3c}
-.loan-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
-.loan-btn{background:rgba(24,27,40,.7);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,.03);cursor:pointer;text-align:center}
-.loan-btn .amount{font-size:18px;font-weight:bold;color:#f1c40f}
-.loan-btn .detail{font-size:9px;color:#8e94a8;margin-top:4px}
+.loan-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+.loan-btn{background:rgba(24,27,40,.9);border-radius:11px;padding:10px;border:1px solid rgba(255,255,255,.04);cursor:pointer;text-align:center;font-family:inherit;color:#fff}
+.loan-btn .amount{font-size:16px;font-weight:bold;color:#f1c40f}
+.loan-btn .detail{font-size:9px;color:#8e94a8;margin-top:3px}
 .loan-btn .detail .rate{color:#e74c3c}
 .loan-btn:disabled{opacity:.3;pointer-events:none}
-.city-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;max-height:300px;overflow-y:auto}
-.city-btn{padding:10px 8px;border-radius:10px;border:1px solid rgba(255,255,255,.03);background:rgba(255,255,255,.02);color:#8e94a8;cursor:pointer;font-size:9px;text-align:center}
-.city-btn.active{background:rgba(52,152,219,.15);border-color:rgba(52,152,219,.2);color:#85c1e9}
-.city-name{font-weight:bold;font-size:11px;color:#fff}
+.city-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(95px,1fr));gap:6px;max-height:400px;overflow-y:auto}
+.city-btn{padding:9px 8px;border-radius:10px;border:1px solid rgba(255,255,255,.04);background:rgba(255,255,255,.02);color:#8e94a8;cursor:pointer;font-size:9px;text-align:center;font-family:inherit}
+.city-btn.active{background:rgba(52,152,219,.15);border-color:rgba(52,152,219,.3);color:#85c1e9}
+.city-name{font-weight:bold;font-size:10px;color:#fff}
 .city-distance{font-size:8px;color:#5a6070;margin-top:2px;display:block}
 .city-pcs{font-size:8px;color:#2ecc71;margin-top:2px;display:block}
-.settings-group{background:rgba(24,27,40,.7);border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid rgba(255,255,255,.03)}
-.group-title{font-size:11px;font-weight:bold;color:#8e94a8;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.settings-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:4px 0}
-.settings-row label{font-size:9px;color:#8e94a8;min-width:80px}
-.settings-row input[type=range]{flex:1;min-width:80px;height:4px;-webkit-appearance:none;background:rgba(255,255,255,.1);border-radius:2px;outline:none}
-.settings-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#f1c40f;cursor:pointer}
-.settings-row .value{font-size:10px;font-weight:bold;color:#f1c40f;min-width:30px;text-align:center}
-.theme-btn{width:32px;height:32px;border-radius:50%;border:2px solid rgba(255,255,255,.1);cursor:pointer}
-.theme-btn.active{border-color:#f1c40f}
-.news-item{background:rgba(255,255,255,.02);border-radius:12px;padding:12px;margin-bottom:8px;border-left:3px solid #f1c40f}
+.settings-group{background:rgba(24,27,40,.9);border-radius:12px;padding:12px 14px;margin-bottom:10px;border:1px solid rgba(255,255,255,.04)}
+.group-title{font-size:11px;font-weight:bold;color:#c5c9d4;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.news-item{background:rgba(255,255,255,.02);border-radius:11px;padding:11px 13px;margin-bottom:6px;border-left:3px solid #f1c40f}
 .news-title{font-size:11px;font-weight:bold}
 .news-date{font-size:8px;color:#8e94a8;margin-top:2px}
-.news-text{font-size:9px;color:#8e94a8;margin-top:4px}
-.part-item{background:rgba(24,27,40,.7);border-radius:12px;padding:10px;margin-bottom:6px;border:1px solid rgba(255,255,255,.03);display:flex;align-items:center;gap:12px}
-.part-image{width:50px;height:50px;border-radius:8px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,.03)}
+.news-text{font-size:10px;color:#8e94a8;margin-top:3px}
+.part-item{background:rgba(24,27,40,.9);border-radius:11px;padding:9px;margin-bottom:6px;border:1px solid rgba(255,255,255,.04);display:flex;align-items:center;gap:10px}
+.part-image{width:42px;height:42px;border-radius:8px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,.03)}
 .part-info{flex:1;min-width:0}
 .part-name{font-size:11px;font-weight:bold}
-.part-price{font-size:13px;font-weight:bold;color:#f1c40f}
-.part-category{font-size:10px;color:#8e94a8;padding:8px 0 4px;border-bottom:1px solid rgba(255,255,255,.03);margin-bottom:4px}
-.sleep-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);backdrop-filter:blur(30px);z-index:99999;display:none;align-items:center;justify-content:center;flex-direction:column}
-.sleep-overlay.show{display:flex}
-.sleep-icon{font-size:72px;animation:fz 2s ease-in-out infinite}
-@keyframes fz{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
-.chat-item{background:rgba(24,27,40,.7);border-radius:12px;padding:12px 14px;margin-bottom:6px;border:1px solid rgba(255,255,255,.03);cursor:pointer;display:flex;align-items:center;gap:12px}
-.chat-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.04);flex-shrink:0}
+.part-price{font-size:12px;font-weight:bold;color:#f1c40f}
+.part-category{font-size:10px;color:#8e94a8;padding:8px 0 4px;margin-bottom:4px;font-weight:600}
+.chat-item{background:rgba(24,27,40,.9);border-radius:11px;padding:10px 12px;margin-bottom:5px;border:1px solid rgba(255,255,255,.04);cursor:pointer;display:flex;align-items:center;gap:10px}
+.chat-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid rgba(255,255,255,.06);flex-shrink:0}
 .chat-info{flex:1;min-width:0}
 .chat-name{font-size:11px;font-weight:bold}
 .chat-last-msg{font-size:9px;color:#8e94a8;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.chat-unread{background:#e74c3c;color:#fff;font-size:8px;padding:2px 8px;border-radius:12px;min-width:20px;text-align:center}
-.chat-window{display:none;flex-direction:column;height:100%;background:rgba(10,11,18,.98);position:absolute;top:0;left:0;width:100%;z-index:20}
+.chat-unread{background:#e74c3c;color:#fff;font-size:8px;padding:2px 7px;border-radius:10px;min-width:18px;text-align:center}
+.chat-window{display:none;flex-direction:column;height:100%;background:rgba(10,11,18,.99);position:absolute;top:0;left:0;width:100%;z-index:20}
 .chat-window.show{display:flex}
-.chat-header{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.03);display:flex;align-items:center;gap:10px;background:rgba(20,22,36,.9)}
+.chat-header{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;gap:10px;background:rgba(20,22,36,.95)}
 .chat-back{font-size:16px;cursor:pointer;padding:4px 8px}
 .chat-user{flex:1}
-.chat-user .name{font-size:13px;font-weight:bold}
+.chat-user .name{font-size:12px;font-weight:bold}
 .chat-user .status{font-size:9px;color:#2ecc71}
 .chat-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px}
-.chat-messages .msg{max-width:80%;padding:10px 14px;border-radius:14px;font-size:10px}
-.msg.sent{align-self:flex-end;background:rgba(52,152,219,.15);border:1px solid rgba(52,152,219,.1)}
+.chat-messages .msg{max-width:80%;padding:9px 12px;border-radius:13px;font-size:11px}
+.msg.sent{align-self:flex-end;background:rgba(52,152,219,.2);border:1px solid rgba(52,152,219,.15)}
 .msg.received{align-self:flex-start;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.05)}
 .msg.system{background:rgba(241,196,15,.05);border:1px solid rgba(241,196,15,.1);align-self:center;max-width:90%;text-align:center;font-style:italic;font-size:9px;color:#f1c40f}
-.msg.offer{background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.2);align-self:flex-start;font-weight:600}
 .msg-time{font-size:7px;color:#5a6070;margin-top:3px;display:block}
-.chat-input{display:flex;gap:8px;padding:8px 12px;border-top:1px solid rgba(255,255,255,.03);background:rgba(20,22,36,.9)}
-.chat-input input{flex:1;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.04);background:rgba(255,255,255,.03);color:#fff;font-size:10px}
-.chat-input button{padding:8px 16px;border:none;border-radius:10px;background:linear-gradient(135deg,#f1c40f,#d4ac0d);color:#000;font-weight:bold;font-size:11px;cursor:pointer}
-.reg-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);backdrop-filter:blur(30px);z-index:999999;display:none;align-items:center;justify-content:center;padding:20px}
+.chat-input{display:flex;gap:6px;padding:8px 10px;border-top:1px solid rgba(255,255,255,.04);background:rgba(20,22,36,.95)}
+.chat-input input{flex:1;padding:9px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.04);color:#fff;font-size:11px;outline:none;font-family:inherit}
+.chat-input button{padding:9px 14px;border:none;border-radius:10px;background:linear-gradient(135deg,#f1c40f,#d4ac0d);color:#000;font-weight:bold;font-size:11px;cursor:pointer}
+.reg-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.97);backdrop-filter:blur(30px);z-index:999999;display:none;align-items:center;justify-content:center;padding:20px}
 .reg-overlay.show{display:flex}
-.reg-box{background:rgba(24,27,40,.95);border:1px solid rgba(241,196,15,.2);border-radius:20px;padding:24px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.7)}
-.reg-icon{font-size:56px;text-align:center;margin-bottom:8px}
-.reg-title{font-size:20px;font-weight:800;color:#f1c40f;text-align:center;margin-bottom:4px}
-.reg-sub{font-size:11px;color:#8e94a8;text-align:center;margin-bottom:20px}
-.reg-field{margin-bottom:12px}
-.reg-field label{display:block;font-size:10px;color:#8e94a8;margin-bottom:6px;font-weight:600}
-.reg-field input,.reg-field select{width:100%;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);color:#fff;font-size:13px;outline:none}
+.reg-box{background:linear-gradient(135deg,rgba(24,27,40,.98),rgba(20,22,36,.95));border:1px solid rgba(241,196,15,.25);border-radius:18px;padding:20px;max-width:360px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.7);max-height:90vh;overflow-y:auto}
+.reg-icon{font-size:48px;text-align:center;margin-bottom:6px}
+.reg-title{font-size:18px;font-weight:800;color:#f1c40f;text-align:center;margin-bottom:4px}
+.reg-sub{font-size:10px;color:#8e94a8;text-align:center;margin-bottom:16px}
+.reg-field{margin-bottom:10px}
+.reg-field label{display:block;font-size:10px;color:#8e94a8;margin-bottom:5px;font-weight:600}
+.reg-field input,.reg-field select{width:100%;padding:11px 13px;border-radius:10px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.04);color:#fff;font-size:12px;outline:none;font-family:inherit}
 .reg-field select option{background:#0a0b12;color:#fff}
+.avatar-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}
+.avatar-opt{width:100%;aspect-ratio:1;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.1);cursor:pointer;transition:transform .15s}
+.avatar-opt:active{transform:scale(.9)}
+.avatar-opt.selected{border-color:#f1c40f;box-shadow:0 0 10px rgba(241,196,15,.5)}
+.job-card{background:rgba(24,27,40,.9);border-radius:12px;padding:12px;margin-bottom:7px;border:1px solid rgba(255,255,255,.04);display:flex;align-items:center;gap:10px}
+.job-icon{font-size:26px;width:44px;text-align:center}
+.job-info{flex:1;min-width:0}
+.job-name{font-size:12px;font-weight:bold;color:#fff}
+.job-salary{font-size:10px;color:#2ecc71;font-weight:bold;margin-top:2px}
+.job-req{font-size:9px;color:#8e94a8;margin-top:2px}
+.job-req.locked{color:#e74c3c}
+.auction-card{background:rgba(24,27,40,.9);border-radius:12px;padding:12px;margin-bottom:8px;border:1px solid rgba(253,121,168,.2)}
+.auction-img{width:100%;height:100px;border-radius:9px;object-fit:cover;background:rgba(255,255,255,.03);margin-bottom:8px}
+.auction-timer{font-size:10px;color:#fd79a8;font-weight:bold}
+.auction-bid{font-size:15px;font-weight:bold;color:#f1c40f}
+.auction-leader{font-size:9px;color:#8e94a8;margin-top:2px}
+.shop-item{background:rgba(24,27,40,.9);border-radius:12px;padding:12px;margin-bottom:7px;border:1px solid rgba(162,155,254,.15);display:flex;align-items:center;gap:10px}
+.shop-icon{font-size:24px;width:44px;text-align:center}
+.shop-info{flex:1;min-width:0}
+.shop-name{font-size:11px;font-weight:bold;color:#fff}
+.shop-desc{font-size:9px;color:#8e94a8;margin-top:1px}
+.shop-price{font-size:11px;font-weight:bold;color:#f1c40f;margin-top:3px}
+.shop-owned{font-size:9px;color:#2ecc71;margin-top:2px}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);z-index:9999999;display:none;align-items:center;justify-content:center;padding:20px;animation:modalFade .2s}
+.modal-overlay.show{display:flex}
+.modal-box{background:linear-gradient(135deg,rgba(24,27,40,.99),rgba(20,22,36,.97));border-radius:14px;padding:18px;max-width:320px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.08);animation:modalSlide .25s}
+.modal-title{font-size:14px;font-weight:bold;margin-bottom:8px;color:#f1c40f;display:flex;align-items:center;gap:6px}
+.modal-text{font-size:12px;color:#c5c9d4;line-height:1.5;margin-bottom:14px;white-space:pre-line}
+.modal-input{width:100%;padding:10px 12px;border-radius:9px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#fff;font-size:13px;outline:none;margin-bottom:14px;font-family:inherit}
+.modal-input:focus{border-color:#f1c40f}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end}
+.modal-btn{padding:9px 18px;border-radius:9px;font-size:11px;font-weight:bold;border:none;cursor:pointer;font-family:inherit}
+.modal-btn-ok{background:linear-gradient(135deg,#f1c40f,#d4ac0d);color:#000}
+.modal-btn-cancel{background:rgba(255,255,255,.06);color:#8e94a8}
+@keyframes modalFade{from{opacity:0}}
+@keyframes modalSlide{from{transform:translateY(15px);opacity:0}}
+.sleep-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);backdrop-filter:blur(30px);z-index:99999;display:none;align-items:center;justify-content:center;flex-direction:column}
+.sleep-overlay.show{display:flex}
+.sleep-icon{font-size:60px;animation:fz 2s ease-in-out infinite}
+@keyframes fz{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:10px}
 </style>
@@ -172,10 +218,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0b12;color:#fff}
 <div class="reg-overlay" id="reg">
     <div class="reg-box">
         <div class="reg-icon">🎮</div>
-        <div class="reg-title">Добро пожаловать в PC Tycoon!</div>
-        <div class="reg-sub">Расскажи о себе, чтобы начать</div>
-        <div class="reg-field"><label>👤 Имя (ник)</label><input type="text" id="regName" placeholder="Например: КиберКот" maxlength="20"></div>
-        <div class="reg-field"><label>🎂 Возраст</label><input type="number" id="regAge" placeholder="Например: 14" min="5" max="99"></div>
+        <div class="reg-title">PC Tycoon v1.4.1</div>
+        <div class="reg-sub">Создай свой профиль</div>
+        <div class="reg-field"><label>👤 Имя</label><input type="text" id="regName" placeholder="Например: КиберКот" maxlength="20"></div>
+        <div class="reg-field"><label>🎂 Возраст</label><input type="number" id="regAge" placeholder="14" min="5" max="99"></div>
         <div class="reg-field"><label>🏙️ Родной город</label><select id="regCity">
             <option value="Москва">Москва</option><option value="Санкт-Петербург">Санкт-Петербург</option>
             <option value="Новосибирск">Новосибирск</option><option value="Екатеринбург">Екатеринбург</option>
@@ -186,66 +232,84 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0b12;color:#fff}
             <option value="Воронеж">Воронеж</option><option value="Волгоград">Волгоград</option>
             <option value="Краснодар">Краснодар</option>
         </select></div>
-        <button class="action-btn success" style="width:100%;padding:14px;font-size:14px;margin-top:10px;" onclick="completeRegistration()">🚀 Начать играть</button>
+        <div class="reg-field"><label>🎨 Аватарка</label><div class="avatar-picker" id="avatarPicker"></div></div>
+        <button class="action-btn success" style="width:100%;padding:13px;font-size:13px;margin-top:8px;" onclick="completeRegistration()">🚀 Начать играть</button>
     </div>
 </div>
 
 <div class="status-bar">
 <div class="left"><span class="game-time" id="gt">06:00</span><span class="day-badge" id="db">День 1</span></div>
-<div class="right"><span class="city-badge" id="cb">📍 Москва</span><span class="sync-status online" id="ss">Онлайн</span><div class="status-icons"><i class="fa-solid fa-signal"></i><i class="fa-solid fa-wifi"></i><i class="fa-solid fa-battery-three-quarters"></i></div></div>
+<div class="right"><span class="city-badge" id="cb">📍 Москва</span><span class="sync-status online" id="ss">●</span></div>
 </div>
 
 <div class="home-screen">
-<div class="app-item" onclick="openApp('market')"><div class="app-icon orange"><i class="fa-solid fa-store"></i></div><div class="app-label">Маркетплейс</div></div>
-<div class="app-item" onclick="openApp('parts')"><div class="app-icon blue"><i class="fa-solid fa-microchip"></i></div><div class="app-label">Запчасти</div></div>
-<div class="app-item" onclick="openApp('black')"><div class="app-icon pink"><i class="fa-solid fa-skull"></i></div><div class="app-label">Черный рынок</div></div>
-<div class="app-item" onclick="openApp('service')"><div class="app-icon gold"><i class="fa-solid fa-wrench"></i></div><div class="app-label">Сервис</div></div>
-<div class="app-item" onclick="openApp('work')"><div class="app-icon purple"><i class="fa-solid fa-screwdriver-wrench"></i></div><div class="app-label">Сборка</div></div>
-<div class="app-item" onclick="openApp('bank')"><div class="app-icon gold"><i class="fa-solid fa-credit-card"></i></div><div class="app-label">Банк</div></div>
-<div class="app-item" onclick="openApp('cal')"><div class="app-icon teal"><i class="fa-solid fa-calendar"></i></div><div class="app-label">Календарь</div></div>
-<div class="app-item" onclick="openApp('cities')"><div class="app-icon blue"><i class="fa-solid fa-map-location-dot"></i></div><div class="app-label">Города</div></div>
-<div class="app-item" onclick="openApp('chats')"><div class="app-icon green"><i class="fa-solid fa-comments"></i></div><div class="app-label">Чаты</div></div>
-<div class="app-item" onclick="openApp('gchat')"><div class="app-icon teal"><i class="fa-solid fa-globe"></i></div><div class="app-label">Общий чат</div></div>
-<div class="app-item" onclick="openApp('rank')"><div class="app-icon purple"><i class="fa-solid fa-ranking-star"></i></div><div class="app-label">Рейтинг</div></div>
-<div class="app-item" onclick="openApp('ach')"><div class="app-icon gold"><i class="fa-solid fa-trophy"></i></div><div class="app-label">Достижения</div></div>
-<div class="app-item" onclick="openApp('news')"><div class="app-icon gray"><i class="fa-solid fa-newspaper"></i></div><div class="app-label">Новости</div></div>
-<div class="app-item" onclick="openApp('sleep')"><div class="app-icon moon"><i class="fa-solid fa-moon"></i></div><div class="app-label">Сон</div></div>
-<div class="app-item" onclick="openApp('inv')"><div class="app-icon inv"><i class="fa-solid fa-box"></i></div><div class="app-label">Инвентарь</div></div>
-<div class="app-item" onclick="openApp('set')"><div class="app-icon gray"><i class="fa-solid fa-gear"></i></div><div class="app-label">Настройки</div></div>
+<div class="app-item" onclick="openApp('market')"><div class="app-icon ic-orange">🏪</div><div class="app-label">Маркет</div></div>
+<div class="app-item" onclick="openApp('parts')"><div class="app-icon ic-blue">🔧</div><div class="app-label">Запчасти</div></div>
+<div class="app-item" onclick="openApp('black')"><div class="app-icon ic-pink">💀</div><div class="app-label">Чёрный</div></div>
+<div class="app-item" onclick="openApp('service')"><div class="app-icon ic-gold">🖥️</div><div class="app-label">Мои ПК</div></div>
+<div class="app-item" onclick="openApp('work')"><div class="app-icon ic-purple">🛠️</div><div class="app-label">Сборка</div></div>
+<div class="app-item" onclick="openApp('jobs')"><div class="app-icon ic-work">💼</div><div class="app-label">Работа</div></div>
+<div class="app-item" onclick="openApp('auction')"><div class="app-icon ic-auction">🔨</div><div class="app-label">Аукцион</div></div>
+<div class="app-item" onclick="openApp('shop')"><div class="app-icon ic-shop">⭐</div><div class="app-label">Улучшения</div></div>
+<div class="app-item" onclick="openApp('bank')"><div class="app-icon ic-gold">💳</div><div class="app-label">Банк</div></div>
+<div class="app-item" onclick="openApp('cal')"><div class="app-icon ic-teal">📅</div><div class="app-label">Календарь</div></div>
+<div class="app-item" onclick="openApp('cities')"><div class="app-icon ic-blue">🗺️</div><div class="app-label">Города</div></div>
+<div class="app-item" onclick="openApp('chats')"><div class="app-icon ic-green">💬</div><div class="app-label">Чаты</div></div>
+<div class="app-item" onclick="openApp('gchat')"><div class="app-icon ic-teal">🌍</div><div class="app-label">Общий чат</div></div>
+<div class="app-item" onclick="openApp('rank')"><div class="app-icon ic-purple">🏆</div><div class="app-label">Рейтинг</div></div>
+<div class="app-item" onclick="openApp('ach')"><div class="app-icon ic-gold">🎖️</div><div class="app-label">Достижения</div></div>
+<div class="app-item" onclick="openApp('news')"><div class="app-icon ic-gray">📰</div><div class="app-label">Новости</div></div>
+<div class="app-item" onclick="openApp('sleep')"><div class="app-icon ic-moon">🌙</div><div class="app-label">Сон</div></div>
+<div class="app-item" onclick="openApp('inv')"><div class="app-icon ic-inv">📦</div><div class="app-label">Инвентарь</div></div>
+<div class="app-item" onclick="openApp('set')"><div class="app-icon ic-gray">⚙️</div><div class="app-label">Настройки</div></div>
 </div>
 
-<div class="dock-wrapper"><div class="dock"><div class="app-icon orange"><i class="fa-solid fa-phone"></i></div><div class="app-icon blue"><i class="fa-solid fa-comment"></i></div><div class="app-icon gold"><i class="fa-solid fa-camera"></i></div><div class="app-icon teal"><i class="fa-solid fa-compass"></i></div></div></div>
+<div class="dock-wrapper"><div class="dock">
+<div class="app-icon ic-orange">📞</div>
+<div class="app-icon ic-blue">💬</div>
+<div class="app-icon ic-gold">📷</div>
+<div class="app-icon ic-teal">🧭</div>
+</div></div>
 
-<div class="app-window" id="w-market"><div class="window-header"><div class="window-title"><i class="fa-solid fa-store"></i> Маркетплейс</div><button class="back-btn" onclick="closeApp('market')">✕</button></div>
+<div class="app-window" id="w-market"><div class="window-header"><div class="window-title"><span class="emoji">🏪</span><span>Маркетплейс</span></div><button class="back-btn" onclick="closeApp('market')">✕</button></div>
 <div class="window-body">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:6px;">
-<div style="display:flex;gap:12px;font-size:10px;color:#8e94a8;"><span>🖥️ <span id="mc">0</span></span><span>📍 <span id="mcity">Москва</span></span></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px;">
+<div style="display:flex;gap:10px;font-size:10px;color:#8e94a8;"><span>🖥️ <span id="mc">0</span></span><span>📍 <span id="mcity">Москва</span></span></div>
 <button class="action-btn gold" style="font-size:8px;padding:4px 14px;" onclick="addMyAd()">➕ Создать</button></div>
-<div style="display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;">
-<button class="action-btn outline" style="font-size:7px;padding:4px 12px;" onclick="switchTab('all')">Все</button>
-<button class="action-btn outline" style="font-size:7px;padding:4px 12px;" onclick="switchTab('cheap')">💰 Дешевле</button>
-<button class="action-btn outline" style="font-size:7px;padding:4px 12px;" onclick="switchTab('expensive')">💎 Дороже</button>
-<button class="action-btn outline" style="font-size:7px;padding:4px 12px;" onclick="switchTab('my')">📦 Мои</button>
-<button class="action-btn outline" style="font-size:7px;padding:4px 12px;" onclick="switchTab('fav')">❤️ Избранное</button>
-<button class="action-btn outline" style="font-size:7px;padding:4px 12px;" onclick="switchTab('city')">🏙️ Город</button>
+<div style="display:flex;gap:5px;margin-bottom:10px;overflow-x:auto;padding-bottom:4px;">
+<button class="action-btn outline" style="font-size:7px;padding:4px 10px;" onclick="switchTab('all')">Все</button>
+<button class="action-btn outline" style="font-size:7px;padding:4px 10px;" onclick="switchTab('cheap')">💰</button>
+<button class="action-btn outline" style="font-size:7px;padding:4px 10px;" onclick="switchTab('expensive')">💎</button>
+<button class="action-btn outline" style="font-size:7px;padding:4px 10px;" onclick="switchTab('my')">📦</button>
+<button class="action-btn outline" style="font-size:7px;padding:4px 10px;" onclick="switchTab('fav')">❤️</button>
+<button class="action-btn outline" style="font-size:7px;padding:4px 10px;" onclick="switchTab('city')">🏙️</button>
 </div>
 <div id="mlist"></div></div></div>
 
-<div class="app-window" id="w-parts"><div class="window-header"><div class="window-title"><i class="fa-solid fa-microchip"></i> Мастерская</div><button class="back-btn" onclick="closeApp('parts')">✕</button></div>
-<div class="window-body"><div style="font-size:10px;color:#8e94a8;margin-bottom:12px;">🔧 Комплектующие</div><div id="plist"></div></div></div>
+<div class="app-window" id="w-parts"><div class="window-header"><div class="window-title"><span class="emoji">🔧</span><span>Мастерская</span></div><button class="back-btn" onclick="closeApp('parts')">✕</button></div>
+<div class="window-body"><div id="plist"></div></div></div>
 
-<div class="app-window" id="w-black"><div class="window-header"><div class="window-title"><i class="fa-solid fa-skull"></i> Черный рынок</div><button class="back-btn" onclick="closeApp('black')">✕</button></div>
-<div class="window-body"><div style="background:rgba(231,76,60,.05);border:1px solid rgba(231,76,60,.1);border-radius:12px;padding:12px;margin-bottom:12px;"><p style="font-size:10px;color:#e74c3c;">⚠️ Контрафакт дешевле, но может сломаться!</p></div><div id="blist"></div></div></div>
+<div class="app-window" id="w-black"><div class="window-header"><div class="window-title"><span class="emoji">💀</span><span>Чёрный рынок</span></div><button class="back-btn" onclick="closeApp('black')">✕</button></div>
+<div class="window-body"><div class="card" style="border-color:rgba(231,76,60,.2);"><p style="font-size:10px;color:#e74c3c;">⚠️ Контрафакт дешевле, но может сломаться!</p></div><div id="blist"></div></div></div>
 
-<div class="app-window" id="w-service"><div class="window-header"><div class="window-title"><i class="fa-solid fa-wrench"></i> Мои ПК</div><button class="back-btn" onclick="closeApp('service')">✕</button></div>
+<div class="app-window" id="w-service"><div class="window-header"><div class="window-title"><span class="emoji">🖥️</span><span>Мои ПК</span></div><button class="back-btn" onclick="closeApp('service')">✕</button></div>
 <div class="window-body"><div id="slist"></div></div></div>
 
-<div class="app-window" id="w-work"><div class="window-header"><div class="window-title"><i class="fa-solid fa-screwdriver-wrench"></i> Верстак</div><button class="back-btn" onclick="closeApp('work')">✕</button></div>
-<div class="window-body"><div id="slots"></div><button class="action-btn success" style="width:100%;padding:14px;margin-top:12px;font-size:12px;" onclick="sellBuild()">💰 Продать ПК</button><h4 style="margin:14px 0 8px;font-size:12px;color:#8e94a8;">📦 Склад</h4><div id="invlist"></div></div></div>
+<div class="app-window" id="w-work"><div class="window-header"><div class="window-title"><span class="emoji">🛠️</span><span>Верстак</span></div><button class="back-btn" onclick="closeApp('work')">✕</button></div>
+<div class="window-body"><div id="slots"></div><button class="action-btn success" style="width:100%;padding:13px;margin-top:10px;font-size:12px;" onclick="sellBuild()">💰 Продать ПК</button><div style="font-size:11px;font-weight:bold;color:#8e94a8;margin:12px 0 6px;">📦 Склад</div><div id="invlist"></div></div></div>
 
-<div class="app-window" id="w-bank"><div class="window-header"><div class="window-title"><i class="fa-solid fa-credit-card"></i> Банк</div><button class="back-btn" onclick="closeApp('bank')">✕</button></div>
+<div class="app-window" id="w-jobs"><div class="window-header"><div class="window-title"><span class="emoji">💼</span><span>Работа</span></div><button class="back-btn" onclick="closeApp('jobs')">✕</button></div>
+<div class="window-body"><div id="jobsStatus"></div><div id="jobsList"></div></div></div>
+
+<div class="app-window" id="w-auction"><div class="window-header"><div class="window-title"><span class="emoji">🔨</span><span>Аукцион</span></div><button class="back-btn" onclick="closeApp('auction')">✕</button></div>
+<div class="window-body"><div id="auctionList"></div></div></div>
+
+<div class="app-window" id="w-shop"><div class="window-header"><div class="window-title"><span class="emoji">⭐</span><span>Улучшения</span></div><button class="back-btn" onclick="closeApp('shop')">✕</button></div>
+<div class="window-body"><div id="shopList"></div></div></div>
+
+<div class="app-window" id="w-bank"><div class="window-header"><div class="window-title"><span class="emoji">💳</span><span>Банк</span></div><button class="back-btn" onclick="closeApp('bank')">✕</button></div>
 <div class="window-body">
-<div style="text-align:center;padding:8px 0;"><div style="font-size:9px;color:#8e94a8;">БАЛАНС</div><div class="bank-balance-big" id="bv">0 ₽</div></div>
+<div style="text-align:center;padding:6px 0;"><div style="font-size:9px;color:#8e94a8;">БАЛАНС</div><div class="bank-balance-big" id="bv">0 ₽</div></div>
 <div class="settings-group"><div class="loan-info"><span class="label">Кредитов:</span><span class="value" id="lc">0/3</span></div><div class="loan-info"><span class="label">Активных:</span><span class="value active" id="la">0</span></div><div class="loan-info"><span class="label">Долг:</span><span class="value active" id="ld">0 ₽</span></div></div>
 <div class="settings-group"><div class="group-title">📋 Доступные суммы</div>
 <div class="loan-grid">
@@ -254,87 +318,88 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0b12;color:#fff}
 <button class="loan-btn" onclick="takeLoan(30000)"><div class="amount">30 000 ₽</div><div class="detail">Ставка: <span class="rate">15%</span></div></button>
 <button class="loan-btn" onclick="takeLoan(50000)"><div class="amount">50 000 ₽</div><div class="detail">Ставка: <span class="rate">18%</span></div></button>
 </div></div>
-<button class="action-btn danger" style="width:100%;padding:10px;margin-bottom:12px;" onclick="payAll()">💸 Погасить всё</button>
-<div style="font-size:11px;font-weight:bold;color:#8e94a8;margin-bottom:8px;">📜 История</div>
+<button class="action-btn danger" style="width:100%;padding:10px;margin-bottom:10px;" onclick="payAll()">💸 Погасить всё</button>
+<div style="font-size:11px;font-weight:bold;color:#8e94a8;margin-bottom:6px;">📜 История</div>
 <div id="hist"></div></div></div>
 
-<div class="app-window" id="w-cal"><div class="window-header"><div class="window-title"><i class="fa-solid fa-calendar"></i> Календарь</div><button class="back-btn" onclick="closeApp('cal')">✕</button></div>
+<div class="app-window" id="w-cal"><div class="window-header"><div class="window-title"><span class="emoji">📅</span><span>Календарь</span></div><button class="back-btn" onclick="closeApp('cal')">✕</button></div>
 <div class="window-body">
-<div style="background:rgba(255,255,255,.02);border-radius:16px;padding:20px;text-align:center;margin-bottom:12px;"><div style="font-size:32px;font-weight:800;color:#f1c40f;" id="cd">1</div><div style="font-size:16px;color:#8e94a8;" id="cm">Январь 2026</div></div>
-<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font-size:9px;color:#8e94a8;text-align:center;margin-bottom:8px;"><div>ПН</div><div>ВТ</div><div>СР</div><div>ЧТ</div><div>ПТ</div><div>СБ</div><div>ВС</div></div>
+<div style="background:rgba(255,255,255,.02);border-radius:16px;padding:16px;text-align:center;margin-bottom:12px;"><div style="font-size:28px;font-weight:800;color:#f1c40f;" id="cd">1</div><div style="font-size:14px;color:#8e94a8;" id="cm">Январь 2026</div></div>
+<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font-size:9px;color:#8e94a8;text-align:center;margin-bottom:6px;"><div>ПН</div><div>ВТ</div><div>СР</div><div>ЧТ</div><div>ПТ</div><div>СБ</div><div>ВС</div></div>
 <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font-size:11px;text-align:center;" id="cg"></div>
 <div style="margin-top:12px;font-size:10px;color:#8e94a8;text-align:center;" id="ce"></div></div></div>
 
-<div class="app-window" id="w-cities"><div class="window-header"><div class="window-title"><i class="fa-solid fa-map-location-dot"></i> Города</div><button class="back-btn" onclick="closeApp('cities')">✕</button></div>
+<div class="app-window" id="w-cities"><div class="window-header"><div class="window-title"><span class="emoji">🗺️</span><span>Города</span></div><button class="back-btn" onclick="closeApp('cities')">✕</button></div>
 <div class="window-body">
-<div style="background:rgba(255,255,255,.02);border-radius:16px;padding:16px;text-align:center;margin-bottom:12px;"><div style="font-size:12px;color:#8e94a8;">ВЫ ЗДЕСЬ</div><div style="font-size:20px;font-weight:bold;color:#f1c40f;margin-top:4px;" id="cd2">Москва</div></div>
+<div style="background:rgba(255,255,255,.02);border-radius:14px;padding:14px;text-align:center;margin-bottom:10px;"><div style="font-size:11px;color:#8e94a8;">ВЫ ЗДЕСЬ</div><div style="font-size:18px;font-weight:bold;color:#f1c40f;margin-top:3px;" id="cd2">Москва</div></div>
 <div class="city-grid" id="cg2"></div></div></div>
 
-<div class="app-window" id="w-chats"><div class="window-header"><div class="window-title"><i class="fa-solid fa-comments"></i> Чаты</div><button class="back-btn" onclick="closeApp('chats')">✕</button></div>
+<div class="app-window" id="w-chats"><div class="window-header"><div class="window-title"><span class="emoji">💬</span><span>Чаты</span></div><button class="back-btn" onclick="closeApp('chats')">✕</button></div>
 <div class="window-body">
-<div style="display:flex;gap:6px;margin-bottom:12px;"><button class="action-btn outline" style="font-size:7px;padding:4px 14px;" onclick="switchChatTab('incoming')">Входящие</button><button class="action-btn outline" style="font-size:7px;padding:4px 14px;" onclick="switchChatTab('outgoing')">Исходящие</button></div>
+<div style="display:flex;gap:5px;margin-bottom:10px;"><button class="action-btn outline" style="font-size:7px;padding:4px 12px;" onclick="switchChatTab('incoming')">Входящие</button><button class="action-btn outline" style="font-size:7px;padding:4px 12px;" onclick="switchChatTab('outgoing')">Исходящие</button></div>
 <div id="clist"></div>
 <div class="chat-window" id="cw">
-<div class="chat-header"><span class="chat-back" onclick="closeChat()">←</span><img src="" class="chat-avatar" id="cav" onerror="this.src='avatar18.jpg'"><div class="chat-user"><div class="name" id="cun">Продавец</div><div class="status">🟢 Онлайн</div></div><button class="action-btn gold" style="font-size:8px;padding:4px 10px;" onclick="startHaggleFromChat()">💰 Торг</button></div>
+<div class="chat-header"><span class="chat-back" onclick="closeChat()">←</span><img src="" class="chat-avatar" id="cav" onerror="this.src='avatar1.jpg'"><div class="chat-user"><div class="name" id="cun">Продавец</div><div class="status">🟢 Онлайн</div></div><button class="action-btn gold" style="font-size:8px;padding:4px 10px;" onclick="startHaggleFromChat()">💰 Торг</button></div>
 <div class="chat-messages" id="cmsg"></div>
 <div class="chat-input"><input type="text" id="cin" placeholder="Сообщение..." onkeydown="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">➤</button></div></div></div></div>
 
-<div class="app-window" id="w-gchat"><div class="window-header"><div class="window-title"><i class="fa-solid fa-globe"></i> Глобальный чат</div><button class="back-btn" onclick="closeApp('gchat')">✕</button></div>
+<div class="app-window" id="w-gchat"><div class="window-header"><div class="window-title"><span class="emoji">🌍</span><span>Общий чат</span></div><button class="back-btn" onclick="closeApp('gchat')">✕</button></div>
 <div class="window-body" style="display:flex;flex-direction:column;padding:0;">
 <div id="gchatMsgs" style="flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px;"></div>
 <div class="chat-input"><input type="text" id="gchatIn" placeholder="Сообщение всем..." maxlength="200" onkeydown="if(event.key==='Enter')sendGlobalMsg()"><button onclick="sendGlobalMsg()">➤</button></div></div></div>
 
-<div class="app-window" id="w-rank"><div class="window-header"><div class="window-title"><i class="fa-solid fa-ranking-star"></i> Рейтинг игроков</div><button class="back-btn" onclick="closeApp('rank')">✕</button></div>
+<div class="app-window" id="w-rank"><div class="window-header"><div class="window-title"><span class="emoji">🏆</span><span>Рейтинг</span></div><button class="back-btn" onclick="closeApp('rank')">✕</button></div>
 <div class="window-body"><div id="rankList"></div></div></div>
 
-<div class="app-window" id="w-ach"><div class="window-header"><div class="window-title"><i class="fa-solid fa-trophy"></i> Достижения</div><button class="back-btn" onclick="closeApp('ach')">✕</button></div>
+<div class="app-window" id="w-ach"><div class="window-header"><div class="window-title"><span class="emoji">🎖️</span><span>Достижения</span></div><button class="back-btn" onclick="closeApp('ach')">✕</button></div>
 <div class="window-body"><div id="achList"></div></div></div>
 
-<div class="app-window" id="w-news"><div class="window-header"><div class="window-title"><i class="fa-solid fa-newspaper"></i> Новости</div><button class="back-btn" onclick="closeApp('news')">✕</button></div>
+<div class="app-window" id="w-news"><div class="window-header"><div class="window-title"><span class="emoji">📰</span><span>Новости</span></div><button class="back-btn" onclick="closeApp('news')">✕</button></div>
 <div class="window-body"><div id="nlist"></div></div></div>
 
-<div class="app-window" id="w-sleep"><div class="window-header"><div class="window-title"><i class="fa-solid fa-moon"></i> Сон</div><button class="back-btn" onclick="closeApp('sleep')">✕</button></div>
+<div class="app-window" id="w-sleep"><div class="window-header"><div class="window-title"><span class="emoji">🌙</span><span>Сон</span></div><button class="back-btn" onclick="closeApp('sleep')">✕</button></div>
 <div class="window-body" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
-<div style="font-size:72px;margin-bottom:20px;">💤</div>
-<div style="font-size:22px;font-weight:700;margin-bottom:8px;">Сон</div>
-<div style="font-size:13px;color:#8e94a8;text-align:center;margin-bottom:16px;" id="sst">Время снести.</div>
-<div style="font-size:12px;color:#5a6070;margin-bottom:20px;" id="sti">⏰ 06:00</div>
-<button class="action-btn gold" style="width:100%;padding:14px;font-size:14px;" onclick="doSleep()">💤 Лечь спать</button>
-<div style="font-size:10px;color:#8e94a8;margin-top:12px;text-align:center;" id="sh">🌙 С 23:00 до 06:00</div></div></div>
+<div style="font-size:60px;margin-bottom:14px;">💤</div>
+<div style="font-size:20px;font-weight:700;margin-bottom:6px;">Сон</div>
+<div style="font-size:12px;color:#8e94a8;text-align:center;margin-bottom:14px;" id="sst">—</div>
+<div style="font-size:12px;color:#5a6070;margin-bottom:16px;" id="sti">⏰ 06:00</div>
+<button class="action-btn gold" style="width:100%;padding:13px;font-size:13px;" onclick="doSleep()">💤 Лечь спать</button>
+<div style="font-size:10px;color:#8e94a8;margin-top:10px;text-align:center;" id="sh">🌙 С 23:00 до 06:00</div></div></div>
 
-<div class="app-window" id="w-inv"><div class="window-header"><div class="window-title"><i class="fa-solid fa-box"></i> Инвентарь</div><button class="back-btn" onclick="closeApp('inv')">✕</button></div>
+<div class="app-window" id="w-inv"><div class="window-header"><div class="window-title"><span class="emoji">📦</span><span>Инвентарь</span></div><button class="back-btn" onclick="closeApp('inv')">✕</button></div>
 <div class="window-body">
-<div style="display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;">
-<button class="action-btn outline" style="font-size:7px;padding:4px 14px;" onclick="switchInvTab('parts')">🔧 Запчасти</button>
-<button class="action-btn outline" style="font-size:7px;padding:4px 14px;" onclick="switchInvTab('built')">🖥️ Собранные</button>
-<button class="action-btn outline" style="font-size:7px;padding:4px 14px;" onclick="switchInvTab('bought')">📦 Купленные</button>
+<div style="display:flex;gap:5px;margin-bottom:10px;overflow-x:auto;padding-bottom:4px;">
+<button class="action-btn outline" style="font-size:7px;padding:4px 12px;" onclick="switchInvTab('parts')">🔧 Запчасти</button>
+<button class="action-btn outline" style="font-size:7px;padding:4px 12px;" onclick="switchInvTab('built')">🖥️ Собранные</button>
+<button class="action-btn outline" style="font-size:7px;padding:4px 12px;" onclick="switchInvTab('bought')">📦 Купленные</button>
 </div>
-<div class="inv-stats"><div class="inv-stat-box"><div class="num green" id="it">0</div><div class="label">Всего</div></div><div class="inv-stat-box"><div class="num gold" id="io">0</div><div class="label">Оригинал</div></div><div class="inv-stat-box"><div class="num red" id="if">0</div><div class="label">Контрафакт</div></div></div>
+<div class="inv-stats"><div class="inv-stat-box"><div class="num green" id="it">0</div><div class="label">Всего</div></div><div class="inv-stat-box"><div class="num gold" id="io">0</div><div class="label">Ориг.</div></div><div class="inv-stat-box"><div class="num red" id="if">0</div><div class="label">Фейк</div></div></div>
 <div id="invitems"></div></div></div>
 
-<div class="app-window" id="w-set"><div class="window-header"><div class="window-title"><i class="fa-solid fa-gear"></i> Настройки</div><button class="back-btn" onclick="closeApp('set')">✕</button></div>
+<div class="app-window" id="w-set"><div class="window-header"><div class="window-title"><span class="emoji">⚙️</span><span>Настройки</span></div><button class="back-btn" onclick="closeApp('set')">✕</button></div>
 <div class="window-body">
-<div class="settings-group"><div class="group-title"><i class="fa-solid fa-user"></i> Профиль</div><div style="font-size:12px;color:#fff;padding:4px 0;" id="profileInfo">—</div></div>
-<div class="settings-group"><div class="group-title"><i class="fa-regular fa-clock"></i> Время</div><div style="font-size:10px;color:#8e94a8;padding:4px 0;">⏳ Время глобальное — оно одинаково для всех игроков в мире.</div><div style="font-size:9px;color:#5a6070;padding:4px 0;" id="timeSyncInfo">Синхронизация: —</div></div>
-<div class="settings-group"><div class="group-title"><i class="fa-solid fa-palette"></i> Тема</div><div class="settings-row"><div id="tsel" style="display:flex;gap:6px;"></div></div></div>
-<div class="settings-group"><div class="group-title"><i class="fa-solid fa-circle-info"></i> О игре</div><div style="font-size:10px;color:#8e94a8;display:flex;justify-content:space-between;padding:4px 0;"><span>Версия</span><span style="color:#f1c40f;">v1.1 (Global Time)</span></div><div style="font-size:10px;color:#8e94a8;display:flex;justify-content:space-between;padding:4px 0;"><span>Дней</span><span style="color:#2ecc71;" id="sd">0</span></div><button class="action-btn danger" style="width:100%;margin-top:8px;padding:10px;" onclick="fullReset()">🗑️ Сбросить</button></div>
+<div class="settings-group"><div class="group-title">👤 Профиль</div><div style="font-size:11px;color:#fff;padding:4px 0;" id="profileInfo">—</div></div>
+<div class="settings-group"><div class="group-title">🎨 Аватарка</div><div class="avatar-picker" id="avatarPicker2"></div></div>
+<div class="settings-group"><div class="group-title">⏳ Время</div><div style="font-size:10px;color:#8e94a8;padding:4px 0;">Время глобальное — одинаковое для всех.</div><div style="font-size:9px;color:#5a6070;padding:3px 0;" id="timeSyncInfo">—</div></div>
+<div class="settings-group"><div class="group-title">ℹ️ О игре</div><div style="font-size:10px;color:#8e94a8;display:flex;justify-content:space-between;padding:3px 0;"><span>Версия</span><span style="color:#f1c40f;">v1.4.1</span></div><div style="font-size:10px;color:#8e94a8;display:flex;justify-content:space-between;padding:3px 0;"><span>Дней всего</span><span style="color:#2ecc71;" id="sd">0</span></div><button class="action-btn danger" style="width:100%;margin-top:8px;padding:10px;" onclick="fullReset()">🗑️ Сбросить игру</button></div>
 </div></div>
 
-<div class="sleep-overlay" id="so"><div class="sleep-icon">💤</div><div class="sleep-title">Сон</div><div class="sleep-sub">Время снести.</div><div class="sleep-progress"><div class="fill" id="spf"></div></div><div class="sleep-time" id="stm">00:00</div></div>
+<div class="sleep-overlay" id="so"><div class="sleep-icon">💤</div><div style="font-size:18px;font-weight:bold;margin-top:10px;">Сон</div><div style="font-size:11px;color:#8e94a8;margin-top:6px;">Время снести</div><div style="width:80%;max-width:300px;height:6px;background:rgba(255,255,255,.1);border-radius:3px;margin-top:14px;overflow:hidden;"><div class="fill" id="spf" style="width:0%;height:100%;background:#f1c40f;transition:width .1s"></div></div><div style="font-size:12px;color:#f1c40f;margin-top:8px;" id="stm">00:00</div></div>
 
 <script>
-// FIREBASE
+const SAVE_VERSION='v1.4.1';
+
 let syncEnabled=false,database=null;
 if(typeof firebase!=='undefined'&&!firebase.apps.length){try{firebase.initializeApp({apiKey:"AIzaSyAv0ChOvxUSEWjCnWWUXBml01PyTsgfGjo",authDomain:"pc-tycoon-11216.firebaseapp.com",databaseURL:"https://pc-tycoon-11216-default-rtdb.firebaseio.com",projectId:"pc-tycoon-11216",storageBucket:"pc-tycoon-11216.firebasestorage.app",messagingSenderId:"587863804885",appId:"1:587863804885:web:ab92c591d56098cd4fcb5c"});database=firebase.database();syncEnabled=true;console.log('✅ Firebase!');}catch(e){console.log('⚠️',e.message);}}
 
-// ФОТО
+const AVATARS=['avatar.jpg','avatar1.jpg','avatar2.jpg','avatar3.jpg','avatar4.jpg','avatar5.jpg','avatar6.jpg','avatar7.jpg'];
 const PC_IMGS=['avatar.jpg','avatar2.jpg','avatar3.jpg','avatar4.jpg','avatar5.jpg','avatar6.jpg','avatar7.jpg'];
 function getPCImg(s){return PC_IMGS[Math.floor(Math.abs(s||Math.random()*1000))%PC_IMGS.length];}
 const PART_IMGS={cpu:['avatar1.jpg'],gpu:['avatar12.jpg'],ram:['avatar13.jpg'],storage:['avatar14.jpg'],case:['avatar15.jpg'],psu:['avatar16.jpg'],cooler:['avatar17.jpg']};
 function getPartImg(c,s){const a=PART_IMGS[c]||PART_IMGS.cpu;return a[Math.floor(Math.abs(s||Math.random()*1000))%a.length];}
 
 const CITIES=[{name:'Москва',lat:55.7558,lon:37.6173},{name:'Санкт-Петербург',lat:59.9343,lon:30.3351},{name:'Новосибирск',lat:55.0084,lon:82.9357},{name:'Екатеринбург',lat:56.8389,lon:60.6057},{name:'Казань',lat:55.8304,lon:49.0661},{name:'Самара',lat:53.2415,lon:50.2212},{name:'Челябинск',lat:55.1644,lon:61.4368},{name:'Омск',lat:54.9893,lon:73.3682},{name:'Ростов-на-Дону',lat:47.2357,lon:39.7015},{name:'Уфа',lat:54.7388,lon:55.9721},{name:'Красноярск',lat:56.0106,lon:92.8526},{name:'Пермь',lat:58.0104,lon:56.2294},{name:'Воронеж',lat:51.6608,lon:39.2003},{name:'Волгоград',lat:48.7080,lon:44.5133},{name:'Краснодар',lat:45.0393,lon:38.9872}];
-const SELLERS=[{id:1,name:'Алексей',avatar:'avatar18.jpg',rating:85,deals:47},{id:2,name:'Игорь',avatar:'avatar19.jpg',rating:72,deals:23},{id:3,name:'Марина',avatar:'avatar20.jpg',rating:93,deals:89},{id:4,name:'Сергей',avatar:'avatar21.jpg',rating:68,deals:15},{id:5,name:'Елена',avatar:'avatar22.jpg',rating:78,deals:34}];
+const SELLERS=[{id:1,name:'Алексей',avatar:'avatar1.jpg',rating:85,deals:47},{id:2,name:'Игорь',avatar:'avatar2.jpg',rating:72,deals:23},{id:3,name:'Марина',avatar:'avatar3.jpg',rating:93,deals:89},{id:4,name:'Сергей',avatar:'avatar4.jpg',rating:68,deals:15},{id:5,name:'Елена',avatar:'avatar5.jpg',rating:78,deals:34}];
 
 const PC_TYPES=[
 {name:'Офисный i3-10100',price:25000,cpu:'i3-10100',gpu:'Встроенная',tag:'budget',tagName:'Бюджетный'},
@@ -356,372 +421,217 @@ const PC_TYPES=[
 {name:'Космический ПК NASA',price:8000000,cpu:'Cosmic C-1',gpu:'Galaxy GPU',tag:'ultimate',tagName:'Космический'},
 {name:'Легендарный ПК Titan',price:10000000,cpu:'Titan T-9999',gpu:'Titan RTX Ultra',tag:'ultimate',tagName:'Легендарный'}
 ];
-const DAYS=['ПН','ВТ','СР','ЧТ','ПТ','СБ','ВС'];
 const MONTHS=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
 
-let gs={day:1,month:1,year:2026,dayOfWeek:0,balance:30000,reputation:50,totalEarned:0,totalSpent:0,pcsSold:0,pcsBought:0,currentCity:'Москва'};
+let gs={day:1,month:1,year:2026,dayOfWeek:0,balance:30000,reputation:50,totalEarned:0,totalSpent:0,pcsSold:0,pcsBought:0,currentCity:'Москва',totalDays:1};
 let inv=[],myPCs=[],builtPCs=[],build={cpu:null,gpu:null,ram:null,storage:null,case:null,psu:null,cooler:null};
 let hist=[],market={ads:[],chats:[],favorites:[],currentTab:'all',chatTab:'incoming'};
 let loans={list:[],total:0,max:3};
 let time={min:6*60,speed:1,sleeping:false};
-// Глобальная синхронизация времени
-let serverTime={dayStart:null,day:1,dayOfWeek:0,synced:false,lastPush:0,initialized:false};
+let serverTime={dayStart:null,day:1,dayOfWeek:0,month:1,year:2026,synced:false,lastPush:0,initialized:false,totalDays:1};
 let parts=[],fakeParts=[],news=[];
 let curChat=null,curInvTab='parts';
 let lastAdminModified=0;
 let playerData={name:'',age:0,homeCity:'Москва',level:1,xp:0,lastBonus:0,achievements:{}};
+let jobs={current:null,lastSalaryDay:0,completed:[]};
+let auctions=[];
+let shop={discountMarket:0,discountParts:0,extraSlots:0,fastBuild:false,timeBoost:false};
+let selectedAvatar=localStorage.getItem('pcAvatar')||'avatar1.jpg';
 
 function timeStr(m){const h=Math.floor(m/60)%24,mm=Math.floor(m%60);return String(h).padStart(2,'0')+':'+String(mm).padStart(2,'0');}
 function canSleep(m){const h=Math.floor(m/60)%24;return h>=23||h<6;}
-function updTime(){const t=timeStr(time.min);el('gt',t);el('db','День '+gs.day);el('sti','⏰ '+t);const cs=canSleep(time.min);el('sh',cs?' 😴 Можно спать!':' ☀️ 23:00 до 06:00');el('sst',cs?' 😴 Хороших снов!':' ⏰ Подождите ночи.');const s=document.getElementById('sst');if(s)s.style.color=cs?'#2ecc71':'#e74c3c';}
-function updDay(){el('cb','📍 '+gs.currentCity);el('cd2',gs.currentCity);el('cd',gs.day);el('cm',MONTHS[gs.month-1]+' '+gs.year);el('sd',gs.day);}
 function el(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function updTime(){const t=timeStr(time.min);el('gt',t);el('db','День '+gs.day);el('sti','⏰ '+t);const cs=canSleep(time.min);el('sh',cs?' 😴 Можно спать!':' ☀️ 23:00 до 06:00');el('sst',cs?' 😴 Хороших снов!':' ⏰ Подождите ночи.');}
+function updDay(){el('cb','📍 '+gs.currentCity);el('cd2',gs.currentCity);el('cd',gs.day);el('cm',MONTHS[gs.month-1]+' '+gs.year);el('sd',gs.totalDays);}
 
-function updBal(amt,txt){gs.balance+=amt;if(amt>0)gs.totalEarned+=amt;else gs.totalSpent+=Math.abs(amt);el('bv',gs.balance.toLocaleString()+' ₽');const h=document.getElementById('hist');if(h){const d=document.createElement('div');d.className='transaction-item';d.innerHTML='<span>'+txt+'</span><span><span class="trans-amount '+(amt>=0?'positive':'negative')+'">'+(amt>=0?'+':'')+amt.toLocaleString()+' ₽</span></span>';h.prepend(d);if(h.children.length>20)h.removeChild(h.lastChild);}hist.push({amount:amt,text:txt});save();}
+function renderAvatarPicker(){
+    const html=AVATARS.map(a=>`<img src="${a}" class="avatar-opt ${a===selectedAvatar?'selected':''}" onclick="selectAvatar('${a}')" onerror="this.src='avatar1.jpg'">`).join('');
+    const p1=document.getElementById('avatarPicker');if(p1)p1.innerHTML=html;
+    const p2=document.getElementById('avatarPicker2');if(p2)p2.innerHTML=html;
+}
+function selectAvatar(a){selectedAvatar=a;localStorage.setItem('pcAvatar',a);renderAvatarPicker();sound('click');if(playerData.name){playerData.avatar=a;savePlayerData();saveToFirebase();}}
+
+let audioCtx=null;
+function sound(type){try{if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);const now=audioCtx.currentTime;if(type==='click'){o.frequency.value=800;o.type='sine';g.gain.setValueAtTime(.06,now);g.gain.exponentialRampToValueAtTime(.001,now+.06);o.start(now);o.stop(now+.06);}else if(type==='buy'){o.frequency.setValueAtTime(600,now);o.frequency.exponentialRampToValueAtTime(1200,now+.12);o.type='sine';g.gain.setValueAtTime(.08,now);g.gain.exponentialRampToValueAtTime(.001,now+.18);o.start(now);o.stop(now+.18);}else if(type==='sell'){o.frequency.setValueAtTime(1200,now);o.frequency.exponentialRampToValueAtTime(600,now+.15);o.type='triangle';g.gain.setValueAtTime(.08,now);g.gain.exponentialRampToValueAtTime(.001,now+.2);o.start(now);o.stop(now+.2);}else if(type==='error'){o.frequency.value=150;o.type='sawtooth';g.gain.setValueAtTime(.06,now);g.gain.exponentialRampToValueAtTime(.001,now+.25);o.start(now);o.stop(now+.25);}else if(type==='coin'){o.frequency.setValueAtTime(1000,now);o.frequency.setValueAtTime(1500,now+.04);o.type='square';g.gain.setValueAtTime(.04,now);g.gain.exponentialRampToValueAtTime(.001,now+.12);o.start(now);o.stop(now+.12);}}catch(e){}}
+
+function uiAlert(text,title='Уведомление'){return new Promise(r=>{const ov=document.createElement('div');ov.className='modal-overlay show';ov.innerHTML=`<div class="modal-box"><div class="modal-title">${title}</div><div class="modal-text">${text}</div><div class="modal-actions"><button class="modal-btn modal-btn-ok" id="mok">OK</button></div></div>`;document.body.appendChild(ov);ov.querySelector('#mok').onclick=()=>{ov.remove();r();};});}
+function uiConfirm(text,title='Подтверждение'){return new Promise(r=>{const ov=document.createElement('div');ov.className='modal-overlay show';ov.innerHTML=`<div class="modal-box"><div class="modal-title">${title}</div><div class="modal-text">${text}</div><div class="modal-actions"><button class="modal-btn modal-btn-cancel" id="mcancel">Отмена</button><button class="modal-btn modal-btn-ok" id="mok">ОК</button></div></div>`;document.body.appendChild(ov);ov.querySelector('#mok').onclick=()=>{ov.remove();r(true);};ov.querySelector('#mcancel').onclick=()=>{ov.remove();r(false);};});}
+function uiPrompt(text,def='',title='Ввод'){return new Promise(r=>{const ov=document.createElement('div');ov.className='modal-overlay show';ov.innerHTML=`<div class="modal-box"><div class="modal-title">${title}</div><div class="modal-text">${text}</div><input type="text" class="modal-input" id="minput" value="${def}"><div class="modal-actions"><button class="modal-btn modal-btn-cancel" id="mcancel">Отмена</button><button class="modal-btn modal-btn-ok" id="mok">ОК</button></div></div>`;document.body.appendChild(ov);const inp=ov.querySelector('#minput');setTimeout(()=>{inp.focus();inp.select();},100);inp.onkeydown=e=>{if(e.key==='Enter'){ov.remove();r(inp.value);}};ov.querySelector('#mok').onclick=()=>{ov.remove();r(inp.value);};ov.querySelector('#mcancel').onclick=()=>{ov.remove();r(null);};});}
+
+function updBal(amt,txt){gs.balance+=amt;if(amt>0)gs.totalEarned+=amt;else gs.totalSpent+=Math.abs(amt);const bv=document.getElementById('bv');if(bv){bv.textContent=gs.balance.toLocaleString()+' ₽';bv.classList.add('flash');setTimeout(()=>bv.classList.remove('flash'),500);}const h=document.getElementById('hist');if(h){const d=document.createElement('div');d.className='transaction-item';d.innerHTML='<span>'+txt+'</span><span><span class="trans-amount '+(amt>=0?'positive':'negative')+'">'+(amt>=0?'+':'')+amt.toLocaleString()+' ₽</span></span>';h.prepend(d);if(h.children.length>20)h.removeChild(h.lastChild);}hist.push({amount:amt,text:txt});save();}
 function updBank(){el('bv',gs.balance.toLocaleString()+' ₽');}
 
-// РЕГИСТРАЦИЯ
 function loadPlayerData(){try{const d=localStorage.getItem('pcPlayerData');if(d)playerData={...playerData,...JSON.parse(d)};}catch(e){}}
 function savePlayerData(){try{localStorage.setItem('pcPlayerData',JSON.stringify(playerData));}catch(e){}}
 function completeRegistration(){
     const name=document.getElementById('regName').value.trim();
     const age=parseInt(document.getElementById('regAge').value);
     const city=document.getElementById('regCity').value;
-    if(!name||name.length<2){alert('❌ Введи имя (минимум 2 буквы)');return;}
-    if(!age||age<5||age>99){alert('❌ Возраст от 5 до 99 лет');return;}
-    playerData.name=name;playerData.age=age;playerData.homeCity=city;playerData.registrationDate=Date.now();
+    if(!name||name.length<2){uiAlert('❌ Введи имя (минимум 2 буквы)','Ошибка');return;}
+    if(!age||age<5||age>99){uiAlert('❌ Возраст от 5 до 99 лет','Ошибка');return;}
+    playerData.name=name;playerData.age=age;playerData.homeCity=city;playerData.avatar=selectedAvatar;playerData.registrationDate=Date.now();
     savePlayerData();
     document.getElementById('reg').classList.remove('show');
     el('profileInfo','👤 '+name+' | 🎂 '+age+' лет | 🏠 '+city+' | 🎮 Ур. '+playerData.level);
     notif('👋 Привет, '+name+'!');
     saveToFirebase();
+    sound('buy');
     setTimeout(()=>checkDailyBonus(),1500);
 }
-function checkDailyBonus(){
-    const now=Date.now();const dayMs=24*60*60*1000;
-    if(now-playerData.lastBonus<dayMs)return;
-    const bonus=5000+Math.floor(Math.random()*5000);
-    setTimeout(()=>{if(confirm('🎁 Ежедневный бонус!\n\nПолучить '+bonus.toLocaleString()+' ₽?')){updBal(bonus,'🎁 Ежедневный бонус');playerData.lastBonus=now;savePlayerData();notif('🎁 +'+bonus.toLocaleString()+' ₽!');}},1000);
-}
-function addXP(amount){playerData.xp=(playerData.xp||0)+amount;const need=playerData.level*100;if(playerData.xp>=need){playerData.xp-=need;playerData.level++;notif('🎉 Уровень '+playerData.level+'!');el('profileInfo','👤 '+playerData.name+' | 🎂 '+playerData.age+' лет | 🏠 '+playerData.homeCity+' | 🎮 Ур. '+playerData.level);savePlayerData();}}
+async function checkDailyBonus(){const now=Date.now();const dayMs=24*60*60*1000;if(now-playerData.lastBonus<dayMs)return;const bonus=5000+Math.floor(Math.random()*5000);setTimeout(async()=>{const ok=await uiConfirm('🎁 Ежедневный бонус!\n\nПолучить '+bonus.toLocaleString()+' ₽?','🎁 Бонус');if(ok){updBal(bonus,'🎁 Бонус');playerData.lastBonus=now;savePlayerData();notif('🎁 +'+bonus.toLocaleString()+' ₽!');sound('coin');}},1000);}
+function addXP(a){playerData.xp=(playerData.xp||0)+a;const need=playerData.level*100;if(playerData.xp>=need){playerData.xp-=need;playerData.level++;notif('🎉 Уровень '+playerData.level+'!');sound('buy');el('profileInfo','👤 '+playerData.name+' | 🎂 '+playerData.age+' лет | 🏠 '+playerData.homeCity+' | 🎮 Ур. '+playerData.level);savePlayerData();}}
 
-// ДОСТИЖЕНИЯ
-const ACHIEVEMENTS=[
-{id:'first_pc',name:'Первый ПК',icon:'🖥️',desc:'Купить первый компьютер',reward:2000,check:()=>gs.pcsBought>=1},
-{id:'first_sell',name:'Первая продажа',icon:'💰',desc:'Продать первый ПК',reward:3000,check:()=>gs.pcsSold>=1},
-{id:'rich_100k',name:'Сотка',icon:'💵',desc:'Заработать 100 000 ₽',reward:10000,check:()=>gs.balance>=100000},
-{id:'rich_1m',name:'Миллионер',icon:'💎',desc:'Заработать 1 000 000 ₽',reward:50000,check:()=>gs.balance>=1000000},
-{id:'rich_10m',name:'Магнат',icon:'👑',desc:'Заработать 10 000 000 ₽',reward:500000,check:()=>gs.balance>=10000000},
-{id:'rep_100',name:'Уважаемый',icon:'⭐',desc:'Достичь 100% репутации',reward:20000,check:()=>gs.reputation>=100},
-{id:'city_all',name:'Путешественник',icon:'✈️',desc:'Побывать во всех 15 городах',reward:30000,check:()=>{return (localStorage.getItem('visitedCities')||'').split(',').filter(x=>x).length>=15;}},
-{id:'sell_10',name:'Продавец',icon:'📦',desc:'Продать 10 ПК',reward:15000,check:()=>gs.pcsSold>=10},
-{id:'sell_50',name:'Бизнесмен',icon:'🏪',desc:'Продать 50 ПК',reward:50000,check:()=>gs.pcsSold>=50},
-{id:'build_5',name:'Сборщик',icon:'🔧',desc:'Собрать 5 ПК',reward:10000,check:()=>builtPCs.length>=5},
-{id:'inv_20',name:'Склад',icon:'📚',desc:'Собрать 20 запчастей в инвентаре',reward:8000,check:()=>inv.length>=20},
-{id:'fake_5',name:'Осторожный',icon:'⚠️',desc:'Купить 5 контрафактных деталей',reward:5000,check:()=>inv.filter(x=>x.fake).length>=5},
-{id:'level_5',name:'Опытный',icon:'🎮',desc:'Достичь 5 уровня',reward:25000,check:()=>playerData.level>=5},
-{id:'level_10',name:'Профи',icon:'🏅',desc:'Достичь 10 уровня',reward:100000,check:()=>playerData.level>=10},
-{id:'chat_10',name:'Общительный',icon:'💬',desc:'Отправить 10 сообщений в общий чат',reward:5000,check:()=>parseInt(localStorage.getItem('chatCount')||'0')>=10}
-];
-function checkAchievements(){if(!playerData.achievements)playerData.achievements={};let n=0;ACHIEVEMENTS.forEach(a=>{if(!playerData.achievements[a.id]&&a.check()){playerData.achievements[a.id]=Date.now();n++;setTimeout(()=>{updBal(a.reward,'🏆 '+a.name);gs.reputation=Math.min(100,gs.reputation+5);notif('🏆 '+a.name+' (+'+a.reward.toLocaleString()+' ₽)');},n*1000);}});if(n){savePlayerData();renderAchievements();}}
-function renderAchievements(){const c=document.getElementById('achList');if(!c)return;if(!playerData.achievements)playerData.achievements={};const done=ACHIEVEMENTS.filter(a=>playerData.achievements[a.id]).length;let html='<div style="background:rgba(241,196,15,.05);border:1px solid rgba(241,196,15,.2);border-radius:12px;padding:12px;margin-bottom:12px;text-align:center;"><div style="font-size:24px;font-weight:800;color:#f1c40f;">'+done+' / '+ACHIEVEMENTS.length+'</div><div style="font-size:10px;color:#8e94a8;margin-top:4px;">Получено достижений</div></div>';ACHIEVEMENTS.forEach(a=>{const u=!!playerData.achievements[a.id];html+='<div class="part-item" style="border-color:'+(u?'rgba(241,196,15,.3)':'rgba(255,255,255,.03)')+';opacity:'+(u?'1':'.5')+';"><div style="font-size:32px;width:50px;text-align:center;">'+a.icon+'</div><div class="part-info"><div class="part-name">'+a.name+'</div><div style="font-size:9px;color:#8e94a8;">'+a.desc+'</div></div><div style="font-size:11px;color:#f1c40f;font-weight:bold;">'+(u?'✅':'+'+a.reward.toLocaleString()+' ₽')+'</div></div>';});c.innerHTML=html;}
+const JOB_TYPES=[{id:'courier',icon:'🚴',name:'Курьер',salary:500,reqLevel:1,desc:'Развоз еды'},{id:'seller',icon:'🛒',name:'Продавец',salary:1500,reqLevel:3,desc:'Работа в магазине'},{id:'assembler',icon:'🔧',name:'Мастер',salary:3000,reqLevel:5,desc:'Сборка ПК'},{id:'it',icon:'💻',name:'IT-специалист',salary:5000,reqLevel:7,desc:'Разработка'},{id:'director',icon:'👔',name:'Директор',salary:10000,reqLevel:10,desc:'Управление'}];
+function renderJobs(){const list=document.getElementById('jobsList');if(!list)return;const stat=document.getElementById('jobsStatus');if(jobs.current){const j=JOB_TYPES.find(x=>x.id===jobs.current);stat.innerHTML=`<div class="card" style="border-color:rgba(46,204,113,.3);"><div style="font-size:12px;font-weight:bold;color:#2ecc71;">✅ Работа: ${j.icon} ${j.name}</div><div style="font-size:10px;color:#8e94a8;margin-top:4px;">💰 ${j.salary.toLocaleString()} ₽ / игровой день</div><button class="action-btn danger" style="margin-top:8px;font-size:10px;padding:6px 14px;" onclick="quitJob()">🚪 Уволиться</button></div>`;}else{stat.innerHTML=`<div class="card"><div style="font-size:11px;color:#8e94a8;">Вы не работаете. Выберите вакансию:</div></div>`;}list.innerHTML=JOB_TYPES.map(j=>{const can=playerData.level>=j.reqLevel;const isCurrent=jobs.current===j.id;return `<div class="job-card" style="border-color:${isCurrent?'rgba(46,204,113,.3)':'rgba(255,255,255,.04)'}"><div class="job-icon">${j.icon}</div><div class="job-info"><div class="job-name">${j.name}</div><div class="job-salary">💰 ${j.salary.toLocaleString()} ₽ / день</div><div class="job-req ${can?'':'locked'}">Ур. ${j.reqLevel} ${can?'✅':'❌'}</div></div>${isCurrent?'<span style="color:#2ecc71;font-size:9px;">Работаете</span>':(can?`<button class="action-btn success" style="font-size:9px;padding:6px 12px;" onclick="takeJob('${j.id}')">Устроиться</button>`:'<span style="color:#5a6070;font-size:9px;">🔒</span>')}</div>`;}).join('');}
+async function takeJob(id){const j=JOB_TYPES.find(x=>x.id===id);if(!j)return;if(playerData.level<j.reqLevel){uiAlert('❌ Нужен уровень '+j.reqLevel,'Ошибка');sound('error');return;}const ok=await uiConfirm(`Устроиться на "${j.name}"?\n💰 ${j.salary.toLocaleString()} ₽ / день`,'💼 Работа');if(ok){jobs.current=id;jobs.lastSalaryDay=gs.day;save();renderJobs();notif('✅ Вы работаете: '+j.name);sound('buy');saveToFirebase();}}
+async function quitJob(){if(!jobs.current)return;const ok=await uiConfirm('Уволиться?','Увольнение');if(ok){jobs.current=null;save();renderJobs();notif('🚪 Уволены');sound('click');saveToFirebase();}}
+function paySalaryDaily(){if(!jobs.current)return;if(jobs.lastSalaryDay>=gs.totalDays)return;const j=JOB_TYPES.find(x=>x.id===jobs.current);if(!j)return;jobs.lastSalaryDay=gs.totalDays;updBal(j.salary,'💼 Зарплата');notif('💼 +'+j.salary.toLocaleString()+' ₽');sound('coin');save();}
 
-// ГЛОБАЛЬНЫЙ ЧАТ
-function initGlobalChat(){if(!syncEnabled||!database)return;database.ref('globalChat').limitToLast(50).on('child_added',snap=>{const m=snap.val();if(!m)return;const c=document.getElementById('gchatMsgs');if(!c)return;const pid=localStorage.getItem('pcPlayerId');const isMe=m.playerId===pid;const d=document.createElement('div');d.className='msg '+(isMe?'sent':'received');d.innerHTML='<div style="font-size:9px;color:#f1c40f;font-weight:bold;">'+(m.name||'Аноним')+(m.age?' ('+m.age+')':'')+'</div>'+m.text+'<span class="msg-time">'+new Date(m.time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</span>';c.appendChild(d);c.scrollTop=c.scrollHeight;});}
-function sendGlobalMsg(){const i=document.getElementById('gchatIn');const t=i?.value?.trim();if(!t||!playerData.name){if(!playerData.name)notif('❌ Сначала зарегистрируйся');return;}if(!syncEnabled||!database){notif('❌ Нет соединения');return;}database.ref('globalChat').push({playerId:localStorage.getItem('pcPlayerId'),name:playerData.name,age:playerData.age,text:t,time:Date.now()});const cnt=parseInt(localStorage.getItem('chatCount')||'0')+1;localStorage.setItem('chatCount',cnt);i.value='';}
+function genAuction(){const pc=PC_TYPES[Math.floor(Math.random()*PC_TYPES.length)];const startPrice=Math.round(pc.price*.4);const l=Math.floor(2+Math.random()*4);return {id:Date.now()+Math.random()*1000,pc:pc,price:startPrice,step:Math.round(startPrice*.1),leader:'NPC-'+Math.floor(Math.random()*99),leaderIsMe:false,endTime:Date.now()+l*60*1000,img:getPCImg(Math.random()*1000)};}
+function initAuctions(){try{const d=localStorage.getItem('pcAuctions');if(d)auctions=JSON.parse(d);}catch(e){}auctions=auctions.filter(a=>a.endTime>Date.now());while(auctions.length<5)auctions.push(genAuction());saveAuctions();}
+function saveAuctions(){try{localStorage.setItem('pcAuctions',JSON.stringify(auctions));}catch(e){}}
+function renderAuction(){const c=document.getElementById('auctionList');if(!c)return;const active=auctions.filter(a=>a.endTime>Date.now());if(active.length===0){c.innerHTML='<div class="empty-state"><div class="empty-icon">🔨</div><div class="empty-title">Нет лотов</div></div>';return;}c.innerHTML=active.map(a=>{const left=Math.max(0,Math.round((a.endTime-Date.now())/1000));const mins=Math.floor(left/60),secs=left%60;return `<div class="auction-card"><img src="${a.img}" class="auction-img" onerror="this.src='avatar.jpg'"><div style="font-size:11px;font-weight:bold;">${a.pc.name}</div><div class="auction-timer">⏱️ ${mins}:${String(secs).padStart(2,'0')}</div><div class="auction-bid">${a.price.toLocaleString()} ₽</div><div class="auction-leader">${a.leaderIsMe?'👈 ВЫ лидируете':'Лидер: '+a.leader}</div><div style="margin-top:8px;"><button class="action-btn gold" style="font-size:9px;padding:6px 12px;" onclick="placeBid('${a.id}')">💰 +${a.step.toLocaleString()}</button></div></div>`;}).join('');}
+async function placeBid(id){const a=auctions.find(x=>x.id==id);if(!a)return;const newPrice=a.price+a.step;if(gs.balance<newPrice){uiAlert('❌ Нужно '+newPrice.toLocaleString()+' ₽','Ошибка');sound('error');return;}const ok=await uiConfirm(`Ставка ${newPrice.toLocaleString()} ₽?`,'🔨 Аукцион');if(ok){a.price=newPrice;a.leader=playerData.name||'Вы';a.leaderIsMe=true;saveAuctions();renderAuction();notif('✅ Ваша ставка!');sound('coin');}}
+function checkAuctions(){auctions.forEach(a=>{if(a.endTime<=Date.now()&&!a.claimed){a.claimed=true;if(a.leaderIsMe){updBal(-a.price,'🔨 Аукцион');myPCs.push({...a.pc,id:Date.now(),tested:false,isBroken:Math.random()>.8,inRepair:false,image:a.img});notif('🏆 Вы выиграли '+a.pc.name+'!');sound('buy');gs.pcsBought++;localStorage.setItem('auctionWin','1');checkAchievements();}}});auctions=auctions.filter(a=>a.endTime>Date.now()-5000);while(auctions.length<5)auctions.push(genAuction());saveAuctions();if(document.getElementById('w-auction')?.style.display==='flex')renderAuction();}
 
-// РЕЙТИНГ
-function renderRanking(){const c=document.getElementById('rankList');if(!c)return;if(!syncEnabled||!database){c.innerHTML='<div style="text-align:center;padding:20px;color:#8e94a8;">Нет соединения</div>';return;}c.innerHTML='<div style="text-align:center;padding:20px;color:#8e94a8;">Загрузка...</div>';database.ref('players').once('value').then(snap=>{const data=snap.val();if(!data){c.innerHTML='<div style="text-align:center;padding:20px;color:#8e94a8;">Пока нет игроков</div>';return;}const arr=Object.keys(data).map(k=>({...data[k],_id:k})).sort((a,b)=>(b.balance||0)-(a.balance||0)).slice(0,10);const myId=localStorage.getItem('pcPlayerId');let html='<div style="text-align:center;margin-bottom:12px;"><div style="font-size:36px;">🏆</div><div style="font-size:14px;font-weight:bold;color:#f1c40f;">ТОП-10 ИГРОКОВ</div></div>';arr.forEach((p,i)=>{const isMe=p._id===myId;const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);html+='<div class="part-item" style="border-color:'+(isMe?'rgba(241,196,15,.5)':'rgba(255,255,255,.03)')+';"><div style="font-size:24px;width:50px;text-align:center;">'+medal+'</div><div class="part-info"><div class="part-name">'+(p.name||'Аноним')+(isMe?' 👈 Ты':'')+'</div><div style="font-size:9px;color:#8e94a8;">🎂 '+(p.age||'?')+' | 🎮 Ур. '+(p.level||1)+' | ⭐ '+(p.reputation||0)+'%</div></div><div style="font-size:13px;color:#f1c40f;font-weight:bold;">'+(p.balance||0).toLocaleString()+' ₽</div></div>';});c.innerHTML=html;});}
-function trackCity(){const v=(localStorage.getItem('visitedCities')||'').split(',').filter(x=>x);if(!v.includes(gs.currentCity)){v.push(gs.currentCity);localStorage.setItem('visitedCities',v.join(','));}}
+const SHOP_ITEMS=[{id:'discountMarket',icon:'🛍️',name:'Скидка 10% на маркет',price:50000,desc:'Все ПК дешевле на 10%'},{id:'discountParts',icon:'🔧',name:'Скидка 20% на запчасти',price:100000,desc:'Запчасти дешевле на 20%'},{id:'extraSlots',icon:'📦',name:'+5 слотов',price:20000,desc:'Больше места'},{id:'fastBuild',icon:'⚡',name:'Ускорение сборки',price:30000,desc:'Быстрее сборка'},{id:'timeBoost',icon:'⏰',name:'+1 день мгновенно',price:200000,desc:'Прыжок во времени'}];
+function renderShop(){const c=document.getElementById('shopList');if(!c)return;c.innerHTML=SHOP_ITEMS.map(item=>{const owned=shop[item.id];return `<div class="shop-item" style="border-color:${owned?'rgba(46,204,113,.3)':'rgba(162,155,254,.15)'}"><div class="shop-icon">${item.icon}</div><div class="shop-info"><div class="shop-name">${item.name}</div><div class="shop-desc">${item.desc}</div><div class="shop-price">${item.price.toLocaleString()} ₽</div>${owned?'<div class="shop-owned">✅ Куплено</div>':''}</div>${owned?'':`<button class="action-btn" style="font-size:9px;padding:6px 12px;background:linear-gradient(135deg,#a29bfe,#6c5ce7);color:#fff;" onclick="buyShopItem('${item.id}')">Купить</button>`}</div>`;}).join('');}
+async function buyShopItem(id){const item=SHOP_ITEMS.find(x=>x.id===id);if(!item)return;if(gs.balance<item.price){uiAlert('❌ Нужно '+item.price.toLocaleString()+' ₽','Ошибка');sound('error');return;}const ok=await uiConfirm(`Купить "${item.name}"?`,'⭐ Улучшение');if(ok){updBal(-item.price,'⭐ '+item.name);if(id==='timeBoost'){pushNewDay(gs.totalDays+1);}else{shop[id]=1;save();}sound('buy');notif('✅ '+item.name);renderShop();}}
 
-// ЗАПЧАСТИ
-function initParts(){parts=[
-{id:1,cat:'cpu',name:'Intel Pentium Gold G6400',price:2500,icon:'fa-microchip',perf:25,image:getPartImg('cpu',1)},
-{id:2,cat:'cpu',name:'Intel Core i3-10100F',price:3500,icon:'fa-microchip',perf:45,image:getPartImg('cpu',2)},
-{id:3,cat:'cpu',name:'AMD Ryzen 3 3200G',price:4000,icon:'fa-microchip',perf:40,image:getPartImg('cpu',3)},
-{id:4,cat:'cpu',name:'Intel Core i5-10400F',price:7000,icon:'fa-microchip',perf:60,image:getPartImg('cpu',4)},
-{id:5,cat:'cpu',name:'AMD Ryzen 5 3600',price:8000,icon:'fa-microchip',perf:65,image:getPartImg('cpu',5)},
-{id:6,cat:'cpu',name:'Intel Core i5-12400F',price:8500,icon:'fa-microchip',perf:75,image:getPartImg('cpu',1)},
-{id:7,cat:'cpu',name:'AMD Ryzen 5 5600X',price:10000,icon:'fa-microchip',perf:70,image:getPartImg('cpu',2)},
-{id:8,cat:'cpu',name:'Intel Core i7-12700K',price:18000,icon:'fa-microchip',perf:90,image:getPartImg('cpu',3)},
-{id:9,cat:'cpu',name:'Intel Core i7-13700K',price:22000,icon:'fa-microchip',perf:100,image:getPartImg('cpu',4)},
-{id:10,cat:'cpu',name:'AMD Ryzen 7 7800X3D',price:25000,icon:'fa-microchip',perf:105,image:getPartImg('cpu',5)},
-{id:11,cat:'cpu',name:'Intel Core i9-13900K',price:32000,icon:'fa-microchip',perf:120,image:getPartImg('cpu',1)},
-{id:12,cat:'cpu',name:'AMD Ryzen 9 7950X',price:38000,icon:'fa-microchip',perf:125,image:getPartImg('cpu',2)},
-{id:13,cat:'cpu',name:'AMD Threadripper 7960X',price:60000,icon:'fa-microchip',perf:150,image:getPartImg('cpu',3)},
-{id:14,cat:'cpu',name:'AMD Threadripper PRO 7995WX',price:120000,icon:'fa-microchip',perf:200,image:getPartImg('cpu',4)},
-{id:15,cat:'cpu',name:'Intel Xeon Platinum 8592+',price:250000,icon:'fa-microchip',perf:250,image:getPartImg('cpu',5)},
-{id:20,cat:'gpu',name:'NVIDIA GTX 1050 Ti',price:5000,icon:'fa-memory',perf:30,image:getPartImg('gpu',1)},
-{id:21,cat:'gpu',name:'NVIDIA GTX 1650',price:7000,icon:'fa-memory',perf:38,image:getPartImg('gpu',2)},
-{id:22,cat:'gpu',name:'NVIDIA GTX 1060 6GB',price:8000,icon:'fa-memory',perf:45,image:getPartImg('gpu',3)},
-{id:23,cat:'gpu',name:'NVIDIA GTX 1660 Super',price:12000,icon:'fa-memory',perf:55,image:getPartImg('gpu',4)},
-{id:24,cat:'gpu',name:'NVIDIA RTX 3050',price:15000,icon:'fa-memory',perf:60,image:getPartImg('gpu',1)},
-{id:25,cat:'gpu',name:'NVIDIA RTX 3060 12GB',price:18000,icon:'fa-memory',perf:70,image:getPartImg('gpu',2)},
-{id:26,cat:'gpu',name:'NVIDIA RTX 3070',price:25000,icon:'fa-memory',perf:85,image:getPartImg('gpu',3)},
-{id:27,cat:'gpu',name:'NVIDIA RTX 4060 Ti',price:30000,icon:'fa-memory',perf:90,image:getPartImg('gpu',4)},
-{id:28,cat:'gpu',name:'NVIDIA RTX 4070 12GB',price:35000,icon:'fa-memory',perf:100,image:getPartImg('gpu',1)},
-{id:29,cat:'gpu',name:'NVIDIA RTX 4080',price:55000,icon:'fa-memory',perf:125,image:getPartImg('gpu',2)},
-{id:30,cat:'gpu',name:'NVIDIA RTX 4090 24GB',price:100000,icon:'fa-memory',perf:150,image:getPartImg('gpu',3)},
-{id:31,cat:'gpu',name:'NVIDIA RTX 5090',price:180000,icon:'fa-memory',perf:180,image:getPartImg('gpu',4)},
-{id:32,cat:'gpu',name:'NVIDIA H100 (серверная)',price:400000,icon:'fa-memory',perf:220,image:getPartImg('gpu',1)},
-{id:40,cat:'ram',name:'DDR4 8GB 2666',price:1500,icon:'fa-server',perf:25,image:getPartImg('ram',1)},
-{id:41,cat:'ram',name:'DDR4 16GB 3200',price:3000,icon:'fa-server',perf:40,image:getPartImg('ram',2)},
-{id:42,cat:'ram',name:'DDR4 32GB 3600',price:5500,icon:'fa-server',perf:55,image:getPartImg('ram',1)},
-{id:43,cat:'ram',name:'DDR5 16GB 4800',price:5000,icon:'fa-server',perf:50,image:getPartImg('ram',2)},
-{id:44,cat:'ram',name:'DDR5 32GB 5200',price:6500,icon:'fa-server',perf:65,image:getPartImg('ram',1)},
-{id:45,cat:'ram',name:'DDR5 64GB 6000',price:12000,icon:'fa-server',perf:80,image:getPartImg('ram',2)},
-{id:46,cat:'ram',name:'DDR5 128GB 6400',price:25000,icon:'fa-server',perf:110,image:getPartImg('ram',1)},
-{id:50,cat:'storage',name:'HDD 500GB 7200',price:1200,icon:'fa-hard-drive',perf:15,image:getPartImg('storage',1)},
-{id:51,cat:'storage',name:'SATA SSD 256GB',price:1800,icon:'fa-hard-drive',perf:35,image:getPartImg('storage',2)},
-{id:52,cat:'storage',name:'NVMe 512GB Gen3',price:2500,icon:'fa-hard-drive',perf:45,image:getPartImg('storage',1)},
-{id:53,cat:'storage',name:'NVMe 1TB Gen4',price:4000,icon:'fa-hard-drive',perf:60,image:getPartImg('storage',2)},
-{id:54,cat:'storage',name:'NVMe 2TB Gen4',price:7000,icon:'fa-hard-drive',perf:70,image:getPartImg('storage',1)},
-{id:55,cat:'storage',name:'NVMe 4TB Gen5',price:15000,icon:'fa-hard-drive',perf:90,image:getPartImg('storage',2)},
-{id:60,cat:'case',name:'Корпус Mini-ITX',price:2500,icon:'fa-computer',perf:20,image:getPartImg('case',1)},
-{id:61,cat:'case',name:'Корпус Midi-Tower',price:3500,icon:'fa-computer',perf:35,image:getPartImg('case',1)},
-{id:62,cat:'case',name:'Корпус RGB Glass',price:5000,icon:'fa-computer',perf:50,image:getPartImg('case',1)},
-{id:63,cat:'case',name:'Корпус Full-Tower',price:8000,icon:'fa-computer',perf:65,image:getPartImg('case',1)},
-{id:64,cat:'case',name:'Корпус-сервер 4U',price:15000,icon:'fa-computer',perf:80,image:getPartImg('case',1)},
-{id:70,cat:'psu',name:'БП 450W Bronze',price:2000,icon:'fa-bolt',perf:25,image:getPartImg('psu',1)},
-{id:71,cat:'psu',name:'БП 600W Bronze',price:3000,icon:'fa-bolt',perf:40,image:getPartImg('psu',1)},
-{id:72,cat:'psu',name:'БП 750W Gold',price:5000,icon:'fa-bolt',perf:55,image:getPartImg('psu',1)},
-{id:73,cat:'psu',name:'БП 850W Gold',price:7000,icon:'fa-bolt',perf:65,image:getPartImg('psu',1)},
-{id:74,cat:'psu',name:'БП 1000W Platinum',price:12000,icon:'fa-bolt',perf:85,image:getPartImg('psu',1)},
-{id:75,cat:'psu',name:'БП 1600W Titanium',price:30000,icon:'fa-bolt',perf:110,image:getPartImg('psu',1)},
-{id:80,cat:'cooler',name:'Башенный кулер',price:1500,icon:'fa-fan',perf:30,image:getPartImg('cooler',1)},
-{id:81,cat:'cooler',name:'Кулер 120mm RGB',price:2500,icon:'fa-fan',perf:45,image:getPartImg('cooler',1)},
-{id:82,cat:'cooler',name:'Кулер 240mm СЖО',price:4000,icon:'fa-fan',perf:60,image:getPartImg('cooler',1)},
-{id:83,cat:'cooler',name:'Кулер 360mm СЖО',price:7000,icon:'fa-fan',perf:75,image:getPartImg('cooler',1)},
-{id:84,cat:'cooler',name:'Промышленная СЖО 480mm',price:20000,icon:'fa-fan',perf:100,image:getPartImg('cooler',1)}
-];}
-function initFake(){fakeParts=[
-{id:9001,cat:'cpu',name:'Intel i9-9900K (Китай)',price:4000,icon:'fa-microchip',fake:true,breakChance:.30,image:getPartImg('cpu',1)},
-{id:9002,cat:'cpu',name:'AMD Ryzen 9 3900X (Китай)',price:5000,icon:'fa-microchip',fake:true,breakChance:.35,image:getPartImg('cpu',2)},
-{id:9003,cat:'cpu',name:'Intel Xeon E5-2670 (Китай)',price:2500,icon:'fa-microchip',fake:true,breakChance:.25,image:getPartImg('cpu',3)},
-{id:9004,cat:'cpu',name:'AMD Threadripper (Китай)',price:8000,icon:'fa-microchip',fake:true,breakChance:.45,image:getPartImg('cpu',4)},
-{id:9005,cat:'cpu',name:'Intel i9-14900K (Китай)',price:12000,icon:'fa-microchip',fake:true,breakChance:.55,image:getPartImg('cpu',5)},
-{id:9006,cat:'cpu',name:'AMD Ryzen 9 7950X (Китай)',price:15000,icon:'fa-microchip',fake:true,breakChance:.60,image:getPartImg('cpu',1)},
-{id:9010,cat:'gpu',name:'GTX 1080 Ti (Китай)',price:12000,icon:'fa-memory',fake:true,breakChance:.35,image:getPartImg('gpu',1)},
-{id:9011,cat:'gpu',name:'RTX 2080 Ti (Китай)',price:18000,icon:'fa-memory',fake:true,breakChance:.40,image:getPartImg('gpu',2)},
-{id:9012,cat:'gpu',name:'RTX 3080 (Китай)',price:22000,icon:'fa-memory',fake:true,breakChance:.42,image:getPartImg('gpu',3)},
-{id:9013,cat:'gpu',name:'RTX 4090 (Китай)',price:25000,icon:'fa-memory',fake:true,breakChance:.50,image:getPartImg('gpu',4)},
-{id:9014,cat:'gpu',name:'AMD RX 580 (Китай)',price:5000,icon:'fa-memory',fake:true,breakChance:.28,image:getPartImg('gpu',1)},
-{id:9015,cat:'gpu',name:'GTX 1660 Super (Китай)',price:9000,icon:'fa-memory',fake:true,breakChance:.32,image:getPartImg('gpu',2)},
-{id:9016,cat:'gpu',name:'RTX 5090 (Китай)',price:45000,icon:'fa-memory',fake:true,breakChance:.65,image:getPartImg('gpu',3)},
-{id:9017,cat:'gpu',name:'Titan RTX (Китай)',price:60000,icon:'fa-memory',fake:true,breakChance:.70,image:getPartImg('gpu',4)},
-{id:9020,cat:'ram',name:'DDR4 16GB (NoName)',price:2000,icon:'fa-server',fake:true,breakChance:.20,image:getPartImg('ram',1)},
-{id:9021,cat:'ram',name:'DDR4 32GB (NoName)',price:3500,icon:'fa-server',fake:true,breakChance:.22,image:getPartImg('ram',2)},
-{id:9022,cat:'ram',name:'DDR5 32GB (Китай)',price:4000,icon:'fa-server',fake:true,breakChance:.25,image:getPartImg('ram',1)},
-{id:9023,cat:'ram',name:'DDR5 64GB (Китай)',price:7000,icon:'fa-server',fake:true,breakChance:.28,image:getPartImg('ram',2)},
-{id:9024,cat:'ram',name:'DDR5 128GB (Китай)',price:14000,icon:'fa-server',fake:true,breakChance:.40,image:getPartImg('ram',1)},
-{id:9030,cat:'storage',name:'SSD 1TB (Китай)',price:2000,icon:'fa-hard-drive',fake:true,breakChance:.25,image:getPartImg('storage',1)},
-{id:9031,cat:'storage',name:'NVMe 2TB (Китай)',price:3000,icon:'fa-hard-drive',fake:true,breakChance:.30,image:getPartImg('storage',2)},
-{id:9032,cat:'storage',name:'HDD 4TB (Б/У)',price:1500,icon:'fa-hard-drive',fake:true,breakChance:.35,image:getPartImg('storage',1)},
-{id:9033,cat:'storage',name:'SSD 4TB (Китай)',price:5000,icon:'fa-hard-drive',fake:true,breakChance:.32,image:getPartImg('storage',2)},
-{id:9034,cat:'storage',name:'NVMe 8TB (Китай)',price:12000,icon:'fa-hard-drive',fake:true,breakChance:.45,image:getPartImg('storage',1)},
-{id:9040,cat:'psu',name:'БП 650W (Китай)',price:1200,icon:'fa-bolt',fake:true,breakChance:.30,image:getPartImg('psu',1)},
-{id:9041,cat:'psu',name:'БП 850W (Китай)',price:1800,icon:'fa-bolt',fake:true,breakChance:.35,image:getPartImg('psu',1)},
-{id:9042,cat:'psu',name:'БП 1000W (NoName)',price:2200,icon:'fa-bolt',fake:true,breakChance:.40,image:getPartImg('psu',1)},
-{id:9043,cat:'psu',name:'БП 1200W (Китай)',price:3000,icon:'fa-bolt',fake:true,breakChance:.45,image:getPartImg('psu',1)},
-{id:9044,cat:'psu',name:'БП 2000W (Китай)',price:8000,icon:'fa-bolt',fake:true,breakChance:.60,image:getPartImg('psu',1)},
-{id:9050,cat:'case',name:'Корпус с AliExpress',price:1500,icon:'fa-computer',fake:true,breakChance:.15,image:getPartImg('case',1)},
-{id:9051,cat:'case',name:'Корпус RGB (NoName)',price:2500,icon:'fa-computer',fake:true,breakChance:.20,image:getPartImg('case',1)},
-{id:9052,cat:'case',name:'Корпус-сервер (Китай)',price:5000,icon:'fa-computer',fake:true,breakChance:.25,image:getPartImg('case',1)},
-{id:9060,cat:'cooler',name:'Кулер (Китай)',price:800,icon:'fa-fan',fake:true,breakChance:.25,image:getPartImg('cooler',1)},
-{id:9061,cat:'cooler',name:'СЖО 240 (Китай)',price:2500,icon:'fa-fan',fake:true,breakChance:.30,image:getPartImg('cooler',1)},
-{id:9062,cat:'cooler',name:'СЖО 360 (Китай)',price:4000,icon:'fa-fan',fake:true,breakChance:.35,image:getPartImg('cooler',1)},
-{id:9063,cat:'cooler',name:'СЖО 480 (Китай)',price:7000,icon:'fa-fan',fake:true,breakChance:.50,image:getPartImg('cooler',1)}
-];}
-function initNews(){if(news.length===0){news=[{id:1,title:'PC Tycoon v1.1 — Глобальное время!',text:'Теперь время у всех игроков идёт одинаково.',date:'Сегодня'},{id:2,title:'Курс доллара вырос',text:'Цены могут вырасти.',date:'Сегодня, 14:30'},{id:3,title:'Скидки',text:'NVIDIA снижает цены.',date:'Вчера, 12:00'}];save();}}
-function save(){try{localStorage.setItem('pcSave',JSON.stringify({gs,inv,myPCs,builtPCs,build,hist:hist.slice(-50),news}));}catch(e){}}
+function initNews(){if(news.length===0){news=[{id:1,title:'PC Tycoon v1.4.1',text:'Маркетплейс починен!',date:'Сегодня'},{id:2,title:'Цены обновлены',text:'Рынок оживился.',date:'Сегодня'},{id:3,title:'Скидки',text:'NVIDIA снижает цены.',date:'Вчера'}];save();}}
+function save(){try{localStorage.setItem('pcSave',JSON.stringify({gs,inv,myPCs,builtPCs,build,hist:hist.slice(-50),news,jobs,shop,selectedAvatar}));}catch(e){}}
 function saveMarket(){try{localStorage.setItem('pcMarket',JSON.stringify({ads:market.ads,chats:market.chats,favorites:market.favorites}));}catch(e){}}
-function load(){try{const d=localStorage.getItem('pcSave');if(d){const x=JSON.parse(d);if(x.gs)Object.assign(gs,x.gs);if(x.inv)inv=x.inv;if(x.myPCs)myPCs=x.myPCs;if(x.builtPCs)builtPCs=x.builtPCs;if(x.build)build=x.build;if(x.hist)hist=x.hist;if(x.news)news=x.news;}}catch(e){}try{const d=localStorage.getItem('pcMarket');if(d){const x=JSON.parse(d);market.ads=x.ads||[];market.chats=x.chats||[];market.favorites=x.favorites||[];}}catch(e){}try{const d=localStorage.getItem('pcLoans');if(d)loans=JSON.parse(d);}catch(e){}}
+function load(){try{const d=localStorage.getItem('pcSave');if(d){const x=JSON.parse(d);if(x.gs)Object.assign(gs,x.gs);if(x.inv)inv=x.inv;if(x.myPCs)myPCs=x.myPCs;if(x.builtPCs)builtPCs=x.builtPCs;if(x.build)build=x.build;if(x.hist)hist=x.hist;if(x.news)news=x.news;if(x.jobs)jobs=x.jobs;if(x.shop)shop=x.shop;}}catch(e){}try{const d=localStorage.getItem('pcMarket');if(d){const x=JSON.parse(d);market.ads=x.ads||[];market.chats=x.chats||[];market.favorites=x.favorites||[];}}catch(e){}try{const d=localStorage.getItem('pcLoans');if(d)loans=JSON.parse(d);}catch(e){}}
 
-function saveToFirebase(){
-    if(!syncEnabled||!database)return;
-    const pid=localStorage.getItem('pcPlayerId');if(!pid)return;
-    database.ref('players/'+pid).once('value').then(snap=>{
-        const ex=snap.val()||{};const lastAdmin=ex.adminModified||0;
-        const upd={name:playerData.name||'Игрок '+pid.slice(-4),age:playerData.age||0,homeCity:playerData.homeCity||'Москва',level:playerData.level||1,xp:playerData.xp||0,city:gs.currentCity,lastUpdate:Date.now(),online:true,registered:!!playerData.name};
-        if(Date.now()-lastAdmin>15000){upd.balance=gs.balance;upd.reputation=gs.reputation;upd.day=gs.day;}
-        database.ref('players/'+pid).update(upd);
-    }).catch(e=>console.log('FB error:',e));
-}
-function listenToFirebase(){
-    if(!syncEnabled||!database)return;
-    const pid=localStorage.getItem('pcPlayerId');if(!pid)return;
-    database.ref('players/'+pid).on('value',snapshot=>{
-        const data=snapshot.val();if(!data)return;
-        if(!data.adminModified||data.adminModified<=lastAdminModified)return;
-        lastAdminModified=data.adminModified;let changed=false;
-        if(typeof data.balance==='number'&&data.balance!==gs.balance){gs.balance=data.balance;changed=true;notif('💰 Админ: '+data.balance.toLocaleString()+' ₽');}
-        if(typeof data.reputation==='number'&&data.reputation!==gs.reputation){gs.reputation=data.reputation;changed=true;notif('⭐ Админ: '+data.reputation+'%');}
-        if(changed){updBank();save();}
-    });
+function saveToFirebase(){if(!syncEnabled||!database)return;const pid=localStorage.getItem('pcPlayerId');if(!pid)return;database.ref('players/'+pid).once('value').then(snap=>{const ex=snap.val()||{};const lastAdmin=ex.adminModified||0;const upd={name:playerData.name||'Игрок',age:playerData.age||0,homeCity:playerData.homeCity||'Москва',level:playerData.level||1,xp:playerData.xp||0,city:gs.currentCity,avatar:selectedAvatar,lastUpdate:Date.now(),online:true,registered:!!playerData.name,day:gs.day,month:gs.month,year:gs.year,totalDays:gs.totalDays,reputation:gs.reputation,job:jobs.current||null,pcsSold:gs.pcsSold||0,pcsBought:gs.pcsBought||0};if(Date.now()-lastAdmin>15000){upd.balance=gs.balance;}database.ref('players/'+pid).update(upd);}).catch(e=>console.log('FB error:',e));}
+function listenToFirebase(){if(!syncEnabled||!database)return;const pid=localStorage.getItem('pcPlayerId');if(!pid)return;database.ref('players/'+pid).on('value',snapshot=>{const data=snapshot.val();if(!data)return;if(!data.adminModified||data.adminModified<=lastAdminModified)return;lastAdminModified=data.adminModified;let changed=false;if(typeof data.balance==='number'&&data.balance!==gs.balance){gs.balance=data.balance;changed=true;notif('💰 Админ: '+data.balance.toLocaleString()+' ₽');}if(typeof data.reputation==='number'&&data.reputation!==gs.reputation){gs.reputation=data.reputation;changed=true;}if(changed){updBank();save();}});}
+
+const MS_PER_GAME_MINUTE=10000;
+
+function normalizeDate(totalDays){
+    let year=2026+Math.floor((totalDays-1)/360);
+    let rem=(totalDays-1)%360;
+    let month=Math.floor(rem/30)+1;
+    let day=(rem%30)+1;
+    return {day,month,year};
 }
 
-// ============= ГЛОБАЛЬНОЕ ВРЕМЯ =============
-// Логика: 1 реальная секунда = 1 игровая минута.
-// Всё время считается от единой точки старта (globalTime.dayStart).
-// Все клиенты видят одинаковое время, потому что считают от одного timestamp.
 function initGlobalTime(){
-    if(!syncEnabled||!database){
-        // Фолбэк: локальное время
-        serverTime.synced=false;
-        el('timeSyncInfo','🔌 Офлайн (локальное время)');
-        return;
-    }
-
+    if(!syncEnabled||!database){serverTime.synced=false;el('timeSyncInfo','🔌 Офлайн');return;}
     database.ref('globalTime').on('value',snap=>{
         let data=snap.val();
         const now=Date.now();
-
-        // Если глобального времени ещё нет — создаём (первый игрок)
-        if(!data||!data.dayStart){
-            const seed={
-                dayStart:now,
-                day:1,
-                dayOfWeek:0,
-                month:1,
-                year:2026,
-                createdAt:now,
-                speed:1
-            };
+        if(!data||typeof data.totalDays!=='number'||!data.dayStart){
+            const seed={totalDays:1,dayStart:now,createdAt:now};
             database.ref('globalTime').set(seed);
-            el('timeSyncInfo','⏳ Создание глобального времени...');
+            el('timeSyncInfo','⏳ Создание...');
             return;
         }
-
         serverTime.dayStart=data.dayStart;
-        serverTime.day=data.day||1;
-        serverTime.dayOfWeek=data.dayOfWeek||0;
+        serverTime.totalDays=data.totalDays;
         serverTime.synced=true;
 
-        // Первый запуск: подтягиваем день
-        if(!serverTime.initialized){
-            serverTime.initialized=true;
-            gs.day=data.day||1;
-            gs.dayOfWeek=data.dayOfWeek||0;
-            gs.month=data.month||1;
-            gs.year=data.year||2026;
-            updDay();
-            el('timeSyncInfo','🌍 Синхронизировано с сервером');
-        } else if(gs.day!==data.day){
-            // День сменился на сервере другим игроком
-            gs.day=data.day;
-            gs.dayOfWeek=data.dayOfWeek||0;
-            gs.month=data.month||1;
-            gs.year=data.year||2026;
-            updDay();
-            // Локальный пересчёт рынка, если сменился день
-            onGlobalDayChange();
-        }
+        const elapsedMs=now-serverTime.dayStart;
+        const elapsedGameMinutes=elapsedMs/MS_PER_GAME_MINUTE;
+        const fullDaysPassed=Math.floor(elapsedGameMinutes/(24*60));
+        const totalDays=serverTime.totalDays+fullDaysPassed;
+        const date=normalizeDate(totalDays);
+        gs.day=date.day;gs.month=date.month;gs.year=date.year;gs.totalDays=totalDays;
+        const minutesInDay=elapsedGameMinutes%(24*60);
+        time.min=minutesInDay;
+
+        if(totalDays>serverTime.totalDays)pushNewDay(totalDays);
+
+        updTime();updDay();
+        if(!serverTime.initialized){serverTime.initialized=true;el('timeSyncInfo','🌍 Синхронизировано');}
     });
 }
 
-// Тикер глобального времени
 function startGlobalTimeTick(){
     setInterval(()=>{
         if(time.sleeping)return;
-
         if(serverTime.synced&&serverTime.dayStart){
-            // 1 сек = 1 игровая минута
             const now=Date.now();
             const elapsedMs=now-serverTime.dayStart;
-            const totalGameMinutes=elapsedMs/1000; // 1 сек = 1 минута
-            const minutesPerDay=24*60;
-
-            // Сколько дней прошло от точки старта
-            const daysPassed=Math.floor(totalGameMinutes/minutesPerDay);
-            const curMin=totalGameMinutes%minutesPerDay;
-
-            // Синхронизируем локальные часы с расчётными
-            time.min=curMin;
-            updTime();
-
-            // Если по нашим расчётам наступил новый день — пушим на сервер
-            const expectedDay=serverTime.day+daysPassed;
-            if(expectedDay>gs.day){
-                pushNewDay(expectedDay);
-            }
-        } else {
-            // Локальный фолбэк, если Firebase недоступен
+            const elapsedGameMinutes=elapsedMs/MS_PER_GAME_MINUTE;
+            const fullDaysPassed=Math.floor(elapsedGameMinutes/(24*60));
+            const totalDays=serverTime.totalDays+fullDaysPassed;
+            const minutesInDay=elapsedGameMinutes%(24*60);
+            time.min=minutesInDay;
+            const date=normalizeDate(totalDays);
+            gs.day=date.day;gs.month=date.month;gs.year=date.year;gs.totalDays=totalDays;
+            updTime();updDay();
+            if(totalDays>serverTime.totalDays)pushNewDay(totalDays);
+        }else{
             const now=Date.now();
             if(!startGlobalTimeTick._last)startGlobalTimeTick._last=now;
             const d=now-startGlobalTimeTick._last;
             startGlobalTimeTick._last=now;
-            const m=(d/1000)*time.speed/60;
+            const m=(d/MS_PER_GAME_MINUTE);
             if(m>0){
                 time.min+=m;
-                if(time.min>=24*60){time.min=time.min%(24*60);newDay();}
+                if(time.min>=24*60){time.min=time.min%(24*60);gs.totalDays++;const dt=normalizeDate(gs.totalDays);gs.day=dt.day;gs.month=dt.month;gs.year=dt.year;onGlobalDayChange();}
                 updTime();updDay();
             }
         }
     },1000);
 }
 
-// Пуш нового дня на сервер (транзакция для защиты от гонок)
-function pushNewDay(newDay){
+function pushNewDay(newTotalDays){
     if(!syncEnabled||!database)return;
-    // Не пушем чаще 5 секунд
     if(Date.now()-serverTime.lastPush<5000)return;
     serverTime.lastPush=Date.now();
-
     database.ref('globalTime').transaction(cur=>{
         if(!cur)return cur;
-        const curDay=cur.day||1;
-        // Обновляем только если сервер отстал
-        if(newDay>curDay){
-            cur.day=newDay;
-            cur.dayOfWeek=((cur.dayOfWeek||0)+(newDay-curDay))%7;
-            // Новая точка отсчёта — сбрасываем dayStart
-            // Чтобы корректно считать минуты текущего дня
-            // Определяем сколько игровых минут осталось от "прошлого" перехода
-            // Проще: устанавливаем dayStart = now, чтобы текущий день начался сейчас
-            cur.dayStart=Date.now();
-            cur.month=cur.month||1;
-            cur.year=cur.year||2026;
-        }
+        if(newTotalDays>(cur.totalDays||1)){cur.totalDays=newTotalDays;cur.dayStart=Date.now();}
         return cur;
     }).then(()=>{
-        // Локально синхронизируем сразу
         serverTime.dayStart=Date.now();
-        serverTime.day=newDay;
-        gs.day=newDay;
-        gs.dayOfWeek=((gs.dayOfWeek||0)+1)%7;
+        serverTime.totalDays=newTotalDays;
+        const dt=normalizeDate(newTotalDays);
+        gs.day=dt.day;gs.month=dt.month;gs.year=dt.year;gs.totalDays=newTotalDays;
         time.min=0;
         onGlobalDayChange();
         updTime();updDay();
-        notif('📅 День '+newDay+'!');
+        notif('📅 День '+gs.day+' '+MONTHS[gs.month-1]+'!');
     });
 }
 
-// Что делать при смене глобального дня
 function onGlobalDayChange(){
-    // Локальные изменения, привязанные к дню
+    paySalaryDaily();
     loans.list.forEach(l=>{if(!l.isPaid)l.total+=Math.round(l.total*.02);});
     const keep=market.ads.filter(a=>a.status==='sold'||a.isMy);
     market.ads.forEach(a=>{if(!a.isMy&&a.status==='active'){a.price=Math.max(5000,Math.round(a.price*(1+(Math.random()-.5)*.3)));}});
     let newA=[];
-    CITIES.forEach(c=>{
-        const cnt=market.ads.filter(a=>a.city===c.name&&!a.isMy&&a.status==='active').length;
-        if(cnt<5)newA.push(...genCityPCs(c.name));
-    });
+    CITIES.forEach(c=>{const cnt=market.ads.filter(a=>a.city===c.name&&!a.isMy&&a.status==='active').length;if(cnt<5)newA.push(...genCityPCs(c.name));});
     market.ads=[...keep,...newA];
-    parts.forEach(p=>{p.price=Math.max(500,Math.round(p.price*(1+(Math.random()-.5)*.3)));});
-    fakeParts.forEach(p=>{p.price=Math.max(1000,Math.round(p.price*(1+(Math.random()-.5)*.3)));});
-    news.unshift({id:Date.now(),title:'📅 День '+gs.day,text:'Цены обновлены!',date:'Сегодня'});
+    news.unshift({id:Date.now(),title:'📅 День '+gs.day+' '+MONTHS[gs.month-1],text:'Цены обновлены!',date:'Сегодня'});
     if(news.length>20)news.pop();
-    save();saveMarket();
-    renderAll();
+    save();saveMarket();renderAll();
 }
 
-function genCityPCs(city){
-    const sh=[...PC_TYPES].sort(()=>Math.random()-.5);const res=[];
-    for(let i=0;i<Math.min(8,sh.length);i++){const b=sh[i];res.push({id:Date.now()+i+Math.random()*100000,name:b.name,price:Math.round(b.price*(.85+Math.random()*.3)),cpu:b.cpu,gpu:b.gpu,tag:b.tag,tagName:b.tagName,city:city,seller:{...SELLERS[Math.floor(Math.random()*SELLERS.length)]},image:getPCImg(i+Math.random()*1000),views:Math.floor(Math.random()*500),date:new Date(),status:'active',isMy:false,likes:Math.floor(Math.random()*30)});}
-    return res;
+function genCityPCs(city){const sh=[...PC_TYPES].sort(()=>Math.random()-.5);const res=[];for(let i=0;i<Math.min(8,sh.length);i++){const b=sh[i];res.push({id:Date.now()+i+Math.random()*100000,name:b.name,price:Math.round(b.price*(.85+Math.random()*.3)),cpu:b.cpu,gpu:b.gpu,tag:b.tag,tagName:b.tagName,city:city,seller:{...SELLERS[Math.floor(Math.random()*SELLERS.length)]},image:getPCImg(i+Math.random()*1000),views:Math.floor(Math.random()*500),date:new Date(),status:'active',isMy:false,likes:Math.floor(Math.random()*30)});}return res;}
+
+// ===== ИСПРАВЛЕННАЯ initMarket =====
+function initMarket(){
+    const storedVer=localStorage.getItem('pcSaveVer');
+    if(storedVer!==SAVE_VERSION){
+        market.ads=market.ads.filter(a=>a.isMy);
+        market.chats=[];market.favorites=[];
+        localStorage.setItem('pcSaveVer',SAVE_VERSION);
+        console.log('🔄 Рынок обновлён до '+SAVE_VERSION);
+    }
+    const cityPCs=market.ads.filter(a=>!a.isMy&&a.status==='active');
+    if(cityPCs.length<50){
+        CITIES.forEach(c=>{
+            const cnt=market.ads.filter(a=>a.city===c.name&&!a.isMy&&a.status==='active').length;
+            if(cnt<8)market.ads.push(...genCityPCs(c.name));
+        });
+        saveMarket();
+        console.log('✅ Сгенерировано ПК: '+market.ads.length);
+    }
+    renderMarket();
 }
-function initMarket(){if(market.ads.length===0){CITIES.forEach(c=>market.ads.push(...genCityPCs(c.name)));saveMarket();}renderMarket();}
 
 function renderMarket(){
     const l=document.getElementById('mlist');if(!l)return;
@@ -733,182 +643,145 @@ function renderMarket(){
     else if(market.currentTab==='city')ads=ads.filter(a=>a.city===gs.currentCity);
     el('mc',market.ads.length);el('mcity',gs.currentCity);
     if(ads.length===0){l.innerHTML='<div class="empty-state"><div class="empty-icon">🖥️</div><div class="empty-title">Нет объявлений</div></div>';return;}
-    l.innerHTML=ads.map(a=>{
-        const fav=market.favorites.includes(a.id),inCity=a.city===gs.currentCity;
-        let acts='';
-        if(a.isMy)acts+='<button class="action-btn danger" style="font-size:7px;padding:2px 8px;" onclick="deleteMyAd('+a.id+')">🗑️</button>';
-        if(!a.isMy&&a.status==='active'){
-            if(inCity)acts+='<button class="action-btn gold" onclick="quickBuy('+a.id+')">Купить</button><button class="action-btn warn" onclick="startHaggle('+a.id+')">Торг</button>';
-            else acts+='<button class="action-btn blue" onclick="travelBuy(\''+a.city+'\','+a.id+')">🚗 Переехать</button>';
-        }
-        return `<div class="ad-card" onclick="${a.isMy?'':'openChat('+a.id+')'}">
-<img src="${a.image}" class="ad-image" onerror="this.src='avatar.jpg'">
-<div class="ad-price">${a.price.toLocaleString()} ₽</div>
-<div class="ad-title">${a.name}</div>
-<div class="ad-specs"><span>${a.cpu}</span><span>${a.gpu}</span><span class="pc-tag ${a.tag}">${a.tagName}</span></div>
-<div class="ad-footer"><div class="ad-seller"><img src="${a.seller.avatar}" class="seller-avatar"><span class="seller-name">${a.seller.name}</span><span class="seller-rating">⭐${a.seller.rating}%</span></div><div class="ad-city">📍 ${a.city}</div></div>
-<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
-<div style="font-size:8px;color:#5a6070;">👁️ ${a.views||0}${a.isMy?' 📌Ваше':''}${!inCity?' 🚗Другой город':''}${a.status!=='active'?' <span class="ad-status sold">Продано</span>':''}</div>
-<div style="display:flex;gap:4px;" onclick="event.stopPropagation();">${acts}<button class="favorite-btn ${fav?'active':''}" onclick="toggleFav(${a.id})"><i class="fa-${fav?'solid':'regular'} fa-heart"></i></button></div>
-</div></div>`;}).join('');
+    l.innerHTML=ads.map(a=>{const fav=market.favorites.includes(a.id),inCity=a.city===gs.currentCity;let acts='';if(a.isMy)acts+='<button class="action-btn danger" style="font-size:7px;padding:2px 8px;" onclick="event.stopPropagation();deleteMyAd('+a.id+')">🗑️</button>';if(!a.isMy&&a.status==='active'){if(inCity)acts+='<button class="action-btn gold" onclick="event.stopPropagation();quickBuy('+a.id+')">Купить</button><button class="action-btn warn" onclick="event.stopPropagation();startHaggle('+a.id+')">Торг</button>';else acts+='<button class="action-btn blue" onclick="event.stopPropagation();travelBuy(\''+a.city+'\','+a.id+')">🚗</button>';}return `<div class="ad-card" onclick="${a.isMy?'':'openChat('+a.id+')'}"><img src="${a.image}" class="ad-image" onerror="this.src='avatar.jpg'"><div class="ad-price">${a.price.toLocaleString()} ₽</div><div class="ad-title">${a.name}</div><div class="ad-specs"><span>${a.cpu}</span><span>${a.gpu}</span><span class="pc-tag ${a.tag}">${a.tagName}</span></div><div class="ad-footer"><div class="ad-seller"><img src="${a.seller.avatar}" class="seller-avatar" onerror="this.src='avatar1.jpg'"><span class="seller-name">${a.seller.name}</span><span class="seller-rating">⭐${a.seller.rating}%</span></div><div class="ad-city">📍 ${a.city}</div></div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;"><div style="font-size:8px;color:#5a6070;">👁️ ${a.views||0}${a.isMy?' 📌Ваше':''}${!inCity?' 🚗':''}</div><div style="display:flex;gap:4px;" onclick="event.stopPropagation();">${acts}<button class="favorite-btn ${fav?'active':''}" onclick="event.stopPropagation();toggleFav(${a.id})">${fav?'❤️':'🤍'}</button></div></div></div>`;}).join('');
 }
-function switchTab(t){market.currentTab=t;renderMarket();}
-function toggleFav(id){const i=market.favorites.indexOf(id);if(i>-1)market.favorites.splice(i,1);else market.favorites.push(id);renderMarket();saveMarket();}
+function switchTab(t){market.currentTab=t;renderMarket();sound('click');}
+function toggleFav(id){const i=market.favorites.indexOf(id);if(i>-1)market.favorites.splice(i,1);else market.favorites.push(id);renderMarket();saveMarket();sound('click');}
+async function quickBuy(id){const a=market.ads.find(x=>x.id===id);if(!a)return;if(a.city!==gs.currentCity){notif('❌ ПК в '+a.city);sound('error');return;}if(a.isMy){notif('❌ Ваше!');sound('error');return;}if(a.status!=='active'){notif('❌ Продано');sound('error');return;}const discount=shop.discountMarket?.1:0;const price=Math.round(a.price*(1-discount));if(gs.balance<price){notif('❌ Нужно '+price.toLocaleString()+' ₽');sound('error');return;}const ok=await uiConfirm('Купить '+a.name+' за '+price.toLocaleString()+' ₽?'+(discount?'\n💸 Скидка 10%!':''),'🖥️ Покупка');if(ok){updBal(-price,'🖥️ '+a.name);myPCs.push({...a,id:Date.now(),tested:false,isBroken:Math.random()>.8,inRepair:false});const c=a.city;market.ads=market.ads.filter(x=>x.id!==id);const n=genCityPCs(c);if(n.length)market.ads.push(n[0]);gs.reputation=Math.min(100,gs.reputation+3);gs.pcsBought++;addXP(10);trackCity();checkAchievements();renderMarket();renderService();updBank();saveMarket();notif('✅ Куплен!');sound('buy');}}
+async function travelBuy(city,id){const a=market.ads.find(x=>x.id===id);if(!a)return;const d=getDist(city),tt=Math.max(5,Math.round(d/100));if(gs.balance<a.price+1000){notif('❌ Нужно '+(a.price+1000).toLocaleString()+' ₽');sound('error');return;}const ok=await uiConfirm('🚗 В '+city+'?\nПК: '+a.price.toLocaleString()+' ₽\nПереезд: 1000 ₽','Переезд');if(ok){updBal(-1000,'🚗 Переезд');notif('🚗 Едем...');setTimeout(()=>{gs.currentCity=city;el('cb','📍 '+city);renderCities();quickBuy(id);save();notif('✅ Прибыли!');},tt*1000);}}
+async function addMyAd(){if(myPCs.length===0){notif('📭 Нет ПК');sound('error');return;}let list=myPCs.map((p,i)=>(i+1)+'. '+p.name+' ('+p.price.toLocaleString()+')').join('\n');const c=await uiPrompt('Выберите ПК:\n'+list+'\nНомер:','','📦 Создать');if(!c)return;const idx=parseInt(c)-1;if(isNaN(idx)||idx<0||idx>=myPCs.length){notif('❌');sound('error');return;}const pc=myPCs[idx];if(market.ads.some(a=>a.pcId===pc.id&&a.isMy)){notif('⚠️ Уже!');sound('error');return;}const p=await uiPrompt('💰 Цена:',''+pc.price,'Цена');if(!p)return;const pv=parseInt(p.replace(/\D/g,''));if(isNaN(pv)||pv<1000){notif('❌ Цена');sound('error');return;}const newAd={id:Date.now(),name:pc.name,price:pv,cpu:pc.cpu,gpu:pc.gpu,tag:pc.tag||'budget',tagName:pc.tagName||'Бюджетный',city:gs.currentCity,seller:{...SELLERS[0],name:playerData.name||'Вы',avatar:selectedAvatar,rating:gs.reputation},image:getPCImg(Math.random()*1000),views:0,date:new Date(),status:'active',isMy:true,likes:0,pcId:pc.id};market.ads.push(newAd);pc.isOnMarket=true;renderMarket();saveMarket();startAutoOffers(newAd.id);notif('✅ Выставлено за '+pv.toLocaleString()+' ₽');sound('buy');}
+async function deleteMyAd(id){const a=market.ads.find(x=>x.id===id);if(!a||!a.isMy)return;const ok=await uiConfirm('Снять с продажи?','Подтверждение');if(ok){if(a.offerTimer)clearTimeout(a.offerTimer);const pc=myPCs.find(p=>p.id===a.pcId);if(pc)pc.isOnMarket=false;market.ads=market.ads.filter(x=>x.id!==id);renderMarket();saveMarket();notif('✅ Снято');sound('click');}}
 
-function quickBuy(id){
-    const a=market.ads.find(x=>x.id===id);if(!a)return;
-    if(a.city!==gs.currentCity){notif('❌ ПК в '+a.city);return;}
-    if(a.isMy){notif('❌ Ваше!');return;}
-    if(a.status!=='active'){notif('❌ Продано');return;}
-    if(gs.balance<a.price){notif('❌ Нужно '+a.price.toLocaleString()+' ₽');return;}
-    if(confirm('Купить '+a.name+' за '+a.price.toLocaleString()+' ₽?')){
-        updBal(-a.price,'🖥️ '+a.name);
-        myPCs.push({...a,id:Date.now(),tested:false,isBroken:Math.random()>.8,inRepair:false});
-        const c=a.city;market.ads=market.ads.filter(x=>x.id!==id);
-        const n=genCityPCs(c);if(n.length)market.ads.push(n[0]);
-        gs.reputation=Math.min(100,gs.reputation+3);gs.pcsBought++;
-        addXP(10);trackCity();checkAchievements();
-        renderMarket();renderService();updBank();saveMarket();
-        notif('✅ Куплен!');
-    }
-}
-function travelBuy(city,id){
-    const a=market.ads.find(x=>x.id===id);if(!a)return;
-    const d=getDist(city),tt=Math.max(5,Math.round(d/100));
-    if(gs.balance<a.price+1000){notif('❌ Нужно '+(a.price+1000).toLocaleString()+' ₽');return;}
-    if(confirm('🚗 В '+city+'?\nПК: '+a.price.toLocaleString()+' ₽\nПереезд: 1000 ₽')){
-        updBal(-1000,'🚗 Переезд');notif('🚗 Едем...');
-        setTimeout(()=>{gs.currentCity=city;el('cb','📍 '+city);renderCities();quickBuy(id);save();notif('✅ Прибыли!');},tt*1000);
-    }
-}
-function addMyAd(){
-    if(myPCs.length===0){notif('📭 Нет ПК');return;}
-    let list=myPCs.map((p,i)=>(i+1)+'. '+p.name+' ('+p.price.toLocaleString()+')').join('\n');
-    const c=prompt('Выберите ПК:\n'+list+'\nНомер:');if(!c)return;const idx=parseInt(c)-1;
-    if(isNaN(idx)||idx<0||idx>=myPCs.length){notif('❌');return;}
-    const pc=myPCs[idx];
-    if(market.ads.some(a=>a.pcId===pc.id&&a.isMy)){notif('⚠️ Уже!');return;}
-    let p=prompt('💰 Цена:',pc.price);if(!p)return;
-    p=parseInt(p.replace(/\D/g,''));
-    if(isNaN(p)||p<1000){notif('❌ Цена');return;}
-    const newAd={id:Date.now(),name:pc.name,price:p,cpu:pc.cpu,gpu:pc.gpu,tag:pc.tag||'budget',tagName:pc.tagName||'Бюджетный',city:gs.currentCity,seller:{...SELLERS[0],name:playerData.name||'Вы',avatar:'avatar18.jpg',rating:gs.reputation},image:getPCImg(Math.random()*1000),views:0,date:new Date(),status:'active',isMy:true,likes:0,pcId:pc.id};
-    market.ads.push(newAd);pc.isOnMarket=true;renderMarket();saveMarket();
-    startAutoOffers(newAd.id);
-    notif('✅ Выставлено за '+p.toLocaleString()+' ₽. Ждите покупателей!');
-}
-function deleteMyAd(id){
-    const a=market.ads.find(x=>x.id===id);if(!a||!a.isMy)return;
-    if(confirm('Снять с продажи?')){if(a.offerTimer)clearTimeout(a.offerTimer);const pc=myPCs.find(p=>p.id===a.pcId);if(pc)pc.isOnMarket=false;market.ads=market.ads.filter(x=>x.id!==id);renderMarket();saveMarket();notif('✅ Снято');}
-}
-
-// ЧАТЫ
-function openChat(id){
-    const a=market.ads.find(x=>x.id===id);if(!a)return;
-    if(a.isMy){notif('📌 Ваше!');return;}
-    let c=market.chats.find(x=>x.adId===id);
-    if(!c){c={id:Date.now(),adId:id,seller:a.seller,messages:[{text:'Здравствуйте! Интересует "'+a.name+'"',sent:true,time:new Date()},{text:'Цена '+a.price.toLocaleString()+' ₽',sent:false,time:new Date()}],unread:0};market.chats.push(c);saveMarket();}
-    openApp('chats');
-    setTimeout(()=>{el('cun',c.seller.name);const w=document.getElementById('cw');if(w)w.classList.add('show');curChat=id;showMsgs(c);},100);
-}
-function renderChats(){
-    const c=document.getElementById('clist');if(!c)return;
-    let ch=[...market.chats];
-    if(market.chatTab==='incoming')ch=ch.filter(x=>x.messages.some(m=>!m.sent));else ch=ch.filter(x=>x.messages.some(m=>m.sent));
-    if(ch.length===0){c.innerHTML='<div class="empty-state"><div class="empty-icon">💬</div><div class="empty-title">Нет чатов</div></div>';return;}
-    c.innerHTML=ch.map(x=>{const last=x.messages[x.messages.length-1];const icon=x.isBuyerOffer?'💰 ':'';return `<div class="chat-item" onclick="openChatFromList(${x.adId})" ${x.isBuyerOffer?'style="border-color:rgba(46,204,113,.3);"':''}><img src="${x.seller.avatar}" class="chat-avatar"><div class="chat-info"><div class="chat-name">${icon}${x.seller.name}</div><div class="chat-last-msg">${last?last.text:''}</div></div>${x.unread>0?'<span class="chat-unread">'+x.unread+'</span>':''}</div>`;}).join('');
-}
+function openChat(id){const a=market.ads.find(x=>x.id===id);if(!a)return;if(a.isMy){notif('📌 Ваше!');return;}let c=market.chats.find(x=>x.adId===id);if(!c){c={id:Date.now(),adId:id,seller:a.seller,messages:[{text:'Здравствуйте! Интересует "'+a.name+'"',sent:true,time:new Date()},{text:'Цена '+a.price.toLocaleString()+' ₽',sent:false,time:new Date()}],unread:0};market.chats.push(c);saveMarket();}openApp('chats');setTimeout(()=>{el('cun',c.seller.name);const w=document.getElementById('cw');if(w)w.classList.add('show');curChat=id;showMsgs(c);},100);}
+function renderChats(){const c=document.getElementById('clist');if(!c)return;let ch=[...market.chats];if(market.chatTab==='incoming')ch=ch.filter(x=>x.messages.some(m=>!m.sent));else ch=ch.filter(x=>x.messages.some(m=>m.sent));if(ch.length===0){c.innerHTML='<div class="empty-state"><div class="empty-icon">💬</div><div class="empty-title">Нет чатов</div></div>';return;}c.innerHTML=ch.map(x=>{const last=x.messages[x.messages.length-1];const icon=x.isBuyerOffer?'💰 ':'';return `<div class="chat-item" onclick="openChatFromList(${x.adId})"><img src="${x.seller.avatar}" class="chat-avatar" onerror="this.src='avatar1.jpg'"><div class="chat-info"><div class="chat-name">${icon}${x.seller.name}</div><div class="chat-last-msg">${last?last.text:''}</div></div>${x.unread>0?'<span class="chat-unread">'+x.unread+'</span>':''}</div>`;}).join('');}
 function openChatFromList(id){const c=market.chats.find(x=>x.adId===id);if(!c)return;el('cun',c.seller.name);document.getElementById('cw').classList.add('show');c.unread=0;curChat=id;showMsgs(c);saveMarket();}
-function showMsgs(c){const m=document.getElementById('cmsg');if(!m)return;let html=c.messages.map(x=>'<div class="msg '+(x.sent?'sent':'received')+' '+(x.type||'')+'">'+x.text+'<span class="msg-time">'+new Date(x.time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</span></div>').join('');if(c.isBuyerOffer&&c.pendingOffer){html+='<div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;"><button class="action-btn success" onclick="acceptOffer('+c.adId+')">✅ Принять '+c.pendingOffer.toLocaleString()+' ₽</button><button class="action-btn danger" onclick="declineOffer('+c.adId+')">❌ Отклонить</button></div>';}m.innerHTML=html;m.scrollTop=m.scrollHeight;}
+function showMsgs(c){const m=document.getElementById('cmsg');if(!m)return;let html=c.messages.map(x=>'<div class="msg '+(x.sent?'sent':'received')+' '+(x.type||'')+'">'+x.text+'<span class="msg-time">'+new Date(x.time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</span></div>').join('');if(c.isBuyerOffer&&c.pendingOffer){html+='<div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;"><button class="action-btn success" onclick="acceptOffer('+c.adId+')">✅ '+c.pendingOffer.toLocaleString()+' ₽</button><button class="action-btn danger" onclick="declineOffer('+c.adId+')">❌</button></div>';}m.innerHTML=html;m.scrollTop=m.scrollHeight;}
 function closeChat(){document.getElementById('cw').classList.remove('show');curChat=null;renderChats();}
 function switchChatTab(t){market.chatTab=t;renderChats();}
-function sendMsg(){const i=document.getElementById('cin');const t=i?.value?.trim();if(!t)return;const c=market.chats.find(x=>x.adId===curChat);if(!c){notif('❌');return;}c.messages.push({text:t,sent:true,time:new Date()});i.value='';showMsgs(c);saveMarket();setTimeout(()=>{const r=['Интересно!','Давайте обсудим.','Хорошо, подумаю.','Отлично!'];c.messages.push({text:r[Math.floor(Math.random()*r.length)],sent:false,time:new Date()});c.unread=(c.unread||0)+1;showMsgs(c);saveMarket();renderChats();},1500);}
-function startHaggle(id){const a=market.ads.find(x=>x.id===id);if(!a||a.isMy){notif('❌');return;}const min=Math.round(a.price*.5);const o=prompt('💬 Торг\n💰 Цена: '+a.price.toLocaleString()+' ₽\nВаша (от '+min.toLocaleString()+'):');if(!o)return;const op=parseInt(o.replace(/\D/g,''));if(isNaN(op)||op<min||op>=a.price){notif('❌ Цена');return;}const pr=op/a.price,rb=(gs.reputation/100)*.3,pb=(pr-.4)*.8;const ch=Math.min(.85,Math.max(.05,.15+rb+pb));let c=market.chats.find(x=>x.adId===id);if(!c){c={id:Date.now(),adId:id,seller:a.seller,messages:[],unread:0};market.chats.push(c);}if(Math.random()<ch){const old=a.price;a.price=op;gs.reputation=Math.min(100,gs.reputation+2);c.messages.push({text:'✅ Цена: '+old.toLocaleString()+' → '+op.toLocaleString()+' ₽',sent:false,time:new Date(),type:'system'});renderMarket();updBank();saveMarket();notif('✅ Согласен!');}else{gs.reputation=Math.max(0,gs.reputation-1);c.messages.push({text:'❌ Отказ. Попробуйте больше.',sent:false,time:new Date(),type:'system'});updBank();saveMarket();notif('❌ Отказ');}if(document.getElementById('cw')?.classList.contains('show'))showMsgs(c);}
+function sendMsg(){const i=document.getElementById('cin');const t=i?.value?.trim();if(!t)return;const c=market.chats.find(x=>x.adId===curChat);if(!c){notif('❌');return;}c.messages.push({text:t,sent:true,time:new Date()});i.value='';showMsgs(c);saveMarket();sound('click');setTimeout(()=>{const r=['Интересно!','Давайте обсудим.','Хорошо.','Отлично!'];c.messages.push({text:r[Math.floor(Math.random()*r.length)],sent:false,time:new Date()});c.unread=(c.unread||0)+1;showMsgs(c);saveMarket();renderChats();},1500);}
+async function startHaggle(id){const a=market.ads.find(x=>x.id===id);if(!a||a.isMy){notif('❌');return;}const min=Math.round(a.price*.5);const o=await uiPrompt('💰 Цена: '+a.price.toLocaleString()+' ₽\nВаша (от '+min.toLocaleString()+'):','','💬 Торг');if(!o)return;const op=parseInt(o.replace(/\D/g,''));if(isNaN(op)||op<min||op>=a.price){notif('❌ Цена');sound('error');return;}const pr=op/a.price,rb=(gs.reputation/100)*.3,pb=(pr-.4)*.8;const ch=Math.min(.85,Math.max(.05,.15+rb+pb));let c=market.chats.find(x=>x.adId===id);if(!c){c={id:Date.now(),adId:id,seller:a.seller,messages:[],unread:0};market.chats.push(c);}if(Math.random()<ch){const old=a.price;a.price=op;gs.reputation=Math.min(100,gs.reputation+2);c.messages.push({text:'✅ Цена: '+old.toLocaleString()+' → '+op.toLocaleString()+' ₽',sent:false,time:new Date(),type:'system'});renderMarket();updBank();saveMarket();notif('✅ Согласен!');sound('buy');}else{gs.reputation=Math.max(0,gs.reputation-1);c.messages.push({text:'❌ Отказ.',sent:false,time:new Date(),type:'system'});updBank();saveMarket();notif('❌ Отказ');sound('error');}if(document.getElementById('cw')?.classList.contains('show'))showMsgs(c);}
 function startHaggleFromChat(){if(curChat)startHaggle(curChat);}
 
 function startAutoOffers(adId){const ad=market.ads.find(a=>a.id===adId);if(!ad||!ad.isMy)return;if(ad.offerTimer)clearTimeout(ad.offerTimer);const delay=15000+Math.random()*25000;ad.offerTimer=setTimeout(()=>{makeBuyerOffer(adId);if(market.ads.some(a=>a.id===adId&&a.isMy&&a.status==='active'))startAutoOffers(adId);},delay);}
-function makeBuyerOffer(adId){const ad=market.ads.find(a=>a.id===adId);if(!ad||!ad.isMy||ad.status!=='active')return;const buyer=SELLERS[Math.floor(Math.random()*SELLERS.length)];const offerPrice=Math.round(ad.price*(0.7+Math.random()*0.35));let chat=market.chats.find(c=>c.adId===adId&&c.isBuyerOffer);if(!chat){chat={id:Date.now(),adId:adId,isBuyerOffer:true,seller:buyer,messages:[],unread:0,pendingOffer:null};market.chats.push(chat);}else{chat.seller=buyer;}chat.pendingOffer=offerPrice;chat.messages.push({text:'💬 '+buyer.name+' предлагает '+offerPrice.toLocaleString()+' ₽ за ваш ПК "'+ad.name+'"',sent:false,time:new Date(),type:'offer'});chat.unread=(chat.unread||0)+1;notif('📩 '+buyer.name+' предлагает '+offerPrice.toLocaleString()+' ₽!');saveMarket();renderChats();}
-function acceptOffer(adId){const chat=market.chats.find(c=>c.adId===adId&&c.isBuyerOffer);if(!chat||!chat.pendingOffer)return;const ad=market.ads.find(a=>a.id===adId);if(!ad)return;const price=chat.pendingOffer;myPCs=myPCs.filter(p=>p.id!==ad.pcId);builtPCs=builtPCs.filter(p=>p.id!==ad.pcId);market.ads=market.ads.filter(a=>a.id!==adId);updBal(price,'💵 Продажа: '+ad.name);gs.pcsSold++;gs.reputation=Math.min(100,gs.reputation+3);addXP(20);chat.messages.push({text:'✅ Вы приняли предложение '+price.toLocaleString()+' ₽',sent:true,time:new Date(),type:'system'});chat.pendingOffer=null;renderMarket();renderInvItems();renderService();updBank();saveMarket();showMsgs(chat);checkAchievements();notif('✅ ПК продан за '+price.toLocaleString()+' ₽!');}
-function declineOffer(adId){const chat=market.chats.find(c=>c.adId===adId&&c.isBuyerOffer);if(!chat)return;chat.messages.push({text:'❌ Вы отклонили предложение',sent:true,time:new Date(),type:'system'});chat.pendingOffer=null;saveMarket();showMsgs(chat);}
+function makeBuyerOffer(adId){const ad=market.ads.find(a=>a.id===adId);if(!ad||!ad.isMy||ad.status!=='active')return;const buyer=SELLERS[Math.floor(Math.random()*SELLERS.length)];const offerPrice=Math.round(ad.price*(0.7+Math.random()*0.35));let chat=market.chats.find(c=>c.adId===adId&&c.isBuyerOffer);if(!chat){chat={id:Date.now(),adId:adId,isBuyerOffer:true,seller:buyer,messages:[],unread:0,pendingOffer:null};market.chats.push(chat);}else{chat.seller=buyer;}chat.pendingOffer=offerPrice;chat.messages.push({text:'💬 '+buyer.name+' предлагает '+offerPrice.toLocaleString()+' ₽ за "'+ad.name+'"',sent:false,time:new Date(),type:'offer'});chat.unread=(chat.unread||0)+1;notif('📩 '+buyer.name+': '+offerPrice.toLocaleString()+' ₽!');sound('coin');saveMarket();renderChats();}
+function acceptOffer(adId){const chat=market.chats.find(c=>c.adId===adId&&c.isBuyerOffer);if(!chat||!chat.pendingOffer)return;const ad=market.ads.find(a=>a.id===adId);if(!ad)return;const price=chat.pendingOffer;myPCs=myPCs.filter(p=>p.id!==ad.pcId);builtPCs=builtPCs.filter(p=>p.id!==ad.pcId);market.ads=market.ads.filter(a=>a.id!==adId);updBal(price,'💵 '+ad.name);gs.pcsSold++;gs.reputation=Math.min(100,gs.reputation+3);addXP(20);chat.messages.push({text:'✅ Принято '+price.toLocaleString()+' ₽',sent:true,time:new Date(),type:'system'});chat.pendingOffer=null;renderMarket();renderInvItems();renderService();updBank();saveMarket();showMsgs(chat);checkAchievements();notif('✅ Продано за '+price.toLocaleString()+' ₽!');sound('sell');}
+function declineOffer(adId){const chat=market.chats.find(c=>c.adId===adId&&c.isBuyerOffer);if(!chat)return;chat.messages.push({text:'❌ Отклонено',sent:true,time:new Date(),type:'system'});chat.pendingOffer=null;saveMarket();showMsgs(chat);sound('click');}
 
 function getDist(city){const f=CITIES.find(c=>c.name===gs.currentCity),t=CITIES.find(c=>c.name===city);if(!f||!t)return 0;const R=6371;const dLat=(t.lat-f.lat)*Math.PI/180,dLon=(t.lon-f.lon)*Math.PI/180;const a=Math.sin(dLat/2)**2+Math.cos(f.lat*Math.PI/180)*Math.cos(t.lat*Math.PI/180)*Math.sin(dLon/2)**2;return Math.round(R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)));}
-function renderCities(){const g=document.getElementById('cg2');if(!g)return;g.innerHTML=CITIES.map(c=>{const cur=c.name===gs.currentCity,d=getDist(c.name);const cnt=market.ads.filter(a=>a.city===c.name&&a.status==='active'&&!a.isMy).length;return '<button class="city-btn '+(cur?'active':'')+'" onclick="'+(cur?'':'travelCity(\''+c.name+'\')')+'" '+(cur?'disabled':'')+'><div class="city-name">'+c.name+'</div><span class="city-distance">'+(cur?'📍 Текущий':d+' км')+'</span><span class="city-pcs">'+(cnt>0?'🖥️ '+cnt+' ПК':'📭 Нет')+'</span></button>';}).join('');}
-function travelCity(city){if(city===gs.currentCity)return;if(gs.balance<1000){notif('❌ Нужно 1000 ₽');return;}if(confirm('🚗 Переехать в '+city+' за 1000 ₽?')){updBal(-1000,'🚗 Переезд');gs.currentCity=city;el('cb','📍 '+city);trackCity();checkAchievements();renderCities();renderMarket();save();notif('✅ Прибыли!');}}
+function renderCities(){const g=document.getElementById('cg2');if(!g)return;g.innerHTML=CITIES.map(c=>{const cur=c.name===gs.currentCity,d=getDist(c.name);const cnt=market.ads.filter(a=>a.city===c.name&&a.status==='active'&&!a.isMy).length;return '<button class="city-btn '+(cur?'active':'')+'" onclick="'+(cur?'':'travelCity(\''+c.name+'\')')+'" '+(cur?'disabled':'')+'><div class="city-name">'+c.name+'</div><span class="city-distance">'+(cur?'📍':d+' км')+'</span><span class="city-pcs">'+(cnt>0?'🖥️ '+cnt:'📭')+'</span></button>';}).join('');}
+async function travelCity(city){if(city===gs.currentCity)return;if(gs.balance<1000){notif('❌ Нужно 1000 ₽');sound('error');return;}const ok=await uiConfirm('🚗 В '+city+' за 1000 ₽?','Переезд');if(ok){updBal(-1000,'🚗 Переезд');gs.currentCity=city;el('cb','📍 '+city);trackCity();checkAchievements();renderCities();renderMarket();save();notif('✅ Прибыли!');sound('buy');}}
 
-function renderParts(){const l=document.getElementById('plist');if(!l)return;l.innerHTML='';const cats={cpu:'🖥️ Процессоры',gpu:'🎮 Видеокарты',ram:'📊 ОЗУ',storage:'💾 Накопители',case:'📦 Корпуса',psu:'⚡ БП',cooler:'🌀 Кулеры'};let cur='';parts.forEach(p=>{if(cur!==p.cat){cur=p.cat;l.innerHTML+='<div class="part-category">'+cats[p.cat]+'</div>';}l.innerHTML+='<div class="part-item"><img src="'+p.image+'" class="part-image" onerror="this.src=\'avatar1.jpg\'"><div class="part-info"><div class="part-name">'+p.name+'</div><div style="font-size:8px;color:#8e94a8;">'+p.cat.toUpperCase()+' | ⚡'+p.perf+'</div></div><div class="part-price">'+p.price.toLocaleString()+' ₽</div><button class="action-btn gold" style="font-size:8px;padding:4px 10px;" onclick="buyPart('+p.id+')">Купить</button></div>';});}
-function buyPart(id){const p=parts.find(x=>x.id===id);if(!p)return;if(gs.balance>=p.price){updBal(-p.price,'🔧 '+p.name);inv.push({...p,invId:Date.now()});renderInvList();renderInvItems();checkAchievements();}else notif('❌ Нет денег');}
-function renderBlack(){const l=document.getElementById('blist');if(!l)return;l.innerHTML='';fakeParts.forEach(p=>{l.innerHTML+='<div class="part-item" style="border-color:rgba(231,76,60,.1);"><img src="'+p.image+'" class="part-image" onerror="this.src=\'avatar1.jpg\'"><div class="part-info"><div class="part-name">'+p.name+' <span class="badge-danger">⚠️</span></div><div style="font-size:8px;color:#e74c3c;">Поломка: '+Math.round(p.breakChance*100)+'%</div></div><div class="part-price" style="color:#e74c3c;">'+p.price.toLocaleString()+' ₽</div><button class="action-btn danger" style="font-size:8px;padding:4px 10px;" onclick="buyFake('+p.id+')">Купить</button></div>';});}
-function buyFake(id){const p=fakeParts.find(x=>x.id===id);if(!p)return;if(gs.balance>=p.price){updBal(-p.price,'⚠️ '+p.name);inv.push({...p,invId:Date.now()});gs.reputation=Math.max(0,gs.reputation-5);renderInvList();renderInvItems();updBank();checkAchievements();}else notif('❌ Нет денег');}
+function initParts(){parts=[
+{id:1,cat:'cpu',name:'Intel Pentium G6400',price:2500,icon:'fa-microchip',perf:25,image:getPartImg('cpu',1)},
+{id:2,cat:'cpu',name:'Intel i3-10100F',price:3500,icon:'fa-microchip',perf:45,image:getPartImg('cpu',2)},
+{id:4,cat:'cpu',name:'Intel i5-10400F',price:7000,icon:'fa-microchip',perf:60,image:getPartImg('cpu',4)},
+{id:5,cat:'cpu',name:'AMD Ryzen 5 3600',price:8000,icon:'fa-microchip',perf:65,image:getPartImg('cpu',5)},
+{id:7,cat:'cpu',name:'AMD Ryzen 5 5600X',price:10000,icon:'fa-microchip',perf:70,image:getPartImg('cpu',2)},
+{id:9,cat:'cpu',name:'Intel i7-13700K',price:22000,icon:'fa-microchip',perf:100,image:getPartImg('cpu',4)},
+{id:11,cat:'cpu',name:'Intel i9-13900K',price:32000,icon:'fa-microchip',perf:120,image:getPartImg('cpu',1)},
+{id:15,cat:'cpu',name:'Intel Xeon Platinum',price:250000,icon:'fa-microchip',perf:250,image:getPartImg('cpu',5)},
+{id:20,cat:'gpu',name:'GTX 1050 Ti',price:5000,icon:'fa-memory',perf:30,image:getPartImg('gpu',1)},
+{id:22,cat:'gpu',name:'GTX 1060 6GB',price:8000,icon:'fa-memory',perf:45,image:getPartImg('gpu',3)},
+{id:25,cat:'gpu',name:'RTX 3060 12GB',price:18000,icon:'fa-memory',perf:70,image:getPartImg('gpu',2)},
+{id:28,cat:'gpu',name:'RTX 4070',price:35000,icon:'fa-memory',perf:100,image:getPartImg('gpu',1)},
+{id:30,cat:'gpu',name:'RTX 4090',price:100000,icon:'fa-memory',perf:150,image:getPartImg('gpu',3)},
+{id:40,cat:'ram',name:'DDR4 8GB 2666',price:1500,icon:'fa-server',perf:25,image:getPartImg('ram',1)},
+{id:42,cat:'ram',name:'DDR4 32GB 3600',price:5500,icon:'fa-server',perf:55,image:getPartImg('ram',1)},
+{id:45,cat:'ram',name:'DDR5 64GB 6000',price:12000,icon:'fa-server',perf:80,image:getPartImg('ram',2)},
+{id:50,cat:'storage',name:'HDD 500GB',price:1200,icon:'fa-hard-drive',perf:15,image:getPartImg('storage',1)},
+{id:52,cat:'storage',name:'NVMe 512GB Gen3',price:2500,icon:'fa-hard-drive',perf:45,image:getPartImg('storage',1)},
+{id:54,cat:'storage',name:'NVMe 2TB Gen4',price:7000,icon:'fa-hard-drive',perf:70,image:getPartImg('storage',1)},
+{id:60,cat:'case',name:'Mini-ITX',price:2500,icon:'fa-computer',perf:20,image:getPartImg('case',1)},
+{id:62,cat:'case',name:'RGB Glass',price:5000,icon:'fa-computer',perf:50,image:getPartImg('case',1)},
+{id:70,cat:'psu',name:'БП 450W Bronze',price:2000,icon:'fa-bolt',perf:25,image:getPartImg('psu',1)},
+{id:72,cat:'psu',name:'БП 750W Gold',price:5000,icon:'fa-bolt',perf:55,image:getPartImg('psu',1)},
+{id:74,cat:'psu',name:'БП 1000W Platinum',price:12000,icon:'fa-bolt',perf:85,image:getPartImg('psu',1)},
+{id:80,cat:'cooler',name:'Башенный кулер',price:1500,icon:'fa-fan',perf:30,image:getPartImg('cooler',1)},
+{id:82,cat:'cooler',name:'СЖО 240mm',price:4000,icon:'fa-fan',perf:60,image:getPartImg('cooler',1)},
+{id:84,cat:'cooler',name:'Промышленная СЖО',price:20000,icon:'fa-fan',perf:100,image:getPartImg('cooler',1)}
+];}
+function initFake(){fakeParts=[
+{id:9001,cat:'cpu',name:'Intel i9-9900K (Китай)',price:4000,icon:'fa-microchip',fake:true,breakChance:.30,image:getPartImg('cpu',1)},
+{id:9010,cat:'gpu',name:'GTX 1080 Ti (Китай)',price:12000,icon:'fa-memory',fake:true,breakChance:.35,image:getPartImg('gpu',1)},
+{id:9020,cat:'ram',name:'DDR4 16GB (NoName)',price:2000,icon:'fa-server',fake:true,breakChance:.20,image:getPartImg('ram',1)},
+{id:9030,cat:'storage',name:'SSD 1TB (Китай)',price:2000,icon:'fa-hard-drive',fake:true,breakChance:.25,image:getPartImg('storage',1)},
+{id:9040,cat:'psu',name:'БП 650W (Китай)',price:1200,icon:'fa-bolt',fake:true,breakChance:.30,image:getPartImg('psu',1)},
+{id:9050,cat:'case',name:'Корпус с AliExpress',price:1500,icon:'fa-computer',fake:true,breakChance:.15,image:getPartImg('case',1)},
+{id:9060,cat:'cooler',name:'Кулер (Китай)',price:800,icon:'fa-fan',fake:true,breakChance:.25,image:getPartImg('cooler',1)}
+];}
+function renderParts(){const l=document.getElementById('plist');if(!l)return;l.innerHTML='';const cats={cpu:'🖥️ Процессоры',gpu:'🎮 Видеокарты',ram:'📊 ОЗУ',storage:'💾 Накопители',case:'📦 Корпуса',psu:'⚡ БП',cooler:'🌀 Кулеры'};let cur='';parts.forEach(p=>{if(cur!==p.cat){cur=p.cat;l.innerHTML+='<div class="part-category">'+cats[p.cat]+'</div>';}l.innerHTML+='<div class="part-item"><img src="'+p.image+'" class="part-image" onerror="this.src=\'avatar1.jpg\'"><div class="part-info"><div class="part-name">'+p.name+'</div><div style="font-size:8px;color:#8e94a8;">'+p.cat.toUpperCase()+' | ⚡'+p.perf+'</div></div><div class="part-price">'+p.price.toLocaleString()+' ₽</div><button class="action-btn gold" style="font-size:8px;padding:4px 10px;" onclick="buyPart('+p.id+')">+</button></div>';});}
+function buyPart(id){const p=parts.find(x=>x.id===id);if(!p)return;const disc=shop.discountParts?.2:0;const price=Math.round(p.price*(1-disc));if(gs.balance>=price){updBal(-price,'🔧 '+p.name);inv.push({...p,invId:Date.now(),price:price});renderInvList();renderInvItems();checkAchievements();sound('buy');}else{notif('❌ Нет денег');sound('error');}}
+function renderBlack(){const l=document.getElementById('blist');if(!l)return;l.innerHTML='';fakeParts.forEach(p=>{l.innerHTML+='<div class="part-item" style="border-color:rgba(231,76,60,.1);"><img src="'+p.image+'" class="part-image" onerror="this.src=\'avatar1.jpg\'"><div class="part-info"><div class="part-name">'+p.name+' <span class="badge-danger">⚠️</span></div><div style="font-size:8px;color:#e74c3c;">Поломка: '+Math.round(p.breakChance*100)+'%</div></div><div class="part-price" style="color:#e74c3c;">'+p.price.toLocaleString()+' ₽</div><button class="action-btn danger" style="font-size:8px;padding:4px 10px;" onclick="buyFake('+p.id+')">+</button></div>';});}
+function buyFake(id){const p=fakeParts.find(x=>x.id===id);if(!p)return;if(gs.balance>=p.price){updBal(-p.price,'⚠️ '+p.name);inv.push({...p,invId:Date.now()});gs.reputation=Math.max(0,gs.reputation-5);renderInvList();renderInvItems();updBank();checkAchievements();sound('buy');}else{notif('❌ Нет денег');sound('error');}}
 
-function renderInvItems(){const c=document.getElementById('invitems');if(!c)return;let items=[];if(curInvTab==='parts')items=inv;else if(curInvTab==='built')items=builtPCs;else items=myPCs;const total=inv.length+builtPCs.length+myPCs.length;const orig=inv.filter(i=>!i.fake).length+builtPCs.length+myPCs.length;const fake=inv.filter(i=>i.fake).length;el('it',total);el('io',orig);el('if',fake);if(items.length===0){c.innerHTML='<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">Нет предметов</div></div>';return;}const catNames={cpu:'Процессор',gpu:'Видеокарта',ram:'ОЗУ',storage:'Накопитель',case:'Корпус',psu:'БП',cooler:'Охлаждение'};let html='<div style="font-size:10px;color:#8e94a8;margin-bottom:8px;">'+(curInvTab==='parts'?'🔧 Запчасти':curInvTab==='built'?'🖥️ Собранные':'📦 Купленные')+' ('+items.length+')</div>';items.forEach(item=>{const fake=item.fake||false;const onM=market.ads.some(a=>a.pcId===item.id&&a.isMy);if(curInvTab==='bought'||curInvTab==='built'){html+='<div class="inv-item" style="border-color:'+(onM?'rgba(241,196,15,.2)':'rgba(46,204,113,.2)')+'"><div class="inv-icon"><i class="fa-solid fa-desktop"></i></div><div class="inv-info"><div class="inv-name">'+item.name+'</div><div class="inv-cat">'+item.cpu+' | '+item.gpu+'</div>'+(onM?'<div style="font-size:7px;color:#f1c40f;">📌 На продаже</div>':'')+'</div><div class="inv-actions">'+(onM?'<button class="action-btn warn" style="font-size:7px;padding:4px 8px;" onclick="removeFromMarket('+item.id+')">Снять</button>':'<button class="action-btn gold" style="font-size:7px;padding:4px 8px;" onclick="sellFromInv('+item.id+')">💰 Продать</button>')+'</div></div>';}else{html+='<div class="inv-item" style="border-color:'+(fake?'rgba(231,76,60,.1)':'rgba(46,204,113,.1)')+'"><div class="inv-icon"><i class="fa-solid '+(item.icon||'fa-microchip')+'"></i></div><div class="inv-info"><div class="inv-name">'+item.name+(fake?'<span class="fake-badge">⚠️</span>':'<span class="original-badge">✅</span>')+'</div><div class="inv-cat">'+(catNames[item.cat]||item.cat)+'</div></div><div class="inv-actions"><button class="action-btn gold" style="font-size:7px;padding:4px 8px;" onclick="sellPart('+item.invId+')">💰</button><button class="action-btn blue" style="font-size:7px;padding:4px 8px;" onclick="usePart('+item.invId+')">🛠️</button></div></div>';}});c.innerHTML=html;}
+function renderInvItems(){const c=document.getElementById('invitems');if(!c)return;let items=[];if(curInvTab==='parts')items=inv;else if(curInvTab==='built')items=builtPCs;else items=myPCs;const total=inv.length+builtPCs.length+myPCs.length;const orig=inv.filter(i=>!i.fake).length+builtPCs.length+myPCs.length;const fake=inv.filter(i=>i.fake).length;el('it',total);el('io',orig);el('if',fake);if(items.length===0){c.innerHTML='<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">Нет предметов</div></div>';return;}const catNames={cpu:'Процессор',gpu:'Видеокарта',ram:'ОЗУ',storage:'Накопитель',case:'Корпус',psu:'БП',cooler:'Охлаждение'};let html='<div style="font-size:10px;color:#8e94a8;margin-bottom:8px;">'+(curInvTab==='parts'?'🔧 Запчасти':curInvTab==='built'?'🖥️ Собранные':'📦 Купленные')+' ('+items.length+')</div>';items.forEach(item=>{const fake=item.fake||false;const onM=market.ads.some(a=>a.pcId===item.id&&a.isMy);if(curInvTab==='bought'||curInvTab==='built'){html+='<div class="inv-item" style="border-color:'+(onM?'rgba(241,196,15,.2)':'rgba(46,204,113,.15)')+'"><div class="inv-icon">🖥️</div><div class="inv-info"><div class="inv-name">'+item.name+'</div><div class="inv-cat">'+item.cpu+' | '+item.gpu+'</div>'+(onM?'<div style="font-size:7px;color:#f1c40f;">📌 На продаже</div>':'')+'</div><div class="inv-actions">'+(onM?'<button class="action-btn warn" style="font-size:7px;padding:4px 8px;" onclick="removeFromMarket('+item.id+')">Снять</button>':'<button class="action-btn gold" style="font-size:7px;padding:4px 8px;" onclick="sellFromInv('+item.id+')">💰</button>')+'</div></div>';}else{html+='<div class="inv-item"><div class="inv-icon">🔧</div><div class="inv-info"><div class="inv-name">'+item.name+(fake?'<span class="fake-badge">⚠️</span>':'<span class="original-badge">✅</span>')+'</div><div class="inv-cat">'+(catNames[item.cat]||item.cat)+'</div></div><div class="inv-actions"><button class="action-btn gold" style="font-size:7px;padding:4px 8px;" onclick="sellPart('+item.invId+')">💰</button><button class="action-btn blue" style="font-size:7px;padding:4px 8px;" onclick="usePart('+item.invId+')">🛠️</button></div></div>';}});c.innerHTML=html;}
 function switchInvTab(t){curInvTab=t;renderInvItems();}
-function sellPart(id){const i=inv.findIndex(x=>x.invId===id);if(i===-1)return;const it=inv[i],price=Math.round(it.price*(.7+Math.random()*.2));if(confirm('Продать '+it.name+' за '+price.toLocaleString()+' ₽?')){inv.splice(i,1);updBal(price,'💰 Продажа');gs.reputation=Math.min(100,gs.reputation+1);renderInvItems();renderInvList();updBank();notif('✅ Продан!');}}
-function usePart(id){const i=inv.findIndex(x=>x.invId===id);if(i===-1)return;const it=inv[i];if(build[it.cat]){alert('Слот занят!');return;}build[it.cat]={...it};inv.splice(i,1);renderSlots();renderInvList();renderInvItems();notif('✅ В сборке');}
-function sellFromInv(id){let pc=myPCs.find(p=>p.id===id)||builtPCs.find(p=>p.id===id);if(!pc){notif('❌');return;}if(market.ads.some(a=>a.pcId===pc.id&&a.isMy)){notif('⚠️ На продаже!');return;}let p=prompt('💰 Цена:',pc.price);if(!p)return;p=parseInt(p.replace(/\D/g,''));if(isNaN(p)||p<1000){notif('❌ Цена');return;}const newAd={id:Date.now(),name:pc.name,price:p,cpu:pc.cpu,gpu:pc.gpu,tag:pc.tag||'budget',tagName:pc.tagName||'Бюджетный',city:gs.currentCity,seller:{...SELLERS[0],name:playerData.name||'Вы',avatar:'avatar18.jpg',rating:gs.reputation},image:getPCImg(Math.random()*1000),views:0,date:new Date(),status:'active',isMy:true,likes:0,pcId:pc.id};market.ads.push(newAd);pc.isOnMarket=true;renderMarket();renderInvItems();saveMarket();startAutoOffers(newAd.id);notif('✅ Выставлен!');}
-function removeFromMarket(id){const a=market.ads.find(x=>x.pcId===id&&x.isMy);if(!a)return;if(confirm('Снять?')){if(a.offerTimer)clearTimeout(a.offerTimer);const pc=myPCs.find(p=>p.id===id);if(pc)pc.isOnMarket=false;const bp=builtPCs.find(p=>p.id===id);if(bp)bp.isOnMarket=false;market.ads=market.ads.filter(x=>x.id!==a.id);renderMarket();renderInvItems();saveMarket();notif('✅');}}
+async function sellPart(id){const i=inv.findIndex(x=>x.invId===id);if(i===-1)return;const it=inv[i],price=Math.round(it.price*(.7+Math.random()*.2));const ok=await uiConfirm('Продать '+it.name+' за '+price.toLocaleString()+' ₽?','💰 Продажа');if(ok){inv.splice(i,1);updBal(price,'💰 Продажа');gs.reputation=Math.min(100,gs.reputation+1);renderInvItems();renderInvList();updBank();notif('✅ Продан!');sound('sell');}}
+function usePart(id){const i=inv.findIndex(x=>x.invId===id);if(i===-1)return;const it=inv[i];if(build[it.cat]){uiAlert('Слот занят!','Ошибка');sound('error');return;}build[it.cat]={...it};inv.splice(i,1);renderSlots();renderInvList();renderInvItems();notif('✅ В сборке');sound('click');}
+async function sellFromInv(id){let pc=myPCs.find(p=>p.id===id)||builtPCs.find(p=>p.id===id);if(!pc){notif('❌');return;}if(market.ads.some(a=>a.pcId===pc.id&&a.isMy)){notif('⚠️ На продаже!');return;}const p=await uiPrompt('💰 Цена:',''+pc.price,'Продажа');if(!p)return;const pv=parseInt(p.replace(/\D/g,''));if(isNaN(pv)||pv<1000){notif('❌ Цена');sound('error');return;}const newAd={id:Date.now(),name:pc.name,price:pv,cpu:pc.cpu,gpu:pc.gpu,tag:pc.tag||'budget',tagName:pc.tagName||'Бюджетный',city:gs.currentCity,seller:{...SELLERS[0],name:playerData.name||'Вы',avatar:selectedAvatar,rating:gs.reputation},image:getPCImg(Math.random()*1000),views:0,date:new Date(),status:'active',isMy:true,likes:0,pcId:pc.id};market.ads.push(newAd);pc.isOnMarket=true;renderMarket();renderInvItems();saveMarket();startAutoOffers(newAd.id);notif('✅ Выставлен!');sound('buy');}
+async function removeFromMarket(id){const a=market.ads.find(x=>x.pcId===id&&x.isMy);if(!a)return;const ok=await uiConfirm('Снять?','Подтверждение');if(ok){if(a.offerTimer)clearTimeout(a.offerTimer);const pc=myPCs.find(p=>p.id===id);if(pc)pc.isOnMarket=false;const bp=builtPCs.find(p=>p.id===id);if(bp)bp.isOnMarket=false;market.ads=market.ads.filter(x=>x.id!==a.id);renderMarket();renderInvItems();saveMarket();notif('✅');sound('click');}}
 
-function renderInvList(){const l=document.getElementById('invlist');if(!l)return;l.innerHTML='';if(inv.length===0){l.innerHTML='<div style="text-align:center;padding:16px;color:#8e94a8;font-size:10px;">📦 Склад пуст</div>';return;}inv.forEach((it,i)=>{l.innerHTML+='<div class="inv-item"><div class="inv-icon"><i class="fa-solid '+it.icon+'"></i></div><div class="inv-info"><div class="inv-name">'+it.name+(it.fake?' ⚠️':'')+'</div><div class="inv-cat">'+it.cat+'</div></div><div class="inv-actions"><button class="action-btn gold" style="font-size:7px;padding:3px 8px;" onclick="mount('+i+')">Установить</button></div></div>';});}
+function renderInvList(){const l=document.getElementById('invlist');if(!l)return;l.innerHTML='';if(inv.length===0){l.innerHTML='<div style="text-align:center;padding:16px;color:#8e94a8;font-size:10px;">📦 Склад пуст</div>';return;}inv.forEach((it,i)=>{l.innerHTML+='<div class="inv-item"><div class="inv-icon">🔧</div><div class="inv-info"><div class="inv-name">'+it.name+(it.fake?' ⚠️':'')+'</div><div class="inv-cat">'+it.cat+'</div></div><div class="inv-actions"><button class="action-btn gold" style="font-size:7px;padding:3px 8px;" onclick="mount('+i+')">Уст.</button></div></div>';});}
 function renderSlots(){const c=document.getElementById('slots');if(!c)return;const s=[{key:'cpu',l:'🖥️ Процессор'},{key:'gpu',l:'🎮 Видеокарта'},{key:'ram',l:'📊 ОЗУ'},{key:'storage',l:'💾 Накопитель'},{key:'case',l:'📦 Корпус'},{key:'psu',l:'⚡ БП'},{key:'cooler',l:'🌀 Кулер'}];c.innerHTML=s.map(x=>{const it=build[x.key],f=it!==null;return '<div class="slot-item"><div><div class="slot-label">'+x.l+'</div><div class="slot-value '+(f?'filled':'empty')+'" style="color:'+(f?'#2ecc71':'#8e94a8')+';">'+(f?it.name:'Пусто')+'</div></div>'+(f?'<button class="action-btn warn" style="font-size:8px;padding:3px 8px;" onclick="unmount(\''+x.key+'\')">Снять</button>':'')+'</div>';}).join('');}
-function mount(i){const it=inv[i];if(!it)return;if(build[it.cat]){alert('Занято!');return;}build[it.cat]={...it};inv.splice(i,1);renderSlots();renderInvList();renderInvItems();}
-function unmount(t){if(!build[t]){alert('Пусто!');return;}inv.push(build[t]);build[t]=null;renderSlots();renderInvList();renderInvItems();}
-function sellBuild(){const req=['cpu','gpu','ram','storage','case','psu','cooler'];const miss=req.filter(t=>!build[t]);if(miss.length){alert('❌ Нет: '+miss.join(', '));return;}let total=0,fake=false,perf=0;req.forEach(t=>{const p=build[t];total+=p.price;if(p.fake)fake=true;if(p.perf)perf+=p.perf;});if(fake&&Math.random()<.3){alert('💥 Контрафакт сломался!');req.forEach(t=>build[t]=null);renderSlots();gs.reputation=Math.max(0,gs.reputation-10);updBank();return;}const price=Math.round(total*(1.1+(perf/100)*.1+Math.random()*.1));builtPCs.push({id:Date.now(),name:'Собранный ПК',price:price,cpu:build.cpu?.name||'?',gpu:build.gpu?.name||'?',tag:'mid',tagName:'Средний',isBuilt:true,isOnMarket:false});updBal(price,'💻 Собранный');req.forEach(t=>build[t]=null);renderSlots();renderInvList();renderInvItems();gs.pcsSold++;gs.reputation=Math.min(100,gs.reputation+5);addXP(20);updBank();checkAchievements();alert('✅ ПК продан за '+price.toLocaleString()+' ₽!');}
+function mount(i){const it=inv[i];if(!it)return;if(build[it.cat]){uiAlert('Занято!','Ошибка');return;}build[it.cat]={...it};inv.splice(i,1);renderSlots();renderInvList();renderInvItems();sound('click');}
+function unmount(t){if(!build[t]){uiAlert('Пусто!','Ошибка');return;}inv.push(build[t]);build[t]=null;renderSlots();renderInvList();renderInvItems();sound('click');}
+function sellBuild(){const req=['cpu','gpu','ram','storage','case','psu','cooler'];const miss=req.filter(t=>!build[t]);if(miss.length){uiAlert('❌ Нет: '+miss.join(', '),'Ошибка');sound('error');return;}let total=0,fake=false,perf=0;req.forEach(t=>{const p=build[t];total+=p.price;if(p.fake)fake=true;if(p.perf)perf+=p.perf;});if(fake&&Math.random()<.3){uiAlert('💥 Контрафакт сломался!','Поломка');req.forEach(t=>build[t]=null);renderSlots();gs.reputation=Math.max(0,gs.reputation-10);updBank();sound('error');return;}const price=Math.round(total*(1.1+(perf/100)*.1+Math.random()*.1));builtPCs.push({id:Date.now(),name:'Собранный ПК',price:price,cpu:build.cpu?.name||'?',gpu:build.gpu?.name||'?',tag:'mid',tagName:'Средний',isBuilt:true,isOnMarket:false});updBal(price,'💻 Собранный');req.forEach(t=>build[t]=null);renderSlots();renderInvList();renderInvItems();gs.pcsSold++;gs.reputation=Math.min(100,gs.reputation+5);addXP(20);updBank();checkAchievements();uiAlert('✅ ПК продан за '+price.toLocaleString()+' ₽!','Успех');sound('sell');}
 
-function renderService(){const l=document.getElementById('slist');if(!l)return;l.innerHTML='';if(myPCs.length===0){l.innerHTML='<div class="empty-state"><div class="empty-icon">📱</div><div class="empty-title">Нет ПК</div></div>';return;}myPCs.forEach(pc=>{const price=Math.round(pc.price*(1.1+Math.random()*.15));const st=pc.isBroken?'❌ Сломан':(pc.inRepair?'🔧 В ремонте':'✅ Работает');const col=pc.isBroken?'#e74c3c':(pc.inRepair?'#f1c40f':'#2ecc71');l.innerHTML+='<div class="part-item" style="border-color:'+(pc.isBroken?'rgba(231,76,60,.1)':'rgba(46,204,113,.1)')+'"><div style="font-size:32px;width:50px;text-align:center;"><i class="fa-solid fa-desktop"></i></div><div class="part-info"><div class="part-name">'+pc.name+'</div><div style="font-size:8px;color:#8e94a8;">'+pc.cpu+' | '+pc.gpu+'</div><div style="font-size:8px;color:'+col+';">'+st+'</div></div><div style="display:flex;gap:4px;">'+(pc.isBroken?'<button class="action-btn warn" style="font-size:8px;padding:4px 10px;" onclick="repairPC('+pc.id+')">Чинить</button>':'')+(!pc.isBroken&&!pc.inRepair?'<button class="action-btn success" style="font-size:8px;padding:4px 10px;" onclick="sellPC('+pc.id+')">'+price.toLocaleString()+' ₽</button>':'')+(pc.inRepair?'<span style="font-size:9px;color:#f1c40f;">⏳</span>':'')+'</div></div>';});}
-function repairPC(id){const pc=myPCs.find(p=>p.id===id);if(!pc)return;const cost=1500+Math.floor(Math.random()*1500);if(gs.balance<cost){notif('❌ Нужно '+cost.toLocaleString()+' ₽');return;}updBal(-cost,'🔧 Ремонт');pc.inRepair=true;pc.isBroken=false;renderService();setTimeout(()=>{pc.inRepair=false;pc.tested=true;notif('✅ Готов!');renderService();},3000);}
-function sellPC(id){const pc=myPCs.find(p=>p.id===id);if(!pc)return;const price=Math.round(pc.price*(1.1+Math.random()*.15));if(confirm('Продать за '+price.toLocaleString()+' ₽?')){updBal(price,'💵 Продажа');myPCs=myPCs.filter(p=>p.id!==id);gs.pcsSold++;gs.reputation=Math.min(100,gs.reputation+3);addXP(15);renderService();updBank();checkAchievements();notif('✅');}}
+function renderService(){const l=document.getElementById('slist');if(!l)return;l.innerHTML='';if(myPCs.length===0){l.innerHTML='<div class="empty-state"><div class="empty-icon">📱</div><div class="empty-title">Нет ПК</div></div>';return;}myPCs.forEach(pc=>{const price=Math.round(pc.price*(1.1+Math.random()*.15));const st=pc.isBroken?'❌ Сломан':(pc.inRepair?'🔧 Ремонт':'✅ Работает');const col=pc.isBroken?'#e74c3c':(pc.inRepair?'#f1c40f':'#2ecc71');l.innerHTML+='<div class="part-item"><div style="font-size:26px;width:44px;text-align:center;">🖥️</div><div class="part-info"><div class="part-name">'+pc.name+'</div><div style="font-size:8px;color:#8e94a8;">'+pc.cpu+' | '+pc.gpu+'</div><div style="font-size:8px;color:'+col+';">'+st+'</div></div><div style="display:flex;gap:4px;">'+(pc.isBroken?'<button class="action-btn warn" style="font-size:8px;padding:4px 10px;" onclick="repairPC('+pc.id+')">Чинить</button>':'')+(!pc.isBroken&&!pc.inRepair?'<button class="action-btn success" style="font-size:8px;padding:4px 10px;" onclick="sellPC('+pc.id+')">'+price.toLocaleString()+' ₽</button>':'')+(pc.inRepair?'<span style="font-size:9px;color:#f1c40f;">⏳</span>':'')+'</div></div>';});}
+function repairPC(id){const pc=myPCs.find(p=>p.id===id);if(!pc)return;const cost=1500+Math.floor(Math.random()*1500);if(gs.balance<cost){notif('❌ Нужно '+cost.toLocaleString()+' ₽');sound('error');return;}updBal(-cost,'🔧 Ремонт');pc.inRepair=true;pc.isBroken=false;renderService();setTimeout(()=>{pc.inRepair=false;pc.tested=true;notif('✅ Готов!');renderService();sound('buy');},3000);}
+async function sellPC(id){const pc=myPCs.find(p=>p.id===id);if(!pc)return;const price=Math.round(pc.price*(1.1+Math.random()*.15));const ok=await uiConfirm('Продать за '+price.toLocaleString()+' ₽?','💵 Продажа');if(ok){updBal(price,'💵 Продажа');myPCs=myPCs.filter(p=>p.id!==id);gs.pcsSold++;gs.reputation=Math.min(100,gs.reputation+3);addXP(15);renderService();updBank();checkAchievements();notif('✅');sound('sell');}}
 
-function takeLoan(amt){if(loans.total>=loans.max){notif('❌ Макс 3');return;}const act=loans.list.filter(l=>!l.isPaid);if(act.length>0){notif('⚠️ Погасите');return;}if(gs.reputation<30){notif('❌ Репутация <30%');return;}const rate=amt<=10000?10:amt<=20000?12:amt<=30000?15:18;const total=Math.round(amt*(1+rate/100));loans.list.push({id:Date.now(),amount:amt,rate:rate,total:total,paid:0,isPaid:false});loans.total++;updBal(amt,'💰 Кредит');gs.reputation=Math.max(0,gs.reputation-5);saveLoans();updLoans();updBank();notif('✅ Возврат: '+total.toLocaleString()+' ₽');}
-function payAll(){const act=loans.list.filter(l=>!l.isPaid);if(!act.length){notif('✅ Нет');return;}const total=act.reduce((s,l)=>s+(l.total-l.paid),0);if(gs.balance<total){notif('❌ Нужно '+total.toLocaleString()+' ₽');return;}if(confirm('Погасить всё ('+total.toLocaleString()+' ₽)?')){updBal(-total,'💸 Погашение');act.forEach(l=>{l.paid=l.total;l.isPaid=true;});gs.reputation=Math.min(100,gs.reputation+10);saveLoans();updLoans();updBank();notif('✅');}}
+function takeLoan(amt){if(loans.total>=loans.max){notif('❌ Макс 3');sound('error');return;}const act=loans.list.filter(l=>!l.isPaid);if(act.length>0){notif('⚠️ Погасите');sound('error');return;}if(gs.reputation<30){notif('❌ Репутация <30%');sound('error');return;}const rate=amt<=10000?10:amt<=20000?12:amt<=30000?15:18;const total=Math.round(amt*(1+rate/100));loans.list.push({id:Date.now(),amount:amt,rate:rate,total:total,paid:0,isPaid:false});loans.total++;updBal(amt,'💰 Кредит');gs.reputation=Math.max(0,gs.reputation-5);saveLoans();updLoans();updBank();notif('✅ Возврат: '+total.toLocaleString()+' ₽');sound('buy');}
+async function payAll(){const act=loans.list.filter(l=>!l.isPaid);if(!act.length){notif('✅ Нет');return;}const total=act.reduce((s,l)=>s+(l.total-l.paid),0);if(gs.balance<total){notif('❌ Нужно '+total.toLocaleString()+' ₽');sound('error');return;}const ok=await uiConfirm('Погасить всё ('+total.toLocaleString()+' ₽)?','💸 Погашение');if(ok){updBal(-total,'💸 Погашение');act.forEach(l=>{l.paid=l.total;l.isPaid=true;});gs.reputation=Math.min(100,gs.reputation+10);saveLoans();updLoans();updBank();notif('✅');sound('coin');}}
 function updLoans(){const act=loans.list.filter(l=>!l.isPaid);const debt=act.reduce((s,l)=>s+(l.total-l.paid),0);el('lc',loans.total+'/'+loans.max);el('la',act.length);el('ld',debt.toLocaleString()+' ₽');document.querySelectorAll('.loan-btn').forEach(b=>{b.disabled=!(loans.total<loans.max&&act.length===0&&gs.reputation>=30);});}
 function saveLoans(){try{localStorage.setItem('pcLoans',JSON.stringify(loans));}catch(e){}}
 
-function renderCal(){const g=document.getElementById('cg');if(!g)return;g.innerHTML='';const dow=gs.dayOfWeek||0;const first=(dow-(gs.day-1)%7+7)%7;for(let i=0;i<first;i++)g.innerHTML+='<div style="color:#2a2d3d;">-</div>';for(let d=1;d<=30;d++){const t=d===gs.day;g.innerHTML+='<div style="'+(t?'background:rgba(241,196,15,.2);border-radius:6px;padding:3px;font-weight:bold;color:#f1c40f;':'')+'">'+d+'</div>';}const we={0:'📈 Начало недели',1:'📊 Средний спрос',2:'🛒 Распродажи',3:'💻 Поступления',4:'🔥 Ажиотаж',5:'🎉 Слабый',6:'☀️ Отдых'};el('ce',(we[dow]||'📊')+' | ⏰ '+timeStr(time.min));}
+function renderCal(){const g=document.getElementById('cg');if(!g)return;g.innerHTML='';const dow=gs.dayOfWeek||0;const first=(dow-(gs.day-1)%7+7)%7;for(let i=0;i<first;i++)g.innerHTML+='<div style="color:#2a2d3d;">-</div>';for(let d=1;d<=30;d++){const t=d===gs.day;g.innerHTML+='<div style="'+(t?'background:rgba(241,196,15,.2);border-radius:6px;padding:3px;font-weight:bold;color:#f1c40f;':'')+'">'+d+'</div>';}const we={0:'📈 Начало',1:'📊 Средний',2:'🛒 Распродажи',3:'💻 Поступления',4:'🔥 Ажиотаж',5:'🎉 Слабый',6:'☀️ Отдых'};el('ce',(we[dow]||'📊')+' | ⏰ '+timeStr(time.min));}
 
-// СОН: в глобальном времени сон просто ускоряет локальное продвижение,
-// но не двигает глобальный dayStart, чтобы не рассинхронизировать всех.
-// Поэтому сон теперь только восстанавливает репутацию и показывает анимацию.
-function doSleep(){
-    const h=Math.floor(time.min/60)%24;
-    if(h>=6&&h<23){notif('🌙 С 23:00 до 06:00');return;}
-    if(time.sleeping)return;
-    time.sleeping=true;
-    document.getElementById('so').classList.add('show');
-    notif('💤 Спим...');
-    let step=0;
-    const iv=setInterval(()=>{
-        step++;
-        const pr=step/50;
-        const f=document.getElementById('spf');
-        if(f)f.style.width=(pr*100)+'%';
-        el('stm',timeStr(time.min));
-        if(step>=50){
-            clearInterval(iv);
-            time.sleeping=false;
-            document.getElementById('so').classList.remove('show');
-            const r=5+Math.floor(Math.random()*10);
-            gs.reputation=Math.min(100,gs.reputation+r);
-            notif('🌅 +'+r+'% репутации!');
-            updTime();updDay();updBank();save();
-        }
-    },100);
-}
+const ACHIEVEMENTS=[
+{id:'first_pc',name:'Первый ПК',icon:'🖥️',desc:'Купить первый ПК',reward:2000,check:()=>gs.pcsBought>=1},
+{id:'first_sell',name:'Первая продажа',icon:'💰',desc:'Продать первый ПК',reward:3000,check:()=>gs.pcsSold>=1},
+{id:'rich_100k',name:'Сотка',icon:'💵',desc:'100 000 ₽',reward:10000,check:()=>gs.balance>=100000},
+{id:'rich_1m',name:'Миллионер',icon:'💎',desc:'1 000 000 ₽',reward:50000,check:()=>gs.balance>=1000000},
+{id:'rich_10m',name:'Магнат',icon:'👑',desc:'10 000 000 ₽',reward:500000,check:()=>gs.balance>=10000000},
+{id:'rep_100',name:'Уважаемый',icon:'⭐',desc:'100% репутации',reward:20000,check:()=>gs.reputation>=100},
+{id:'sell_10',name:'Продавец',icon:'📦',desc:'10 ПК',reward:15000,check:()=>gs.pcsSold>=10},
+{id:'sell_50',name:'Бизнесмен',icon:'🏪',desc:'50 ПК',reward:50000,check:()=>gs.pcsSold>=50},
+{id:'sell_100',name:'Магнат ПК',icon:'🏢',desc:'100 ПК',reward:200000,check:()=>gs.pcsSold>=100},
+{id:'buy_10',name:'Коллекционер',icon:'📚',desc:'10 ПК куплено',reward:20000,check:()=>gs.pcsBought>=10},
+{id:'buy_50',name:'Скупщик',icon:'🏬',desc:'50 ПК куплено',reward:100000,check:()=>gs.pcsBought>=50},
+{id:'build_5',name:'Сборщик',icon:'🔧',desc:'5 ПК собрано',reward:10000,check:()=>builtPCs.length>=5},
+{id:'inv_20',name:'Склад',icon:'📦',desc:'20 запчастей',reward:8000,check:()=>inv.length>=20},
+{id:'fake_5',name:'Осторожный',icon:'⚠️',desc:'5 контрафакта',reward:5000,check:()=>inv.filter(x=>x.fake).length>=5},
+{id:'level_5',name:'Опытный',icon:'🎮',desc:'Ур. 5',reward:25000,check:()=>playerData.level>=5},
+{id:'level_10',name:'Профи',icon:'🏅',desc:'Ур. 10',reward:100000,check:()=>playerData.level>=10},
+{id:'level_20',name:'Легенда',icon:'🌟',desc:'Ур. 20',reward:500000,check:()=>playerData.level>=20},
+{id:'chat_10',name:'Общительный',icon:'💬',desc:'10 сообщений',reward:5000,check:()=>parseInt(localStorage.getItem('chatCount')||'0')>=10},
+{id:'first_job',name:'Работяга',icon:'💼',desc:'Устроиться на работу',reward:5000,check:()=>jobs.current!==null||jobs.completed.length>=1},
+{id:'job_director',name:'Директор',icon:'👔',desc:'Стать директором',reward:100000,check:()=>jobs.current==='director'},
+{id:'auction_win',name:'Аукционист',icon:'🔨',desc:'Выиграть аукцион',reward:15000,check:()=>localStorage.getItem('auctionWin')==='1'},
+{id:'shop_buy',name:'Инвестор',icon:'⭐',desc:'Купить улучшение',reward:10000,check:()=>Object.keys(shop).some(k=>shop[k])},
+{id:'city_all',name:'Путешественник',icon:'✈️',desc:'Все 15 городов',reward:30000,check:()=>(localStorage.getItem('visitedCities')||'').split(',').filter(x=>x).length>=15},
+{id:'day_30',name:'Месяц',icon:'📅',desc:'30 дней',reward:30000,check:()=>gs.totalDays>=30},
+{id:'day_100',name:'Долгожитель',icon:'🗓️',desc:'100 дней',reward:100000,check:()=>gs.totalDays>=100}
+];
+function checkAchievements(){if(!playerData.achievements)playerData.achievements={};let n=0;ACHIEVEMENTS.forEach(a=>{if(!playerData.achievements[a.id]&&a.check()){playerData.achievements[a.id]=Date.now();n++;setTimeout(()=>{updBal(a.reward,'🏆 '+a.name);gs.reputation=Math.min(100,gs.reputation+5);notif('🏆 '+a.name+' (+'+a.reward.toLocaleString()+' ₽)');sound('coin');},n*1000);}});if(n){savePlayerData();renderAchievements();}}
+function renderAchievements(){const c=document.getElementById('achList');if(!c)return;if(!playerData.achievements)playerData.achievements={};const done=ACHIEVEMENTS.filter(a=>playerData.achievements[a.id]).length;let html='<div class="card" style="text-align:center;"><div style="font-size:22px;font-weight:800;color:#f1c40f;">'+done+' / '+ACHIEVEMENTS.length+'</div><div style="font-size:10px;color:#8e94a8;">Получено</div></div>';ACHIEVEMENTS.forEach(a=>{const u=!!playerData.achievements[a.id];html+='<div class="part-item" style="border-color:'+(u?'rgba(241,196,15,.3)':'rgba(255,255,255,.04)')+';opacity:'+(u?'1':'.5')+';"><div style="font-size:26px;width:44px;text-align:center;">'+a.icon+'</div><div class="part-info"><div class="part-name">'+a.name+'</div><div style="font-size:9px;color:#8e94a8;">'+a.desc+'</div></div><div style="font-size:11px;color:#f1c40f;font-weight:bold;">'+(u?'✅':'+'+a.reward.toLocaleString())+'</div></div>';});c.innerHTML=html;}
 
-function newDay(){gs.day++;gs.dayOfWeek=((gs.dayOfWeek||0)+1)%7;if(gs.day>30){gs.day=1;gs.month++;if(gs.month>12){gs.month=1;gs.year++;}}onGlobalDayChange();}
+function initGlobalChat(){if(!syncEnabled||!database)return;database.ref('globalChat').limitToLast(50).on('child_added',snap=>{const m=snap.val();if(!m)return;const c=document.getElementById('gchatMsgs');if(!c)return;const pid=localStorage.getItem('pcPlayerId');const isMe=m.playerId===pid;const d=document.createElement('div');d.className='msg '+(isMe?'sent':'received');d.innerHTML='<div style="font-size:9px;color:#f1c40f;font-weight:bold;">'+(m.name||'Аноним')+'</div>'+m.text+'<span class="msg-time">'+new Date(m.time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</span>';c.appendChild(d);c.scrollTop=c.scrollHeight;});}
+function sendGlobalMsg(){const i=document.getElementById('gchatIn');const t=i?.value?.trim();if(!t||!playerData.name){if(!playerData.name)notif('❌ Зарегистрируйся');return;}if(!syncEnabled||!database){notif('❌ Нет соединения');return;}database.ref('globalChat').push({playerId:localStorage.getItem('pcPlayerId'),name:playerData.name,age:playerData.age,text:t,time:Date.now()});const cnt=parseInt(localStorage.getItem('chatCount')||'0')+1;localStorage.setItem('chatCount',cnt);i.value='';sound('click');}
 
-function initParticles(){const c=document.getElementById('pc');if(!c)return;const ctx=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;const ps=[],cols=['#2ecc71','#3498db','#9b59b6','#f39c12','#e74c3c'];for(let i=0;i<30;i++)ps.push({x:Math.random()*c.width,y:Math.random()*c.height,s:1+Math.random()*2,sx:(Math.random()-.5)*.3,sy:(Math.random()-.5)*.3,c:cols[Math.floor(Math.random()*cols.length)],o:.15+Math.random()*.25});function anim(){ctx.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.x+=p.sx;p.y+=p.sy;if(p.x<0||p.x>c.width)p.sx*=-1;if(p.y<0||p.y>c.height)p.sy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.s,0,Math.PI*2);ctx.fillStyle=p.c;ctx.globalAlpha=p.o;ctx.fill();});ctx.globalAlpha=1;requestAnimationFrame(anim);}anim();addEventListener('resize',()=>{c.width=innerWidth;c.height=innerHeight;});}
-
-function renderThemes(){const c=document.getElementById('tsel');if(!c)return;const th=[{id:'dark',bg:'#0a0b12'},{id:'light',bg:'#f0f2f5'}];const cur=localStorage.getItem('pcTheme')||'dark';c.innerHTML=th.map(t=>'<div class="theme-btn '+(t.id===cur?'active':'')+'" style="background:'+t.bg+'" onclick="applyTheme(\''+t.id+'\')"></div>').join('');}
-function applyTheme(id){document.body.style.background=id==='light'?'#f0f2f5':'#0a0b12';document.body.style.color=id==='light'?'#1a1a2e':'#fff';localStorage.setItem('pcTheme',id);renderThemes();}
+function renderRanking(){const c=document.getElementById('rankList');if(!c)return;if(!syncEnabled||!database){c.innerHTML='<div style="text-align:center;padding:20px;color:#8e94a8;">Нет соединения</div>';return;}c.innerHTML='<div style="text-align:center;padding:20px;color:#8e94a8;">Загрузка...</div>';database.ref('players').once('value').then(snap=>{const data=snap.val();if(!data){c.innerHTML='<div style="text-align:center;padding:20px;color:#8e94a8;">Нет игроков</div>';return;}const arr=Object.keys(data).map(k=>({...data[k],_id:k})).sort((a,b)=>(b.balance||0)-(a.balance||0)).slice(0,10);const myId=localStorage.getItem('pcPlayerId');let html='<div style="text-align:center;margin-bottom:12px;"><div style="font-size:30px;">🏆</div><div style="font-size:13px;font-weight:bold;color:#f1c40f;">ТОП-10</div></div>';arr.forEach((p,i)=>{const isMe=p._id===myId;const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);html+='<div class="part-item" style="border-color:'+(isMe?'rgba(241,196,15,.5)':'rgba(255,255,255,.04)')+';"><div style="font-size:22px;width:44px;text-align:center;">'+medal+'</div><div class="part-info"><div class="part-name">'+(p.name||'Аноним')+(isMe?' 👈':'')+'</div><div style="font-size:9px;color:#8e94a8;">🎂 '+(p.age||'?')+' | 🎮 '+(p.level||1)+' | ⭐ '+(p.reputation||0)+'%</div></div><div style="font-size:12px;color:#f1c40f;font-weight:bold;">'+(p.balance||0).toLocaleString()+' ₽</div></div>';});c.innerHTML=html;});}
+function trackCity(){const v=(localStorage.getItem('visitedCities')||'').split(',').filter(x=>x);if(!v.includes(gs.currentCity)){v.push(gs.currentCity);localStorage.setItem('visitedCities',v.join(','));}}
 
 function renderNews(){const c=document.getElementById('nlist');if(!c)return;if(news.length===0){c.innerHTML='<div class="empty-state"><div class="empty-icon">📰</div><div class="empty-title">Нет новостей</div></div>';return;}c.innerHTML=news.map(n=>'<div class="news-item"><div class="news-title">'+n.title+'</div><div class="news-date">📅 '+n.date+'</div><div class="news-text">'+n.text+'</div></div>').join('');}
-
 function notif(t){const o=document.querySelector('.notification');if(o)o.remove();const d=document.createElement('div');d.className='notification';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),3000);}
-
-function openApp(id){document.querySelectorAll('.app-window').forEach(a=>a.style.display='none');const a=document.getElementById('w-'+id);if(a){a.style.display='flex';if(id==='market')renderMarket();else if(id==='parts')renderParts();else if(id==='black')renderBlack();else if(id==='service')renderService();else if(id==='work'){renderInvList();renderSlots();}else if(id==='bank'){updLoans();updBank();}else if(id==='cal')renderCal();else if(id==='cities')renderCities();else if(id==='chats')renderChats();else if(id==='gchat'){const g=document.getElementById('gchatMsgs');if(g&&g.children.length===0)g.innerHTML='<div style="text-align:center;padding:20px;color:#8e94a8;">Загрузка чата...</div>';}else if(id==='rank')renderRanking();else if(id==='ach')renderAchievements();else if(id==='news')renderNews();else if(id==='sleep')updTime();else if(id==='inv')renderInvItems();else if(id==='set'){el('sd',gs.day);renderThemes();}}}
-function closeApp(id){const a=document.getElementById('w-'+id);if(a)a.style.display='none';if(id==='chats')document.getElementById('cw').classList.remove('show');}
-
-function renderAll(){renderMarket();renderParts();renderBlack();renderService();renderInvList();renderSlots();renderChats();renderNews();renderCities();renderCal();renderInvItems();updBank();updDay();updTime();updLoans();}
-
-function fullReset(){if(confirm('Сбросить игру? Весь прогресс удалится!')){localStorage.clear();location.reload();}}
+function openApp(id){sound('click');document.querySelectorAll('.app-window').forEach(a=>a.style.display='none');const a=document.getElementById('w-'+id);if(a){a.style.display='flex';if(id==='market')renderMarket();else if(id==='parts')renderParts();else if(id==='black')renderBlack();else if(id==='service')renderService();else if(id==='work'){renderInvList();renderSlots();}else if(id==='jobs')renderJobs();else if(id==='auction')renderAuction();else if(id==='shop')renderShop();else if(id==='bank'){updLoans();updBank();}else if(id==='cal')renderCal();else if(id==='cities')renderCities();else if(id==='chats')renderChats();else if(id==='gchat'){const g=document.getElementById('gchatMsgs');if(g&&g.children.length===0)g.innerHTML='<div style="text-align:center;padding:20px;color:#8e94a8;">Загрузка...</div>';}else if(id==='rank')renderRanking();else if(id==='ach')renderAchievements();else if(id==='news')renderNews();else if(id==='sleep')updTime();else if(id==='inv')renderInvItems();else if(id==='set'){el('sd',gs.totalDays);renderAvatarPicker();}}}
+function closeApp(id){document.getElementById('w-'+id).style.display='none';if(id==='chats')document.getElementById('cw').classList.remove('show');sound('click');}
+function renderAll(){renderMarket();renderParts();renderBlack();renderService();renderInvList();renderSlots();renderChats();renderNews();renderCities();renderCal();renderInvItems();renderJobs();renderAuction();renderShop();updBank();updDay();updTime();updLoans();}
+async function fullReset(){const ok=await uiConfirm('Сбросить игру? Прогресс удалится!','🗑️ Сброс');if(ok){localStorage.clear();location.reload();}}
+function initParticles(){const c=document.getElementById('pc');if(!c)return;const ctx=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;const ps=[],cols=['#2ecc71','#3498db','#9b59b6','#f39c12','#e74c3c'];for(let i=0;i<30;i++)ps.push({x:Math.random()*c.width,y:Math.random()*c.height,s:1+Math.random()*2,sx:(Math.random()-.5)*.3,sy:(Math.random()-.5)*.3,c:cols[Math.floor(Math.random()*cols.length)],o:.15+Math.random()*.25});function anim(){ctx.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.x+=p.sx;p.y+=p.sy;if(p.x<0||p.x>c.width)p.sx*=-1;if(p.y<0||p.y>c.height)p.sy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.s,0,Math.PI*2);ctx.fillStyle=p.c;ctx.globalAlpha=p.o;ctx.fill();});ctx.globalAlpha=1;requestAnimationFrame(anim);}anim();addEventListener('resize',()=>{c.width=innerWidth;c.height=innerHeight;});}
+function doSleep(){const h=Math.floor(time.min/60)%24;if(h>=6&&h<23){notif('🌙 С 23:00 до 06:00');sound('error');return;}if(time.sleeping)return;time.sleeping=true;document.getElementById('so').classList.add('show');notif('💤 Спим...');let step=0;const iv=setInterval(()=>{step++;const pr=step/50;const f=document.getElementById('spf');if(f)f.style.width=(pr*100)+'%';el('stm',timeStr(time.min));if(step>=50){clearInterval(iv);time.sleeping=false;document.getElementById('so').classList.remove('show');const r=5+Math.floor(Math.random()*10);gs.reputation=Math.min(100,gs.reputation+r);notif('🌅 +'+r+'% репутации!');updTime();updDay();updBank();save();sound('coin');}},100);}
 
 function init(){
     if(!localStorage.getItem('pcPlayerId'))localStorage.setItem('pcPlayerId','player_'+Date.now());
@@ -916,20 +789,20 @@ function init(){
     initParts();initFake();
     load();initNews();
     if(news.length===0)initNews();
-    initMarket();updLoans();
+    initMarket();initAuctions();updLoans();
     listenToFirebase();
-    initParticles();renderThemes();renderAll();updTime();
+    initParticles();renderAll();updTime();
     initGlobalChat();
-    initGlobalTime();        // <-- глобальное время
-    startGlobalTimeTick();   // <-- тикер глобального времени
+    initGlobalTime();
+    startGlobalTimeTick();
+    renderAvatarPicker();
     if(playerData.name)el('profileInfo','👤 '+playerData.name+' | 🎂 '+playerData.age+' лет | 🏠 '+playerData.homeCity+' | 🎮 Ур. '+playerData.level);
     if(!playerData.name){setTimeout(()=>document.getElementById('reg').classList.add('show'),500);}
     setInterval(()=>{save();saveMarket();saveLoans();saveToFirebase();},10000);
     setInterval(checkAchievements,5000);
-    const t=localStorage.getItem('pcTheme');if(t)applyTheme(t);
-    console.log('🖥️ PC Tycoon v1.1 (Global Time)!');
-    console.log('✅ Готово!');
-    console.log('📍 Городов: '+CITIES.length);
+    setInterval(checkAuctions,1000);
+    setInterval(paySalaryDaily,10000);
+    console.log('🖥️ PC Tycoon v1.4.1!');
 }
 document.addEventListener('DOMContentLoaded',init);
 </script>

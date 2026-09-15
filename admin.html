@@ -2,76 +2,68 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PC Tycoon v1 — Админ-панель</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PC Tycoon v1.4.1 — Админ-панель</title>
 <style>
-*{box-sizing:border-box}
-body{background:#0a0b12;color:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif;padding:20px;margin:0;max-width:1200px;margin:0 auto}
-h1{color:#f1c40f;font-size:20px;display:flex;align-items:center;gap:10px;margin:0 0 4px 0}
-.sub{color:#8e94a8;font-size:12px;margin-bottom:20px}
-h2{color:#f1c40f;font-size:15px;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0b12;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:16px;max-width:1300px;margin:0 auto;font-size:13px}
+h1{color:#f1c40f;font-size:18px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.sub{color:#8e94a8;font-size:11px;margin-bottom:16px}
+h2{color:#f1c40f;font-size:14px;margin:18px 0 8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 h2 .count{color:#5a6070;font-size:11px;font-weight:normal}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:20px}
-.stat-card{background:#181b28;border-radius:12px;padding:14px;text-align:center}
-.stat-num{font-size:22px;font-weight:800}
-.stat-lbl{font-size:10px;color:#8e94a8;margin-top:4px}
-.control-group{background:#181b28;border-radius:12px;padding:14px;margin-bottom:12px;border:1px solid rgba(255,255,255,.04)}
-.control-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:14px}
+.stat-card{background:#181b28;border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(255,255,255,.05)}
+.stat-num{font-size:20px;font-weight:800}
+.stat-lbl{font-size:9px;color:#8e94a8;margin-top:3px}
+.control-group{background:#181b28;border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid rgba(255,255,255,.05)}
+.control-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px}
 .control-row:last-child{margin-bottom:0}
-.control-row label{font-size:11px;color:#8e94a8;min-width:100px}
-.time-display{font-size:14px;font-weight:bold;color:#f1c40f;background:rgba(241,196,15,.08);padding:6px 12px;border-radius:8px;font-family:monospace}
-input[type=text],input[type=number],select{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#fff;padding:6px 10px;border-radius:8px;font-size:12px;outline:none}
+.control-row label{font-size:10px;color:#8e94a8;min-width:90px}
+.time-display{font-size:13px;font-weight:bold;color:#f1c40f;background:rgba(241,196,15,.08);padding:5px 10px;border-radius:8px;font-family:monospace}
+input[type=text],input[type=number],select{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#fff;padding:6px 10px;border-radius:8px;font-size:12px;outline:none;font-family:inherit}
 input[type=text]:focus,input[type=number]:focus{border-color:#f1c40f}
-button{background:#f1c40f;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:11px;color:#000;transition:opacity .15s}
-button:hover{opacity:0.8}
+button{background:linear-gradient(135deg,#f1c40f,#d4ac0d);border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:10px;color:#000;transition:opacity .15s;font-family:inherit}
+button:hover{opacity:.85}
 button:disabled{opacity:.3;cursor:not-allowed}
-.danger{background:#e74c3c;color:#fff}
-.green{background:#2ecc71;color:#fff}
-.purple{background:#9b59b6;color:#fff}
-.blue{background:#3498db;color:#fff}
-.orange{background:#e67e22;color:#fff}
-.player{background:#181b28;padding:12px 16px;margin-bottom:8px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border:1px solid rgba(255,255,255,0.05)}
-.player.me{border-color:rgba(241,196,15,.3)}
-.player-info{font-size:13px;line-height:1.6;flex:1;min-width:250px}
-.player-info span{color:#8e94a8;font-size:11px}
-.player-info b{font-size:14px}
-.actions{display:flex;gap:6px;flex-wrap:wrap;max-width:600px}
-.log{background:#0f111a;border-radius:10px;padding:10px 14px;max-height:200px;overflow-y:auto;font-size:11px;font-family:monospace;color:#8e94a8;border:1px solid rgba(255,255,255,.04)}
+.danger{background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff}
+.green{background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff}
+.purple{background:linear-gradient(135deg,#9b59b6,#8e44ad);color:#fff}
+.blue{background:linear-gradient(135deg,#3498db,#2980b9);color:#fff}
+.orange{background:linear-gradient(135deg,#f39c12,#e67e22);color:#fff}
+.gray{background:rgba(255,255,255,.08);color:#c5c9d4}
+.player{background:#181b28;padding:10px 12px;margin-bottom:6px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border:1px solid rgba(255,255,255,.05)}
+.player.banned{border-color:rgba(231,76,60,.4);opacity:.6}
+.player-info{font-size:12px;line-height:1.5;flex:1;min-width:250px}
+.player-info span{color:#8e94a8;font-size:10px}
+.player-info b{font-size:13px}
+.actions{display:flex;gap:4px;flex-wrap:wrap;max-width:640px}
+.log{background:#0f111a;border-radius:10px;padding:10px 12px;max-height:240px;overflow-y:auto;font-size:11px;font-family:monospace;color:#8e94a8;border:1px solid rgba(255,255,255,.05)}
 .log-entry{padding:3px 0;border-bottom:1px solid rgba(255,255,255,.03)}
-.log-entry .time{color:#5a6070}
+.log-entry .time{color:#5a6070;margin-right:6px}
 .log-entry .ok{color:#2ecc71}
 .log-entry .bad{color:#e74c3c}
-.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
-.badge{display:inline-block;padding:2px 8px;border-radius:8px;font-size:9px;font-weight:600}
+.toolbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.badge{display:inline-block;padding:2px 7px;border-radius:6px;font-size:9px;font-weight:600;margin-left:4px}
 .badge-reg{background:rgba(46,204,113,.15);color:#2ecc71}
 .badge-noreg{background:rgba(241,196,15,.15);color:#f1c40f}
 .badge-online{background:rgba(46,204,113,.15);color:#2ecc71}
 .badge-offline{background:rgba(90,96,112,.2);color:#8e94a8}
-.warn-box{background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.2);border-radius:10px;padding:12px;font-size:11px;color:#e74c3c;margin-bottom:12px}
+.badge-ban{background:rgba(231,76,60,.2);color:#e74c3c}
+.warn-box{background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.2);border-radius:10px;padding:10px;font-size:11px;color:#e74c3c;margin-bottom:12px}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:6px}
 </style>
 </head>
 <body>
-<h1>👑 PC Tycoon v1 — Админ-панель</h1>
-<div class="sub">Управление игроками и глобальным временем в реальном времени</div>
+<h1>👑 PC Tycoon v1.4.1 — Админ-панель</h1>
+<div class="sub">Управление игроками, временем и миром в реальном времени</div>
 
 <!-- СТАТИСТИКА -->
 <div class="stats-grid">
-    <div class="stat-card" style="border:1px solid rgba(241,196,15,.2);">
-        <div class="stat-num" style="color:#f1c40f;" id="statTotal">0</div>
-        <div class="stat-lbl">Всего игроков</div>
-    </div>
-    <div class="stat-card" style="border:1px solid rgba(46,204,113,.2);">
-        <div class="stat-num" style="color:#2ecc71;" id="statOnline">0</div>
-        <div class="stat-lbl">Онлайн</div>
-    </div>
-    <div class="stat-card" style="border:1px solid rgba(52,152,219,.2);">
-        <div class="stat-num" style="color:#3498db;font-size:16px;" id="statMoney">0 ₽</div>
-        <div class="stat-lbl">Капитал мира</div>
-    </div>
-    <div class="stat-card" style="border:1px solid rgba(155,89,182,.2);">
-        <div class="stat-num" style="color:#9b59b6;font-size:16px;" id="statAvg">0 ₽</div>
-        <div class="stat-lbl">Средний баланс</div>
-    </div>
+    <div class="stat-card"><div class="stat-num" style="color:#f1c40f;" id="statTotal">0</div><div class="stat-lbl">Всего игроков</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#2ecc71;" id="statOnline">0</div><div class="stat-lbl">Онлайн</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#3498db;font-size:15px;" id="statMoney">0 ₽</div><div class="stat-lbl">Капитал мира</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#9b59b6;font-size:15px;" id="statAvg">0 ₽</div><div class="stat-lbl">Средний баланс</div></div>
 </div>
 
 <!-- ГЛОБАЛЬНОЕ ВРЕМЯ -->
@@ -80,8 +72,9 @@ button:disabled{opacity:.3;cursor:not-allowed}
     <div class="control-row">
         <label>Сейчас в мире:</label>
         <span class="time-display" id="worldTime">—</span>
-        <span class="time-display" id="worldDay">День —</span>
-        <button class="blue" onclick="syncTimeDisplay()">🔄 Обновить</button>
+        <span class="time-display" id="worldDate">—</span>
+        <span class="time-display" id="worldTotal">—</span>
+        <button class="blue" onclick="syncTimeDisplay()">🔄</button>
     </div>
     <div class="control-row">
         <label>Сдвиг времени:</label>
@@ -91,24 +84,37 @@ button:disabled{opacity:.3;cursor:not-allowed}
         <button class="purple" onclick="shiftDay(1)">+1 день</button>
     </div>
     <div class="control-row">
-        <label>Установить день:</label>
-        <input type="number" id="setDay" min="1" max="9999" value="1" style="width:80px;">
-        <button class="green" onclick="setDayExact()">📅 Применить</button>
+        <label>Установить всего дней:</label>
+        <input type="number" id="setTotalDays" min="1" max="99999" value="1" style="width:90px;">
+        <button class="green" onclick="setTotalDaysExact()">📅 Применить</button>
         <label style="min-width:auto;">Час:</label>
         <input type="number" id="setHour" min="0" max="23" value="6" style="width:70px;">
-        <button class="green" onclick="setHourExact()">⏰ Применить</button>
+        <button class="green" onclick="setHourExact()">⏰</button>
     </div>
     <div class="control-row">
-        <button class="danger" onclick="resetGlobalTime()">🗑️ Сбросить глобальное время (День 1, 06:00)</button>
-        <button class="green" onclick="forceMarketRefresh()">💹 Обновить цены на рынке (всем)</button>
+        <button class="danger" onclick="resetGlobalTime()">🗑️ Сбросить время (День 1, 06:00)</button>
+        <button class="green" onclick="forceMarketRefresh()">💹 Обновить рынок всем</button>
     </div>
 </div>
 
-<div class="warn-box">
-    ⚠️ Внимание: изменение глобального времени мгновенно применяется ко <b>всем</b> игрокам.
+<div class="warn-box">⚠️ Изменение времени мгновенно применяется ко всем игрокам.</div>
+
+<!-- МАССОВЫЕ ДЕЙСТВИЯ -->
+<h2>🎁 Массовые действия</h2>
+<div class="control-group">
+    <div class="control-row">
+        <label>Выдать всем:</label>
+        <input type="number" id="massAmount" placeholder="Сумма" style="width:120px;" value="10000">
+        <button class="green" onclick="massGiveMoney()">💰 +₽ всем</button>
+        <button class="danger" onclick="massTakeMoney()">💸 −₽ всем</button>
+    </div>
+    <div class="control-row">
+        <button class="purple" onclick="clearAllMarkets()">🔄 Сбросить рынок (NPC заново)</button>
+        <button class="orange" onclick="clearAllChats()">💬 Очистить глобальный чат</button>
+    </div>
 </div>
 
-<!-- ФИЛЬТРЫ И ПОИСК -->
+<!-- ИГРОКИ -->
 <h2>👥 Игроки <span class="count" id="playerCount">—</span></h2>
 <div class="toolbar">
     <input type="text" id="searchInput" placeholder="🔍 Поиск по имени..." style="min-width:200px;" oninput="renderPlayers()">
@@ -118,10 +124,21 @@ button:disabled{opacity:.3;cursor:not-allowed}
         <option value="name">🔤 По имени</option>
         <option value="level">🎮 По уровню</option>
     </select>
-    <button class="blue" onclick="autoRefresh=!autoRefresh;this.textContent=autoRefresh?'⏸️ Автообновление: ВКЛ':'▶️ Автообновление: ВЫКЛ'">⏸️ Автообновление: ВКЛ</button>
+    <button id="autoBtn" class="blue" onclick="toggleAuto()">⏸️ Автообновление: ВКЛ</button>
 </div>
+<div id="players">Загрузка...</div>
 
-<div id="players">Загрузка игроков...</div>
+<!-- ТОПЫ -->
+<h2>🏆 Топы</h2>
+<div class="control-group">
+    <div class="control-row">
+        <button class="blue" onclick="showTop('balance')">💰 По балансу</button>
+        <button class="purple" onclick="showTop('level')">🎮 По уровню</button>
+        <button class="orange" onclick="showTop('pcsSold')">📦 По продажам</button>
+        <button class="gray" onclick="hideTop()">✖ Скрыть</button>
+    </div>
+    <div id="topList" style="margin-top:8px;"></div>
+</div>
 
 <!-- ЛОГ -->
 <h2>📜 Лог действий <span class="count">— последние 20</span></h2>
@@ -134,146 +151,153 @@ const firebaseConfig={apiKey:"AIzaSyAv0ChOvxUSEWjCnWWUXBml01PyTsgfGjo",authDomai
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
 
+const MONTHS=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const MS_PER_GAME_MINUTE=10000;
+
 let playersCache=[];
 let autoRefresh=true;
 let logEntries=[];
+let worldTimeCache=null;
+let topMode=null;
 
-// ====== УТИЛИТЫ ======
-function timeStrFromMinutes(m){
-    const h=Math.floor(m/60)%24,mm=Math.floor(m%60);
-    return String(h).padStart(2,'0')+':'+String(mm).padStart(2,'0');
+function timeStrFromMinutes(m){const h=Math.floor(m/60)%24,mm=Math.floor(m%60);return String(h).padStart(2,'0')+':'+String(mm).padStart(2,'0');}
+function normalizeDate(totalDays){
+    let year=2026+Math.floor((totalDays-1)/360);
+    let rem=(totalDays-1)%360;
+    let month=Math.floor(rem/30)+1;
+    let day=(rem%30)+1;
+    return {day,month,year};
 }
 function addLog(text,ok=true){
     const t=new Date().toLocaleTimeString();
     logEntries.unshift({t,text,ok});
     if(logEntries.length>20)logEntries.pop();
-    const el=document.getElementById('log');
-    el.innerHTML=logEntries.map(l=>`<div class="log-entry"><span class="time">${l.t}</span> <span class="${l.ok?'ok':'bad'}">${l.text}</span></div>`).join('');
+    document.getElementById('log').innerHTML=logEntries.map(l=>`<div class="log-entry"><span class="time">${l.t}</span><span class="${l.ok?'ok':'bad'}">${l.text}</span></div>`).join('');
 }
 
-// ====== ГЛОБАЛЬНОЕ ВРЕМЯ ======
-let worldTimeCache=null;
-
+// ===== ГЛОБАЛЬНОЕ ВРЕМЯ =====
 function listenGlobalTime(){
-    db.ref('globalTime').on('value',snap=>{
-        worldTimeCache=snap.val();
-        syncTimeDisplay();
-    });
+    db.ref('globalTime').on('value',snap=>{worldTimeCache=snap.val();syncTimeDisplay();});
 }
-
 function syncTimeDisplay(){
-    if(!worldTimeCache||!worldTimeCache.dayStart){
+    if(!worldTimeCache||typeof worldTimeCache.totalDays!=='number'){
         document.getElementById('worldTime').textContent='—';
-        document.getElementById('worldDay').textContent='День —';
+        document.getElementById('worldDate').textContent='—';
+        document.getElementById('worldTotal').textContent='—';
         return;
     }
     const now=Date.now();
-    const elapsedMs=now-worldTimeCache.dayStart;
-    const totalGameMinutes=elapsedMs/1000; // 1 сек = 1 минута
-    const minutesPerDay=24*60;
-    const daysPassed=Math.floor(totalGameMinutes/minutesPerDay);
-    const curMin=totalGameMinutes%minutesPerDay;
-    const curDay=(worldTimeCache.day||1)+daysPassed;
-    document.getElementById('worldTime').textContent='⏰ '+timeStrFromMinutes(curMin);
-    document.getElementById('worldDay').textContent='📅 День '+curDay;
-    document.getElementById('setDay').value=curDay;
-    document.getElementById('setHour').value=Math.floor(curMin/60);
+    const elapsedMs=now-(worldTimeCache.dayStart||now);
+    const elapsedGameMinutes=elapsedMs/MS_PER_GAME_MINUTE;
+    const fullDaysPassed=Math.floor(elapsedGameMinutes/(24*60));
+    const totalDays=worldTimeCache.totalDays+fullDaysPassed;
+    const minutesInDay=elapsedGameMinutes%(24*60);
+    const date=normalizeDate(totalDays);
+    document.getElementById('worldTime').textContent='⏰ '+timeStrFromMinutes(minutesInDay);
+    document.getElementById('worldDate').textContent='📅 '+date.day+' '+MONTHS[date.month-1]+' '+date.year;
+    document.getElementById('worldTotal').textContent='Σ Дней: '+totalDays;
+    document.getElementById('setTotalDays').value=totalDays;
+    document.getElementById('setHour').value=Math.floor(minutesInDay/60);
 }
-
-// Сдвиг времени на N минут (положительный или отрицательный)
 function shiftTime(minutes){
     if(!worldTimeCache)return;
-    const now=Date.now();
-    // Сдвигаем dayStart в прошлое (чтобы время шло быстрее вперёд) или в будущее
-    // Если нужно +1 час вперёд → dayStart становится на 1 час раньше
-    const offset=minutes*60*1000; // минут → мс игровых = мс реальных (1 сек = 1 мин)
-    // НО: 1 реальная минута = 60 игровых минут. Значит 1 игровой час = 60 реальных секунд
-    // Чтобы сдвинуть игровое время на X минут, dayStart надо уменьшить на X*1000 мс
-    const realMs=minutes*1000;
+    const realMs=minutes*MS_PER_GAME_MINUTE;
     const newDayStart=worldTimeCache.dayStart-realMs;
     db.ref('globalTime').update({dayStart:newDayStart}).then(()=>{
-        addLog('⏰ Сдвиг времени на '+(minutes>0?'+':'')+minutes+' мин (всем игрокам)',true);
+        addLog('⏰ Сдвиг времени на '+(minutes>0?'+':'')+minutes+' мин (всем)',true);
     });
 }
-
-// Сдвиг дня на N
 function shiftDay(days){
     if(!worldTimeCache)return;
-    const newDay=(worldTimeCache.day||1)+days;
-    if(newDay<1){addLog('❌ День не может быть меньше 1',false);return;}
-    // Сбрасываем dayStart на "сейчас" и ставим новый день
-    db.ref('globalTime').update({
-        day:newDay,
-        dayOfWeek:((worldTimeCache.dayOfWeek||0)+days+7)%7,
-        dayStart:Date.now()
-    }).then(()=>{
-        addLog('📅 День изменён на '+newDay+' (всем игрокам)',true);
+    const now=Date.now();
+    const elapsedMs=now-(worldTimeCache.dayStart||now);
+    const elapsedGameMinutes=elapsedMs/MS_PER_GAME_MINUTE;
+    const fullDaysPassed=Math.floor(elapsedGameMinutes/(24*60));
+    const currentTotal=worldTimeCache.totalDays+fullDaysPassed;
+    const newTotal=Math.max(1,currentTotal+days);
+    const minutesInDay=elapsedGameMinutes%(24*60);
+    // Сохраняем текущее время суток, сдвигаем только totalDays
+    const newDayStart=now-(minutesInDay*MS_PER_GAME_MINUTE);
+    db.ref('globalTime').update({totalDays:newTotal,dayStart:newDayStart}).then(()=>{
+        addLog('📅 День изменён на '+newTotal+' (всем)',true);
     });
 }
-
-// Установить точный день
-function setDayExact(){
-    const d=parseInt(document.getElementById('setDay').value);
+function setTotalDaysExact(){
+    const d=parseInt(document.getElementById('setTotalDays').value);
     if(isNaN(d)||d<1){addLog('❌ Неверный день',false);return;}
-    if(!confirm('Установить День '+d+' для ВСЕХ игроков?'))return;
-    const diff=d-(worldTimeCache.day||1);
-    db.ref('globalTime').update({
-        day:d,
-        dayOfWeek:((worldTimeCache.dayOfWeek||0)+diff+700)%7,
-        dayStart:Date.now()
-    }).then(()=>{
-        addLog('📅 Установлен день '+d+' (всем игрокам)',true);
+    if(!confirm('Установить общий день #'+d+' для ВСЕХ игроков?'))return;
+    const now=Date.now();
+    const elapsedMs=now-(worldTimeCache.dayStart||now);
+    const elapsedGameMinutes=elapsedMs/MS_PER_GAME_MINUTE;
+    const minutesInDay=elapsedGameMinutes%(24*60);
+    const newDayStart=now-(minutesInDay*MS_PER_GAME_MINUTE);
+    db.ref('globalTime').update({totalDays:d,dayStart:newDayStart}).then(()=>{
+        addLog('📅 Установлен день #'+d+' (всем)',true);
     });
 }
-
-// Установить точный час
 function setHourExact(){
     const h=parseInt(document.getElementById('setHour').value);
-    if(isNaN(h)||h<0||h>23){addLog('❌ Час должен быть 0-23',false);return;}
+    if(isNaN(h)||h<0||h>23){addLog('❌ Час 0-23',false);return;}
     if(!worldTimeCache)return;
-    // Нам нужно, чтобы текущая игровая минута стала h*60
     const now=Date.now();
-    const elapsedMs=now-worldTimeCache.dayStart;
-    const totalGameMinutes=elapsedMs/1000;
-    const minutesPerDay=24*60;
-    const curMin=totalGameMinutes%minutesPerDay;
-    const targetMin=h*60;
-    // Разница: сдвигаем dayStart так, чтобы curMin стал targetMin
-    // curMin = (now - dayStart)/1000 % 1440
-    // Нужно: (now - newDayStart)/1000 % 1440 = targetMin
-    // Решение: newDayStart = now - ((daysPassed*1440 + targetMin) * 1000)
-    const daysPassed=Math.floor(totalGameMinutes/minutesPerDay);
-    const newDayStart=now-((daysPassed*minutesPerDay+targetMin)*1000);
+    const elapsedMs=now-(worldTimeCache.dayStart||now);
+    const elapsedGameMinutes=elapsedMs/MS_PER_GAME_MINUTE;
+    const fullDaysPassed=Math.floor(elapsedGameMinutes/(24*60));
+    const minutesInDay=elapsedGameMinutes%(24*60);
+    // Сдвигаем так, чтобы текущие минуты стали h*60
+    const diffMinutes=h*60-minutesInDay;
+    const newDayStart=worldTimeCache.dayStart-(diffMinutes*MS_PER_GAME_MINUTE);
     db.ref('globalTime').update({dayStart:newDayStart}).then(()=>{
         addLog('⏰ Установлено время '+String(h).padStart(2,'0')+':00 (всем)',true);
     });
 }
-
-// Сброс глобального времени
 function resetGlobalTime(){
     if(!confirm('Сбросить глобальное время для ВСЕХ игроков?\n\nБудет: День 1, 06:00'))return;
+    // Чтобы сейчас было 06:00 — dayStart = now - 6*60*MS_PER_GAME_MINUTE
     db.ref('globalTime').set({
-        dayStart:Date.now()-6*60*1000, // 6 игровых часов назад = 6 реальных минут... 
-        // на самом деле 6 игровых часов = 6*60 игровых минут = 360 реальных секунд = 6 минут
-        // чтобы сейчас было 06:00, надо чтобы с момента dayStart прошло 6 игровых часов = 360 сек
-        day:1,
-        dayOfWeek:0,
-        month:1,
-        year:2026,
-        createdAt:Date.now(),
-        speed:1
-    }).then(()=>{
-        addLog('🗑️ Глобальное время сброшено (День 1, 06:00)',true);
-    });
+        totalDays:1,
+        dayStart:Date.now()-6*60*MS_PER_GAME_MINUTE,
+        createdAt:Date.now()
+    }).then(()=>{addLog('🗑️ Глобальное время сброшено (День 1, 06:00)',true);});
 }
-
-// Принудительно обновить рынок у всех (через смену дня - уловка)
 function forceMarketRefresh(){
-    if(!confirm('Обновить цены на рынке для всех игроков?\n\nДень сдвинется на +1.'))return;
+    if(!confirm('Обновить рынок всем игрокам?\n\nДень сдвинется на +1.'))return;
     shiftDay(1);
 }
 
-// ====== ИГРОКИ ======
+// ===== МАССОВЫЕ =====
+function massGiveMoney(){massMoney(true);}
+function massTakeMoney(){massMoney(false);}
+function massMoney(add){
+    const amt=parseInt(document.getElementById('massAmount').value);
+    if(isNaN(amt)||amt<=0){addLog('❌ Неверная сумма',false);return;}
+    const verb=add?'+':'-';
+    if(!confirm(verb+amt.toLocaleString()+' ₽ ВСЕМ игрокам?'))return;
+    let count=0;
+    const updates={};
+    playersCache.forEach(p=>{
+        const nb=(p.balance||0)+(add?amt:-amt);
+        updates['players/'+p._id+'/balance']=Math.max(0,nb);
+        updates['players/'+p._id+'/adminModified']=Date.now();
+        count++;
+    });
+    if(count===0){addLog('❌ Нет игроков',false);return;}
+    db.ref().update(updates).then(()=>{
+        addLog(verb+amt.toLocaleString()+' ₽ всем ('+count+' игроков)',add);
+    });
+}
+function clearAllMarkets(){
+    if(!confirm('Сбросить рынок у всех? Объявления NPC удалятся.'))return;
+    // Обнуляем локальные рынки у игроков — фактически сбрасываем день
+    shiftDay(1);
+    addLog('🔄 Рынок обновлён (день +1)',true);
+}
+function clearAllChats(){
+    if(!confirm('Очистить глобальный чат?'))return;
+    db.ref('globalChat').remove().then(()=>{addLog('💬 Глобальный чат очищен',true);});
+}
+
+// ===== ИГРОКИ =====
 db.ref('players').on('value',(snapshot)=>{
     const data=snapshot.val();
     if(!data){
@@ -287,14 +311,12 @@ db.ref('players').on('value',(snapshot)=>{
         return;
     }
     playersCache=Object.keys(data).map(k=>({...data[k],_id:k}));
-
     const now=Date.now();
     document.getElementById('statTotal').textContent=playersCache.length;
     document.getElementById('statOnline').textContent=playersCache.filter(p=>now-(p.lastUpdate||0)<60000).length;
     const totalMoney=playersCache.reduce((s,p)=>s+(p.balance||0),0);
     document.getElementById('statMoney').textContent=totalMoney.toLocaleString()+' ₽';
     document.getElementById('statAvg').textContent=playersCache.length?Math.round(totalMoney/playersCache.length).toLocaleString()+' ₽':'0 ₽';
-
     renderPlayers();
 });
 
@@ -302,53 +324,47 @@ function renderPlayers(){
     const now=Date.now();
     const search=(document.getElementById('searchInput')?.value||'').toLowerCase().trim();
     const sortBy=document.getElementById('sortSelect')?.value||'balance';
-
     let list=[...playersCache];
-
-    // Фильтр
-    if(search){
-        list=list.filter(p=>(p.name||'').toLowerCase().includes(search));
-    }
-
-    // Сортировка
+    if(search)list=list.filter(p=>(p.name||'').toLowerCase().includes(search));
     if(sortBy==='balance')list.sort((a,b)=>(b.balance||0)-(a.balance||0));
     else if(sortBy==='recent')list.sort((a,b)=>(b.lastUpdate||0)-(a.lastUpdate||0));
     else if(sortBy==='name')list.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
     else if(sortBy==='level')list.sort((a,b)=>(b.level||0)-(a.level||0));
 
     document.getElementById('playerCount').textContent='Найдено: '+list.length;
-
-    if(list.length===0){
-        document.getElementById('players').innerHTML='<div style="color:#8e94a8;padding:20px;text-align:center;">Никого не найдено</div>';
-        return;
-    }
+    if(list.length===0){document.getElementById('players').innerHTML='<div style="color:#8e94a8;padding:20px;text-align:center;">Никого не найдено</div>';return;}
 
     let html='';
     list.forEach(p=>{
-        const date=new Date(p.lastUpdate||Date.now()).toLocaleTimeString();
+        const date=new Date(p.lastUpdate||Date.now()).toLocaleString();
         const isOnline=now-(p.lastUpdate||0)<60000;
-        const regBadge=p.registered?'<span class="badge badge-reg">✅ Зарегистрирован</span>':'<span class="badge badge-noreg">⏳ Без регистрации</span>';
+        const regBadge=p.registered?'<span class="badge badge-reg">✅</span>':'<span class="badge badge-noreg">⏳</span>';
         const onlineBadge=isOnline?'<span class="badge badge-online">🟢 Онлайн</span>':'<span class="badge badge-offline">⚫ Офлайн</span>';
-
-        html+=`<div class="player">
+        const banBadge=p.banned?'<span class="badge badge-ban">🚫 БАН</span>':'';
+        const job=p.job?('💼 '+p.job):'';
+        html+=`<div class="player ${p.banned?'banned':''}">
             <div class="player-info">
-                <b>${p.name||'Без имени'}</b> ${onlineBadge} ${regBadge}<br>
-                <span>🎂 ${p.age||'?'} лет | 🏠 ${p.homeCity||'?'} | 🎮 Ур. ${p.level||1} | ⭐ ${p.reputation||0}%</span><br>
-                <span>💰 <b style="color:#f1c40f;font-size:13px;">${(p.balance||0).toLocaleString()} ₽</b> | 📅 День ${p.day||1} | 📍 ${p.city||'?'} | 🕒 ${date}</span>
-                <span style="color:#5a6070;font-size:10px;margin-left:6px;">ID: ${p._id.slice(-8)}</span>
+                <b>${p.name||'Без имени'}</b> ${onlineBadge} ${regBadge} ${banBadge}<br>
+                <span>🎂 ${p.age||'?'} | 🏠 ${p.homeCity||'?'} | 🎮 Ур. ${p.level||1} | ⭐ ${p.reputation||0}% | ${job}</span><br>
+                <span>💰 <b style="color:#f1c40f;font-size:13px;">${(p.balance||0).toLocaleString()} ₽</b> | 📅 День ${p.totalDays||p.day||1} (${p.day||1} ${MONTHS[(p.month||1)-1]}) | 📍 ${p.city||'?'}</span><br>
+                <span style="color:#5a6070;font-size:10px;">ID: ${p._id} | ${date}</span>
             </div>
             <div class="actions">
-                <button class="green" onclick="addMoney('${p._id}',10000)">+10 000 ₽</button>
-                <button class="green" onclick="addMoney('${p._id}',100000)">+100 000 ₽</button>
-                <button class="green" onclick="addMoney('${p._id}',1000000)">+1 000 000 ₽</button>
-                <button class="danger" onclick="addMoney('${p._id}',-100000)">−100 000 ₽</button>
-                <button class="green" onclick="addRep('${p._id}',20)">+20 ⭐</button>
-                <button class="danger" onclick="addRep('${p._id}',-20)">−20 ⭐</button>
+                <button class="green" onclick="addMoney('${p._id}',10000)">+10k</button>
+                <button class="green" onclick="addMoney('${p._id}',100000)">+100k</button>
+                <button class="green" onclick="addMoney('${p._id}',1000000)">+1M</button>
+                <button class="danger" onclick="addMoney('${p._id}',-100000)">−100k</button>
+                <button class="green" onclick="addRep('${p._id}',20)">+20⭐</button>
+                <button class="danger" onclick="addRep('${p._id}',-20)">−20⭐</button>
+                <button class="purple" onclick="addLevel('${p._id}',1)">+1ур</button>
+                <button class="danger" onclick="addLevel('${p._id}',-1)">−1ур</button>
                 <button class="blue" onclick="setBalance('${p._id}')">💰 Задать</button>
                 <button class="purple" onclick="setCity('${p._id}')">📍 Город</button>
+                <button class="green" onclick="setJob('${p._id}')">💼 Работа</button>
                 <button class="orange" onclick="kickPlayer('${p._id}')">👢 Кик</button>
+                <button class="danger" onclick="toggleBan('${p._id}',${!!p.banned})">${p.banned?'✅ Разбан':'🚫 Бан'}</button>
                 <button class="danger" onclick="resetPlayer('${p._id}')">🔄 Сброс</button>
-                <button class="danger" onclick="deletePlayer('${p._id}','${(p.name||'').replace(/'/g,"")}')">🗑️ Удалить</button>
+                <button class="danger" onclick="deletePlayer('${p._id}')">🗑️</button>
             </div>
         </div>`;
     });
@@ -358,33 +374,36 @@ function renderPlayers(){
 function getP(id){return playersCache.find(p=>p._id===id);}
 function getPName(id){const p=getP(id);return p?(p.name||'#'+id.slice(-4)):'#'+id.slice(-4);}
 
-// ====== ДЕЙСТВИЯ ======
+// ===== ДЕЙСТВИЯ =====
 function addMoney(id,amount){
-    db.ref('players/'+id).once('value').then(snap=>{
-        const p=snap.val();if(!p)return;
-        const nb=(p.balance||0)+amount;
-        db.ref('players/'+id).update({balance:nb,adminModified:Date.now()}).then(()=>{
-            addLog((amount>0?'💰 +':'💸 ')+amount.toLocaleString()+' ₽ → '+getPName(id)+' (итог: '+nb.toLocaleString()+' ₽)',amount>0);
-        });
+    const p=getP(id);if(!p)return;
+    const nb=Math.max(0,(p.balance||0)+amount);
+    db.ref('players/'+id).update({balance:nb,adminModified:Date.now()}).then(()=>{
+        addLog((amount>0?'💰 +':'💸 ')+amount.toLocaleString()+' ₽ → '+getPName(id)+' (итог: '+nb.toLocaleString()+')',amount>0);
     });
 }
 function addRep(id,amount){
-    db.ref('players/'+id).once('value').then(snap=>{
-        const p=snap.val();if(!p)return;
-        const nr=Math.max(0,Math.min(100,(p.reputation||0)+amount));
-        db.ref('players/'+id).update({reputation:nr,adminModified:Date.now()}).then(()=>{
-            addLog((amount>0?'⭐ +':'💀 ')+amount+' ⭐ → '+getPName(id)+' (итог: '+nr+'%)',amount>0);
-        });
+    const p=getP(id);if(!p)return;
+    const nr=Math.max(0,Math.min(100,(p.reputation||0)+amount));
+    db.ref('players/'+id).update({reputation:nr,adminModified:Date.now()}).then(()=>{
+        addLog((amount>0?'⭐ +':'💀 ')+amount+'⭐ → '+getPName(id)+' ('+nr+'%)',amount>0);
+    });
+}
+function addLevel(id,amount){
+    const p=getP(id);if(!p)return;
+    const nl=Math.max(1,(p.level||1)+amount);
+    db.ref('players/'+id).update({level:nl,setLevel:nl,adminModified:Date.now()}).then(()=>{
+        addLog('🎮 Уровень '+getPName(id)+' → '+nl,amount>0);
     });
 }
 function setBalance(id){
     const p=getP(id);if(!p)return;
-    const v=prompt('Введите новый баланс для '+getPName(id)+':',p.balance||0);
+    const v=prompt('Новый баланс для '+getPName(id)+':',p.balance||0);
     if(v===null)return;
     const nb=parseInt(v.replace(/\D/g,''));
     if(isNaN(nb)||nb<0){addLog('❌ Неверная сумма',false);return;}
     db.ref('players/'+id).update({balance:nb,adminModified:Date.now()}).then(()=>{
-        addLog('💰 Баланс '+getPName(id)+' установлен: '+nb.toLocaleString()+' ₽',true);
+        addLog('💰 Баланс '+getPName(id)+' = '+nb.toLocaleString()+' ₽',true);
     });
 }
 function setCity(id){
@@ -397,36 +416,68 @@ function setCity(id){
         addLog('📍 '+getPName(id)+' → '+v,true);
     });
 }
+function setJob(id){
+    const p=getP(id);if(!p)return;
+    const jobs=['courier','seller','assembler','it','director','(нет)'];
+    const v=prompt('Работа для '+getPName(id)+':\n- courier (Курьер)\n- seller (Продавец)\n- assembler (Мастер)\n- it (IT-спец)\n- director (Директор)\n- (нет) — уволить',p.job||'(нет)');
+    if(v===null)return;
+    if(!jobs.includes(v)){addLog('❌ Неверная работа',false);return;}
+    const val=v==='(нет)'?null:v;
+    db.ref('players/'+id).update({job:val,setJob:val,adminModified:Date.now()}).then(()=>{
+        addLog('💼 '+getPName(id)+' → '+(val||'уволен'),true);
+    });
+}
 function kickPlayer(id){
-    if(!confirm('Кикнуть '+getPName(id)+'?\n\nИгрок будет помечен офлайн (перезайдёт — снова онлайн).'))return;
+    if(!confirm('Кикнуть '+getPName(id)+'?'))return;
     db.ref('players/'+id).update({lastUpdate:0,online:false}).then(()=>{
         addLog('👢 Кик: '+getPName(id),false);
     });
 }
+function toggleBan(id,banned){
+    const verb=banned?'разбанить':'забанить';
+    if(!confirm('Точно '+verb+' '+getPName(id)+'?'))return;
+    db.ref('players/'+id).update({banned:!banned,adminModified:Date.now()}).then(()=>{
+        addLog((banned?'✅ Разбан: ':'🚫 Бан: ')+getPName(id),!banned);
+    });
+}
 function resetPlayer(id){
-    if(!confirm('Сбросить прогресс '+getPName(id)+'?\n\nБаланс=30000, репутация=50, день=1'))return;
-    db.ref('players/'+id).update({balance:30000,reputation:50,day:1,adminModified:Date.now()}).then(()=>{
-        addLog('🔄 Сброс: '+getPName(id),false);
-    });
+    if(!confirm('Сбросить прогресс '+getPName(id)+'?\nБаланс=30000, реп=50, день=1, уровень=1'))return;
+    db.ref('players/'+id).update({
+        balance:30000,reputation:50,day:1,month:1,year:2026,totalDays:1,level:1,xp:0,
+        pcsSold:0,pcsBought:0,job:null,setJob:null,adminModified:Date.now()
+    }).then(()=>{addLog('🔄 Сброс: '+getPName(id),false);});
 }
-function deletePlayer(id,name){
-    if(!confirm('УДАЛИТЬ игрока «'+name+'» из базы навсегда?\n\nЭто действие необратимо!'))return;
-    db.ref('players/'+id).remove().then(()=>{
-        addLog('🗑️ Удалён игрок: '+name,false);
-    });
+function deletePlayer(id){
+    if(!confirm('УДАЛИТЬ '+getPName(id)+' навсегда?'))return;
+    const name=getPName(id);
+    db.ref('players/'+id).remove().then(()=>{addLog('🗑️ Удалён: '+name,false);});
 }
 
-// ====== АВТООБНОВЛЕНИЕ ======
-setInterval(()=>{
-    if(autoRefresh){
-        renderPlayers();
-        syncTimeDisplay();
-    }
-},5000);
+// ===== ТОПЫ =====
+function showTop(mode){
+    topMode=mode;
+    let list=[...playersCache];
+    if(mode==='balance')list.sort((a,b)=>(b.balance||0)-(a.balance||0));
+    else if(mode==='level')list.sort((a,b)=>(b.level||0)-(a.level||0));
+    else if(mode==='pcsSold')list.sort((a,b)=>(b.pcsSold||0)-(a.pcsSold||0));
+    list=list.slice(0,10);
+    const labels={balance:'💰 Топ-10 по балансу',level:'🎮 Топ-10 по уровню',pcsSold:'📦 Топ-10 по продажам'};
+    const vals={balance:p=>(p.balance||0).toLocaleString()+' ₽',level:p=>'Ур. '+(p.level||1),pcsSold:p=>(p.pcsSold||0)+' ПК'};
+    document.getElementById('topList').innerHTML='<div style="font-size:12px;font-weight:bold;color:#f1c40f;margin-bottom:6px;">'+labels[mode]+'</div>'+
+        list.map((p,i)=>`<div class="player"><div class="player-info"><b>${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)} ${p.name||'Аноним'}</b> <span>${p.age||'?'} лет</span></div><div style="font-size:13px;font-weight:bold;color:#f1c40f;">${vals[mode](p)}</div></div>`).join('');
+}
+function hideTop(){document.getElementById('topList').innerHTML='';}
 
-// ====== СТАРТ ======
+// ===== АВТО =====
+function toggleAuto(){
+    autoRefresh=!autoRefresh;
+    document.getElementById('autoBtn').textContent=autoRefresh?'⏸️ Автообновление: ВКЛ':'▶️ Автообновление: ВЫКЛ';
+}
+setInterval(()=>{if(autoRefresh){renderPlayers();syncTimeDisplay();}},5000);
+
+// ===== СТАРТ =====
 listenGlobalTime();
-addLog('🚀 Админ-панель запущена',true);
+addLog('🚀 Админ-панель v1.4.1 запущена',true);
 </script>
 </body>
 </html>
