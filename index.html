@@ -6,49 +6,40 @@
 <title>Phone Reseller Tycoon</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;touch-action:manipulation}
-:root{--bg:#0f1117;--surface:#1e212c;--surface2:#252a37;--text:#f1f5f9;--text-sec:#94a3b8;--text-lt:#64748b;--primary:#818cf8;--primary-glow:rgba(129,140,248,.35);--success:#4ade80;--danger:#f87171;--warning:#f59e0b;--border:rgba(255,255,255,.06)}
-body{background:var(--bg);color:var(--text);overflow:hidden;position:relative;height:100vh}
+:root{--bg:#0a0c12;--surface:#161a24;--surface2:#1e2330;--surface3:#262c3a;--text:#f1f5f9;--text-sec:#94a3b8;--text-lt:#64748b;--primary:#818cf8;--primary-glow:rgba(129,140,248,.4);--success:#4ade80;--danger:#f87171;--warning:#f59e0b;--border:rgba(255,255,255,.07)}
+body{background:var(--bg);color:var(--text);overflow:hidden;position:relative;height:100vh;-webkit-font-smoothing:antialiased}
 .hidden{display:none!important}
 button{font-family:inherit;cursor:pointer;border:none;outline:none}
 input,select{font-family:inherit}
-#statusBar{position:fixed;top:0;left:0;right:0;height:28px;background:rgba(15,17,23,.9);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:12px;font-weight:700;z-index:9000;color:#fff;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer}
+#statusBar{position:fixed;top:0;left:0;right:0;height:28px;background:rgba(10,12,18,.9);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:12px;font-weight:700;z-index:9000;color:#fff;cursor:pointer}
 #statusBar .right{display:flex;align-items:center;gap:8px}
 .batt{position:relative;width:24px;height:12px;border:2px solid #fff;border-radius:3px;display:inline-block}
 .batt::after{content:'';position:absolute;right:-4px;top:2px;width:2px;height:4px;background:#fff;border-radius:0 2px 2px 0}
-.batt i{position:absolute;top:1px;left:1px;bottom:1px;background:#4ade80;border-radius:1px;transition:width .3s}
-#shutter{position:fixed;top:0;left:0;right:0;height:0;background:rgba(15,17,23,.97);backdrop-filter:blur(30px);z-index:9500;overflow:hidden;transition:height .3s cubic-bezier(.4,0,.2,1);border-bottom-left-radius:26px;border-bottom-right-radius:26px;border-bottom:1px solid var(--border)}
-#shutter.open{height:280px}
-#shutterOverlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9400;opacity:0;pointer-events:none;transition:opacity .3s}
+.batt i{position:absolute;top:1px;left:1px;bottom:1px;background:var(--success);border-radius:1px;transition:width .3s}
+#shutter{position:fixed;top:0;left:0;right:0;height:0;background:rgba(10,12,18,.98);backdrop-filter:blur(30px);z-index:9500;overflow:hidden;transition:height .35s cubic-bezier(.4,0,.2,1);border-bottom-left-radius:26px;border-bottom-right-radius:26px}
+#shutter.open{height:290px}
+#shutterOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9400;opacity:0;pointer-events:none;transition:opacity .3s}
 #shutterOverlay.show{opacity:1;pointer-events:auto}
 .shutter-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:44px 14px 20px}
 .sht{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer}
 .sht .circ{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:22px;border:1px solid rgba(255,255,255,.08);transition:all .2s}
-.sht.on .circ{background:linear-gradient(135deg,#818cf8,#6366f1);box-shadow:0 0 16px rgba(129,140,248,.5)}
-.sht .lbl{font-size:10px;font-weight:700;color:#94a3b8;text-align:center}
+.sht.on .circ{background:linear-gradient(135deg,#818cf8,#6366f1);box-shadow:0 0 16px var(--primary-glow)}
+.sht .lbl{font-size:10px;font-weight:700;color:var(--text-sec);text-align:center}
 .sht.on .lbl{color:#fff}
 .sht:active .circ{transform:scale(.92)}
-#lockScreen{position:fixed;inset:0;z-index:99999;background:linear-gradient(160deg,#1a1a2e,#16213e 40%,#0f1117);display:flex;flex-direction:column;align-items:center;padding:60px 20px 40px;transition:transform .5s cubic-bezier(.4,0,.2,1),opacity .5s}
+#lockScreen{position:fixed;inset:0;z-index:99999;background:linear-gradient(160deg,#1a1a2e,#16213e 40%,#0a0c12);display:flex;flex-direction:column;align-items:center;padding:60px 20px 40px;transition:transform .5s cubic-bezier(.4,0,.2,1),opacity .5s}
 #lockScreen.up{transform:translateY(-100%);opacity:0;pointer-events:none}
-.lock-time{font-size:72px;font-weight:200;letter-spacing:-3px;margin-top:12vh;color:#fff}
+.lock-time{font-size:76px;font-weight:200;letter-spacing:-4px;margin-top:12vh;color:#fff}
 .lock-date{font-size:18px;color:#cbd5e1;margin-top:8px;font-weight:500}
 .lock-hint{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:12px;color:#cbd5e1;font-size:13px;font-weight:600}
 .lock-bar{width:110px;height:5px;border-radius:10px;background:#fff;opacity:.85;animation:pulseBar 2s ease-in-out infinite}
 @keyframes pulseBar{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-#pinModal{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99998;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px}
-#pinModal.show{display:flex}
-.pin-title{font-size:20px;font-weight:800;margin-bottom:8px}
-.pin-dots{font-size:30px;letter-spacing:8px;color:var(--primary);height:40px;margin-bottom:20px}
-.pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:280px;width:100%}
-.pin-key{padding:20px;background:var(--surface);border-radius:50%;font-size:22px;font-weight:700;color:var(--text);aspect-ratio:1;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);transition:all .1s}
-.pin-key:active{transform:scale(.9);background:var(--primary)}
-.pin-key.red{background:var(--danger);color:#fff}
-.pin-key.green{background:var(--success);color:#fff}
-#menu{width:100%;max-width:520px;padding:44px 12px 40px;margin:0 auto;height:100vh;overflow-y:auto}
+#menu{width:100%;max-width:520px;padding:44px 12px 130px;margin:0 auto;height:100vh;overflow-y:auto}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.icon-item{background:transparent;border:none;padding:10px 4px;display:flex;flex-direction:column;align-items:center;height:88px;cursor:pointer;transition:transform .15s;position:relative}
-.icon-item:active{transform:scale(.92)}
-.icon-circle{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:6px;font-size:20px;color:#fff;position:relative;box-shadow:inset 0 1px 1px rgba(255,255,255,.3)}
-.icon-item span{font-weight:700;font-size:9.5px;color:var(--text);text-align:center;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.icon-item{background:transparent;border:none;padding:10px 4px;display:flex;flex-direction:column;align-items:center;height:92px;cursor:pointer;transition:transform .15s;position:relative}
+.icon-item:active{transform:scale(.88)}
+.icon-circle{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;font-size:22px;color:#fff;position:relative;box-shadow:inset 0 1px 1px rgba(255,255,255,.3),0 4px 12px rgba(0,0,0,.25)}
+.icon-item span{font-weight:700;font-size:10px;color:var(--text);text-align:center;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .c-market{background:linear-gradient(135deg,#f59e0b,#ea580c)}
 .c-cars{background:linear-gradient(135deg,#3b82f6,#1d4ed8)}
 .c-bank{background:linear-gradient(135deg,#3b82f6,#2563eb)}
@@ -66,90 +57,127 @@ input,select{font-family:inherit}
 .c-jobs{background:linear-gradient(135deg,#14b8a6,#0d9488)}
 .c-used{background:linear-gradient(135deg,#f97316,#ea580c)}
 .c-stats{background:linear-gradient(135deg,#10b981,#059669)}
-.screen{position:fixed;inset:0;background:var(--bg);z-index:100;display:none;flex-direction:column}
+.c-snake{background:linear-gradient(135deg,#84cc16,#16a34a)}
+.c-cam{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.c-gal{background:linear-gradient(135deg,#8b5cf6,#6d28d9)}
+#bottomDock{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:18px;padding:12px 24px;background:rgba(30,35,48,.75);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-radius:28px;border:1px solid rgba(255,255,255,.08);z-index:200;box-shadow:0 10px 40px rgba(0,0,0,.45);transition:opacity .3s,transform .3s}
+#bottomDock.hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(100px)}
+.dock-item{position:relative;cursor:pointer;transition:transform .15s}
+.dock-item:active{transform:scale(.88)}
+.dock-circle{width:52px;height:52px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;box-shadow:inset 0 1px 1px rgba(255,255,255,.35),0 4px 12px rgba(0,0,0,.3)}
+.dock-badge{position:absolute;top:-4px;right:-4px;background:var(--danger);color:#fff;font-size:10px;font-weight:800;border-radius:50%;min-width:20px;height:20px;display:flex;align-items:center;justify-content:center;padding:0 5px;box-shadow:0 2px 6px rgba(0,0,0,.4);border:2px solid var(--bg)}
+.dock-badge.hidden{display:none}
+.screen{position:fixed;inset:0;background:var(--bg);z-index:100;display:none;flex-direction:column;animation:slideIn .2s}
 .screen.active{display:flex}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
 .header{padding:14px 16px;background:var(--surface);backdrop-filter:blur(20px);display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);padding-top:max(14px,env(safe-area-inset-top) + 20px);flex-shrink:0;min-height:66px;z-index:10}
-.back-btn{background:var(--surface2);border:1px solid var(--border);width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:var(--text);font-size:18px}
+.back-btn{background:var(--surface2);border:1px solid var(--border);width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:var(--text);font-size:20px;transition:all .1s}
 .back-btn:active{transform:scale(.9);background:var(--primary)}
 .page-title{font-size:17px;font-weight:800;flex:1}
-.content{flex:1;overflow-y:auto;padding:14px 12px 90px;-webkit-overflow-scrolling:touch}
-.card{background:var(--surface);border-radius:14px;padding:12px;border:1px solid var(--border);cursor:pointer;transition:all .12s;position:relative;overflow:hidden}
+.content{flex:1;overflow-y:auto;padding:14px 12px 130px;-webkit-overflow-scrolling:touch}
+.card{background:var(--surface);border-radius:16px;padding:12px;border:1px solid var(--border);cursor:pointer;transition:all .12s;position:relative;overflow:hidden}
 .card:active{transform:scale(.97);border-color:var(--primary)}
-.card-img{width:44px;height:44px;border-radius:12px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:20px}
+.card-img{width:52px;height:52px;border-radius:14px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:24px}
 .grid-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.list-item{background:var(--surface);padding:12px 14px;border-radius:14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border);gap:8px}
-.btn{width:100%;padding:13px;border-radius:12px;font-weight:700;font-size:14px;transition:transform .1s;border:none;color:#fff;background:var(--primary)}
+.list-item{background:var(--surface);padding:13px 15px;border-radius:14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border);gap:10px}
+.btn{width:100%;padding:13px;border-radius:13px;font-weight:700;font-size:14px;transition:transform .1s;border:none;color:#fff;background:var(--primary)}
 .btn:active{transform:scale(.97)}
 .btn:disabled{opacity:.4;cursor:not-allowed}
-.btn-primary{background:var(--primary)}
-.btn-danger{background:var(--danger)}
-.btn-success{background:var(--success)}
-.btn-warning{background:var(--warning)}
-.btn-sm{padding:7px 12px;font-size:12px;width:auto;border-radius:10px}
-.market-tabs{display:flex;gap:6px;margin-bottom:14px;background:var(--surface);padding:5px;border-radius:14px;border:1px solid var(--border);overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
-.market-tabs::-webkit-scrollbar{display:none}
-.market-tab{flex:0 0 auto;padding:9px 14px;border-radius:10px;background:transparent;color:var(--text-sec);font-weight:700;font-size:12px;border:none;white-space:nowrap}
-.market-tab.active{background:var(--primary);color:#fff}
+.btn-primary{background:linear-gradient(135deg,#818cf8,#6366f1)}
+.btn-danger{background:linear-gradient(135deg,#f87171,#dc2626)}
+.btn-success{background:linear-gradient(135deg,#4ade80,#16a34a)}
+.btn-warning{background:linear-gradient(135deg,#fbbf24,#d97706)}
+.btn-sm{padding:8px 14px;font-size:12px;width:auto;border-radius:11px}
+.chip{background:var(--surface2);color:var(--text);padding:8px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid var(--border);cursor:pointer}
+.chip.active{background:var(--primary);color:#fff}
+.brand-row{display:flex;align-items:center;gap:12px;background:var(--surface);padding:14px;border-radius:16px;margin-bottom:10px;cursor:pointer;border:1px solid var(--border)}
+.brand-row:active{transform:scale(.98);border-color:var(--primary);background:var(--surface2)}
+.brand-logo{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;flex-shrink:0}
+.brand-info{flex:1;min-width:0}
+.brand-name{font-size:15px;font-weight:800}
+.brand-count{font-size:11px;color:var(--text-sec);margin-top:2px}
+.brand-arrow{color:var(--text-lt);font-size:22px}
+.model-row{background:var(--surface);border-radius:14px;padding:12px 14px;margin-bottom:8px;border:1px solid var(--border);display:flex;align-items:center;gap:12px;cursor:pointer}
+.model-row:active{transform:scale(.98);border-color:var(--primary)}
+.model-emoji{font-size:28px;flex-shrink:0}
+.model-info{flex:1;min-width:0}
+.model-title{font-size:13px;font-weight:700}
+.model-meta{font-size:11px;color:var(--text-sec);margin-top:2px}
+.model-price{font-size:14px;font-weight:900;color:var(--success);flex-shrink:0}
 .chat-area{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;padding-top:20px}
-.msg{max-width:82%;padding:10px 14px;border-radius:18px;font-size:13px;line-height:1.4;font-weight:500;word-wrap:break-word}
+.msg{max-width:82%;padding:11px 15px;border-radius:18px;font-size:13px;line-height:1.4;font-weight:500;word-wrap:break-word}
 .msg.bot{background:var(--surface2);align-self:flex-start;border-bottom-left-radius:6px;border:1px solid var(--border)}
-.msg.me{background:var(--primary);color:#fff;align-self:flex-end;border-bottom-right-radius:6px}
+.msg.me{background:linear-gradient(135deg,#818cf8,#6366f1);color:#fff;align-self:flex-end;border-bottom-right-radius:6px}
 .msg.sys{background:transparent;color:var(--text-lt);font-size:11px;text-align:center;align-self:center;padding:3px 8px;font-weight:600}
 .chat-input{padding:14px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;padding-bottom:max(14px,env(safe-area-inset-bottom))}
-.quick-chip{background:var(--surface2);color:var(--text);padding:6px 10px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid var(--border)}
-input[type=number],input[type=text],input[type=password],select{width:100%;padding:13px;border-radius:12px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;font-weight:600;outline:none;transition:border .2s}
-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px}
+input[type=number],input[type=text],input[type=password],select{width:100%;padding:13px;border-radius:13px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;font-weight:600;outline:none;transition:all .2s}
+input:focus{border-color:var(--primary);background:var(--surface3)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px}
 .overlay.show{display:flex}
-.modal{background:var(--surface);border-radius:20px;padding:22px;max-width:340px;width:100%;text-align:center;border:1px solid var(--border);max-height:85vh;overflow-y:auto}
-.modal h3{font-size:17px;font-weight:800;margin-bottom:10px}
-.modal p{font-size:13px;color:var(--text-sec);line-height:1.5;margin-bottom:16px;white-space:pre-line}
+.modal{background:var(--surface);border-radius:22px;padding:24px;max-width:360px;width:100%;text-align:center;border:1px solid var(--border);max-height:85vh;overflow-y:auto}
+.modal h3{font-size:18px;font-weight:800;margin-bottom:10px}
+.modal p{font-size:13px;color:var(--text-sec);line-height:1.5;margin-bottom:18px;white-space:pre-line}
 .modal-actions{display:flex;gap:8px}
 .modal-actions button{flex:1;padding:12px;border-radius:12px;font-weight:700;font-size:13px}
-.toast{position:fixed;top:44px;left:50%;transform:translateX(-50%);background:var(--surface);padding:12px 18px;border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.5);z-index:9800;max-width:90%;text-align:center;border:1px solid var(--border);border-left:4px solid var(--primary);font-weight:700;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast{position:fixed;top:50px;left:50%;transform:translateX(-50%);background:var(--surface);padding:14px 22px;border-radius:16px;box-shadow:0 15px 40px rgba(0,0,0,.6);z-index:9800;max-width:90%;text-align:center;border:1px solid var(--border);font-weight:700;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}
-.profile-card{background:var(--surface);border-radius:18px;padding:18px;border:1px solid var(--border);margin-bottom:14px}
-.avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#60a5fa,#3b82f6);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;flex-shrink:0}
+.profile-card{background:var(--surface);border-radius:20px;padding:20px;border:1px solid var(--border);margin-bottom:14px}
+.avatar{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#60a5fa,#3b82f6);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;flex-shrink:0}
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.stat-box{background:var(--surface2);padding:12px;border-radius:12px;text-align:center}
+.stat-box{background:var(--surface2);padding:13px;border-radius:14px;text-align:center;border:1px solid var(--border)}
 .stat-box .lbl{font-size:10px;color:var(--text-sec);margin-bottom:4px;font-weight:700;text-transform:uppercase}
-.stat-box .val{font-size:16px;font-weight:800}
-.level-bar{background:var(--surface2);height:8px;border-radius:4px;overflow:hidden;margin-top:6px}
+.stat-box .val{font-size:17px;font-weight:800}
+.level-bar{background:var(--surface2);height:8px;border-radius:4px;overflow:hidden;margin-top:8px}
 .level-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),#a78bfa);transition:width .5s}
-.quest-item{background:var(--surface);padding:12px;border-radius:14px;margin-bottom:8px;border:1px solid var(--border);display:flex;align-items:center;gap:12px}
-.quest-icon{width:40px;height:40px;border-radius:10px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:20px}
+.quest-item{background:var(--surface);padding:14px;border-radius:16px;margin-bottom:10px;border:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.quest-icon{width:44px;height:44px;border-radius:12px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 .quest-info{flex:1;min-width:0}
 .quest-title{font-weight:700;font-size:13px}
 .quest-desc{font-size:11px;color:var(--text-sec);margin-top:2px}
-.quest-bar{height:3px;background:var(--surface2);border-radius:2px;margin-top:6px;overflow:hidden}
+.quest-bar{height:4px;background:var(--surface2);border-radius:2px;margin-top:8px;overflow:hidden}
 .quest-bar i{display:block;height:100%;background:var(--primary);transition:width .3s}
-.ach-item{background:var(--surface);padding:12px;border-radius:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;border:1px solid var(--border);opacity:.5}
+.ach-item{background:var(--surface);padding:14px;border-radius:16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;border:1px solid var(--border);opacity:.5}
 .ach-item.unlocked{opacity:1;border-color:var(--warning)}
-.badge{position:absolute;top:-2px;right:0;background:var(--danger);color:#fff;font-size:10px;font-weight:800;border-radius:50%;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.badge{position:absolute;top:-3px;right:0;background:var(--danger);color:#fff;font-size:10px;font-weight:800;border-radius:50%;min-width:19px;height:19px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--bg)}
 .section-title{font-size:15px;font-weight:800;margin:18px 0 10px;color:var(--text)}
 .biz-card{background:var(--surface);border-radius:18px;padding:16px;margin-bottom:12px;border:1px solid var(--border)}
 .biz-header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.biz-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.biz-icon{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px}
 .biz-income{font-size:18px;font-weight:900;color:var(--success);text-align:center;margin:8px 0}
-.sim-card{border-radius:18px;padding:20px;color:#fff;margin-bottom:14px;background:linear-gradient(135deg,#a855f7,#7c3aed)}
+.sim-card{border-radius:20px;padding:22px;color:#fff;margin-bottom:14px;background:linear-gradient(135deg,#a855f7,#7c3aed)}
 .sim-num{font-family:monospace;font-size:20px;font-weight:900;text-align:center;margin:14px 0;letter-spacing:1px}
 .gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.gallery-item{aspect-ratio:1;background:var(--surface);border-radius:10px;overflow:hidden;cursor:pointer}
+.gallery-item{aspect-ratio:1;background:var(--surface);border-radius:12px;overflow:hidden;cursor:pointer}
 .gallery-item img{width:100%;height:100%;object-fit:cover}
 .toggle{position:relative;width:48px;height:28px;background:var(--surface2);border-radius:14px;cursor:pointer;transition:background .2s;flex-shrink:0}
-.toggle::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .25s}
 .toggle.on{background:var(--primary)}
 .toggle.on::after{transform:translateX(20px)}
-#tetrisCanvas{background:#0f172a;border:2px solid #334155;border-radius:8px;display:block;margin:0 auto;touch-action:none}
+#tetrisCanvas,#snakeCanvas{background:#0a0c12;border:2px solid var(--surface3);border-radius:12px;display:block;margin:0 auto;touch-action:none}
 .city-row{background:var(--surface);padding:14px;border-radius:14px;margin-bottom:8px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;gap:10px}
 .city-row.current{border-color:var(--success);background:rgba(74,222,128,.05)}
 .city-row:active{background:var(--surface2)}
 .install-wrap{margin:16px 0;display:none}
 .install-wrap.show{display:block}
 .install-bar{width:100%;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
-.install-bar i{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);width:0;transition:width .12s;border-radius:4px}
+.install-bar i{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);width:0;transition:width .12s}
 .install-label{font-size:12px;color:var(--text-sec);margin-top:6px;text-align:center;font-weight:600}
-.app-detail-icon{width:84px;height:84px;border-radius:22px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:38px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.app-detail-icon{width:90px;height:90px;border-radius:24px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:42px}
+.filter-tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+.filter-tabs::-webkit-scrollbar{display:none}
+.filter-tab{flex:0 0 auto;padding:9px 16px;border-radius:20px;background:var(--surface);color:var(--text-sec);font-weight:700;font-size:12px;border:1px solid var(--border);white-space:nowrap;cursor:pointer;transition:all .1s}
+.filter-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.cam-filters{position:absolute;bottom:100px;left:0;right:0;display:flex;gap:8px;overflow-x:auto;padding:0 14px;scrollbar-width:none;z-index:15}
+.cam-filters::-webkit-scrollbar{display:none}
+.cam-filter{flex:0 0 auto;padding:8px 14px;border-radius:20px;background:rgba(0,0,0,.6);color:#fff;font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,.2);cursor:pointer;backdrop-filter:blur(10px)}
+.cam-filter.active{background:var(--primary);border-color:var(--primary)}
+/* ========== ФИКС: PIN-сетка ========== */
+.pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:280px;width:100%;margin:0 auto;justify-content:center}
+.pin-key{padding:20px;background:var(--surface);border-radius:50%;font-size:22px;font-weight:700;color:var(--text);aspect-ratio:1;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);transition:all .1s;margin:0 auto;width:100%;max-width:80px}
+.pin-key:active{transform:scale(.9);background:var(--primary);color:#fff}
+.pin-key.red{background:var(--danger);color:#fff}
+.pin-key.green{background:var(--success);color:#fff}
+.pin-dots{font-size:30px;letter-spacing:8px;color:var(--primary);height:40px;margin-bottom:20px;text-align:center;font-weight:700}
 </style>
 </head>
 <body>
@@ -165,7 +193,6 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
 </div>
 
 <div id="shutterOverlay" onclick="closeShutter()"></div>
-
 <div id="shutter">
     <div class="shutter-grid">
         <div class="sht on" data-sh="internet" onclick="toggleShutter(this)"><div class="circ">📶</div><div class="lbl">Интернет</div></div>
@@ -188,13 +215,6 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
     <div class="lock-hint"><span>Проведите вверх</span><div class="lock-bar"></div></div>
 </div>
 
-<div id="pinModal">
-    <div class="pin-title" id="pinTitle">Введите PIN</div>
-    <div class="pin-dots" id="pinDots">○ ○ ○ ○</div>
-    <div class="pin-grid" id="pinGrid"></div>
-    <button class="btn btn-danger" style="max-width:280px;margin-top:20px" onclick="pinCancel()">Отмена</button>
-</div>
-
 <div id="menu">
     <div class="grid" id="mainGrid">
         <div class="icon-item" onclick="openScreen('home-screen')"><div class="icon-circle c-market">🏠</div><span>Рынок</span></div>
@@ -213,8 +233,22 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
         <div class="icon-item hidden" id="app-icon-used" onclick="openScreen('used-market-screen')"><div class="icon-circle c-used">♻️</div><span>Б/У</span></div>
         <div class="icon-item hidden" id="app-icon-cars" onclick="openScreen('cars-market-screen')"><div class="icon-circle c-cars">🚗</div><span>Авто</span></div>
         <div class="icon-item hidden" id="app-icon-repair" onclick="openScreen('repair-screen')"><div class="icon-circle c-repair">🔧</div><span>Ремонт</span></div>
-        <div class="icon-item hidden" id="app-icon-tetris" onclick="openTetris()"><div class="icon-circle c-tetris">🎮</div><span>Тетрис</span></div>
+        <div class="icon-item hidden" id="app-icon-tetris" onclick="openGame('tetris')"><div class="icon-circle c-tetris">🎮</div><span>Тетрис</span></div>
+        <div class="icon-item hidden" id="app-icon-snake" onclick="openGame('snake')"><div class="icon-circle c-snake">🐍</div><span>Змейка</span></div>
         <div class="icon-item hidden" id="app-icon-stats" onclick="openScreen('stats-screen')"><div class="icon-circle c-stats">📊</div><span>Статистика</span></div>
+    </div>
+</div>
+
+<div id="bottomDock">
+    <div class="dock-item" onclick="openScreen('messages-screen')">
+        <div class="dock-circle c-msgs">💬</div>
+        <span class="dock-badge hidden" id="dockMsgBadge">0</span>
+    </div>
+    <div class="dock-item" onclick="openCamera()">
+        <div class="dock-circle c-cam">📷</div>
+    </div>
+    <div class="dock-item" onclick="openScreen('gallery-screen')">
+        <div class="dock-circle c-gal">🖼️</div>
     </div>
 </div>
 
@@ -225,15 +259,16 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
         <button class="back-btn" onclick="openCityPicker()">📍</button>
     </div>
     <div class="content">
-        <input type="text" id="marketSearch" placeholder="🔍 Поиск..." oninput="renderMarketList(this.value)" style="margin-bottom:12px">
-        <div class="market-tabs">
-            <button class="market-tab active" data-cat="phone" onclick="setMarketCat('phone', this)">📱 Телефоны</button>
-            <button class="market-tab" data-cat="laptop" onclick="setMarketCat('laptop', this)">💻 Ноутбуки</button>
-            <button class="market-tab" data-cat="pc" onclick="setMarketCat('pc', this)">🖥️ ПК</button>
-            <button class="market-tab" data-cat="tablet" onclick="setMarketCat('tablet', this)">📟 Планшеты</button>
-            <button class="market-tab" data-cat="headphones" onclick="setMarketCat('headphones', this)">🎧 Наушники</button>
+        <input type="text" id="marketSearch" placeholder="🔍 Поиск бренда..." oninput="filterBrands(this.value)" style="margin-bottom:12px">
+        <div class="filter-tabs" id="categoryTabs">
+            <div class="filter-tab active" data-cat="phone" onclick="setMarketCat('phone', this)">📱 Телефоны</div>
+            <div class="filter-tab" data-cat="laptop" onclick="setMarketCat('laptop', this)">💻 Ноутбуки</div>
+            <div class="filter-tab" data-cat="pc" onclick="setMarketCat('pc', this)">🖥️ ПК</div>
+            <div class="filter-tab" data-cat="tablet" onclick="setMarketCat('tablet', this)">📟 Планшеты</div>
+            <div class="filter-tab" data-cat="headphones" onclick="setMarketCat('headphones', this)">🎧 Наушники</div>
         </div>
-        <div class="grid-list" id="marketList"></div>
+        <div id="brandListView"></div>
+        <div id="modelListView" class="hidden"></div>
     </div>
 </div>
 
@@ -244,8 +279,9 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
         <button class="back-btn" onclick="openCityPicker()">📍</button>
     </div>
     <div class="content">
-        <input type="text" id="carSearch" placeholder="🔍 Поиск..." oninput="renderCarList(this.value)" style="margin-bottom:12px">
-        <div class="grid-list" id="carList"></div>
+        <input type="text" id="carSearch" placeholder="🔍 Поиск..." oninput="filterCarBrands(this.value)" style="margin-bottom:12px">
+        <div id="carBrandListView"></div>
+        <div id="carModelListView" class="hidden"></div>
     </div>
 </div>
 
@@ -255,8 +291,8 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
         <div class="page-title">Б/У Рынок</div>
     </div>
     <div class="content">
-        <div style="background:var(--surface);padding:12px;border-radius:12px;border:1px solid var(--border);margin-bottom:12px;font-size:12px;color:var(--text-sec)">
-            ⚠️ Сломанные товары. Купи дёшево — почини — продай дороже.
+        <div style="background:var(--surface);padding:14px;border-radius:14px;border:1px solid var(--border);margin-bottom:14px;font-size:12px;color:var(--text-sec);line-height:1.5">
+            ⚠️ Здесь продают сломанные товары дёшево. Купи → почини → продай дороже.
         </div>
         <div class="grid-list" id="usedList"></div>
     </div>
@@ -276,7 +312,7 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
         <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap" id="quickChips"></div>
         <input type="number" id="chatInput" placeholder="Своя цена (₽)" style="margin-bottom:8px">
         <button class="btn btn-primary" id="chatSendBtn" onclick="sendChatOffer()">💰 Предложить</button>
-        <button class="btn btn-success hidden" id="chatAcceptBtn" style="margin-top:8px" onclick="acceptDeal()">✅ Заключить</button>
+        <button class="btn btn-success hidden" id="chatAcceptBtn" style="margin-top:8px" onclick="acceptDeal()">✅ Заключить сделку</button>
     </div>
 </div>
 
@@ -287,11 +323,11 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
     </div>
     <div class="content">
         <div class="profile-card">
-            <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
                 <div class="avatar" id="profileAvatar">?</div>
                 <div style="flex:1">
-                    <input type="text" id="profileName" placeholder="Ваше имя" style="font-weight:700;font-size:15px;padding:8px 10px" oninput="state.playerName=this.value;saveGame()">
-                    <div style="font-size:10px;color:var(--text-lt);margin-top:4px" id="profileId">ID: —</div>
+                    <input type="text" id="profileName" placeholder="Ваше имя" style="font-weight:700;font-size:15px;padding:8px 12px" oninput="state.playerName=this.value;saveGame()">
+                    <div style="font-size:10px;color:var(--text-lt);margin-top:6px" id="profileId">ID: —</div>
                 </div>
             </div>
             <div class="stat-grid">
@@ -305,11 +341,11 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
                 <div class="level-bar"><i id="pLevelBar" style="width:0%"></i></div>
             </div>
         </div>
-        <div style="background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff;padding:14px;border-radius:14px;text-align:center;font-weight:800;font-size:14px;margin-bottom:14px;cursor:pointer" id="dailyBonus" onclick="claimDaily()">🎁 Ежедневный бонус — 500₽</div>
-        <div class="market-tabs" style="margin-bottom:12px">
-            <button class="market-tab active" onclick="switchPlayerTab('inv', this)" style="flex:1">📦 Склад</button>
-            <button class="market-tab" onclick="switchPlayerTab('quests', this)" style="flex:1">📋 Квесты</button>
-            <button class="market-tab" onclick="switchPlayerTab('ach', this)" style="flex:1">🏆 Ачивки</button>
+        <div style="background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff;padding:15px;border-radius:14px;text-align:center;font-weight:800;font-size:14px;margin-bottom:14px;cursor:pointer" id="dailyBonus" onclick="claimDaily()">🎁 Ежедневный бонус — 500₽</div>
+        <div class="filter-tabs" style="margin-bottom:12px">
+            <div class="filter-tab active" onclick="switchPlayerTab('inv', this)">📦 Склад</div>
+            <div class="filter-tab" onclick="switchPlayerTab('quests', this)">📋 Квесты</div>
+            <div class="filter-tab" onclick="switchPlayerTab('ach', this)">🏆 Ачивки</div>
         </div>
         <div id="playerInv"></div>
         <div id="playerQuests" class="hidden"></div>
@@ -323,9 +359,9 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
         <div class="page-title">Сервисный центр</div>
     </div>
     <div class="content">
-        <div class="market-tabs">
-            <button class="market-tab active" onclick="switchRepairTab('broken', this)">Сломанные</button>
-            <button class="market-tab" onclick="switchRepairTab('parts', this)">Запчасти</button>
+        <div class="filter-tabs">
+            <div class="filter-tab active" onclick="switchRepairTab('broken', this)">Сломанные</div>
+            <div class="filter-tab" onclick="switchRepairTab('parts', this)">Запчасти</div>
         </div>
         <div id="repairBrokenList"></div>
         <div id="repairPartsList" class="hidden"></div>
@@ -349,23 +385,23 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
         </div>
         <div id="bankPinStep" class="hidden" style="text-align:center;padding-top:30px">
             <div style="font-size:12px;color:var(--text-sec);margin-bottom:8px" id="bankNameDisplay">Банк</div>
-            <div class="pin-title" id="bankPinInstruction">Введите PIN</div>
+            <div style="font-size:20px;font-weight:800;margin-bottom:8px" id="bankPinInstruction">Введите PIN</div>
             <div class="pin-dots" id="bankPinDots">○ ○ ○ ○</div>
             <div class="pin-grid" id="bankPinGrid"></div>
         </div>
         <div id="bankMain" class="hidden">
-            <div id="bankCard" style="background:linear-gradient(135deg,#22c55e,#16a34a);border-radius:20px;padding:20px;color:#fff;margin-bottom:14px">
+            <div id="bankCard" style="background:linear-gradient(135deg,#22c55e,#16a34a);border-radius:22px;padding:22px;color:#fff;margin-bottom:16px">
                 <div style="font-size:11px;opacity:.85;font-weight:700" id="cardBankName">BANK</div>
                 <div style="font-size:11px;opacity:.7;margin-top:2px">Дебетовая карта</div>
-                <div style="font-family:monospace;font-size:14px;font-weight:700;letter-spacing:2px;margin:16px 0">•••• •••• •••• 4278</div>
+                <div style="font-family:monospace;font-size:15px;font-weight:700;letter-spacing:2px;margin:18px 0">•••• •••• •••• 4278</div>
                 <div style="display:flex;justify-content:space-between;align-items:flex-end">
                     <div><div style="font-size:10px;opacity:.7">Владелец</div><div style="font-size:13px;font-weight:700" id="cardOwner">ИГРОК</div></div>
-                    <div><div style="font-size:10px;opacity:.7">Баланс</div><div style="font-size:15px;font-weight:900" id="cardBalance">0 ₽</div></div>
+                    <div><div style="font-size:10px;opacity:.7">Баланс</div><div style="font-size:16px;font-weight:900" id="cardBalance">0 ₽</div></div>
                 </div>
             </div>
-            <div style="background:var(--surface);padding:14px;border-radius:14px;margin-bottom:10px;border:1px solid var(--border)">
-                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text-sec)">Кредит:</span><b style="color:var(--danger)" id="creditDisplay">0 ₽</b></div>
-                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text-sec)">Вклад:</span><b style="color:var(--success)" id="depositDisplay">0 ₽</b></div>
+            <div style="background:var(--surface);padding:16px;border-radius:14px;margin-bottom:10px;border:1px solid var(--border)">
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px"><span style="color:var(--text-sec)">Кредит:</span><b style="color:var(--danger)" id="creditDisplay">0 ₽</b></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px"><span style="color:var(--text-sec)">Вклад:</span><b style="color:var(--success)" id="depositDisplay">0 ₽</b></div>
                 <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-sec)">Рейтинг:</span><b style="color:var(--primary)" id="ratingDisplay">500</b></div>
             </div>
             <button class="btn btn-warning" onclick="takeLoan()" style="margin-bottom:8px">💳 Взять кредит</button>
@@ -377,23 +413,17 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
 </div>
 
 <div class="screen" id="business-screen">
-    <div class="header">
-        <button class="back-btn" onclick="closeAll()">←</button>
-        <div class="page-title">Бизнес</div>
-    </div>
+    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Бизнес</div></div>
     <div class="content" id="bizList"></div>
 </div>
 
 <div class="screen" id="office-screen">
-    <div class="header">
-        <button class="back-btn" onclick="closeAll()">←</button>
-        <div class="page-title">Офис</div>
-    </div>
+    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Офис</div></div>
     <div class="content">
-        <div style="background:var(--surface);padding:16px;border-radius:14px;margin-bottom:14px;text-align:center;border:1px solid var(--border)">
+        <div style="background:var(--surface);padding:18px;border-radius:14px;margin-bottom:14px;text-align:center;border:1px solid var(--border)">
             <div style="font-size:11px;color:var(--text-sec)">Текущее помещение</div>
-            <div style="font-size:22px;font-weight:900;color:var(--primary);margin-top:4px" id="officeName">Гараж</div>
-            <div style="font-size:12px;color:var(--text-sec);margin-top:6px">Лимит: <b id="officeLimit">5</b> товаров · <b id="officePartsLimit">10</b> запчастей</div>
+            <div style="font-size:24px;font-weight:900;color:var(--primary);margin-top:6px" id="officeName">Гараж</div>
+            <div style="font-size:12px;color:var(--text-sec);margin-top:8px">Лимит: <b id="officeLimit">5</b> товаров · <b id="officePartsLimit">10</b> запчастей</div>
         </div>
         <div id="officesList"></div>
         <div class="section-title">👥 Сотрудники</div>
@@ -402,18 +432,12 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
 </div>
 
 <div class="screen" id="jobs-screen">
-    <div class="header">
-        <button class="back-btn" onclick="closeAll()">←</button>
-        <div class="page-title">Работа</div>
-    </div>
+    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Работа</div></div>
     <div class="content" id="jobsList"></div>
 </div>
 
 <div class="screen" id="travel-screen">
-    <div class="header">
-        <button class="back-btn" onclick="closeAll()">←</button>
-        <div class="page-title">Поездки</div>
-    </div>
+    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Поездки</div></div>
     <div class="content">
         <div style="background:var(--surface);padding:18px;border-radius:14px;text-align:center;margin-bottom:14px;border:1px solid var(--border)">
             <div style="font-size:11px;color:var(--text-sec)">Вы в городе</div>
@@ -425,10 +449,7 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
 </div>
 
 <div class="screen" id="sim-screen">
-    <div class="header">
-        <button class="back-btn" onclick="closeAll()">←</button>
-        <div class="page-title">Сим Т3</div>
-    </div>
+    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Сим Т3</div></div>
     <div class="content">
         <div id="simCountryStep">
             <div class="section-title">Выберите страну</div>
@@ -442,19 +463,19 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
         <div id="simMainStep" class="hidden">
             <div class="sim-card" id="simCard">
                 <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-                    <div style="width:50px;height:50px;border-radius:14px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900" id="simOperatorAvatar">С</div>
+                    <div style="width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900" id="simOperatorAvatar">С</div>
                     <div style="flex:1">
                         <div style="font-size:12px;opacity:.85;font-weight:700" id="simOperatorDisplay">Оператор</div>
                         <div style="font-size:11px;opacity:.7">Оператор связи</div>
                     </div>
-                    <button style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:8px 12px;border-radius:10px;font-size:11px;font-weight:700" onclick="changeSimOperator()">🔄</button>
+                    <button style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:9px 13px;border-radius:11px;font-size:12px;font-weight:700" onclick="changeSimOperator()">🔄</button>
                 </div>
                 <div class="sim-num" id="simNumberDisplay">+7 XXX ••• •••-••-••</div>
                 <div style="text-align:center;font-size:12px;opacity:.85" id="simCountryLabel">—</div>
             </div>
             <div style="background:var(--surface);padding:16px;border-radius:14px;border:1px solid var(--border);margin-bottom:12px">
                 <div style="display:flex;justify-content:space-between;margin-bottom:12px"><span style="font-size:13px;color:var(--text-sec)">💰 Баланс</span><b style="color:var(--success);font-size:20px" id="simBalance">0 ₽</b></div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:13px;color:var(--text-sec)">📶 Остаток ГБ</span><b style="color:var(--primary)" id="simGB">30 ГБ</b></div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-size:13px;color:var(--text-sec)">📶 Остаток ГБ</span><b style="color:var(--primary)" id="simGB">30 ГБ</b></div>
                 <div style="height:8px;background:var(--bg);border-radius:4px;overflow:hidden"><div id="simGBBar" style="height:100%;background:linear-gradient(90deg,var(--primary),#a78bfa);width:100%"></div></div>
             </div>
             <button class="btn btn-primary" onclick="showSimTariffs()" style="margin-bottom:8px">📶 Выбрать тариф</button>
@@ -466,13 +487,8 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
 </div>
 
 <div class="screen" id="store-screen">
-    <div class="header">
-        <button class="back-btn" onclick="closeAll()">←</button>
-        <div class="page-title">Магазин приложений</div>
-    </div>
-    <div class="content">
-        <div class="grid-list" id="storeList"></div>
-    </div>
+    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Магазин приложений</div></div>
+    <div class="content"><div class="grid-list" id="storeList"></div></div>
 </div>
 
 <div class="screen" id="app-detail-screen">
@@ -484,59 +500,49 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
 </div>
 
 <div class="screen" id="tax-screen">
-    <div class="header">
-        <button class="back-btn" onclick="closeAll()">←</button>
-        <div class="page-title">Налоги</div>
-    </div>
+    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Налоги</div></div>
     <div class="content">
-        <div style="text-align:center;padding-top:30px">
-            <div style="font-size:64px;margin-bottom:16px">📋</div>
+        <div style="text-align:center;padding-top:40px">
+            <div style="font-size:70px;margin-bottom:20px">📋</div>
             <div style="font-size:13px;color:var(--text-sec)">Налоговая задолженность</div>
-            <div style="font-size:40px;font-weight:900;color:var(--danger);margin:20px 0" id="taxAmount">0 ₽</div>
-            <p style="color:var(--text-sec);font-size:12px">Налог 5% списывается с доходов автоматически</p>
+            <div style="font-size:44px;font-weight:900;color:var(--danger);margin:24px 0" id="taxAmount">0 ₽</div>
+            <p style="color:var(--text-sec);font-size:12px;line-height:1.6">Налог 5% списывается<br>с каждого дохода автоматически</p>
         </div>
     </div>
 </div>
 
 <div class="screen" id="stats-screen">
-    <div class="header">
-        <button class="back-btn" onclick="closeAll()">←</button>
-        <div class="page-title">Статистика</div>
-    </div>
+    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Статистика</div></div>
     <div class="content" id="statsContent"></div>
 </div>
 
 <div class="screen" id="messages-screen">
-    <div class="header">
-        <button class="back-btn" onclick="closeAll()">←</button>
-        <div class="page-title">Сообщения</div>
-    </div>
+    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Сообщения</div></div>
     <div class="content" id="messagesList"></div>
 </div>
 
 <div class="screen" id="gallery-screen">
-    <div class="header">
-        <button class="back-btn" onclick="closeAll()">←</button>
-        <div class="page-title">Галерея</div>
-    </div>
+    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Галерея</div></div>
     <div class="content">
         <div id="galleryGrid" class="gallery-grid"></div>
-        <div id="galleryEmpty" style="text-align:center;color:var(--text-lt);padding:50px;font-size:14px">📷 Пока пусто</div>
+        <div id="galleryEmpty" style="text-align:center;color:var(--text-lt);padding:60px;font-size:14px">📷 Пока пусто</div>
     </div>
 </div>
 
 <div class="screen" id="camera-screen" style="background:#000">
     <div style="position:absolute;top:0;left:0;right:0;padding:14px;padding-top:max(14px,env(safe-area-inset-top) + 20px);display:flex;justify-content:space-between;z-index:10">
         <button class="back-btn" onclick="closeCamera()" style="background:rgba(0,0,0,.5);color:#fff">←</button>
+        <button class="back-btn" onclick="switchCamera()" style="background:rgba(0,0,0,.5);color:#fff">🔄</button>
     </div>
-    <video id="camPreview" autoplay playsinline style="width:100%;height:100%;object-fit:cover"></video>
+    <video id="camPreview" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover"></video>
     <canvas id="camCanvas" style="display:none"></canvas>
-    <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.7));display:flex;justify-content:center">
-        <button onclick="takePhoto()" style="width:70px;height:70px;border-radius:50%;background:#fff;border:5px solid rgba(255,255,255,.5)"></button>
+    <div class="cam-filters" id="camFilters"></div>
+    <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.8));display:flex;justify-content:center">
+        <button onclick="takePhoto()" style="width:76px;height:76px;border-radius:50%;background:#fff;border:5px solid rgba(255,255,255,.5)"></button>
     </div>
 </div>
 
-<div class="screen" id="tetris-screen" style="background:#000">
+<div class="screen" id="tetris-screen" style="background:#0a0c12">
     <div class="header">
         <button class="back-btn" onclick="closeAll();stopTetris()">←</button>
         <div class="page-title">Тетрис</div>
@@ -554,28 +560,38 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
     </div>
 </div>
 
-<div class="screen" id="settings-screen">
+<div class="screen" id="snake-screen" style="background:#0a0c12">
     <div class="header">
-        <button class="back-btn" onclick="closeAll()">←</button>
-        <div class="page-title">Настройки</div>
+        <button class="back-btn" onclick="closeAll();stopSnake()">←</button>
+        <div class="page-title">Змейка</div>
+        <div style="font-weight:800;font-size:14px">Очки: <span id="snakeScore">0</span></div>
     </div>
+    <div class="content" style="display:flex;flex-direction:column;align-items:center;padding-top:20px">
+        <canvas id="snakeCanvas" width="320" height="320"></canvas>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;width:220px">
+            <div></div>
+            <button class="btn btn-primary" onclick="snakeDir(0,-1)">▲</button>
+            <div></div>
+            <button class="btn btn-primary" onclick="snakeDir(-1,0)">◀</button>
+            <button class="btn btn-danger" onclick="snakeReset()">🔄</button>
+            <button class="btn btn-primary" onclick="snakeDir(1,0)">▶</button>
+            <div></div>
+            <button class="btn btn-primary" onclick="snakeDir(0,1)">▼</button>
+            <div></div>
+        </div>
+    </div>
+</div>
+
+<div class="screen" id="settings-screen">
+    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Настройки</div></div>
     <div class="content">
         <div class="list-item" onclick="togglePinSetting()">
             <span>🔐 PIN-код</span>
             <span style="color:var(--text-sec);font-size:12px" id="pinStatus">Не задан</span>
         </div>
-        <div class="list-item">
-            <span>🎬 Анимации</span>
-            <div class="toggle on" id="toggleAnim" onclick="toggleSetting('anim', this)"></div>
-        </div>
-        <div class="list-item">
-            <span>🔊 Звуки</span>
-            <div class="toggle on" id="toggleSound" onclick="toggleSetting('sound', this)"></div>
-        </div>
-        <div class="list-item">
-            <span>🔔 Уведомления</span>
-            <div class="toggle on" id="toggleNotif" onclick="toggleSetting('notif', this)"></div>
-        </div>
+        <div class="list-item"><span>🎬 Анимации</span><div class="toggle on" id="toggleAnim" onclick="toggleSetting('anim', this)"></div></div>
+        <div class="list-item"><span>🔊 Звуки</span><div class="toggle on" id="toggleSound" onclick="toggleSetting('sound', this)"></div></div>
+        <div class="list-item"><span>🔔 Уведомления</span><div class="toggle on" id="toggleNotif" onclick="toggleSetting('notif', this)"></div></div>
         <div class="section-title">🎟️ Промокод</div>
         <div style="background:var(--surface);padding:14px;border-radius:14px;border:1px solid var(--border)">
             <input type="text" id="promoInput" placeholder="Введите промокод">
@@ -583,7 +599,7 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
         </div>
         <div class="section-title">⚠️ Опасная зона</div>
         <button class="btn btn-danger" onclick="confirmReset()">🗑️ Сбросить прогресс</button>
-        <div style="text-align:center;color:var(--text-lt);font-size:11px;margin-top:20px" id="versionLabel">v2.3</div>
+        <div style="text-align:center;color:var(--text-lt);font-size:11px;margin-top:20px" id="versionLabel">v3.1</div>
     </div>
 </div>
 
@@ -615,15 +631,11 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)
 <script>
 'use strict';
 
-/* =================================================================
-   НАЗВАНИЕ ИГРЫ — МЕНЯЙ ЗДЕСЬ
-================================================================= */
 const GAME_TITLE = 'Phone Reseller Tycoon';
-const GAME_VERSION = 'v2.3';
+const GAME_VERSION = 'v3.1';
 document.title = GAME_TITLE;
 
-/* ================================================================= */
-const SAVE_KEY = 'prt_complete_v23';
+const SAVE_KEY = 'prt_v31';
 const MONTH = 30 * 24 * 3600 * 1000;
 const TAX_RATE = 0.05;
 
@@ -631,21 +643,15 @@ const state = {
     money: 15000,
     playerName: '',
     playerId: 'PK-' + Math.floor(100000 + Math.random()*900000),
-    level: 1,
-    xp: 0,
-    xpNext: 100,
+    level: 1, xp: 0, xpNext: 100,
     currentCity: 'Москва',
-    inventory: [],
-    cars: [],
+    inventory: [], cars: [],
     phonesBought: 0, phonesSold: 0,
     carsBought: 0, carsSold: 0,
-    totalEarned: 0, totalSpent: 0,
-    tax: 0,
+    totalEarned: 0, totalSpent: 0, tax: 0,
     credit: 0, creditRating: 500, deposit: 0,
     depositLastUpdate: Date.now(),
-    officeLevel: 0,
-    employees: [],
-    businesses: [],
+    officeLevel: 0, employees: [], businesses: [],
     bankCountry: null, bankName: null, bankColor: null, bankPin: null,
     lockPin: null,
     simCountry: null, simOperator: null, simOperatorColor: null,
@@ -653,8 +659,7 @@ const state = {
     battery: 100, batteryLastTick: Date.now(),
     internetOn: true, airplaneMode: false, locationOn: true,
     batterySaver: false, flashlightOn: false,
-    messages: [], unreadMessages: 0,
-    gallery: [],
+    messages: [], unreadMessages: 0, gallery: [],
     installedApps: {},
     quests: {}, achievements: {},
     lastDaily: null, usedPromos: [],
@@ -663,7 +668,7 @@ const state = {
     pcParts: {cpu:0, gpu:0, ram:0, storage:0, case:0, psu:0, cooler:0}
 };
 
-/* ============== DATA ============== */
+/* ============ ДАННЫЕ ============ */
 const CITIES = [
     {name:'Москва', lat:55.75, lon:37.62, mul:1.15},
     {name:'Санкт-Петербург', lat:59.94, lon:30.31, mul:1.08},
@@ -688,16 +693,16 @@ const CITIES = [
 ];
 
 const PHONE_BRANDS = [
-    {id:'iphone', name:'iPhone', color:'#333'},
-    {id:'samsung', name:'Samsung', color:'#1428a0'},
-    {id:'xiaomi', name:'Xiaomi', color:'#ff6900'},
-    {id:'honor', name:'Honor', color:'#00aaff'},
-    {id:'huawei', name:'Huawei', color:'#cf0a2c'},
-    {id:'google', name:'Google', color:'#4285f4'},
-    {id:'oneplus', name:'OnePlus', color:'#eb0028'},
-    {id:'realme', name:'Realme', color:'#ffc107'},
-    {id:'poco', name:'POCO', color:'#ffcc00'},
-    {id:'nokia', name:'Nokia', color:'#005aff'}
+    {id:'iphone', name:'iPhone', color:'#333', logo:'🍎'},
+    {id:'samsung', name:'Samsung', color:'#1428a0', logo:'📱'},
+    {id:'xiaomi', name:'Xiaomi', color:'#ff6900', logo:'🔶'},
+    {id:'honor', name:'Honor', color:'#00aaff', logo:'🟦'},
+    {id:'huawei', name:'Huawei', color:'#cf0a2c', logo:'🌸'},
+    {id:'google', name:'Google', color:'#4285f4', logo:'🔵'},
+    {id:'oneplus', name:'OnePlus', color:'#eb0028', logo:'🔴'},
+    {id:'realme', name:'Realme', color:'#ffc107', logo:'🟡'},
+    {id:'poco', name:'POCO', color:'#ffcc00', logo:'🟡'},
+    {id:'nokia', name:'Nokia', color:'#005aff', logo:'📞'}
 ];
 const PHONE_MODELS = {
     iphone:['iPhone 11','iPhone 12','iPhone 13','iPhone 14','iPhone 15','iPhone 15 Pro','iPhone 16','iPhone 16 Pro Max','iPhone SE'],
@@ -712,12 +717,12 @@ const PHONE_MODELS = {
     nokia:['G42','X30']
 };
 const LAPTOP_BRANDS = [
-    {id:'lenovo', name:'Lenovo', color:'#e2231a'},
-    {id:'hp', name:'HP', color:'#0096d6'},
-    {id:'asus', name:'ASUS', color:'#00539b'},
-    {id:'apple_l', name:'MacBook', color:'#333'},
-    {id:'dell', name:'Dell', color:'#007db8'},
-    {id:'msi', name:'MSI', color:'#ff0000'}
+    {id:'lenovo', name:'Lenovo', color:'#e2231a', logo:'💻'},
+    {id:'hp', name:'HP', color:'#0096d6', logo:'💻'},
+    {id:'asus', name:'ASUS', color:'#00539b', logo:'💻'},
+    {id:'apple_l', name:'MacBook', color:'#333', logo:'🍏'},
+    {id:'dell', name:'Dell', color:'#007db8', logo:'💻'},
+    {id:'msi', name:'MSI', color:'#ff0000', logo:'💻'}
 ];
 const LAPTOP_MODELS = {
     lenovo:['IdeaPad 3','ThinkPad E14','Legion 5'],
@@ -728,33 +733,33 @@ const LAPTOP_MODELS = {
     msi:['Modern 14','Katana GF66']
 };
 const PC_BRANDS = [
-    {id:'office', name:'Офисные', color:'#22c55e', icon:'🖥️'},
-    {id:'gaming', name:'Игровые', color:'#0ea5e9', icon:'🎮'},
-    {id:'workstation', name:'Рабочие', color:'#8b5cf6', icon:'🚀'},
-    {id:'premium_pc', name:'Премиум', color:'#f59e0b', icon:'⚡'},
-    {id:'ultra_pc', name:'Ультра', color:'#ef4444', icon:'🔥'}
+    {id:'office', name:'Офисные', color:'#22c55e', logo:'🖥️'},
+    {id:'gaming', name:'Игровые', color:'#0ea5e9', logo:'🎮'},
+    {id:'workstation', name:'Рабочие', color:'#8b5cf6', logo:'🚀'},
+    {id:'premium_pc', name:'Премиум', color:'#f59e0b', logo:'⚡'},
+    {id:'ultra_pc', name:'Ультра', color:'#ef4444', logo:'🔥'}
 ];
 const PC_MODELS = {
-    office:      ['Офисный Celeron','Офисный i3-10100','i3+GTX 1050'],
-    gaming:      ['i5-12400F/RTX 3060','Ryzen 5/RTX 3060Ti','i5-13400F/RTX 4060'],
-    workstation: ['i7-13700K/RTX 4070','i9-13900K/RTX 4080','Ryzen 9/RTX 4070Ti'],
-    premium_pc:  ['i9-14900K/RTX 4090','Ryzen 9 7950X/RTX 4090'],
-    ultra_pc:    ['Threadripper/4090','Сервер 2x Xeon','Квантовый ПК']
+    office:['Офисный Celeron','Офисный i3-10100','i3+GTX 1050'],
+    gaming:['i5-12400F/RTX 3060','Ryzen 5/RTX 3060Ti','i5-13400F/RTX 4060'],
+    workstation:['i7-13700K/RTX 4070','i9-13900K/RTX 4080','Ryzen 9/RTX 4070Ti'],
+    premium_pc:['i9-14900K/RTX 4090','Ryzen 9 7950X/RTX 4090'],
+    ultra_pc:['Threadripper/4090','Сервер 2x Xeon','Квантовый ПК']
 };
 const PC_PARTS = [
-    {id:'cpu',     name:'Процессор',  price:8500,  icon:'🔧'},
-    {id:'gpu',     name:'Видеокарта', price:18000, icon:'🎮'},
-    {id:'ram',     name:'ОЗУ',        price:3000,  icon:'📊'},
-    {id:'storage', name:'Накопитель', price:2500,  icon:'💾'},
-    {id:'case',    name:'Корпус',     price:5000,  icon:'📦'},
-    {id:'psu',     name:'БП',         price:5000,  icon:'⚡'},
-    {id:'cooler',  name:'Кулер',      price:4000,  icon:'🌀'}
+    {id:'cpu', name:'Процессор', price:8500, icon:'🔧'},
+    {id:'gpu', name:'Видеокарта', price:18000, icon:'🎮'},
+    {id:'ram', name:'ОЗУ', price:3000, icon:'📊'},
+    {id:'storage', name:'Накопитель', price:2500, icon:'💾'},
+    {id:'case', name:'Корпус', price:5000, icon:'📦'},
+    {id:'psu', name:'БП', price:5000, icon:'⚡'},
+    {id:'cooler', name:'Кулер', price:4000, icon:'🌀'}
 ];
 const TABLET_BRANDS = [
-    {id:'ipad', name:'iPad', color:'#333'},
-    {id:'samsung_t', name:'Samsung Tab', color:'#1428a0'},
-    {id:'lenovo_t', name:'Lenovo Tab', color:'#e2231a'},
-    {id:'xiaomi_t', name:'Xiaomi Pad', color:'#ff6900'}
+    {id:'ipad', name:'iPad', color:'#333', logo:'📱'},
+    {id:'samsung_t', name:'Samsung Tab', color:'#1428a0', logo:'📟'},
+    {id:'lenovo_t', name:'Lenovo Tab', color:'#e2231a', logo:'📟'},
+    {id:'xiaomi_t', name:'Xiaomi Pad', color:'#ff6900', logo:'📟'}
 ];
 const TABLET_MODELS = {
     ipad:['iPad 9','iPad 10','iPad Air 5','iPad Pro 11'],
@@ -763,10 +768,10 @@ const TABLET_MODELS = {
     xiaomi_t:['Xiaomi Pad 6','Redmi Pad SE']
 };
 const HEADPHONE_BRANDS = [
-    {id:'airpods', name:'AirPods', color:'#333'},
-    {id:'sony_hp', name:'Sony', color:'#000'},
-    {id:'jbl', name:'JBL', color:'#ff6600'},
-    {id:'bose', name:'Bose', color:'#1a1a1a'}
+    {id:'airpods', name:'AirPods', color:'#333', logo:'🎧'},
+    {id:'sony_hp', name:'Sony', color:'#000', logo:'🎧'},
+    {id:'jbl', name:'JBL', color:'#ff6600', logo:'🎧'},
+    {id:'bose', name:'Bose', color:'#1a1a1a', logo:'🎧'}
 ];
 const HEADPHONE_MODELS = {
     airpods:['AirPods 2','AirPods 3','AirPods Pro 2','AirPods Max'],
@@ -775,14 +780,14 @@ const HEADPHONE_MODELS = {
     bose:['QC 45','QC Ultra']
 };
 const CAR_BRANDS = [
-    {id:'lada', name:'Lada', color:'#1e40af', icon:'🚗'},
-    {id:'toyota', name:'Toyota', color:'#dc2626', icon:'🚙'},
-    {id:'bmw', name:'BMW', color:'#0ea5e9', icon:'🏎️'},
-    {id:'mercedes', name:'Mercedes', color:'#64748b', icon:'🚘'},
-    {id:'audi', name:'Audi', color:'#dc2626', icon:'🚗'},
-    {id:'kia', name:'Kia', color:'#ea580c', icon:'🚙'},
-    {id:'hyundai', name:'Hyundai', color:'#2563eb', icon:'🚘'},
-    {id:'tesla', name:'Tesla', color:'#dc2626', icon:'⚡'}
+    {id:'lada', name:'Lada', color:'#1e40af', logo:'🚗'},
+    {id:'toyota', name:'Toyota', color:'#dc2626', logo:'🚙'},
+    {id:'bmw', name:'BMW', color:'#0ea5e9', logo:'🏎️'},
+    {id:'mercedes', name:'Mercedes', color:'#64748b', logo:'🚘'},
+    {id:'audi', name:'Audi', color:'#dc2626', logo:'🚗'},
+    {id:'kia', name:'Kia', color:'#ea580c', logo:'🚙'},
+    {id:'hyundai', name:'Hyundai', color:'#2563eb', logo:'🚘'},
+    {id:'tesla', name:'Tesla', color:'#dc2626', logo:'⚡'}
 ];
 const CAR_MODELS = {
     lada:['Granta','Vesta','Niva Legend','XRAY'],
@@ -839,13 +844,7 @@ const OPERATORS = {
     'ОАЭ':[{name:'Etisalat',color:'#16a34a'}],
     'Китай':[{name:'China Mobile',color:'#0ea5e9'}]
 };
-const SIM_TARIFFS = [
-    {gb:10, price:50},
-    {gb:30, price:200},
-    {gb:50, price:400},
-    {gb:100, price:700},
-    {gb:9999, price:1500, label:'Безлимит'}
-];
+const SIM_TARIFFS = [{gb:10,price:50},{gb:30,price:200},{gb:50,price:400},{gb:100,price:700},{gb:9999,price:1500,label:'Безлимит'}];
 const BUSINESSES = [
     {id:'larok', name:'🥤 Ларёк', price:50000, income:30000},
     {id:'fastfood', name:'🍔 Фастфуд', price:150000, income:100000},
@@ -872,17 +871,18 @@ const JOBS = [
     {id:'director', name:'Директор', salary:8000, req:10, icon:'👔'}
 ];
 const STORE_APPS = [
-    {id:'tax',    name:'Налоги',      icon:'📋', color:'#ef4444', size:'12 МБ', desc:'Проверка и оплата налогов'},
-    {id:'used',   name:'Б/У Рынок',   icon:'♻️', color:'#f97316', size:'18 МБ', desc:'Покупка сломанной техники для перепродажи'},
-    {id:'cars',   name:'Авто',        icon:'🚗', color:'#3b82f6', size:'25 МБ', desc:'Рынок автомобилей'},
-    {id:'repair', name:'Ремонт',      icon:'🔧', color:'#8b5cf6', size:'15 МБ', desc:'Сервисный центр и запчасти'},
-    {id:'stats',  name:'Статистика',  icon:'📊', color:'#10b981', size:'8 МБ',  desc:'Просмотр статистики бизнеса'},
-    {id:'tetris', name:'Тетрис',      icon:'🎮', color:'#ef4444', size:'5 МБ',  desc:'Классическая игра для отдыха'}
+    {id:'tax', name:'Налоги', icon:'📋', color:'#ef4444', size:'12 МБ', desc:'Проверка налогов'},
+    {id:'used', name:'Б/У Рынок', icon:'♻️', color:'#f97316', size:'18 МБ', desc:'Покупка сломанных устройств'},
+    {id:'cars', name:'Авто', icon:'🚗', color:'#3b82f6', size:'25 МБ', desc:'Рынок автомобилей'},
+    {id:'repair', name:'Ремонт', icon:'🔧', color:'#8b5cf6', size:'15 МБ', desc:'Сервис и запчасти'},
+    {id:'stats', name:'Статистика', icon:'📊', color:'#10b981', size:'8 МБ', desc:'Статистика бизнеса'},
+    {id:'tetris', name:'Тетрис', icon:'🎮', color:'#ef4444', size:'5 МБ', desc:'Классика'},
+    {id:'snake', name:'Змейка', icon:'🐍', color:'#84cc16', size:'4 МБ', desc:'Легенда'}
 ];
 const SELLER_NAMES = ['Алексей','Мария','Иван','Ольга','Дмитрий','Елена','Сергей','Катя','Никита','Света'];
 const BUYER_NAMES = ['Андрей','Виктор','Галина','Егор','Жанна','Игорь','Костя','Лена','Миша','Наташа'];
 
-/* ============== UTILS ============== */
+/* ============ УТИЛИТЫ ============ */
 function fmt(n){
     n = Number(n) || 0;
     if(Math.abs(n) >= 1e12) return (n/1e12).toFixed(1)+' трлн ₽';
@@ -908,12 +908,10 @@ function addMoney(delta, label){
     state.money += delta;
     if(delta > 0){
         state.totalEarned += delta;
-        if(label && !label.includes('налог') && !label.includes('вклад') && !label.includes('награда') && !label.includes('промокод')){
+        if(label && !/налог|вклад|награда|промокод/.test(label)){
             state.tax += Math.round(delta * TAX_RATE);
         }
-    } else {
-        state.totalSpent += Math.abs(delta);
-    }
+    } else state.totalSpent += Math.abs(delta);
     saveGame();
 }
 function addXP(n){
@@ -930,14 +928,12 @@ function notify(text, sub, type){
     const el = document.getElementById('toast');
     el.textContent = text + (sub ? ' · ' + sub : '');
     el.className = 'toast show';
-    el.style.borderLeftColor = type === 'success' ? 'var(--success)' :
-                               type === 'warning' ? 'var(--warning)' :
-                               type === 'danger' ? 'var(--danger)' : 'var(--primary)';
+    el.style.borderLeft = '4px solid ' + (type === 'success' ? 'var(--success)' : type === 'warning' ? 'var(--warning)' : type === 'danger' ? 'var(--danger)' : 'var(--primary)');
     clearTimeout(el._t);
     el._t = setTimeout(() => el.classList.remove('show'), 2500);
 }
 
-/* ============== MODAL ============== */
+/* ============ МОДАЛКА ============ */
 let modalResolve = null;
 function showModal(title, text, {ok = 'OK', cancel = 'Отмена', onOk = null, hideCancel = false, extraHtml = ''} = {}){
     document.getElementById('modalTitle').textContent = title;
@@ -954,7 +950,7 @@ function closeModal(ok){
     if(modalResolve){ const r = modalResolve; modalResolve = null; r(ok); }
 }
 
-/* ============== MARKET GENERATION ============== */
+/* ============ ГЕНЕРАЦИЯ РЫНКА ============ */
 const marketDB = [];
 const carsDB = [];
 const usedDB = [];
@@ -970,7 +966,7 @@ function generateMarkets(){
                     const broken = Math.random() < 0.35;
                     marketDB.push({
                         id: 'ph_'+city.name+'_'+brand.id+'_'+model+'_'+i+'_'+Math.random().toString(36).slice(2,7),
-                        type: 'phone', brand: brand.id, brandName: brand.name, brandColor: brand.color,
+                        type: 'phone', brand: brand.id, brandName: brand.name, brandColor: brand.color, brandLogo: brand.logo,
                         fullName: model, price: Math.floor(base * mul / 100) * 100,
                         seller: rand(SELLER_NAMES), sellerType: Math.random() < 0.5 ? 'good' : 'evil',
                         broken, brokenParts: broken ? [rand(PHONE_PARTS).id] : [],
@@ -984,7 +980,7 @@ function generateMarkets(){
                 const base = 30000 + Math.random() * 80000;
                 marketDB.push({
                     id: 'lp_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
-                    type: 'laptop', brand: brand.id, brandName: brand.name, brandColor: brand.color,
+                    type: 'laptop', brand: brand.id, brandName: brand.name, brandColor: brand.color, brandLogo: brand.logo,
                     fullName: model, price: Math.floor(base * mul / 100) * 100,
                     seller: rand(SELLER_NAMES), sellerType: 'good',
                     broken: false, brokenParts: [],
@@ -995,16 +991,16 @@ function generateMarkets(){
         if(['Москва','Санкт-Петербург','Новосибирск','Екатеринбург','Казань'].includes(city.name)){
             PC_BRANDS.forEach(brand => {
                 PC_MODELS[brand.id].forEach(model => {
-                    const base = brand.id === 'office'   ? 15000 + Math.random()*15000 :
-                                 brand.id === 'gaming'   ? 70000 + Math.random()*40000 :
+                    const base = brand.id === 'office' ? 15000 + Math.random()*15000 :
+                                 brand.id === 'gaming' ? 70000 + Math.random()*40000 :
                                  brand.id === 'workstation' ? 150000 + Math.random()*80000 :
-                                 brand.id === 'premium_pc'  ? 300000 + Math.random()*150000 :
+                                 brand.id === 'premium_pc' ? 300000 + Math.random()*150000 :
                                  500000 + Math.random()*2000000;
                     const broken = Math.random() < 0.35;
                     const pool = PC_PARTS.map(p => p.id);
                     marketDB.push({
                         id: 'pc_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
-                        type: 'pc', brand: brand.id, brandName: brand.name, brandColor: brand.color,
+                        type: 'pc', brand: brand.id, brandName: brand.name, brandColor: brand.color, brandLogo: brand.logo,
                         fullName: model, price: Math.floor(base * mul / 100) * 100,
                         seller: rand(SELLER_NAMES), sellerType: Math.random() < 0.5 ? 'good' : 'evil',
                         broken, brokenParts: broken ? [...new Set([rand(pool), rand(pool)])] : [],
@@ -1018,7 +1014,7 @@ function generateMarkets(){
                 const base = 15000 + Math.random() * 40000;
                 marketDB.push({
                     id: 'tb_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
-                    type: 'tablet', brand: brand.id, brandName: brand.name, brandColor: brand.color,
+                    type: 'tablet', brand: brand.id, brandName: brand.name, brandColor: brand.color, brandLogo: brand.logo,
                     fullName: model, price: Math.floor(base * mul / 100) * 100,
                     seller: rand(SELLER_NAMES), sellerType: 'good',
                     broken: Math.random() < 0.2, brokenParts: [],
@@ -1031,7 +1027,7 @@ function generateMarkets(){
                 const base = 3000 + Math.random() * 25000;
                 marketDB.push({
                     id: 'hp_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
-                    type: 'headphones', brand: brand.id, brandName: brand.name, brandColor: brand.color,
+                    type: 'headphones', brand: brand.id, brandName: brand.name, brandColor: brand.color, brandLogo: brand.logo,
                     fullName: model, price: Math.floor(base * mul / 100) * 100,
                     seller: rand(SELLER_NAMES), sellerType: 'good',
                     broken: false, brokenParts: [],
@@ -1048,7 +1044,7 @@ function generateMarkets(){
                     const broken = Math.random() < 0.4;
                     carsDB.push({
                         id: 'car_'+city.name+'_'+brand.id+'_'+model+'_'+i+'_'+Math.random().toString(36).slice(2,7),
-                        type: 'car', brand: brand.id, brandName: brand.name, brandColor: brand.color, brandIcon: brand.icon,
+                        type: 'car', brand: brand.id, brandName: brand.name, brandColor: brand.color, brandLogo: brand.logo,
                         fullName: model, price: Math.floor(base * mul / 100) * 100,
                         seller: rand(SELLER_NAMES), sellerType: 'good',
                         broken, brokenParts: broken ? [rand(['engine','transmission','brakes','suspension','tires','body','electronics'])] : [],
@@ -1064,7 +1060,7 @@ function generateMarkets(){
                 const base = 3000 + Math.random() * 12000;
                 usedDB.push({
                     id: 'us_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
-                    type: 'phone', brand: brand.id, brandName: brand.name, brandColor: brand.color,
+                    type: 'phone', brand: brand.id, brandName: brand.name, brandColor: brand.color, brandLogo: brand.logo,
                     fullName: model, price: Math.floor(base / 100) * 100,
                     seller: rand(SELLER_NAMES), sellerType: Math.random() < 0.5 ? 'good' : 'evil',
                     broken: true, brokenParts: [rand(PHONE_PARTS).id, rand(PHONE_PARTS).id],
@@ -1078,7 +1074,7 @@ function generateMarkets(){
                     const base = 5000 + Math.random()*20000;
                     usedDB.push({
                         id: 'uspc_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
-                        type: 'pc', brand: brand.id, brandName: brand.name, brandColor: brand.color,
+                        type: 'pc', brand: brand.id, brandName: brand.name, brandColor: brand.color, brandLogo: brand.logo,
                         fullName: model, price: Math.floor(base / 100) * 100,
                         seller: rand(SELLER_NAMES), sellerType: Math.random() < 0.5 ? 'good' : 'evil',
                         broken: true, brokenParts: [rand(PC_PARTS).id, rand(PC_PARTS).id],
@@ -1090,14 +1086,18 @@ function generateMarkets(){
     });
 }
 
-/* ============== SCREEN NAV ============== */
+/* ============ НАВИГАЦИЯ ============ */
 function openScreen(id){
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const el = document.getElementById(id);
     if(!el) return;
     el.classList.add('active');
-    if(id === 'home-screen') renderMarketList();
-    if(id === 'cars-market-screen') renderCarList();
+    const dock = document.getElementById('bottomDock');
+    const hideDock = ['camera-screen','tetris-screen','snake-screen','chat-screen','app-detail-screen'];
+    if(dock) dock.classList.toggle('hidden', hideDock.includes(id));
+
+    if(id === 'home-screen'){ selectedBrand = null; renderBrandList(); }
+    if(id === 'cars-market-screen'){ selectedCarBrand = null; renderCarBrandList(); }
     if(id === 'used-market-screen') renderUsedList();
     if(id === 'repair-screen') renderRepairScreen();
     if(id === 'bank-screen') renderBankScreen();
@@ -1114,23 +1114,25 @@ function openScreen(id){
     if(id === 'gallery-screen') renderGalleryScreen();
     if(id === 'settings-screen') renderSettingsScreen();
 }
-function closeAll(){ document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); }
+function closeAll(){
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const dock = document.getElementById('bottomDock');
+    if(dock) dock.classList.remove('hidden');
+}
 
-/* ============== APP INSTALL ============== */
+/* ============ МАГАЗИН ============ */
 function updateAllAppIcons(){
-    const apps = ['tax', 'used', 'cars', 'repair', 'tetris', 'stats'];
-    apps.forEach(id => {
+    ['tax','used','cars','repair','tetris','snake','stats'].forEach(id => {
         const el = document.getElementById('app-icon-' + id);
         if(!el) return;
-        if(state.installedApps[id]) el.classList.remove('hidden');
-        else el.classList.add('hidden');
+        el.classList.toggle('hidden', !state.installedApps[id]);
     });
 }
 function renderStore(){
     document.getElementById('storeList').innerHTML = STORE_APPS.map(a => {
         const installed = state.installedApps[a.id];
         return `<div class="card" onclick="openAppDetail('${a.id}')">
-            <div class="card-img" style="background:${a.color};font-size:24px">${a.icon}</div>
+            <div class="card-img" style="background:${a.color}">${a.icon}</div>
             <h3 style="font-size:12px;font-weight:700;text-align:center">${a.name}</h3>
             <div style="text-align:center;font-size:10px;color:var(--text-lt);margin-top:2px">${a.size}</div>
             ${installed ? '<div style="text-align:center;color:var(--success);font-size:10px;margin-top:4px">✅ Установлено</div>' : '<div style="text-align:center;color:var(--primary);font-size:10px;font-weight:700;margin-top:4px">⬇️ Установить</div>'}
@@ -1143,7 +1145,7 @@ function openAppDetail(id){
     const installed = state.installedApps[id];
     document.getElementById('appDetailTitle').textContent = app.name;
     document.getElementById('appDetailContent').innerHTML = `
-        <div style="text-align:center;padding:16px 0">
+        <div style="text-align:center;padding:20px 0">
             <div class="app-detail-icon" style="background:${app.color}">${app.icon}</div>
             <div style="font-size:22px;font-weight:800">${app.name}</div>
             <div style="font-size:12px;color:var(--text-sec);margin-top:4px">📦 ${app.size}</div>
@@ -1156,9 +1158,7 @@ function openAppDetail(id){
                 ${installed ? '🗑️ Удалить' : '⬇️ Установить'}
             </button>
         </div>`;
-    document.getElementById('installBtn').onclick = installed
-        ? () => uninstallApp(id)
-        : () => installApp(id);
+    document.getElementById('installBtn').onclick = installed ? () => uninstallApp(id) : () => installApp(id);
     openScreen('app-detail-screen');
 }
 function installApp(id){
@@ -1192,7 +1192,7 @@ function installApp(id){
 }
 function uninstallApp(id){
     const app = STORE_APPS.find(a => a.id === id);
-    showModal('Удалить приложение?', app.name, {
+    showModal('Удалить?', app.name, {
         ok: 'Удалить',
         onOk: () => {
             delete state.installedApps[id];
@@ -1203,94 +1203,244 @@ function uninstallApp(id){
         }
     });
 }
-function openTetris(){
-    if(!state.installedApps.tetris){ notify('❌ Приложение не установлено','','warning'); return; }
-    openScreen('tetris-screen');
-    setTimeout(tetrisReset, 100);
+function openGame(id){
+    if(!state.installedApps[id]){ notify('❌ Приложение не установлено','','warning'); return; }
+    if(id === 'tetris'){ openScreen('tetris-screen'); setTimeout(tetrisReset, 100); }
+    if(id === 'snake'){ openScreen('snake-screen'); setTimeout(snakeReset, 100); }
 }
 
-/* ============== MARKET RENDER ============== */
+/* ============ РЫНОК: БРЕНДЫ → МОДЕЛИ ============ */
 let marketCategory = 'phone';
+let selectedBrand = null;
+let selectedCarBrand = null;
+
+function getBrandListByCategory(cat){
+    if(cat === 'phone') return PHONE_BRANDS;
+    if(cat === 'laptop') return LAPTOP_BRANDS;
+    if(cat === 'pc') return PC_BRANDS;
+    if(cat === 'tablet') return TABLET_BRANDS;
+    if(cat === 'headphones') return HEADPHONE_BRANDS;
+    return [];
+}
+function getModelsForBrand(brandId){
+    return PHONE_MODELS[brandId] || LAPTOP_MODELS[brandId] || PC_MODELS[brandId] || TABLET_MODELS[brandId] || HEADPHONE_MODELS[brandId] || [];
+}
 function setMarketCat(cat, el){
     marketCategory = cat;
-    document.querySelectorAll('#home-screen .market-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#categoryTabs .filter-tab').forEach(t => t.classList.remove('active'));
     if(el) el.classList.add('active');
-    renderMarketList();
+    selectedBrand = null;
+    document.getElementById('modelListView').classList.add('hidden');
+    renderBrandList();
 }
-function renderMarketList(search = ''){
+function renderBrandList(search = ''){
     const city = state.currentCity;
     document.getElementById('homeCityLabel').textContent = city;
-    const q = search.toLowerCase().trim();
-    const items = marketDB.filter(m => m.city === city && m.type === marketCategory && (
-        !q || (m.fullName + ' ' + m.brandName).toLowerCase().includes(q)
-    ));
-    const seen = new Set();
-    const uniq = items.filter(m => {
-        const k = m.brand + m.fullName;
-        if(seen.has(k)) return false;
-        seen.add(k); return true;
-    }).slice(0, 60);
-    const el = document.getElementById('marketList');
-    if(!uniq.length){
-        el.innerHTML = '<div style="grid-column:span 2;text-align:center;padding:30px;color:var(--text-lt)">Пусто. Для ПК загляните в Москву/СПб.</div>';
+    const q = (search || '').toLowerCase().trim();
+    const brands = getBrandListByCategory(marketCategory);
+    const listEl = document.getElementById('brandListView');
+    listEl.classList.remove('hidden');
+    document.getElementById('modelListView').classList.add('hidden');
+
+    const items = brands.map(brand => {
+        const cityItems = marketDB.filter(m => m.city === city && m.type === marketCategory && m.brand === brand.id);
+        return { brand, count: cityItems.length };
+    }).filter(x => x.count > 0 && (!q || x.brand.name.toLowerCase().includes(q)));
+
+    if(!items.length){
+        listEl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-lt)">В этом городе пусто</div>';
         return;
     }
-    const icons = {phone:'📱', laptop:'💻', pc:'🖥️', tablet:'📟', headphones:'🎧'};
-    el.innerHTML = uniq.map(item => {
-        const icon = icons[item.type] || '📦';
-        const broken = item.broken ? '<div style="text-align:center;color:var(--danger);font-size:10px;font-weight:700;margin-top:4px">⚠️ СЛОМАН</div>' : '';
-        return `<div class="card" onclick="startBuyChat('${item.id}')">
-            <div class="card-img" style="background:${item.brandColor}">${icon}</div>
-            <h3 style="font-size:12px;font-weight:700;text-align:center">${item.brandName} ${item.fullName}</h3>
-            <div style="text-align:center;font-size:10px;color:var(--warning);margin-top:2px">★ ${item.stars}</div>
-            <div style="text-align:center;font-size:10px;color:var(--text-lt);margin-top:2px">📍 ${item.seller}</div>
-            ${broken}
-            <div style="text-align:center;font-weight:800;color:var(--success);margin-top:6px;font-size:13px">${fmt(item.price)}</div>
-        </div>`;
-    }).join('');
-}
-function renderCarList(search = ''){
-    const city = state.currentCity;
-    document.getElementById('carCityLabel').textContent = city;
-    const q = search.toLowerCase().trim();
-    const items = carsDB.filter(m => m.city === city && (
-        !q || (m.fullName + ' ' + m.brandName).toLowerCase().includes(q)
-    ));
-    const seen = new Set();
-    const uniq = items.filter(m => {
-        const k = m.brand + m.fullName;
-        if(seen.has(k)) return false;
-        seen.add(k); return true;
-    }).slice(0, 60);
-    const el = document.getElementById('carList');
-    if(!uniq.length){ el.innerHTML = '<div style="grid-column:span 2;text-align:center;padding:30px;color:var(--text-lt)">Пусто</div>'; return; }
-    el.innerHTML = uniq.map(item => `
-        <div class="card" onclick="startCarBuyChat('${item.id}')">
-            <div style="text-align:center;font-size:36px">${item.brandIcon}</div>
-            <h3 style="font-size:12px;font-weight:700;text-align:center">${item.brandName} ${item.fullName}</h3>
-            <div style="text-align:center;font-size:10px;color:var(--text-lt);margin-top:2px">${item.year} · ${item.mileage.toLocaleString('ru-RU')} км</div>
-            ${item.broken ? '<div style="text-align:center;margin-top:4px;color:var(--danger);font-size:10px;font-weight:700">⚠️ Есть проблемы</div>' : ''}
-            <div style="text-align:center;font-weight:800;color:var(--success);margin-top:6px;font-size:13px">${fmt(item.price)}</div>
+    listEl.innerHTML = items.map(({brand, count}) => `
+        <div class="brand-row" onclick="openBrand('${brand.id}')">
+            <div class="brand-logo" style="background:${brand.color}">${brand.logo || brand.name[0]}</div>
+            <div class="brand-info">
+                <div class="brand-name">${brand.name}</div>
+                <div class="brand-count">${count} предложений</div>
+            </div>
+            <div class="brand-arrow">›</div>
         </div>
     `).join('');
 }
+function filterBrands(q){ renderBrandList(q); }
+
+function openBrand(brandId){
+    const city = state.currentCity;
+    selectedBrand = brandId;
+    const brand = getBrandListByCategory(marketCategory).find(b => b.id === brandId);
+    if(!brand) return;
+
+    document.getElementById('brandListView').classList.add('hidden');
+    const modelEl = document.getElementById('modelListView');
+    modelEl.classList.remove('hidden');
+
+    const items = marketDB.filter(m => m.city === city && m.type === marketCategory && m.brand === brandId);
+    const grouped = {};
+    items.forEach(it => {
+        if(!grouped[it.fullName]) grouped[it.fullName] = [];
+        grouped[it.fullName].push(it);
+    });
+
+    const typeIcon = {phone:'📱', laptop:'💻', pc:'🖥️', tablet:'📟', headphones:'🎧'}[marketCategory] || '📦';
+    modelEl.innerHTML = `
+        <button class="btn btn-danger" style="margin-bottom:12px" onclick="backToBrands()">← К брендам</button>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:0 4px">
+            <div class="brand-logo" style="background:${brand.color}">${brand.logo || brand.name[0]}</div>
+            <div>
+                <div style="font-size:18px;font-weight:900">${brand.name}</div>
+                <div style="font-size:12px;color:var(--text-sec)">${Object.keys(grouped).length} моделей в ${city}</div>
+            </div>
+        </div>
+        ${Object.keys(grouped).map(modelName => {
+            const offers = grouped[modelName];
+            const cheapest = offers.reduce((a,b) => a.price < b.price ? a : b);
+            const broken = offers.some(o => o.broken);
+            return `<div class="model-row" onclick="openModel('${brandId}', ${JSON.stringify(modelName).replace(/"/g,'&quot;')})">
+                <div class="model-emoji">${typeIcon}</div>
+                <div class="model-info">
+                    <div class="model-title">${brand.name} ${modelName}</div>
+                    <div class="model-meta">${offers.length} шт. · от ${fmt(cheapest.price)}${broken ? ' · ⚠️ есть сломанные' : ''}</div>
+                </div>
+                <div class="model-price">→</div>
+            </div>`;
+        }).join('')}
+    `;
+}
+function backToBrands(){
+    selectedBrand = null;
+    renderBrandList();
+}
+function openModel(brandId, modelName){
+    const city = state.currentCity;
+    const items = marketDB.filter(m => m.city === city && m.type === marketCategory && m.brand === brandId && m.fullName === modelName);
+    const brand = getBrandListByCategory(marketCategory).find(b => b.id === brandId);
+    const typeIcon = {phone:'📱', laptop:'💻', pc:'🖥️', tablet:'📟', headphones:'🎧'}[marketCategory] || '📦';
+    const modelEl = document.getElementById('modelListView');
+    modelEl.innerHTML = `
+        <button class="btn btn-danger" style="margin-bottom:12px" onclick="openBrand('${brandId}')">← К моделям</button>
+        <div style="font-size:16px;font-weight:800;margin-bottom:12px;padding:0 4px">${brand.name} ${modelName}</div>
+        ${items.map(item => {
+            const broken = item.broken ? '<span style="color:var(--danger);font-size:10px;font-weight:700;margin-left:6px">⚠️</span>' : '';
+            return `<div class="model-row" onclick="startBuyChat('${item.id}')">
+                <div class="model-emoji">${typeIcon}</div>
+                <div class="model-info">
+                    <div class="model-title">${item.brandName} ${item.fullName}${broken}</div>
+                    <div class="model-meta">📍 ${item.seller} · ★ ${item.stars}</div>
+                </div>
+                <div class="model-price">${fmt(item.price)}</div>
+            </div>`;
+        }).join('')}
+    `;
+}
+
+/* ============ МАШИНЫ ============ */
+function renderCarBrandList(search = ''){
+    const city = state.currentCity;
+    document.getElementById('carCityLabel').textContent = city;
+    const q = (search || '').toLowerCase().trim();
+    const listEl = document.getElementById('carBrandListView');
+    listEl.classList.remove('hidden');
+    document.getElementById('carModelListView').classList.add('hidden');
+    const items = CAR_BRANDS.map(brand => {
+        const cityItems = carsDB.filter(m => m.city === city && m.brand === brand.id);
+        return { brand, count: cityItems.length };
+    }).filter(x => x.count > 0 && (!q || x.brand.name.toLowerCase().includes(q)));
+    if(!items.length){
+        listEl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-lt)">Пусто</div>';
+        return;
+    }
+    listEl.innerHTML = items.map(({brand, count}) => `
+        <div class="brand-row" onclick="openCarBrand('${brand.id}')">
+            <div class="brand-logo" style="background:${brand.color}">${brand.logo}</div>
+            <div class="brand-info">
+                <div class="brand-name">${brand.name}</div>
+                <div class="brand-count">${count} предложений</div>
+            </div>
+            <div class="brand-arrow">›</div>
+        </div>
+    `).join('');
+}
+function filterCarBrands(q){ renderCarBrandList(q); }
+function openCarBrand(brandId){
+    const city = state.currentCity;
+    selectedCarBrand = brandId;
+    const brand = CAR_BRANDS.find(b => b.id === brandId);
+    document.getElementById('carBrandListView').classList.add('hidden');
+    const modelEl = document.getElementById('carModelListView');
+    modelEl.classList.remove('hidden');
+    const items = carsDB.filter(m => m.city === city && m.brand === brandId);
+    const grouped = {};
+    items.forEach(it => {
+        if(!grouped[it.fullName]) grouped[it.fullName] = [];
+        grouped[it.fullName].push(it);
+    });
+    modelEl.innerHTML = `
+        <button class="btn btn-danger" style="margin-bottom:12px" onclick="backToCarBrands()">← К брендам</button>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:0 4px">
+            <div class="brand-logo" style="background:${brand.color}">${brand.logo}</div>
+            <div>
+                <div style="font-size:18px;font-weight:900">${brand.name}</div>
+                <div style="font-size:12px;color:var(--text-sec)">${Object.keys(grouped).length} моделей</div>
+            </div>
+        </div>
+        ${Object.keys(grouped).map(modelName => {
+            const offers = grouped[modelName];
+            const cheapest = offers.reduce((a,b) => a.price < b.price ? a : b);
+            return `<div class="model-row" onclick="openCarModel('${brandId}', ${JSON.stringify(modelName).replace(/"/g,'&quot;')})">
+                <div class="model-emoji">${brand.logo}</div>
+                <div class="model-info">
+                    <div class="model-title">${brand.name} ${modelName}</div>
+                    <div class="model-meta">${offers.length} шт. · от ${fmt(cheapest.price)}</div>
+                </div>
+                <div class="model-price">→</div>
+            </div>`;
+        }).join('')}
+    `;
+}
+function backToCarBrands(){
+    selectedCarBrand = null;
+    renderCarBrandList();
+}
+function openCarModel(brandId, modelName){
+    const city = state.currentCity;
+    const items = carsDB.filter(m => m.city === city && m.brand === brandId && m.fullName === modelName);
+    const brand = CAR_BRANDS.find(b => b.id === brandId);
+    const modelEl = document.getElementById('carModelListView');
+    modelEl.innerHTML = `
+        <button class="btn btn-danger" style="margin-bottom:12px" onclick="openCarBrand('${brandId}')">← К моделям</button>
+        <div style="font-size:16px;font-weight:800;margin-bottom:12px;padding:0 4px">${brand.name} ${modelName}</div>
+        ${items.map(item => {
+            const broken = item.broken ? '<span style="color:var(--danger);font-size:10px;font-weight:700;margin-left:6px">⚠️</span>' : '';
+            return `<div class="model-row" onclick="startCarBuyChat('${item.id}')">
+                <div class="model-emoji">${brand.logo}</div>
+                <div class="model-info">
+                    <div class="model-title">${brand.name} ${modelName} ${item.year}${broken}</div>
+                    <div class="model-meta">${item.mileage.toLocaleString('ru-RU')} км · 📍 ${item.seller}</div>
+                </div>
+                <div class="model-price">${fmt(item.price)}</div>
+            </div>`;
+        }).join('')}
+    `;
+}
+
+/* ============ Б/У РЫНОК ============ */
 function renderUsedList(){
     const city = state.currentCity;
-    const items = usedDB.filter(m => m.city === city).slice(0, 50);
+    const items = usedDB.filter(m => m.city === city).slice(0, 60);
     const el = document.getElementById('usedList');
     if(!items.length){ el.innerHTML = '<div style="grid-column:span 2;text-align:center;padding:30px;color:var(--text-lt)">Пока пусто</div>'; return; }
     el.innerHTML = items.map(item => {
-        const icon = item.type === 'pc' ? '🖥️' : '📱';
+        const icon = item.brandLogo || (item.type === 'pc' ? '🖥️' : '📱');
         return `<div class="card" onclick="startUsedChat('${item.id}')">
             <div class="card-img" style="background:${item.brandColor}">${icon}</div>
             <h3 style="font-size:12px;font-weight:700;text-align:center">${item.brandName} ${item.fullName}</h3>
-            <div style="text-align:center;color:var(--danger);font-size:10px;font-weight:700;margin-top:4px">⚠️ ${item.brokenParts.length} проблемы</div>
+            <div style="text-align:center;color:var(--danger);font-size:10px;font-weight:700;margin-top:4px">⚠️ ${item.brokenParts.length} поломки</div>
             <div style="text-align:center;font-weight:800;color:var(--success);margin-top:6px;font-size:13px">${fmt(item.price)}</div>
         </div>`;
     }).join('');
 }
 
-/* ============== CHAT ============== */
+/* ============ ЧАТ / ТОРГИ ============ */
 let currentChat = null;
 
 function startBuyChat(itemId){
@@ -1333,35 +1483,32 @@ function startUsedChat(itemId){
 }
 function startSellFromInv(itemId){
     const item = state.inventory.find(x => x.id === itemId);
-    if(!item){ startSellCarFromInv(itemId); return; }
-    const buyerPool = [
-        {name: rand(BUYER_NAMES), type:'rich', mul:1.35, patience:6},
-        {name: rand(BUYER_NAMES), type:'normal', mul:1.05, patience:4},
-        {name: rand(BUYER_NAMES), type:'cheap', mul:0.78, patience:3},
-        {name: rand(BUYER_NAMES), type:'expert', mul:1.15, patience:7},
-        {name: rand(BUYER_NAMES), type:'drunk', mul:1.25, patience:2}
-    ];
-    const buyer = rand(buyerPool);
-    let basePrice = item.buyPrice * (1.2 + Math.random()*0.8);
-    if(item.hasSim) basePrice *= 1.15;
-    if(item.insured) basePrice *= 1.05;
-    const targetAsk = Math.round(basePrice / 100) * 100;
+    if(item){
+        const buyerPool = [
+            {name: rand(BUYER_NAMES), type:'rich', mul:1.35, patience:6},
+            {name: rand(BUYER_NAMES), type:'normal', mul:1.05, patience:4},
+            {name: rand(BUYER_NAMES), type:'cheap', mul:0.78, patience:3},
+            {name: rand(BUYER_NAMES), type:'expert', mul:1.15, patience:7},
+            {name: rand(BUYER_NAMES), type:'drunk', mul:1.25, patience:2}
+        ];
+        const buyer = rand(buyerPool);
+        let basePrice = item.buyPrice * (1.2 + Math.random()*0.8);
+        if(item.hasSim) basePrice *= 1.15;
+        const targetAsk = Math.round(basePrice / 100) * 100;
+        currentChat = {
+            mode: 'sell', item, targetAsk,
+            maxPay: Math.round(targetAsk * buyer.mul / 100) * 100,
+            patience: buyer.patience, rounds: 0, finalPrice: null,
+            buyerName: buyer.name, buyerType: buyer.type, waiting: false
+        };
+        openChatScreen();
+        return;
+    }
+    const car = state.cars.find(x => x.id === itemId);
+    if(!car) return;
+    const targetAsk = Math.round(car.buyPrice * (1.15 + Math.random()*0.4) / 100) * 100;
     currentChat = {
-        mode: 'sell',
-        item, targetAsk,
-        maxPay: Math.round(targetAsk * buyer.mul / 100) * 100,
-        patience: buyer.patience, rounds: 0, finalPrice: null,
-        buyerName: buyer.name, buyerType: buyer.type, waiting: false
-    };
-    openChatScreen();
-}
-function startSellCarFromInv(itemId){
-    const item = state.cars.find(x => x.id === itemId);
-    if(!item) return;
-    const targetAsk = Math.round(item.buyPrice * (1.15 + Math.random()*0.4) / 100) * 100;
-    currentChat = {
-        mode: 'sellCar',
-        item, targetAsk,
+        mode: 'sellCar', item: car, targetAsk,
         maxPay: Math.round(targetAsk * 1.1 / 100) * 100,
         patience: 4, rounds: 0, finalPrice: null,
         buyerName: rand(BUYER_NAMES), buyerType: 'normal', waiting: false
@@ -1371,7 +1518,7 @@ function startSellCarFromInv(itemId){
 function openChatScreen(){
     const c = currentChat;
     const typeIcon = {phone:'📱', laptop:'💻', tablet:'📟', pc:'🖥️', car:'🚗', headphones:'🎧'};
-    document.getElementById('chatAvatar').textContent = c.item.brandIcon || typeIcon[c.item.type] || '📦';
+    document.getElementById('chatAvatar').textContent = c.item.brandLogo || typeIcon[c.item.type] || '📦';
     document.getElementById('chatAvatar').style.background = c.item.brandColor || '#333';
     document.getElementById('chatName').textContent = c.mode.startsWith('sell') ? c.buyerName : c.item.seller;
     let sub = (c.item.brandName || '') + ' ' + (c.item.fullName || '');
@@ -1434,7 +1581,7 @@ function renderQuickChips(){
         base = c.item.price;
         opts = [Math.round(base*0.5), Math.round(base*0.7), Math.round(base*0.85), base];
     }
-    chips.innerHTML = opts.map(v => `<button class="quick-chip" onclick="document.getElementById('chatInput').value=${v}">${fmt(v)}</button>`).join('');
+    chips.innerHTML = opts.map(v => `<button class="chip" onclick="document.getElementById('chatInput').value=${v}">${fmt(v)}</button>`).join('');
 }
 function sendChatOffer(){
     const c = currentChat;
@@ -1533,7 +1680,7 @@ function acceptDeal(){
             id: 'inv_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
             buyPrice: c.finalPrice,
             brokenParts: [...(c.item.brokenParts || [])],
-            hasSim: false, insured: false, addedAt: Date.now()
+            hasSim: false, addedAt: Date.now()
         };
         if(c.item.type === 'car'){
             state.cars.push(newItem);
@@ -1574,7 +1721,7 @@ function acceptDeal(){
 }
 function closeChat(){ currentChat = null; openScreen('home-screen'); }
 
-/* ============== REPAIR ============== */
+/* ============ РЕМОНТ ============ */
 function renderRepairScreen(){
     const broken = state.inventory.filter(x => x.broken || (x.brokenParts && x.brokenParts.length));
     const bEl = document.getElementById('repairBrokenList');
@@ -1608,23 +1755,22 @@ function renderRepairScreen(){
     }
     const pEl = document.getElementById('repairPartsList');
     pEl.innerHTML = `
-        <div style="display:flex;gap:6px;margin-bottom:10px">
-            <button class="market-tab active" onclick="switchPartsTab('phone', this)" style="flex:1">📱 Телефон</button>
-            <button class="market-tab" onclick="switchPartsTab('pc', this)" style="flex:1">🖥️ ПК</button>
+        <div class="filter-tabs">
+            <div class="filter-tab active" onclick="switchPartsTab('phone', this)">📱 Телефон</div>
+            <div class="filter-tab" onclick="switchPartsTab('pc', this)">🖥️ ПК</div>
         </div>
-        <div id="partsGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
+        <div id="partsGrid" class="grid-list"></div>
     `;
     renderPartsGrid('phone');
 }
 function switchRepairTab(tab, el){
-    const tabs = document.querySelectorAll('#repair-screen > .content > .market-tabs .market-tab');
-    tabs.forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#repair-screen > .content > .filter-tabs .filter-tab').forEach(t => t.classList.remove('active'));
     if(el) el.classList.add('active');
     document.getElementById('repairBrokenList').classList.toggle('hidden', tab !== 'broken');
     document.getElementById('repairPartsList').classList.toggle('hidden', tab !== 'parts');
 }
 function switchPartsTab(kind, el){
-    document.querySelectorAll('#repairPartsList .market-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#repairPartsList .filter-tab').forEach(t => t.classList.remove('active'));
     if(el) el.classList.add('active');
     renderPartsGrid(kind);
 }
@@ -1671,7 +1817,7 @@ function repairItem(id){
     renderRepairScreen();
 }
 
-/* ============== BANK ============== */
+/* ============ БАНК ============ */
 function renderBankScreen(){
     if(state.bankCountry && state.bankName){
         document.getElementById('bankCountryStep').classList.add('hidden');
@@ -1720,6 +1866,7 @@ function selectBank(name, color){
     document.getElementById('bankNameDisplay').textContent = name;
     startBankPin();
 }
+/* ============ ФИКС PIN-кода ============ */
 let bankPinBuffer = '', bankPinConfirm = '';
 function startBankPin(){
     bankPinBuffer = ''; bankPinConfirm = '';
@@ -1729,6 +1876,7 @@ function startBankPin(){
     grid.innerHTML = '';
     ['1','2','3','4','5','6','7','8','9','C','0','OK'].forEach(k => {
         const b = document.createElement('button');
+        b.type = 'button';
         b.className = 'pin-key' + (k === 'C' ? ' red' : k === 'OK' ? ' green' : '');
         b.textContent = k;
         b.onclick = () => bankPinInput(k);
@@ -1736,27 +1884,30 @@ function startBankPin(){
     });
 }
 function updateBankPinDots(){
-    document.getElementById('bankPinDots').textContent = Array.from({length:4}, (_, i) => i < bankPinBuffer.length ? '●' : '○').join(' ');
+    const el = document.getElementById('bankPinDots');
+    const len = bankPinBuffer.length;
+    el.textContent = '○ ○ ○ ○'.split(' ').map((o, i) => i < len ? '●' : '○').join(' ');
 }
 function bankPinInput(k){
-    if(k === 'C'){ bankPinBuffer = ''; updateBankPinDots(); return; }
+    if(k === 'C'){ bankPinBuffer = bankPinBuffer.slice(0, -1); updateBankPinDots(); return; }
     if(k === 'OK'){ submitBankPin(); return; }
     if(bankPinBuffer.length >= 4) return;
     bankPinBuffer += k;
     updateBankPinDots();
-    if(bankPinBuffer.length === 4 && !state.bankPin){
-        bankPinConfirm = bankPinBuffer;
-        bankPinBuffer = '';
-        updateBankPinDots();
-        document.getElementById('bankPinInstruction').textContent = 'Повторите PIN';
-    } else if(bankPinBuffer.length === 4 && state.bankPin){
-        submitBankPin();
+    if(bankPinBuffer.length === 4){
+        setTimeout(submitBankPin, 100);
     }
 }
 function submitBankPin(){
     if(!state.bankPin){
-        if(bankPinConfirm && bankPinBuffer === bankPinConfirm){
+        if(!bankPinConfirm){
+            bankPinConfirm = bankPinBuffer;
+            bankPinBuffer = '';
+            updateBankPinDots();
+            document.getElementById('bankPinInstruction').textContent = 'Повторите PIN';
+        } else if(bankPinBuffer === bankPinConfirm){
             state.bankPin = bankPinBuffer;
+            saveGame();
             showBankMain();
         } else {
             bankPinBuffer = ''; bankPinConfirm = '';
@@ -1834,7 +1985,7 @@ function withdrawDeposit(){
     notify('✅ Снято','','success');
 }
 
-/* ============== BUSINESS ============== */
+/* ============ БИЗНЕС ============ */
 function renderBusinessList(){
     const el = document.getElementById('bizList');
     el.innerHTML = BUSINESSES.map(b => {
@@ -1877,7 +2028,7 @@ function upgradeBusiness(id){
     const owned = state.businesses.find(x => x.id === id);
     const b = BUSINESSES.find(x => x.id === id);
     if(!owned || !b) return;
-    if(owned.level >= 3){ notify('Максимальный уровень','','warning'); return; }
+    if(owned.level >= 3){ notify('Максимум','','warning'); return; }
     const cost = owned.level === 1 ? b.price * 0.5 : b.price;
     if(state.money < cost){ notify('❌ Не хватает','','danger'); return; }
     showModal('Улучшить?', 'Стоимость: ' + fmt(cost), {
@@ -1891,7 +2042,7 @@ function upgradeBusiness(id){
     });
 }
 
-/* ============== OFFICE ============== */
+/* ============ ОФИС ============ */
 function renderOfficeScreen(){
     const cur = OFFICES[state.officeLevel];
     document.getElementById('officeName').textContent = cur.name;
@@ -1951,7 +2102,7 @@ function hireEmployee(role){
 }
 function fireEmployee(i){ state.employees.splice(i, 1); saveGame(); renderOfficeScreen(); }
 
-/* ============== JOBS ============== */
+/* ============ РАБОТА ============ */
 function renderJobsScreen(){
     document.getElementById('jobsList').innerHTML = JOBS.map(j => {
         const can = state.level >= j.req;
@@ -1970,10 +2121,10 @@ function workJob(id){
     notify('✅ Отработано', '+' + fmt(j.salary), 'success');
 }
 
-/* ============== TRAVEL ============== */
+/* ============ ПОЕЗДКИ ============ */
 function renderCityList(search = ''){
     document.getElementById('travelCurrentCity').textContent = state.currentCity;
-    const q = search.toLowerCase().trim();
+    const q = (search || '').toLowerCase().trim();
     const list = CITIES.filter(c => !q || c.name.toLowerCase().includes(q));
     document.getElementById('cityList').innerHTML = list.map(c => {
         const isCurrent = c.name === state.currentCity;
@@ -2012,49 +2163,11 @@ function travelTo(city, price){
             saveGame();
             notify('✅ Вы в ' + city, '', 'success');
             renderCityList();
-            renderMarketList();
-            renderCarList();
         }
     });
 }
 
-/* ============== CITY PICKER ============== */
-function openCityPicker(){
-    document.getElementById('cityOverlay').classList.add('show');
-    renderCityPickerList('');
-}
-function closeCityPicker(){ document.getElementById('cityOverlay').classList.remove('show'); }
-function renderCityPickerList(search){
-    const q = search.toLowerCase().trim();
-    const list = CITIES.filter(c => !q || c.name.toLowerCase().includes(q));
-    document.getElementById('cityPickerList').innerHTML = list.map(c => {
-        const isCur = c.name === state.currentCity;
-        const price = calcTravelPrice(state.currentCity, c.name);
-        return `<div class="city-row ${isCur ? 'current' : ''}" ${isCur ? '' : `onclick="pickCity('${c.name}', ${price})"`}>
-            <div style="flex:1">
-                <b>${c.name}</b>
-                <div style="font-size:10px;color:var(--text-sec)">Цены: ×${c.mul.toFixed(2)}</div>
-            </div>
-            ${isCur ? '<span style="color:var(--success)">Вы здесь</span>' : `<span>${fmt(price)}</span>`}
-        </div>`;
-    }).join('');
-}
-function pickCity(name, price){
-    closeCityPicker();
-    if(state.money < price){ notify('❌ Не хватает','','danger'); return; }
-    showModal('Переехать в ' + name + '?', 'Стоимость: ' + fmt(price), {
-        onOk: () => {
-            addMoney(-price, 'переезд');
-            state.currentCity = name;
-            saveGame();
-            renderMarketList();
-            renderCarList();
-            notify('✅ Переехали', name, 'success');
-        }
-    });
-}
-
-/* ============== SIM ============== */
+/* ============ СИМ ============ */
 function renderSimScreen(){
     if(state.simOperator){
         document.getElementById('simCountryStep').classList.add('hidden');
@@ -2172,10 +2285,10 @@ function insertSimIntoPhone(phoneId){
     state.simHistory.unshift({title: 'Активация в ' + phone.fullName, amount: -200, date: Date.now()});
     saveGame();
     notify('✅ SIM активирована', '+15% к цене', 'success');
-    renderPlayerInventory();
+    renderPlayerScreen();
 }
 
-/* ============== PLAYER ============== */
+/* ============ ИГРОК ============ */
 let playerTab = 'inv';
 function renderPlayerScreen(){
     document.getElementById('profileName').value = state.playerName || '';
@@ -2207,7 +2320,7 @@ function renderPlayerScreen(){
 }
 function switchPlayerTab(tab, el){
     playerTab = tab;
-    document.querySelectorAll('#player-screen .market-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#player-screen .filter-tabs .filter-tab').forEach(t => t.classList.remove('active'));
     if(el) el.classList.add('active');
     renderPlayerScreen();
 }
@@ -2249,7 +2362,7 @@ function renderPlayerInventory(){
         html += state.cars.map(item => `
             <div class="list-item" style="flex-direction:column;align-items:stretch">
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-                    <div style="font-size:28px">${item.brandIcon}</div>
+                    <div style="font-size:28px">${item.brandLogo || '🚗'}</div>
                     <div style="flex:1">
                         <div style="font-weight:700">${item.brandName} ${item.fullName}</div>
                         <div style="font-size:11px;color:var(--text-sec)">${item.year} · Куплено за ${fmt(item.buyPrice)}</div>
@@ -2266,13 +2379,12 @@ function renderPlayerQuests(){
         {id:'first_buy', title:'Первая покупка', desc:'Купи 1 товар', target:1, reward:500},
         {id:'first_sell', title:'Первая продажа', desc:'Продай 1 товар', target:1, reward:500},
         {id:'buys_10', title:'Покупатель', desc:'10 покупок', target:10, reward:3000},
-        {id:'sales_10', title:'Опытный продавец', desc:'10 продаж', target:10, reward:3000},
+        {id:'sales_10', title:'Продавец', desc:'10 продаж', target:10, reward:3000},
         {id:'repairs_5', title:'Мастер', desc:'5 ремонтов', target:5, reward:2000},
-        {id:'car_sales_5', title:'Автодилер', desc:'5 авто продано', target:5, reward:10000},
+        {id:'car_sales_5', title:'Автодилер', desc:'5 авто', target:5, reward:10000},
         {id:'hire_employee', title:'Начальник', desc:'Найми сотрудника', target:1, reward:2000},
         {id:'open_business', title:'Бизнесмен', desc:'Открой бизнес', target:1, reward:5000},
-        {id:'travel_3', title:'Путешественник', desc:'3 города', target:3, reward:1500},
-        {id:'rich_100k', title:'Накопи 100 000₽', desc:'', target:100000, reward:5000}
+        {id:'travel_3', title:'Путешественник', desc:'3 города', target:3, reward:1500}
     ];
     document.getElementById('playerQuests').innerHTML = questDefs.map(q => {
         const s = state.quests[q.id] || {current: 0, completed: false};
@@ -2296,7 +2408,7 @@ function renderPlayerAchievements(){
         {id:'millionaire', icon:'💎', name:'Миллионер', desc:'1 000 000 ₽', check: () => state.money >= 1000000},
         {id:'biz', icon:'🏢', name:'Бизнесмен', desc:'Открой бизнес', check: () => state.businesses.length >= 1},
         {id:'lvl5', icon:'⭐', name:'Опытный', desc:'Уровень 5', check: () => state.level >= 5},
-        {id:'lvl10', icon:'🌟', name:'Профессионал', desc:'Уровень 10', check: () => state.level >= 10},
+        {id:'lvl10', icon:'🌟', name:'Профи', desc:'Уровень 10', check: () => state.level >= 10},
         {id:'traveler', icon:'✈️', name:'Путешественник', desc:'3 города', check: () => (state.quests.travel_3?.current || 0) >= 3}
     ];
     document.getElementById('playerAch').innerHTML = defs.map(a => {
@@ -2335,7 +2447,7 @@ function checkQuestProgress(id){
     saveGame();
 }
 
-/* ============== STATS ============== */
+/* ============ СТАТИСТИКА ============ */
 function renderStatsScreen(){
     document.getElementById('statsContent').innerHTML = `
         <div class="list-item"><span>📱 Куплено телефонов</span><b>${state.phonesBought}</b></div>
@@ -2346,16 +2458,15 @@ function renderStatsScreen(){
         <div class="list-item"><span>🚗 В гараже</span><b>${state.cars.length}</b></div>
         <div class="list-item"><span>🏢 Бизнесов</span><b>${state.businesses.length}</b></div>
         <div class="list-item"><span>👥 Сотрудников</span><b>${state.employees.length}</b></div>
-        <div class="list-item"><span>🗺️ Посещено городов</span><b>${state.quests.travel_3?.current || 1}</b></div>
         <div class="list-item"><span>💵 Заработано</span><b style="color:var(--success)">${fmt(state.totalEarned)}</b></div>
         <div class="list-item"><span>💸 Потрачено</span><b style="color:var(--danger)">${fmt(state.totalSpent)}</b></div>
     `;
 }
 
-/* ============== TAX ============== */
+/* ============ НАЛОГИ ============ */
 function renderTaxScreen(){ document.getElementById('taxAmount').textContent = fmt(state.tax); }
 
-/* ============== MESSAGES ============== */
+/* ============ СООБЩЕНИЯ ============ */
 function addMessage(from, text, type){
     state.messages.unshift({from, text, type: type || 'info', date: Date.now(), read: false});
     state.unreadMessages++;
@@ -2364,8 +2475,14 @@ function addMessage(from, text, type){
 }
 function updateMsgBadge(){
     const b = document.getElementById('msgBadge');
-    if(state.unreadMessages > 0){ b.textContent = state.unreadMessages; b.classList.remove('hidden'); }
-    else b.classList.add('hidden');
+    const db = document.getElementById('dockMsgBadge');
+    if(state.unreadMessages > 0){
+        if(b){ b.textContent = state.unreadMessages; b.classList.remove('hidden'); }
+        if(db){ db.textContent = state.unreadMessages; db.classList.remove('hidden'); }
+    } else {
+        if(b) b.classList.add('hidden');
+        if(db) db.classList.add('hidden');
+    }
 }
 function renderMessagesScreen(){
     const el = document.getElementById('messagesList');
@@ -2382,29 +2499,84 @@ function renderMessagesScreen(){
     saveGame();
 }
 
-/* ============== GALLERY ============== */
-let camStream = null;
+/* ============ КАМЕРА ============ */
+let camStream = null, camFacing = 'environment', camFilter = 'none';
+
 async function openCamera(){
+    if(location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1' && !location.hostname.includes('.')){
+        // Разрешаем file://, но предупредим
+    }
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+        showModal('📷 Камера не поддерживается', 'Ваш браузер не даёт доступ к камере.', {ok: 'OK', hideCancel: true});
+        return;
+    }
+    if(camStream){ camStream.getTracks().forEach(t => t.stop()); camStream = null; }
     try {
-        camStream = await navigator.mediaDevices.getUserMedia({video: {facingMode: 'environment'}});
-        document.getElementById('camPreview').srcObject = camStream;
+        camStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { ideal: camFacing } },
+            audio: false
+        });
+        const v = document.getElementById('camPreview');
+        v.srcObject = camStream;
+        v.style.filter = camFilter === 'none' ? '' : camFilter;
+        renderCameraFilters();
         openScreen('camera-screen');
-    } catch(e){ notify('📷 Камера недоступна','','danger'); }
+    } catch(err){
+        console.error('Camera error:', err);
+        let msg = 'Не удалось запустить камеру.\n\n';
+        if(err.name === 'NotAllowedError') msg += 'Разрешите доступ к камере в настройках браузера.';
+        else if(err.name === 'NotFoundError') msg += 'Камера не найдена на этом устройстве.';
+        else if(err.name === 'NotReadableError') msg += 'Камера используется другим приложением.';
+        else if(err.name === 'SecurityError') msg += 'Заблокировано.\nРаботает только по HTTPS или localhost.';
+        else msg += err.name + ': ' + (err.message || '');
+        showModal('📷 Ошибка камеры', msg, {ok: 'OK', hideCancel: true});
+    }
+}
+function switchCamera(){
+    camFacing = camFacing === 'environment' ? 'user' : 'environment';
+    if(camStream){ camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+    openCamera();
+}
+function renderCameraFilters(){
+    const filters = [
+        {id:'none', name:'Обычно', css:''},
+        {id:'grayscale(100%)', name:'Ч/Б', css:'grayscale(100%)'},
+        {id:'sepia(100%)', name:'Сепия', css:'sepia(100%)'},
+        {id:'brightness(1.3)', name:'Ярко', css:'brightness(1.3)'},
+        {id:'contrast(1.4)', name:'Контраст', css:'contrast(1.4)'},
+        {id:'saturate(2)', name:'Насыщ.', css:'saturate(2)'},
+        {id:'invert(100%)', name:'Инверсия', css:'invert(100%)'}
+    ];
+    document.getElementById('camFilters').innerHTML = filters.map(f => `
+        <div class="cam-filter ${camFilter === f.css ? 'active' : ''}" onclick="setCamFilter('${f.css.replace(/'/g,'')}')">${f.name}</div>
+    `).join('');
+}
+function setCamFilter(css){
+    camFilter = css;
+    const v = document.getElementById('camPreview');
+    v.style.filter = css;
+    renderCameraFilters();
 }
 function closeCamera(){
     if(camStream){ camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+    const v = document.getElementById('camPreview');
+    if(v) v.srcObject = null;
     closeAll();
 }
 function takePhoto(){
     const v = document.getElementById('camPreview');
     const cv = document.getElementById('camCanvas');
-    if(!v || !cv) return;
+    if(!v || !cv || !camStream){ notify('❌ Камера не активна','','danger'); return; }
     cv.width = v.videoWidth || 640;
     cv.height = v.videoHeight || 480;
-    cv.getContext('2d').drawImage(v, 0, 0);
-    state.gallery.push({id: Date.now() + Math.random(), data: cv.toDataURL('image/jpeg', 0.7), date: Date.now()});
+    const ctx = cv.getContext('2d');
+    if(camFilter) ctx.filter = camFilter;
+    ctx.drawImage(v, 0, 0, cv.width, cv.height);
+    ctx.filter = 'none';
+    const data = cv.toDataURL('image/jpeg', 0.75);
+    state.gallery.push({id: Date.now() + Math.random(), data, date: Date.now()});
     saveGame();
-    notify('📷 Снято','','success');
+    notify('📷 Фото сохранено','','success');
 }
 function renderGalleryScreen(){
     const grid = document.getElementById('galleryGrid');
@@ -2428,7 +2600,7 @@ function renderGalleryScreen(){
     });
 }
 
-/* ============== SETTINGS ============== */
+/* ============ НАСТРОЙКИ ============ */
 function renderSettingsScreen(){
     document.getElementById('pinStatus').textContent = state.lockPin ? 'Установлен' : 'Не задан';
     document.getElementById('toggleAnim').classList.toggle('on', state.animations);
@@ -2463,15 +2635,9 @@ function applyPromo(){
     const code = document.getElementById('promoInput').value.trim();
     if(!code) return;
     if(state.usedPromos.includes(code)){ notify('❌ Уже использован','','danger'); return; }
-    if(code === 'TYCOON2025'){
-        state.usedPromos.push(code);
-        addMoney(150000, 'промокод');
-        notify('✅ +150 000₽','','success');
-    } else if(code === 'WELCOME'){
-        state.usedPromos.push(code);
-        addMoney(25000, 'промокод');
-        notify('✅ +25 000₽','','success');
-    } else { notify('❌ Неверный промокод','','danger'); }
+    if(code === 'TYCOON2025'){ state.usedPromos.push(code); addMoney(150000, 'промокод'); notify('✅ +150 000₽','','success'); }
+    else if(code === 'WELCOME'){ state.usedPromos.push(code); addMoney(25000, 'промокод'); notify('✅ +25 000₽','','success'); }
+    else notify('❌ Неверный промокод','','danger');
     document.getElementById('promoInput').value = '';
     saveGame();
 }
@@ -2482,7 +2648,7 @@ function confirmReset(){
     });
 }
 
-/* ============== SHUTTER (ИСПРАВЛЕНО) ============== */
+/* ============ ШТОРКА ============ */
 let shutterOpen = false;
 function openShutter(){
     document.getElementById('shutter').classList.add('open');
@@ -2531,82 +2697,42 @@ function batteryTick(){
     }
     updateStatusBar();
 }
-
-/* ============== SHUTTER SWIPE (ИСПРАВЛЕНО) ============== */
 function setupShutterSwipe(){
     const sb = document.getElementById('statusBar');
     const sh = document.getElementById('shutter');
-    let startY = 0;
-    let startTarget = null;
-    let didDrag = false;
-
-    function getY(e){
-        if(e.touches && e.touches.length) return e.touches[0].clientY;
-        if(e.changedTouches && e.changedTouches.length) return e.changedTouches[0].clientY;
-        return e.clientY;
-    }
-    function onStart(e){
-        startY = getY(e);
-        startTarget = e.target;
-        didDrag = false;
-    }
-    function onMove(e){
+    let startY = 0, startTarget = null, didDrag = false;
+    const getY = e => (e.touches && e.touches[0] ? e.touches[0].clientY : (e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientY : e.clientY));
+    const onStart = e => { startY = getY(e); startTarget = e.target; didDrag = false; };
+    const onMove = e => {
         if(!startY) return;
-        const y = getY(e);
-        const dy = y - startY;
-        if(!shutterOpen && startY < 50 && dy > 30){
-            openShutter();
-            didDrag = true;
-            startY = 0;
-        }
+        const dy = getY(e) - startY;
+        if(!shutterOpen && startY < 50 && dy > 30){ openShutter(); didDrag = true; startY = 0; }
         if(Math.abs(dy) > 8) didDrag = true;
-    }
-    function onEnd(e){
+    };
+    const onEnd = e => {
         if(!startY){ startTarget = null; return; }
-        const y = getY(e);
-        const dy = y - startY;
-        // Закрытие: свайп ВВЕРХ внутри шторки
-        if(shutterOpen && startTarget && sh.contains(startTarget) && dy < -30){
-            closeShutter();
-        }
-        startY = 0;
-        startTarget = null;
+        const dy = getY(e) - startY;
+        if(shutterOpen && startTarget && sh.contains(startTarget) && dy < -30) closeShutter();
+        startY = 0; startTarget = null;
         setTimeout(() => { didDrag = false; }, 50);
-    }
-
+    };
     document.addEventListener('touchstart', onStart, {passive: true});
     document.addEventListener('touchmove', onMove, {passive: true});
     document.addEventListener('touchend', onEnd);
     document.addEventListener('mousedown', onStart);
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onEnd);
-
-    // Клик по statusBar — открыть/закрыть
-    sb.addEventListener('click', () => {
-        if(didDrag) return;
-        if(shutterOpen) closeShutter();
-        else openShutter();
-    });
-
-    // Клик по пустому месту шторки
-    sh.addEventListener('click', (e) => {
-        if(e.target === sh || e.target.classList.contains('shutter-grid')){
-            closeShutter();
-        }
-    });
-
-    // ESC на клавиатуре
-    document.addEventListener('keydown', (e) => {
-        if(e.key === 'Escape' && shutterOpen) closeShutter();
-    });
+    sb.addEventListener('click', () => { if(!didDrag){ shutterOpen ? closeShutter() : openShutter(); } });
+    sh.addEventListener('click', e => { if(e.target === sh || e.target.classList.contains('shutter-grid')) closeShutter(); });
+    document.addEventListener('keydown', e => { if(e.key === 'Escape' && shutterOpen) closeShutter(); });
 }
 
-/* ============== LOCK SCREEN ============== */
+/* ============ LOCK SCREEN ============ */
 function setupLockScreen(){
     const ls = document.getElementById('lockScreen');
     let sy = null;
-    const start = (y) => sy = y;
-    const end = (y) => {
+    const start = y => sy = y;
+    const end = y => {
         if(sy === null) return;
         const dy = sy - y;
         sy = null;
@@ -2628,7 +2754,7 @@ function promptName(){
         extraHtml: '<input type="text" id="playerNameInput" placeholder="Ваше имя" maxlength="20">',
         onOk: () => {
             const n = document.getElementById('playerNameInput').value.trim();
-            if(!n){ notify('❌ Имя слишком короткое','','danger'); return; }
+            if(!n){ notify('❌ Имя короткое','','danger'); return; }
             state.playerName = n;
             document.getElementById('profileAvatar').textContent = n[0].toUpperCase();
             saveGame();
@@ -2639,14 +2765,14 @@ function promptName(){
 function showCalendar(){
     const events = [];
     state.employees.forEach(e => events.push('Сотрудник ' + e.role + ': ' + new Date(e.nextSalary).toLocaleDateString('ru-RU')));
-    state.businesses.forEach(b => events.push('Бизнес ' + b.id + ': доход ' + new Date(b.nextIncome).toLocaleDateString('ru-RU')));
+    state.businesses.forEach(b => events.push('Бизнес ' + b.id + ': ' + new Date(b.nextIncome).toLocaleDateString('ru-RU')));
     showModal('📅 Календарь', events.length ? '' : 'Пока пусто', {
         extraHtml: events.length ? '<div style="text-align:left;font-size:12px;line-height:1.8">' + events.join('<br>') + '</div>' : '',
         ok: 'Закрыть', hideCancel: true
     });
 }
 
-/* ============== TETRIS ============== */
+/* ============ ТЕТРИС ============ */
 let tetrisState = null, tetrisInterval = null, tetrisScore = 0;
 const TETRIS_COLS = 10, TETRIS_ROWS = 20, TILE = 28;
 const TETRIS_SHAPES = [
@@ -2677,37 +2803,32 @@ function tetrisSpawn(){
     }
 }
 function tetrisCollide(x, y, shape){
-    for(let r = 0; r < shape.length; r++){
+    for(let r = 0; r < shape.length; r++)
         for(let c = 0; c < shape[r].length; c++){
             if(!shape[r][c]) continue;
             const nx = x + c, ny = y + r;
             if(nx < 0 || nx >= TETRIS_COLS || ny >= TETRIS_ROWS) return true;
             if(ny >= 0 && tetrisState.board[ny][nx]) return true;
         }
-    }
     return false;
 }
 function tetrisTick(){
     if(!tetrisState || !tetrisState.current) return;
     const c = tetrisState.current;
-    if(!tetrisCollide(c.x, c.y + 1, c.shape)) c.y++;
-    else tetrisLock();
+    if(!tetrisCollide(c.x, c.y + 1, c.shape)) c.y++; else tetrisLock();
     tetrisDraw();
 }
 function tetrisLock(){
     const c = tetrisState.current;
-    for(let r = 0; r < c.shape.length; r++){
-        for(let cc = 0; cc < c.shape[r].length; cc++){
+    for(let r = 0; r < c.shape.length; r++)
+        for(let cc = 0; cc < c.shape[r].length; cc++)
             if(c.shape[r][cc] && c.y + r >= 0) tetrisState.board[c.y + r][c.x + cc] = c.color;
-        }
-    }
     let cleared = 0;
     for(let r = TETRIS_ROWS - 1; r >= 0; r--){
         if(tetrisState.board[r].every(x => x)){
             tetrisState.board.splice(r, 1);
             tetrisState.board.unshift(Array(TETRIS_COLS).fill(null));
-            cleared++;
-            r++;
+            cleared++; r++;
         }
     }
     if(cleared){ tetrisScore += cleared * 100; document.getElementById('tetrisScore').textContent = tetrisScore; }
@@ -2724,40 +2845,87 @@ function tetrisRotate(){
 function tetrisDrop(){
     if(!tetrisState || !tetrisState.current) return;
     while(!tetrisCollide(tetrisState.current.x, tetrisState.current.y + 1, tetrisState.current.shape)) tetrisState.current.y++;
-    tetrisLock();
-    tetrisDraw();
+    tetrisLock(); tetrisDraw();
 }
 function tetrisDraw(){
     const cv = document.getElementById('tetrisCanvas');
     if(!cv || !tetrisState) return;
     const ctx = cv.getContext('2d');
-    ctx.fillStyle = '#0f172a';
-    ctx.fillRect(0, 0, cv.width, cv.height);
+    ctx.fillStyle = '#0a0c12'; ctx.fillRect(0, 0, cv.width, cv.height);
     ctx.strokeStyle = 'rgba(255,255,255,.04)';
     for(let i = 0; i <= TETRIS_COLS; i++){ ctx.beginPath(); ctx.moveTo(i*TILE, 0); ctx.lineTo(i*TILE, cv.height); ctx.stroke(); }
     for(let i = 0; i <= TETRIS_ROWS; i++){ ctx.beginPath(); ctx.moveTo(0, i*TILE); ctx.lineTo(cv.width, i*TILE); ctx.stroke(); }
-    for(let r = 0; r < TETRIS_ROWS; r++){
-        for(let c = 0; c < TETRIS_COLS; c++){
-            if(tetrisState.board[r][c]){
-                ctx.fillStyle = tetrisState.board[r][c];
-                ctx.fillRect(c*TILE+1, r*TILE+1, TILE-2, TILE-2);
-            }
-        }
-    }
+    for(let r = 0; r < TETRIS_ROWS; r++)
+        for(let c = 0; c < TETRIS_COLS; c++)
+            if(tetrisState.board[r][c]){ ctx.fillStyle = tetrisState.board[r][c]; ctx.fillRect(c*TILE+1, r*TILE+1, TILE-2, TILE-2); }
     const c = tetrisState.current;
-    if(c){
-        for(let r = 0; r < c.shape.length; r++){
-            for(let cc = 0; cc < c.shape[r].length; cc++){
-                if(c.shape[r][cc] && c.y + r >= 0){
-                    ctx.fillStyle = c.color;
-                    ctx.fillRect((c.x + cc)*TILE+1, (c.y + r)*TILE+1, TILE-2, TILE-2);
-                }
-            }
-        }
-    }
+    if(c) for(let r = 0; r < c.shape.length; r++)
+        for(let cc = 0; cc < c.shape[r].length; cc++)
+            if(c.shape[r][cc] && c.y + r >= 0){ ctx.fillStyle = c.color; ctx.fillRect((c.x + cc)*TILE+1, (c.y + r)*TILE+1, TILE-2, TILE-2); }
 }
 
-/* ============== TIMERS ============== */
+/* ============ ЗМЕЙКА ============ */
+let snakeState = null, snakeInterval = null, snakeScore = 0;
+const SNAKE_SIZE = 16, SNAKE_COLS = 20, SNAKE_ROWS = 20;
+function stopSnake(){ if(snakeInterval) clearInterval(snakeInterval); snakeInterval = null; }
+function snakeReset(){
+    snakeScore = 0;
+    document.getElementById('snakeScore').textContent = '0';
+    snakeState = {
+        snake: [{x:10,y:10},{x:9,y:10},{x:8,y:10}],
+        dir: {x:1, y:0},
+        nextDir: {x:1, y:0},
+        food: {x:15, y:10}
+    };
+    if(snakeInterval) clearInterval(snakeInterval);
+    snakeInterval = setInterval(snakeTick, 130);
+    snakeDraw();
+}
+function snakeDir(dx, dy){
+    if(!snakeState) return;
+    if(snakeState.dir.x === -dx && snakeState.dir.y === -dy) return;
+    snakeState.nextDir = {x:dx, y:dy};
+}
+function snakeTick(){
+    if(!snakeState) return;
+    snakeState.dir = {...snakeState.nextDir};
+    const head = {x: snakeState.snake[0].x + snakeState.dir.x, y: snakeState.snake[0].y + snakeState.dir.y};
+    if(head.x < 0 || head.x >= SNAKE_COLS || head.y < 0 || head.y >= SNAKE_ROWS){
+        notify('💀 Игра окончена','','warning');
+        setTimeout(snakeReset, 800);
+        return;
+    }
+    if(snakeState.snake.some(s => s.x === head.x && s.y === head.y)){
+        notify('💀 Игра окончена','','warning');
+        setTimeout(snakeReset, 800);
+        return;
+    }
+    snakeState.snake.unshift(head);
+    if(head.x === snakeState.food.x && head.y === snakeState.food.y){
+        snakeScore += 10;
+        document.getElementById('snakeScore').textContent = snakeScore;
+        do { snakeState.food = {x: Math.floor(Math.random()*SNAKE_COLS), y: Math.floor(Math.random()*SNAKE_ROWS)}; }
+        while(snakeState.snake.some(s => s.x === snakeState.food.x && s.y === snakeState.food.y));
+    } else {
+        snakeState.snake.pop();
+    }
+    snakeDraw();
+}
+function snakeDraw(){
+    const cv = document.getElementById('snakeCanvas');
+    if(!cv || !snakeState) return;
+    const ctx = cv.getContext('2d');
+    ctx.fillStyle = '#0a0c12'; ctx.fillRect(0, 0, cv.width, cv.height);
+    const cellW = cv.width / SNAKE_COLS, cellH = cv.height / SNAKE_ROWS;
+    ctx.fillStyle = '#ef4444';
+    ctx.fillRect(snakeState.food.x * cellW + 2, snakeState.food.y * cellH + 2, cellW - 4, cellH - 4);
+    snakeState.snake.forEach((s, i) => {
+        ctx.fillStyle = i === 0 ? '#84cc16' : '#16a34a';
+        ctx.fillRect(s.x * cellW + 1, s.y * cellH + 1, cellW - 2, cellH - 2);
+    });
+}
+
+/* ============ ТАЙМЕРЫ ============ */
 setInterval(() => {
     state.businesses.forEach(b => {
         if(Date.now() >= b.nextIncome){
@@ -2783,10 +2951,8 @@ setInterval(() => {
             e.nextSalary = Date.now() + MONTH;
             if(state.money >= e.salary){
                 state.money -= e.salary;
-                addMessage('👥 Сотрудник', 'Зарплата ' + fmt(e.salary) + ' списана', 'warning');
-            } else {
-                addMessage('⚠️ Сотрудник', 'Не хватило на зарплату!', 'danger');
-            }
+                addMessage('👥 Сотрудник', 'Зарплата ' + fmt(e.salary), 'warning');
+            } else addMessage('⚠️ Сотрудник', 'Не хватило на зарплату!', 'danger');
         }
     });
     saveGame();
@@ -2794,7 +2960,7 @@ setInterval(() => {
 setInterval(batteryTick, 10000);
 setInterval(updateStatusBar, 1000);
 
-/* ============== BOOT ============== */
+/* ============ СТАРТ ============ */
 function boot(){
     document.title = GAME_TITLE;
     const loaded = loadGame();
@@ -2812,11 +2978,8 @@ function boot(){
         if(k === 'saver') el.classList.toggle('on', state.batterySaver);
         if(k === 'flashlight') el.classList.toggle('on', state.flashlightOn);
     });
-    if(!state.playerName){
-        setTimeout(() => { if(!state.playerName) promptName(); }, 2000);
-    } else {
-        document.getElementById('profileAvatar').textContent = state.playerName[0].toUpperCase();
-    }
+    if(!state.playerName) setTimeout(() => { if(!state.playerName) promptName(); }, 2000);
+    else document.getElementById('profileAvatar').textContent = state.playerName[0].toUpperCase();
     console.log('✅ ' + GAME_TITLE + ' ' + GAME_VERSION + ' loaded');
 }
 document.addEventListener('DOMContentLoaded', boot);
