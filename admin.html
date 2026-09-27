@@ -594,7 +594,7 @@ function runDiagnostics(){
         done++; finish();
     }).catch(() => { results.push({ok:false, text:'jackpot НЕ читается'}); done++; finish(); });
 
-    const testRef = fbDB.ref('_admin_test_' + Date.now());
+    const testRef = fbDB.ref('users/_admin_test_' + Date.now());
     testRef.set({t: Date.now()}).then(() => {
         results.push({ok:true, text:'Запись разрешена'});
         testRef.remove();
