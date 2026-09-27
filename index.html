@@ -9,7 +9,15 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;touch-action:manipulation}
-:root{--bg:#0a0c12;--surface:#161a24;--surface2:#1e2330;--surface3:#262c3a;--text:#f1f5f9;--text-sec:#94a3b8;--text-lt:#64748b;--primary:#818cf8;--primary-glow:rgba(129,140,248,.4);--success:#4ade80;--danger:#f87171;--warning:#f59e0b;--border:rgba(255,255,255,.07)}
+:root{
+  --bg:#0a0c12;--surface:#161a24;--surface2:#1e2330;--surface3:#262c3a;
+  --text:#f1f5f9;--text-sec:#94a3b8;--text-lt:#64748b;
+  --primary:#818cf8;--primary-glow:rgba(129,140,248,.4);
+  --success:#4ade80;--danger:#f87171;--warning:#f59e0b;
+  --gold:#fbbf24;--gold-glow:rgba(251,191,36,.5);
+  --pink:#ec4899;--cyan:#06b6d4;
+  --border:rgba(255,255,255,.07);
+}
 body{background:var(--bg);color:var(--text);overflow:hidden;position:relative;height:100vh;-webkit-font-smoothing:antialiased}
 .hidden{display:none!important}
 button{font-family:inherit;cursor:pointer;border:none;outline:none}
@@ -51,7 +59,7 @@ input,select,textarea{font-family:inherit}
 .login-status{margin-top:24px;font-size:13px;color:#64748b;text-align:center;min-height:20px}
 #banScreen{position:fixed;inset:0;z-index:999999;background:#0a0c12;color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center}
 #banScreen.show{display:flex}
-#menu{width:100%;max-width:520px;padding:44px 12px 130px;margin:0 auto;height:100vh;overflow-y:auto}
+#menu{width:100%;max-width:560px;padding:44px 12px 160px;margin:0 auto;height:100vh;overflow-y:auto}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .icon-item{background:transparent;border:none;padding:10px 4px;display:flex;flex-direction:column;align-items:center;height:92px;cursor:pointer;transition:transform .15s;position:relative}
 .icon-item:active{transform:scale(.88)}
@@ -79,13 +87,22 @@ input,select,textarea{font-family:inherit}
 .c-gal{background:linear-gradient(135deg,#8b5cf6,#6d28d9)}
 .c-leader{background:linear-gradient(135deg,#fbbf24,#f59e0b)}
 .c-gchat{background:linear-gradient(135deg,#06b6d4,#0891b2)}
-#bottomDock{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:18px;padding:12px 24px;background:rgba(30,35,48,.75);backdrop-filter:blur(30px);border-radius:28px;border:1px solid rgba(255,255,255,.08);z-index:200;box-shadow:0 10px 40px rgba(0,0,0,.45);transition:opacity .3s,transform .3s}
+.c-casino{background:linear-gradient(135deg,#ec4899,#a855f7)}
+.c-arena{background:linear-gradient(135deg,#ef4444,#f97316)}
+.c-season{background:linear-gradient(135deg,#fbbf24,#f59e0b)}
+.c-world{background:linear-gradient(135deg,#06b6d4,#0891b2)}
+.c-exchange{background:linear-gradient(135deg,#10b981,#059669)}
+.c-quests{background:linear-gradient(135deg,#f59e0b,#ea580c)}
+#bottomDock{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:8px;padding:10px 14px;background:rgba(30,35,48,.85);backdrop-filter:blur(30px);border-radius:28px;border:1px solid rgba(255,255,255,.08);z-index:200;box-shadow:0 10px 40px rgba(0,0,0,.5);transition:opacity .3s,transform .3s}
 #bottomDock.hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(100px)}
-.dock-item{position:relative;cursor:pointer;transition:transform .15s}
+.dock-item{position:relative;cursor:pointer;transition:transform .15s;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;border-radius:14px}
 .dock-item:active{transform:scale(.88)}
-.dock-circle{width:52px;height:52px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;box-shadow:inset 0 1px 1px rgba(255,255,255,.35),0 4px 12px rgba(0,0,0,.3)}
-.dock-badge{position:absolute;top:-4px;right:-4px;background:var(--danger);color:#fff;font-size:10px;font-weight:800;border-radius:50%;min-width:20px;height:20px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--bg)}
-.dock-badge.hidden{display:none}
+.dock-item.active{background:rgba(129,140,248,.15)}
+.dock-item.active .dock-circle{box-shadow:0 0 16px var(--primary-glow)}
+.dock-circle{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;box-shadow:inset 0 1px 1px rgba(255,255,255,.35),0 4px 12px rgba(0,0,0,.3);transition:box-shadow .2s}
+.dock-label{font-size:9px;font-weight:800;color:var(--text-sec);text-transform:uppercase;letter-spacing:.3px}
+.dock-item.active .dock-label{color:var(--primary)}
+.dock-badge{position:absolute;top:0;right:0;background:var(--danger);color:#fff;font-size:9px;font-weight:800;border-radius:50%;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--bg)}
 .screen{position:fixed;inset:0;background:var(--bg);z-index:100;display:none;flex-direction:column;animation:slideIn .2s}
 .screen.active{display:flex}
 @keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
@@ -93,7 +110,7 @@ input,select,textarea{font-family:inherit}
 .back-btn{background:var(--surface2);border:1px solid var(--border);width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:var(--text);font-size:20px}
 .back-btn:active{transform:scale(.9);background:var(--primary)}
 .page-title{font-size:17px;font-weight:800;flex:1}
-.content{flex:1;overflow-y:auto;padding:14px 12px 130px;-webkit-overflow-scrolling:touch}
+.content{flex:1;overflow-y:auto;padding:14px 12px 150px;-webkit-overflow-scrolling:touch}
 .card{background:var(--surface);border-radius:16px;padding:12px;border:1px solid var(--border);cursor:pointer;transition:all .12s;position:relative;overflow:hidden}
 .card:active{transform:scale(.97);border-color:var(--primary)}
 .card-img{width:52px;height:52px;border-radius:14px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:24px}
@@ -106,30 +123,57 @@ input,select,textarea{font-family:inherit}
 .btn-danger{background:linear-gradient(135deg,#f87171,#dc2626)}
 .btn-success{background:linear-gradient(135deg,#4ade80,#16a34a)}
 .btn-warning{background:linear-gradient(135deg,#fbbf24,#d97706)}
+.btn-gold{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000}
+.btn-pink{background:linear-gradient(135deg,#ec4899,#a855f7)}
 .btn-sm{padding:8px 14px;font-size:12px;width:auto;border-radius:11px}
-.chip{background:var(--surface2);color:var(--text);padding:8px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid var(--border);cursor:pointer}
-.brand-row{display:flex;align-items:center;gap:12px;background:var(--surface);padding:14px;border-radius:16px;margin-bottom:10px;cursor:pointer;border:1px solid var(--border)}
-.brand-row:active{transform:scale(.98);border-color:var(--primary)}
-.brand-logo{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;flex-shrink:0}
-.brand-info{flex:1;min-width:0}
-.brand-name{font-size:15px;font-weight:800}
-.brand-count{font-size:11px;color:var(--text-sec);margin-top:2px}
-.brand-arrow{color:var(--text-lt);font-size:22px}
-.model-row{background:var(--surface);border-radius:14px;padding:12px 14px;margin-bottom:8px;border:1px solid var(--border);display:flex;align-items:center;gap:12px;cursor:pointer}
-.model-row:active{transform:scale(.98);border-color:var(--primary)}
-.model-emoji{font-size:28px;flex-shrink:0}
-.model-info{flex:1;min-width:0}
-.model-title{font-size:13px;font-weight:700}
-.model-meta{font-size:11px;color:var(--text-sec);margin-top:2px}
-.model-price{font-size:14px;font-weight:900;color:var(--success);flex-shrink:0}
-.chat-area{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;padding-top:20px}
-.msg{max-width:82%;padding:11px 15px;border-radius:18px;font-size:13px;line-height:1.4;font-weight:500;word-wrap:break-word}
-.msg.bot{background:var(--surface2);align-self:flex-start;border-bottom-left-radius:6px;border:1px solid var(--border)}
-.msg.me{background:linear-gradient(135deg,#818cf8,#6366f1);color:#fff;align-self:flex-end;border-bottom-right-radius:6px}
-.msg.sys{background:transparent;color:var(--text-lt);font-size:11px;text-align:center;align-self:center;padding:3px 8px;font-weight:600}
-.chat-input{padding:14px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;padding-bottom:max(14px,env(safe-area-inset-bottom))}
-input[type=number],input[type=text],input[type=password],select,textarea{width:100%;padding:13px;border-radius:13px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;font-weight:600;outline:none;transition:all .2s}
-input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3)}
+.casino-balance{background:linear-gradient(135deg,#1a1a2e,#2d1b4e);border-radius:22px;padding:24px;text-align:center;margin-bottom:16px;border:1px solid rgba(251,191,36,.3);box-shadow:0 8px 32px rgba(251,191,36,.15);position:relative;overflow:hidden}
+.casino-balance::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(251,191,36,.15),transparent 60%);animation:rotateGlow 8s linear infinite}
+@keyframes rotateGlow{to{transform:rotate(360deg)}}
+.casino-balance .label{font-size:11px;color:var(--gold);font-weight:800;text-transform:uppercase;letter-spacing:2px;position:relative}
+.casino-balance .amount{font-size:44px;font-weight:900;color:#fff;margin:8px 0;text-shadow:0 0 24px var(--gold-glow);position:relative}
+.casino-balance .sub{font-size:12px;color:var(--text-sec);position:relative}
+.casino-tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+.casino-tabs::-webkit-scrollbar{display:none}
+.casino-tab{flex:0 0 auto;padding:10px 16px;border-radius:14px;background:var(--surface);color:var(--text-sec);font-weight:800;font-size:12px;border:1px solid var(--border);cursor:pointer;white-space:nowrap}
+.casino-tab.active{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000;border-color:var(--gold);box-shadow:0 0 16px var(--gold-glow)}
+.slot-machine{display:flex;justify-content:center;gap:10px;margin:24px 0;perspective:600px}
+.slot-reel{width:72px;height:96px;background:linear-gradient(180deg,#0a0c12,#1a1a2e);border:2px solid var(--gold);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:44px;box-shadow:inset 0 0 20px rgba(251,191,36,.2),0 0 24px rgba(251,191,36,.15);transition:transform .1s}
+.slot-reel.spinning{animation:reelSpin .1s linear infinite}
+@keyframes reelSpin{0%{transform:translateY(0)}50%{transform:translateY(-4px)}100%{transform:translateY(0)}}
+.roulette-wheel{width:220px;height:220px;border-radius:50%;margin:20px auto;background:conic-gradient(#dc2626 0deg 10deg,#000 10deg 20deg,#dc2626 20deg 30deg,#000 30deg 40deg,#dc2626 40deg 50deg,#000 50deg 60deg,#dc2626 60deg 70deg,#000 70deg 80deg,#dc2626 80deg 90deg,#000 90deg 100deg,#dc2626 100deg 110deg,#000 110deg 120deg,#dc2626 120deg 130deg,#000 130deg 140deg,#dc2626 140deg 150deg,#000 150deg 160deg,#dc2626 160deg 170deg,#000 170deg 180deg,#dc2626 180deg 190deg,#000 190deg 200deg,#dc2626 200deg 210deg,#000 210deg 220deg,#dc2626 220deg 230deg,#000 230deg 240deg,#dc2626 240deg 250deg,#000 250deg 260deg,#dc2626 260deg 270deg,#000 270deg 280deg,#dc2626 280deg 290deg,#000 290deg 300deg,#dc2626 300deg 310deg,#000 310deg 320deg,#dc2626 320deg 330deg,#000 330deg 340deg,#dc2626 340deg 350deg,#000 350deg 360deg);border:6px solid var(--gold);box-shadow:0 0 40px var(--gold-glow),inset 0 0 40px rgba(0,0,0,.5);position:relative;transition:transform 3s cubic-bezier(.2,.8,.2,1)}
+.roulette-wheel::after{content:'';position:absolute;top:50%;left:50%;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#fbbf24,#f59e0b);transform:translate(-50%,-50%);border:3px solid #000;box-shadow:0 0 16px var(--gold-glow)}
+.roulette-wheel.spinning{transform:rotate(1440deg)}
+.jackpot-display{background:linear-gradient(135deg,#ec4899,#a855f7);border-radius:22px;padding:30px 20px;text-align:center;margin:16px 0;box-shadow:0 0 40px rgba(236,72,153,.4);position:relative;overflow:hidden}
+.jackpot-display::before{content:'💎';position:absolute;font-size:200px;opacity:.05;top:-40px;right:-40px}
+.jackpot-display .label{font-size:11px;color:rgba(255,255,255,.8);font-weight:800;text-transform:uppercase;letter-spacing:3px}
+.jackpot-display .amount{font-size:48px;font-weight:900;color:#fff;margin:8px 0;text-shadow:0 0 30px rgba(255,255,255,.5);animation:pulseJackpot 2s ease-in-out infinite}
+@keyframes pulseJackpot{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.quest-tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+.quest-tabs::-webkit-scrollbar{display:none}
+.quest-tab{flex:0 0 auto;padding:10px 16px;border-radius:14px;background:var(--surface);color:var(--text-sec);font-weight:800;font-size:12px;border:1px solid var(--border);cursor:pointer;white-space:nowrap}
+.quest-tab.active{background:linear-gradient(135deg,#818cf8,#6366f1);color:#fff;border-color:var(--primary)}
+.quest-card{background:var(--surface);border-radius:18px;padding:16px;margin-bottom:12px;border:1px solid var(--border);display:flex;gap:14px;align-items:center;transition:all .2s}
+.quest-card.done{border-color:var(--success);background:linear-gradient(135deg,rgba(74,222,128,.08),transparent)}
+.quest-card.claimed{opacity:.5}
+.quest-icon-box{width:52px;height:52px;border-radius:14px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;border:1px solid var(--border)}
+.quest-card.done .quest-icon-box{background:linear-gradient(135deg,#4ade80,#16a34a);border-color:transparent}
+.quest-body{flex:1;min-width:0}
+.quest-name{font-size:14px;font-weight:800;margin-bottom:4px}
+.quest-desc{font-size:11px;color:var(--text-sec);margin-bottom:8px}
+.quest-progress{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.quest-progress i{display:block;height:100%;background:linear-gradient(90deg,#818cf8,#a78bfa);transition:width .4s;border-radius:3px}
+.quest-card.done .quest-progress i{background:linear-gradient(90deg,#4ade80,#16a34a)}
+.quest-reward{display:flex;gap:8px;font-size:11px;font-weight:800}
+.quest-reward .money{color:var(--success)}
+.quest-reward .chips{color:var(--gold)}
+.quest-claim-btn{padding:10px 16px;border-radius:12px;font-weight:800;font-size:12px;background:linear-gradient(135deg,#4ade80,#16a34a);color:#fff;flex-shrink:0}
+.quest-claim-btn:disabled{background:var(--surface2);color:var(--text-lt);cursor:not-allowed}
+.game-day-pill{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(251,191,36,.2),rgba(245,158,11,.2));border:1px solid rgba(251,191,36,.4);padding:5px 10px;border-radius:20px;font-size:11px;font-weight:800;color:var(--gold)}
+.game-day-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulseGold 1.5s ease-in-out infinite}
+@keyframes pulseGold{0%,100%{opacity:1}50%{opacity:.4}}
+.toast{position:fixed;top:50px;left:50%;transform:translateX(-50%);background:var(--surface);padding:14px 22px;border-radius:16px;box-shadow:0 15px 40px rgba(0,0,0,.6);z-index:9800;max-width:90%;text-align:center;border:1px solid var(--border);font-weight:700;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+.toast.gold{border-left:4px solid var(--gold);color:var(--gold)}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px}
 .overlay.show{display:flex}
 .modal{background:var(--surface);border-radius:22px;padding:24px;max-width:360px;width:100%;text-align:center;border:1px solid var(--border);max-height:85vh;overflow-y:auto}
@@ -137,8 +181,25 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
 .modal p{font-size:13px;color:var(--text-sec);line-height:1.5;margin-bottom:18px;white-space:pre-line}
 .modal-actions{display:flex;gap:8px}
 .modal-actions button{flex:1;padding:12px;border-radius:12px;font-weight:700;font-size:13px}
-.toast{position:fixed;top:50px;left:50%;transform:translateX(-50%);background:var(--surface);padding:14px 22px;border-radius:16px;box-shadow:0 15px 40px rgba(0,0,0,.6);z-index:9800;max-width:90%;text-align:center;border:1px solid var(--border);font-weight:700;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none}
-.toast.show{opacity:1}
+input[type=number],input[type=text],input[type=password],select,textarea{width:100%;padding:13px;border-radius:13px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;font-weight:600;outline:none;transition:all .2s}
+input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3)}
+#eventBanner{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000;padding:12px;border-radius:14px;margin-bottom:12px;font-weight:800;font-size:13px;text-align:center;box-shadow:0 4px 16px rgba(251,191,36,.4);animation:pulseBanner 2s ease-in-out infinite}
+@keyframes pulseBanner{0%,100%{box-shadow:0 4px 16px rgba(251,191,36,.4)}50%{box-shadow:0 4px 24px rgba(251,191,36,.8)}}
+.badge{position:absolute;top:-3px;right:0;background:var(--danger);color:#fff;font-size:10px;font-weight:800;border-radius:50%;min-width:19px;height:19px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--bg)}
+.chat-area{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px}
+.chat-input{padding:14px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0}
+.gchat-msg{background:var(--surface);padding:10px 14px;border-radius:14px;margin-bottom:8px;border:1px solid var(--border)}
+.gchat-msg.me{border-color:var(--primary)}
+.gchat-name{font-size:12px;font-weight:700;color:var(--primary)}
+.gchat-text{font-size:13px;color:var(--text);margin-top:2px;word-wrap:break-word}
+.leader-row{background:var(--surface);padding:14px;border-radius:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;border:1px solid var(--border)}
+.leader-row.me{border-color:var(--primary)}
+.leader-rank{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;background:var(--surface2);flex-shrink:0}
+.leader-rank.gold{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000}
+.leader-rank.silver{background:linear-gradient(135deg,#e5e7eb,#9ca3af);color:#000}
+.leader-rank.bronze{background:linear-gradient(135deg,#c8956d,#92400e);color:#fff}
+.leader-name{flex:1;font-weight:700;font-size:14px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.leader-money{font-weight:900;color:var(--success);font-size:14px}
 .profile-card{background:var(--surface);border-radius:20px;padding:20px;border:1px solid var(--border);margin-bottom:14px}
 .avatar{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#60a5fa,#3b82f6);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;flex-shrink:0;overflow:hidden}
 .avatar img{width:100%;height:100%;object-fit:cover}
@@ -146,75 +207,10 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
 .stat-box{background:var(--surface2);padding:13px;border-radius:14px;text-align:center;border:1px solid var(--border)}
 .stat-box .lbl{font-size:10px;color:var(--text-sec);margin-bottom:4px;font-weight:700;text-transform:uppercase}
 .stat-box .val{font-size:17px;font-weight:800}
-.level-bar{background:var(--surface2);height:8px;border-radius:4px;overflow:hidden;margin-top:8px}
-.level-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),#a78bfa);transition:width .5s}
-.quest-item{background:var(--surface);padding:14px;border-radius:16px;margin-bottom:10px;border:1px solid var(--border);display:flex;align-items:center;gap:12px}
-.quest-icon{width:44px;height:44px;border-radius:12px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.quest-info{flex:1;min-width:0}
-.quest-title{font-weight:700;font-size:13px}
-.quest-bar{height:4px;background:var(--surface2);border-radius:2px;margin-top:8px;overflow:hidden}
-.quest-bar i{display:block;height:100%;background:var(--primary);transition:width .3s}
-.ach-item{background:var(--surface);padding:14px;border-radius:16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;border:1px solid var(--border);opacity:.5}
-.ach-item.unlocked{opacity:1;border-color:var(--warning)}
-.badge{position:absolute;top:-3px;right:0;background:var(--danger);color:#fff;font-size:10px;font-weight:800;border-radius:50%;min-width:19px;height:19px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--bg)}
-.section-title{font-size:15px;font-weight:800;margin:18px 0 10px;color:var(--text)}
-.biz-card{background:var(--surface);border-radius:18px;padding:16px;margin-bottom:12px;border:1px solid var(--border)}
-.biz-header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.biz-icon{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px}
-.biz-income{font-size:18px;font-weight:900;color:var(--success);text-align:center;margin:8px 0}
-.sim-card{border-radius:20px;padding:22px;color:#fff;margin-bottom:14px;background:linear-gradient(135deg,#a855f7,#7c3aed)}
-.sim-num{font-family:monospace;font-size:20px;font-weight:900;text-align:center;margin:14px 0;letter-spacing:1px}
-.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.gallery-item{aspect-ratio:1;background:var(--surface);border-radius:12px;overflow:hidden;cursor:pointer}
-.gallery-item img{width:100%;height:100%;object-fit:cover}
-.toggle{position:relative;width:48px;height:28px;background:var(--surface2);border-radius:14px;cursor:pointer;transition:background .2s;flex-shrink:0}
-.toggle::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .25s}
-.toggle.on{background:var(--primary)}
-.toggle.on::after{transform:translateX(20px)}
-#tetrisCanvas,#snakeCanvas{background:#0a0c12;border:2px solid var(--surface3);border-radius:12px;display:block;margin:0 auto;touch-action:none}
-.city-row{background:var(--surface);padding:14px;border-radius:14px;margin-bottom:8px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;gap:10px}
-.city-row.current{border-color:var(--success);background:rgba(74,222,128,.05)}
-.install-wrap{margin:16px 0;display:none}
-.install-wrap.show{display:block}
-.install-bar{width:100%;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
-.install-bar i{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);width:0;transition:width .12s}
-.install-label{font-size:12px;color:var(--text-sec);margin-top:6px;text-align:center;font-weight:600}
-.app-detail-icon{width:90px;height:90px;border-radius:24px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:42px}
 .filter-tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
 .filter-tabs::-webkit-scrollbar{display:none}
 .filter-tab{flex:0 0 auto;padding:9px 16px;border-radius:20px;background:var(--surface);color:var(--text-sec);font-weight:700;font-size:12px;border:1px solid var(--border);white-space:nowrap;cursor:pointer}
 .filter-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-.cam-filters{position:absolute;bottom:100px;left:0;right:0;display:flex;gap:8px;overflow-x:auto;padding:0 14px;scrollbar-width:none;z-index:15}
-.cam-filters::-webkit-scrollbar{display:none}
-.cam-filter{flex:0 0 auto;padding:8px 14px;border-radius:20px;background:rgba(0,0,0,.6);color:#fff;font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,.2);cursor:pointer;backdrop-filter:blur(10px)}
-.cam-filter.active{background:var(--primary)}
-.pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:280px;width:100%;margin:0 auto}
-.pin-key{padding:20px;background:var(--surface);border-radius:50%;font-size:22px;font-weight:700;color:var(--text);aspect-ratio:1;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);margin:0 auto;width:100%;max-width:80px;font-family:inherit}
-.pin-key:active{transform:scale(.9);background:var(--primary);color:#fff}
-.pin-key.red{background:var(--danger);color:#fff}
-.pin-key.green{background:var(--success);color:#fff}
-.pin-dots{font-size:30px;letter-spacing:8px;color:var(--primary);height:40px;margin-bottom:20px;text-align:center;font-weight:700}
-.leader-row{background:var(--surface);padding:14px;border-radius:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;border:1px solid var(--border)}
-.leader-row.me{border-color:var(--primary);background:linear-gradient(135deg,rgba(129,140,248,.1),transparent)}
-.leader-rank{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;background:var(--surface2);flex-shrink:0}
-.leader-rank.gold{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000}
-.leader-rank.silver{background:linear-gradient(135deg,#e5e7eb,#9ca3af);color:#000}
-.leader-rank.bronze{background:linear-gradient(135deg,#c8956d,#92400e);color:#fff}
-.leader-avatar{width:40px;height:40px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff}
-.leader-avatar img{width:100%;height:100%;object-fit:cover}
-.leader-name{flex:1;font-weight:700;font-size:14px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.leader-money{font-weight:900;color:var(--success);font-size:14px}
-.gchat-msg{background:var(--surface);padding:10px 14px;border-radius:14px;margin-bottom:8px;border:1px solid var(--border);display:flex;gap:10px;align-items:flex-start}
-.gchat-msg.me{border-color:var(--primary)}
-.gchat-msg.system{border-color:var(--warning);background:linear-gradient(135deg,rgba(245,158,11,.1),transparent)}
-.gchat-avatar{width:32px;height:32px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
-.gchat-avatar img{width:100%;height:100%;object-fit:cover}
-.gchat-content{flex:1;min-width:0}
-.gchat-name{font-size:12px;font-weight:700;color:var(--primary)}
-.gchat-name.me{color:var(--success)}
-.gchat-name.system{color:var(--warning)}
-.gchat-text{font-size:13px;color:var(--text);margin-top:2px;word-wrap:break-word}
-.gchat-time{font-size:10px;color:var(--text-lt);margin-top:4px}
 </style>
 </head>
 <body>
@@ -247,7 +243,7 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
 <div id="loginScreen" class="hidden">
     <div class="login-logo">📱</div>
     <div class="login-title">Phone Reseller<br>Tycoon</div>
-    <div class="login-sub">Войдите через Google, чтобы играть с любого устройства. Прогресс сохраняется в облаке.</div>
+    <div class="login-sub">Войдите через Google, чтобы играть с любого устройства.</div>
     <button class="login-btn" onclick="signInWithGoogle()">
         <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.4 29.3 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.4 1.1 7.3 2.8l5.7-5.7C33.6 6.9 29 5 24 5 12.9 5 4 13.9 4 25s8.9 20 20 20c11 0 20-9 20-20 0-1.3-.1-2.7-.4-4z"/><path fill="#FF3D00" d="M6.3 15.3l6.6 4.8C14.7 16.1 19 13 24 13c2.8 0 5.4 1.1 7.3 2.8l5.7-5.7C33.6 6.9 29 5 24 5c-7.6 0-14.2 4.3-17.7 10.3z"/><path fill="#4CAF50" d="M24 45c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 36.4 26.8 37 24 37c-5.3 0-9.7-3.4-11.3-8l-6.5 5C9.6 40.7 16.3 45 24 45z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.1 5.6l6.2 5.2C40.9 36.3 44 31.1 44 25c0-1.3-.1-2.7-.4-4.5z"/></svg>
         Войти через Google
@@ -258,7 +254,7 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
 <div id="banScreen">
     <div style="font-size:80px;margin-bottom:20px">🚫</div>
     <h1 style="font-size:32px;font-weight:900;color:#f87171;margin-bottom:12px">Аккаунт заблокирован</h1>
-    <p style="font-size:14px;color:#94a3b8;max-width:400px;line-height:1.6;margin-bottom:20px" id="banReason">Причина: Нарушение правил</p>
+    <p style="font-size:14px;color:#94a3b8;max-width:400px;line-height:1.6;margin-bottom:20px" id="banReason"></p>
     <p style="font-size:12px;color:#64748b" id="banUid"></p>
 </div>
 
@@ -272,6 +268,17 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
 </div>
 
 <div id="menu">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding:0 4px">
+        <div>
+            <div style="font-size:11px;color:var(--text-sec);font-weight:700">БАЛАНС</div>
+            <div style="font-size:24px;font-weight:900;color:var(--success)" id="menuBalance">0 ₽</div>
+        </div>
+        <div style="text-align:right">
+            <div class="game-day-pill"><span class="dot"></span> День <span id="menuGameDay">1</span></div>
+            <div style="font-size:10px;color:var(--text-lt);margin-top:4px;font-weight:700">до конца: <span id="menuDayTimer">15:00</span></div>
+        </div>
+    </div>
+
     <div class="grid" id="mainGrid">
         <div class="icon-item" onclick="openScreen('home-screen')"><div class="icon-circle c-market">🏠</div><span>Рынок</span></div>
         <div class="icon-item" onclick="openScreen('bank-screen')"><div class="icon-circle c-bank">🏦</div><span>Банк</span></div>
@@ -281,7 +288,8 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
         <div class="icon-item" onclick="openScreen('travel-screen')"><div class="icon-circle c-travel">✈️</div><span>Поездки</span></div>
         <div class="icon-item" onclick="openScreen('sim-screen')"><div class="icon-circle c-sim">📶</div><span>Сим Т3</span></div>
         <div class="icon-item" onclick="openScreen('store-screen')"><div class="icon-circle c-store">📱</div><span>Магазин</span></div>
-        <div class="icon-item" onclick="openScreen('player-screen')"><div class="icon-circle c-player">👤</div><span>Игрок</span></div>
+        <div class="icon-item" onclick="openScreen('casino-screen')"><div class="icon-circle c-casino">🎰</div><span>Казино</span></div>
+        <div class="icon-item" onclick="openScreen('quests-screen')" style="position:relative"><div class="icon-circle c-quests">🎯</div><span>Задания</span><span class="badge hidden" id="questsBadge">0</span></div>
         <div class="icon-item" onclick="openScreen('leaderboard-screen')"><div class="icon-circle c-leader">🏆</div><span>Лидеры</span></div>
         <div class="icon-item" onclick="openScreen('globalchat-screen')"><div class="icon-circle c-gchat">🌐</div><span>Общий чат</span></div>
         <div class="icon-item" onclick="openScreen('messages-screen')" style="position:relative"><div class="icon-circle c-msgs">💬</div><span>Сообщения</span><span class="badge hidden" id="msgBadge">0</span></div>
@@ -298,15 +306,122 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
 </div>
 
 <div id="bottomDock">
-    <div class="dock-item" onclick="openScreen('messages-screen')">
-        <div class="dock-circle c-msgs">💬</div>
-        <span class="dock-badge hidden" id="dockMsgBadge">0</span>
+    <div class="dock-item active" data-dock="home" onclick="openScreen('menu')">
+        <div class="dock-circle c-market">🏠</div>
+        <div class="dock-label">Главная</div>
     </div>
-    <div class="dock-item" onclick="openCamera()">
-        <div class="dock-circle c-cam">📷</div>
+    <div class="dock-item" data-dock="quests" onclick="openScreen('quests-screen')">
+        <div class="dock-circle c-quests">🎯</div>
+        <div class="dock-label">Задания</div>
+        <span class="dock-badge hidden" id="dockQuestsBadge">0</span>
     </div>
-    <div class="dock-item" onclick="openScreen('gallery-screen')">
-        <div class="dock-circle c-gal">🖼️</div>
+    <div class="dock-item" data-dock="casino" onclick="openScreen('casino-screen')">
+        <div class="dock-circle c-casino">🎰</div>
+        <div class="dock-label">Казино</div>
+    </div>
+    <div class="dock-item" data-dock="arena" onclick="notify('Скоро!','Арена появится в Части 2','warning')">
+        <div class="dock-circle c-arena">⚔️</div>
+        <div class="dock-label">Арена</div>
+    </div>
+    <div class="dock-item" data-dock="profile" onclick="openScreen('player-screen')">
+        <div class="dock-circle c-player">👤</div>
+        <div class="dock-label">Профиль</div>
+    </div>
+</div>
+
+<div class="screen" id="casino-screen">
+    <div class="header">
+        <button class="back-btn" onclick="closeAll()">←</button>
+        <div class="page-title">🎰 Казино</div>
+        <button class="back-btn" onclick="openChipsShop()">💰</button>
+    </div>
+    <div class="content">
+        <div class="casino-balance">
+            <div class="label">🎰 Фишки</div>
+            <div class="amount" id="casinoChips">0</div>
+            <div class="sub">Купить фишки → <b id="casinoChipsRate">1 000 ₽ = 1 000 🎰</b></div>
+        </div>
+        <div class="casino-tabs">
+            <div class="casino-tab active" onclick="switchCasinoTab('roulette', this)">🎡 Рулетка</div>
+            <div class="casino-tab" onclick="switchCasinoTab('slots', this)">🎰 Слоты</div>
+            <div class="casino-tab" onclick="switchCasinoTab('blackjack', this)">🃏 Блэкджек</div>
+            <div class="casino-tab" onclick="switchCasinoTab('jackpot', this)">💎 Джекпот</div>
+        </div>
+        <div class="casino-content" id="casino-roulette">
+            <div class="roulette-wheel" id="rouletteWheel"></div>
+            <div style="text-align:center;margin-bottom:12px">
+                <div style="font-size:11px;color:var(--text-sec);font-weight:700;margin-bottom:6px">СТАВКА</div>
+                <input type="number" id="rouletteBet" placeholder="1000" style="text-align:center;font-size:20px;font-weight:900">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">
+                <button class="btn btn-danger" onclick="playRoulette('red')">🔴 Красное ×2</button>
+                <button class="btn" style="background:#000;border:1px solid #333" onclick="playRoulette('black')">⚫ Чёрное ×2</button>
+                <button class="btn btn-success" onclick="playRoulette('green')">🟢 Зеро ×36</button>
+            </div>
+            <button class="btn btn-gold" onclick="playRoulette('number')">🎯 Угадать число ×36</button>
+            <div style="text-align:center;margin-top:12px;font-size:11px;color:var(--text-lt)" id="rouletteResult">—</div>
+        </div>
+        <div class="casino-content hidden" id="casino-slots">
+            <div class="slot-machine">
+                <div class="slot-reel" id="reel1">🍒</div>
+                <div class="slot-reel" id="reel2">🍒</div>
+                <div class="slot-reel" id="reel3">🍒</div>
+            </div>
+            <div style="text-align:center;margin-bottom:12px">
+                <div style="font-size:11px;color:var(--text-sec);font-weight:700;margin-bottom:6px">СТАВКА</div>
+                <input type="number" id="slotsBet" placeholder="500" style="text-align:center;font-size:20px;font-weight:900">
+            </div>
+            <button class="btn btn-gold" onclick="playSlots()">🎰 Крутить!</button>
+            <div style="text-align:center;margin-top:12px;font-size:11px;color:var(--text-lt)" id="slotsResult">—</div>
+        </div>
+        <div class="casino-content hidden" id="casino-blackjack">
+            <div style="text-align:center;margin-bottom:12px">
+                <div style="font-size:11px;color:var(--text-sec);font-weight:700">ДИЛЕР</div>
+                <div style="font-size:32px;margin-top:6px;letter-spacing:8px" id="bjDealerCards">🂠 🂠</div>
+                <div style="font-size:14px;font-weight:800;color:var(--text-sec);margin-top:4px" id="bjDealerScore">?</div>
+            </div>
+            <div style="text-align:center;margin-bottom:12px">
+                <div style="font-size:11px;color:var(--text-sec);font-weight:700">ВЫ</div>
+                <div style="font-size:32px;margin-top:6px;letter-spacing:8px" id="bjPlayerCards">—</div>
+                <div style="font-size:14px;font-weight:800;color:var(--primary);margin-top:4px" id="bjPlayerScore">0</div>
+            </div>
+            <div id="bjControls">
+                <div style="text-align:center;margin-bottom:8px">
+                    <input type="number" id="bjBet" placeholder="1000" style="text-align:center;font-size:18px;font-weight:900">
+                </div>
+                <button class="btn btn-gold" onclick="startBlackjack()">🃏 Начать игру</button>
+            </div>
+            <div id="bjActions" class="hidden" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <button class="btn btn-success" onclick="bjHit()">➕ Взять</button>
+                <button class="btn btn-warning" onclick="bjStand()">✋ Хватит</button>
+            </div>
+            <div style="text-align:center;margin-top:12px;font-size:12px;font-weight:800" id="bjResult">—</div>
+        </div>
+        <div class="casino-content hidden" id="casino-jackpot">
+            <div class="jackpot-display">
+                <div class="label">💎 ДЖЕКПОТ</div>
+                <div class="amount" id="jackpotAmount">0</div>
+                <div style="font-size:11px;color:rgba(255,255,255,.7);font-weight:700">Разыгрывается раз в час</div>
+            </div>
+            <button class="btn btn-pink" onclick="buyJackpotTicket()">💎 Купить билет (2 000 фишек)</button>
+            <div style="text-align:center;margin-top:12px;font-size:11px;color:var(--text-lt)">Ваших билетов: <b id="jackpotTickets" style="color:var(--gold)">0</b></div>
+        </div>
+    </div>
+</div>
+
+<div class="screen" id="quests-screen">
+    <div class="header">
+        <button class="back-btn" onclick="closeAll()">←</button>
+        <div class="page-title">🎯 Задания</div>
+        <div class="game-day-pill"><span class="dot"></span> День <span id="questsGameDay">1</span></div>
+    </div>
+    <div class="content">
+        <div class="quest-tabs">
+            <div class="quest-tab active" onclick="switchQuestTab('daily', this)">📅 Ежедневные</div>
+            <div class="quest-tab" onclick="switchQuestTab('weekly', this)">📆 Еженедельные</div>
+            <div class="quest-tab" onclick="switchQuestTab('ach', this)">🏆 Достижения</div>
+        </div>
+        <div id="questsList"></div>
     </div>
 </div>
 
@@ -317,6 +432,7 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
         <button class="back-btn" onclick="openCityPicker()">📍</button>
     </div>
     <div class="content">
+        <div id="eventBanner" style="display:none">🎉 <span id="eventBannerText"></span></div>
         <input type="text" id="marketSearch" placeholder="🔍 Поиск бренда..." oninput="filterBrands(this.value)" style="margin-bottom:12px">
         <div class="filter-tabs" id="categoryTabs">
             <div class="filter-tab active" data-cat="phone" onclick="setMarketCat('phone', this)">📱 Телефоны</div>
@@ -330,49 +446,8 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
     </div>
 </div>
 
-<div class="screen" id="cars-market-screen">
-    <div class="header">
-        <button class="back-btn" onclick="closeAll()">←</button>
-        <div class="page-title">Авто · <span id="carCityLabel">Москва</span></div>
-        <button class="back-btn" onclick="openCityPicker()">📍</button>
-    </div>
-    <div class="content">
-        <input type="text" id="carSearch" placeholder="🔍 Поиск..." oninput="filterCarBrands(this.value)" style="margin-bottom:12px">
-        <div id="carBrandListView"></div>
-        <div id="carModelListView" class="hidden"></div>
-    </div>
-</div>
-
-<div class="screen" id="used-market-screen">
-    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Б/У Рынок</div></div>
-    <div class="content">
-        <div style="background:var(--surface);padding:14px;border-radius:14px;border:1px solid var(--border);margin-bottom:14px;font-size:12px;color:var(--text-sec);line-height:1.5">
-            ⚠️ Сломанные товары дёшево. Купи → почини → продай дороже.
-        </div>
-        <div class="grid-list" id="usedList"></div>
-    </div>
-</div>
-
-<div class="screen" id="chat-screen">
-    <div class="header">
-        <button class="back-btn" onclick="closeChat()">←</button>
-        <div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;background:#333" id="chatAvatar">📱</div>
-        <div style="flex:1;min-width:0">
-            <div style="font-size:14px;font-weight:800" id="chatName">Продавец</div>
-            <div style="font-size:11px;color:var(--text-sec);margin-top:2px" id="chatSub">—</div>
-        </div>
-    </div>
-    <div class="chat-area" id="chatBody"></div>
-    <div class="chat-input">
-        <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap" id="quickChips"></div>
-        <input type="number" id="chatInput" placeholder="Своя цена (₽)" style="margin-bottom:8px">
-        <button class="btn btn-primary" id="chatSendBtn" onclick="sendChatOffer()">💰 Предложить</button>
-        <button class="btn btn-success hidden" id="chatAcceptBtn" style="margin-top:8px" onclick="acceptDeal()">✅ Заключить сделку</button>
-    </div>
-</div>
-
 <div class="screen" id="player-screen">
-    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Игрок</div></div>
+    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">👤 Профиль</div></div>
     <div class="content">
         <div class="profile-card">
             <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
@@ -384,247 +459,40 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
             </div>
             <div class="stat-grid">
                 <div class="stat-box"><div class="lbl">Баланс</div><div class="val" style="color:var(--success)" id="pBalance">0 ₽</div></div>
-                <div class="stat-box"><div class="lbl">Город</div><div class="val" style="font-size:13px" id="pCity">—</div></div>
+                <div class="stat-box"><div class="lbl">🎰 Фишки</div><div class="val" style="color:var(--gold)" id="pChips">0</div></div>
                 <div class="stat-box"><div class="lbl">Уровень</div><div class="val" id="pLevel">1</div></div>
-                <div class="stat-box"><div class="lbl">Склад</div><div class="val" id="pInvCount">0</div></div>
-            </div>
-            <div style="margin-top:14px">
-                <div style="display:flex;justify-content:space-between;margin-bottom:6px"><b style="font-size:13px">Уровень</b><span style="font-size:11px;color:var(--text-sec)" id="pXP">0 / 100</span></div>
-                <div class="level-bar"><i id="pLevelBar" style="width:0%"></i></div>
+                <div class="stat-box"><div class="lbl">Игровой день</div><div class="val" id="pGameDay">1</div></div>
             </div>
         </div>
-        <div style="background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff;padding:15px;border-radius:14px;text-align:center;font-weight:800;font-size:14px;margin-bottom:14px;cursor:pointer" id="dailyBonus" onclick="claimDaily()">🎁 Ежедневный бонус — 500₽</div>
-        <div class="filter-tabs" style="margin-bottom:12px">
-            <div class="filter-tab active" onclick="switchPlayerTab('inv', this)">📦 Склад</div>
-            <div class="filter-tab" onclick="switchPlayerTab('quests', this)">📋 Квесты</div>
-            <div class="filter-tab" onclick="switchPlayerTab('ach', this)">🏆 Ачивки</div>
-        </div>
+        <button class="btn btn-gold" onclick="openChipsShop()" style="margin-bottom:14px">💰 Купить фишки</button>
         <div id="playerInv"></div>
-        <div id="playerQuests" class="hidden"></div>
-        <div id="playerAch" class="hidden"></div>
     </div>
 </div>
 
-<div class="screen" id="leaderboard-screen">
-    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">🏆 Топ-100</div><button class="back-btn" onclick="loadLeaderboard()">🔄</button></div>
-    <div class="content">
-        <div style="background:linear-gradient(135deg,rgba(251,191,36,.15),transparent);padding:14px;border-radius:14px;border:1px solid rgba(251,191,36,.3);margin-bottom:14px;text-align:center;font-size:12px;color:var(--text-sec)">
-            🏆 Рейтинг по балансу
-        </div>
-        <div id="leaderboardList"><div style="text-align:center;padding:40px;color:var(--text-lt)">Загрузка...</div></div>
-    </div>
-</div>
-
-<div class="screen" id="globalchat-screen">
-    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">🌐 Общий чат</div></div>
-    <div class="chat-area" id="globalChatMessages" style="padding-top:20px"></div>
-    <div class="chat-input">
-        <textarea id="globalChatInput" placeholder="Написать в чат..." rows="1" style="resize:none;max-height:80px"></textarea>
-        <button class="btn btn-primary" style="margin-top:8px" onclick="sendGlobalMessage()">📤 Отправить</button>
-    </div>
-</div>
-
-<div class="screen" id="repair-screen">
-    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Сервисный центр</div></div>
-    <div class="content">
-        <div class="filter-tabs">
-            <div class="filter-tab active" onclick="switchRepairTab('broken', this)">Сломанные</div>
-            <div class="filter-tab" onclick="switchRepairTab('parts', this)">Запчасти</div>
-        </div>
-        <div id="repairBrokenList"></div>
-        <div id="repairPartsList" class="hidden"></div>
-    </div>
-</div>
-
-<div class="screen" id="bank-screen">
-    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Банк</div></div>
-    <div class="content">
-        <div id="bankCountryStep"><div class="section-title">Выберите страну</div><div id="bankCountryList"></div></div>
-        <div id="bankOperatorStep" class="hidden"><div class="section-title">Выберите банк</div><div id="bankList"></div><button class="btn btn-danger" style="margin-top:12px" onclick="backToBankCountry()">← Назад</button></div>
-        <div id="bankPinStep" class="hidden" style="text-align:center;padding-top:30px">
-            <div style="font-size:12px;color:var(--text-sec);margin-bottom:8px" id="bankNameDisplay">Банк</div>
-            <div style="font-size:20px;font-weight:800;margin-bottom:8px" id="bankPinInstruction">Введите PIN</div>
-            <div class="pin-dots" id="bankPinDots">○ ○ ○ ○</div>
-            <div class="pin-grid" id="bankPinGrid"></div>
-        </div>
-        <div id="bankMain" class="hidden">
-            <div id="bankCard" style="background:linear-gradient(135deg,#22c55e,#16a34a);border-radius:22px;padding:22px;color:#fff;margin-bottom:16px">
-                <div style="font-size:11px;opacity:.85;font-weight:700" id="cardBankName">BANK</div>
-                <div style="font-size:11px;opacity:.7;margin-top:2px">Дебетовая карта</div>
-                <div style="font-family:monospace;font-size:15px;font-weight:700;letter-spacing:2px;margin:18px 0">•••• •••• •••• 4278</div>
-                <div style="display:flex;justify-content:space-between;align-items:flex-end">
-                    <div><div style="font-size:10px;opacity:.7">Владелец</div><div style="font-size:13px;font-weight:700" id="cardOwner">ИГРОК</div></div>
-                    <div><div style="font-size:10px;opacity:.7">Баланс</div><div style="font-size:16px;font-weight:900" id="cardBalance">0 ₽</div></div>
-                </div>
-            </div>
-            <div style="background:var(--surface);padding:16px;border-radius:14px;margin-bottom:10px;border:1px solid var(--border)">
-                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px"><span style="color:var(--text-sec)">Кредит:</span><b style="color:var(--danger)" id="creditDisplay">0 ₽</b></div>
-                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px"><span style="color:var(--text-sec)">Вклад:</span><b style="color:var(--success)" id="depositDisplay">0 ₽</b></div>
-                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-sec)">Рейтинг:</span><b style="color:var(--primary)" id="ratingDisplay">500</b></div>
-            </div>
-            <button class="btn btn-warning" onclick="takeLoan()" style="margin-bottom:8px">💳 Взять кредит</button>
-            <button class="btn btn-success" onclick="addDeposit()" style="margin-bottom:8px">💰 На вклад</button>
-            <button class="btn btn-danger" id="withdrawDepositBtn" onclick="withdrawDeposit()" style="display:none;margin-bottom:8px">💸 Снять вклад</button>
-            <button class="btn btn-primary" onclick="changeBank()">🏦 Сменить банк</button>
-        </div>
-    </div>
-</div>
-
+<div class="screen" id="bank-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Банк</div></div><div class="content"><div style="text-align:center;padding:40px;color:var(--text-lt)">Скоро…</div></div></div>
 <div class="screen" id="business-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Бизнес</div></div><div class="content" id="bizList"></div></div>
-
-<div class="screen" id="office-screen">
-    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Офис</div></div>
-    <div class="content">
-        <div style="background:var(--surface);padding:18px;border-radius:14px;margin-bottom:14px;text-align:center;border:1px solid var(--border)">
-            <div style="font-size:11px;color:var(--text-sec)">Текущее помещение</div>
-            <div style="font-size:24px;font-weight:900;color:var(--primary);margin-top:6px" id="officeName">Гараж</div>
-            <div style="font-size:12px;color:var(--text-sec);margin-top:8px">Лимит: <b id="officeLimit">5</b> товаров · <b id="officePartsLimit">10</b> запчастей</div>
-        </div>
-        <div id="officesList"></div>
-        <div class="section-title">👥 Сотрудники</div>
-        <div id="employeesList"></div>
-    </div>
-</div>
-
+<div class="screen" id="office-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Офис</div></div><div class="content" id="officesList"></div></div>
 <div class="screen" id="jobs-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Работа</div></div><div class="content" id="jobsList"></div></div>
-
-<div class="screen" id="travel-screen">
-    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Поездки</div></div>
-    <div class="content">
-        <div style="background:var(--surface);padding:18px;border-radius:14px;text-align:center;margin-bottom:14px;border:1px solid var(--border)">
-            <div style="font-size:11px;color:var(--text-sec)">Вы в городе</div>
-            <div style="font-size:24px;font-weight:900;color:var(--primary);margin-top:4px" id="travelCurrentCity">Москва</div>
-        </div>
-        <input type="text" id="citySearch" placeholder="🔍 Поиск города..." oninput="renderCityList(this.value)" style="margin-bottom:12px">
-        <div id="cityList"></div>
-    </div>
-</div>
-
-<div class="screen" id="sim-screen">
-    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Сим Т3</div></div>
-    <div class="content">
-        <div id="simCountryStep"><div class="section-title">Выберите страну</div><div id="simCountryList"></div></div>
-        <div id="simOperatorStep" class="hidden"><div class="section-title">Выберите оператора</div><div id="simOperatorList"></div><button class="btn btn-danger" style="margin-top:12px" onclick="backToSimCountry()">← Назад</button></div>
-        <div id="simMainStep" class="hidden">
-            <div class="sim-card" id="simCard">
-                <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-                    <div style="width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900" id="simOperatorAvatar">С</div>
-                    <div style="flex:1">
-                        <div style="font-size:12px;opacity:.85;font-weight:700" id="simOperatorDisplay">Оператор</div>
-                        <div style="font-size:11px;opacity:.7">Оператор связи</div>
-                    </div>
-                    <button style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:9px 13px;border-radius:11px;font-size:12px;font-weight:700" onclick="changeSimOperator()">🔄</button>
-                </div>
-                <div class="sim-num" id="simNumberDisplay">+7 XXX ••• •••-••-••</div>
-                <div style="text-align:center;font-size:12px;opacity:.85" id="simCountryLabel">—</div>
-            </div>
-            <div style="background:var(--surface);padding:16px;border-radius:14px;border:1px solid var(--border);margin-bottom:12px">
-                <div style="display:flex;justify-content:space-between;margin-bottom:12px"><span style="font-size:13px;color:var(--text-sec)">💰 Баланс</span><b style="color:var(--success);font-size:20px" id="simBalance">0 ₽</b></div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-size:13px;color:var(--text-sec)">📶 Остаток ГБ</span><b style="color:var(--primary)" id="simGB">30 ГБ</b></div>
-                <div style="height:8px;background:var(--bg);border-radius:4px;overflow:hidden"><div id="simGBBar" style="height:100%;background:linear-gradient(90deg,var(--primary),#a78bfa);width:100%"></div></div>
-            </div>
-            <button class="btn btn-primary" onclick="showSimTariffs()" style="margin-bottom:8px">📶 Выбрать тариф</button>
-            <button class="btn btn-warning" onclick="changeSimNumber()" style="margin-bottom:8px">🔀 Сменить номер (500₽)</button>
-            <div class="section-title">📋 История</div>
-            <div id="simHistory"></div>
-        </div>
-    </div>
-</div>
-
-<div class="screen" id="store-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Магазин приложений</div></div><div class="content"><div class="grid-list" id="storeList"></div></div></div>
-<div class="screen" id="app-detail-screen"><div class="header"><button class="back-btn" onclick="openScreen('store-screen')">←</button><div class="page-title" id="appDetailTitle">Приложение</div></div><div class="content" id="appDetailContent"></div></div>
-
-<div class="screen" id="tax-screen">
-    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Налоги</div></div>
-    <div class="content">
-        <div style="text-align:center;padding-top:40px">
-            <div style="font-size:70px;margin-bottom:20px">📋</div>
-            <div style="font-size:13px;color:var(--text-sec)">Налоговая задолженность</div>
-            <div style="font-size:44px;font-weight:900;color:var(--danger);margin:24px 0" id="taxAmount">0 ₽</div>
-            <p style="color:var(--text-sec);font-size:12px;line-height:1.6">Налог 5% списывается<br>с каждого дохода автоматически</p>
-        </div>
-    </div>
-</div>
-
-<div class="screen" id="stats-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Статистика</div></div><div class="content" id="statsContent"></div></div>
+<div class="screen" id="travel-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Поездки</div></div><div class="content" id="cityList"></div></div>
+<div class="screen" id="sim-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Сим Т3</div></div><div class="content" id="simCountryList"></div></div>
+<div class="screen" id="store-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Магазин</div></div><div class="content"><div class="grid-list" id="storeList"></div></div></div>
+<div class="screen" id="leaderboard-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">🏆 Топ</div></div><div class="content" id="leaderboardList"></div></div>
+<div class="screen" id="globalchat-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">🌐 Общий чат</div></div><div class="chat-area" id="globalChatMessages"></div><div class="chat-input"><input id="globalChatInput" placeholder="Сообщение..."><button class="btn btn-primary" style="margin-top:8px" onclick="sendGlobalMessage()">📤 Отправить</button></div></div>
 <div class="screen" id="messages-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Сообщения</div></div><div class="content" id="messagesList"></div></div>
+<div class="screen" id="settings-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Настройки</div></div><div class="content">
+    <div class="list-item" onclick="signOut()" style="cursor:pointer"><span>🚪 Выйти</span><span style="color:var(--danger)">→</span></div>
+    <button class="btn btn-danger" onclick="confirmReset()">🗑️ Сбросить прогресс</button>
+</div></div>
+<div class="screen" id="tax-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Налоги</div></div><div class="content" id="taxContent"></div></div>
+<div class="screen" id="stats-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Статистика</div></div><div class="content" id="statsContent"></div></div>
+<div class="screen" id="gallery-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Галерея</div></div><div class="content" id="galleryGrid"></div></div>
 
-<div class="screen" id="gallery-screen">
-    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Галерея</div></div>
-    <div class="content">
-        <div id="galleryGrid" class="gallery-grid"></div>
-        <div id="galleryEmpty" style="text-align:center;color:var(--text-lt);padding:60px;font-size:14px">📷 Пока пусто</div>
-    </div>
-</div>
-
-<div class="screen" id="camera-screen" style="background:#000">
-    <div style="position:absolute;top:0;left:0;right:0;padding:14px;padding-top:max(14px,env(safe-area-inset-top) + 20px);display:flex;justify-content:space-between;z-index:10">
-        <button class="back-btn" onclick="closeCamera()" style="background:rgba(0,0,0,.5);color:#fff">←</button>
-        <button class="back-btn" onclick="switchCamera()" style="background:rgba(0,0,0,.5);color:#fff">🔄</button>
-    </div>
-    <video id="camPreview" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover"></video>
-    <canvas id="camCanvas" style="display:none"></canvas>
-    <div class="cam-filters" id="camFilters"></div>
-    <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.8));display:flex;justify-content:center">
-        <button onclick="takePhoto()" style="width:76px;height:76px;border-radius:50%;background:#fff;border:5px solid rgba(255,255,255,.5)"></button>
-    </div>
-</div>
-
-<div class="screen" id="tetris-screen" style="background:#0a0c12">
-    <div class="header"><button class="back-btn" onclick="closeAll();stopTetris()">←</button><div class="page-title">Тетрис</div><div style="font-weight:800;font-size:14px">Очки: <span id="tetrisScore">0</span></div></div>
-    <div class="content" style="display:flex;flex-direction:column;align-items:center;padding-top:20px">
-        <canvas id="tetrisCanvas" width="280" height="560"></canvas>
-        <div style="display:flex;gap:10px;margin-top:16px;width:100%;max-width:280px">
-            <button class="btn btn-primary" onclick="tetrisMove(-1)">◀</button>
-            <button class="btn btn-warning" onclick="tetrisRotate()">🔄</button>
-            <button class="btn btn-primary" onclick="tetrisMove(1)">▶</button>
-        </div>
-        <button class="btn btn-success" style="margin-top:8px;max-width:280px" onclick="tetrisDrop()">⬇ Уронить</button>
-        <button class="btn btn-danger" style="margin-top:8px;max-width:280px" onclick="tetrisReset()">🔄 Заново</button>
-    </div>
-</div>
-
-<div class="screen" id="snake-screen" style="background:#0a0c12">
-    <div class="header"><button class="back-btn" onclick="closeAll();stopSnake()">←</button><div class="page-title">Змейка</div><div style="font-weight:800;font-size:14px">Очки: <span id="snakeScore">0</span></div></div>
-    <div class="content" style="display:flex;flex-direction:column;align-items:center;padding-top:20px">
-        <canvas id="snakeCanvas" width="320" height="320"></canvas>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;width:220px">
-            <div></div><button class="btn btn-primary" onclick="snakeDir(0,-1)">▲</button><div></div>
-            <button class="btn btn-primary" onclick="snakeDir(-1,0)">◀</button>
-            <button class="btn btn-danger" onclick="snakeReset()">🔄</button>
-            <button class="btn btn-primary" onclick="snakeDir(1,0)">▶</button>
-            <div></div><button class="btn btn-primary" onclick="snakeDir(0,1)">▼</button><div></div>
-        </div>
-    </div>
-</div>
-
-<div class="screen" id="settings-screen">
-    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Настройки</div></div>
-    <div class="content">
-        <div class="list-item" onclick="togglePinSetting()"><span>🔐 PIN-код</span><span style="color:var(--text-sec);font-size:12px" id="pinStatus">Не задан</span></div>
-        <div class="list-item"><span>🎬 Анимации</span><div class="toggle on" id="toggleAnim" onclick="toggleSetting('anim', this)"></div></div>
-        <div class="list-item"><span>🔊 Звуки</span><div class="toggle on" id="toggleSound" onclick="toggleSetting('sound', this)"></div></div>
-        <div class="list-item"><span>🔔 Уведомления</span><div class="toggle on" id="toggleNotif" onclick="toggleSetting('notif', this)"></div></div>
-        <div class="list-item" style="cursor:default"><span>☁️ Синхронизация</span><span style="color:var(--success);font-size:12px" id="syncStatusText">Включена</span></div>
-        <div class="list-item" onclick="syncNow()" style="cursor:pointer"><span>🔄 Синхронизировать сейчас</span><span style="color:var(--primary)">→</span></div>
-        <div class="list-item" onclick="signOut()" style="cursor:pointer"><span>🚪 Выйти из аккаунта</span><span style="color:var(--danger)">→</span></div>
-        <div class="section-title">🎟️ Промокод</div>
-        <div style="background:var(--surface);padding:14px;border-radius:14px;border:1px solid var(--border)">
-            <input type="text" id="promoInput" placeholder="Введите промокод">
-            <button class="btn btn-success" style="margin-top:8px" onclick="applyPromo()">OK</button>
-        </div>
-        <div class="section-title">⚠️ Опасная зона</div>
-        <button class="btn btn-danger" onclick="confirmReset()">🗑️ Сбросить прогресс</button>
-        <div style="text-align:center;color:var(--text-lt);font-size:11px;margin-top:20px" id="versionLabel">v4.1</div>
-    </div>
-</div>
-
-<div class="overlay" id="cityOverlay">
-    <div class="modal" style="max-width:400px">
-        <h3>🌍 Выбор города</h3>
-        <input type="text" id="cityPickerSearch" placeholder="🔍 Поиск..." oninput="renderCityPickerList(this.value)" style="margin-bottom:10px">
-        <div id="cityPickerList" style="max-height:60vh;overflow-y:auto;text-align:left"></div>
-        <div class="modal-actions" style="margin-top:12px"><button class="btn btn-danger" onclick="closeCityPicker()">Закрыть</button></div>
+<div class="overlay" id="chipsShop">
+    <div class="modal">
+        <h3>💰 Купить фишки</h3>
+        <p style="font-size:12px">1 000 ₽ = 1 000 🎰<br>Вывод: 1 500 🎰 = 1 000 ₽ (лимит 20 000 ₽ / день)</p>
+        <div id="chipsShopOptions" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px"></div>
+        <div class="modal-actions"><button class="btn btn-danger" onclick="closeModal('chipsShop')">Закрыть</button></div>
     </div>
 </div>
 
@@ -634,8 +502,8 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
         <p id="modalText">Текст</p>
         <div id="modalExtra" style="margin-bottom:14px"></div>
         <div class="modal-actions">
-            <button class="btn btn-danger" id="modalCancel" onclick="closeModal(false)">Отмена</button>
-            <button class="btn btn-primary" id="modalOk" onclick="closeModal(true)">ОК</button>
+            <button class="btn btn-danger" id="modalCancel" onclick="closeModal()">Отмена</button>
+            <button class="btn btn-primary" id="modalOk" onclick="if(window._modalCallback){window._modalCallback();window._modalCallback=null;}closeModal();">ОК</button>
         </div>
     </div>
 </div>
@@ -645,6 +513,9 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
 <script>
 'use strict';
 
+/* ============================================================
+   FIREBASE CONFIG
+   ============================================================ */
 const firebaseConfig = {
     apiKey: "AIzaSyAv0ChOvxUSEWjCnWWUXBml01PyTsgfGjo",
     authDomain: "pc-tycoon-11216.firebaseapp.com",
@@ -668,12 +539,17 @@ try {
 } catch(e) { console.error('❌ Firebase:', e); }
 
 const GAME_TITLE = 'Phone Reseller Tycoon';
-const GAME_VERSION = 'v4.1';
-document.title = GAME_TITLE;
-
-const SAVE_KEY = 'prt_v4';
-const MONTH = 30 * 24 * 3600 * 1000;
+const GAME_VERSION = 'v5.0';
+const SAVE_KEY = 'prt_v5';
+const GAME_DAY_MS = 15 * 60 * 1000;
 const TAX_RATE = 0.05;
+
+const CHIPS_RATE_BUY = 1;
+const CHIPS_RATE_SELL = 1.5;
+const CHIPS_WITHDRAW_LIMIT = 20000;
+const JACKPOT_CONTRIBUTION = 0.02;
+const CASINO_MIN_BET = 100;
+const CASINO_MAX_BET = 50000;
 
 let state = {
     uid: null, playerName: '', playerEmail: '', playerPhoto: '',
@@ -697,133 +573,97 @@ let state = {
     animations: true, sound: true, notifications: true,
     parts: {camera:0, battery:0, glass:0, cover:0, screen:0, motherboard:0, charging_port:0, fingerprint:0, vibration:0, microphone:0},
     pcParts: {cpu:0, gpu:0, ram:0, storage:0, case:0, psu:0, cooler:0},
-    lastSaved: 0
+    lastSaved: 0,
+    chips: 0,
+    chipsTotalBought: 0,
+    chipsTotalWithdrawn: 0,
+    chipsWithdrawnToday: 0,
+    chipsWithdrawDay: 1,
+    gameDay: 1,
+    gameDayStartedAt: Date.now(),
+    dailyQuests: [],
+    weeklyQuests: [],
+    dailyQuestsDay: 0,
+    weeklyQuestsDay: 0,
+    jackpotTickets: 0
 };
 
-/* ============ ДАННЫЕ (сокращённо) ============ */
-const CITIES = [
-    {name:'Москва', lat:55.75, lon:37.62, mul:1.15},{name:'Санкт-Петербург', lat:59.94, lon:30.31, mul:1.08},
-    {name:'Новосибирск', lat:55.03, lon:82.93, mul:0.92},{name:'Екатеринбург', lat:56.84, lon:60.61, mul:0.95},
-    {name:'Казань', lat:55.79, lon:49.11, mul:0.98},{name:'Нижний Новгород', lat:56.33, lon:44.00, mul:0.94},
-    {name:'Челябинск', lat:55.16, lon:61.40, mul:0.93},{name:'Самара', lat:53.20, lon:50.15, mul:0.94},
-    {name:'Омск', lat:54.99, lon:73.37, mul:0.90},{name:'Ростов-на-Дону', lat:47.23, lon:39.72, mul:0.96},
-    {name:'Уфа', lat:54.74, lon:55.97, mul:0.94},{name:'Красноярск', lat:56.01, lon:92.87, mul:0.92},
-    {name:'Воронеж', lat:51.67, lon:39.18, mul:0.95},{name:'Пермь', lat:58.01, lon:56.25, mul:0.93},
-    {name:'Волгоград', lat:48.71, lon:44.51, mul:0.92},{name:'Краснодар', lat:45.04, lon:38.98, mul:1.02},
-    {name:'Саратов', lat:51.53, lon:46.03, mul:0.91},{name:'Тюмень', lat:57.15, lon:65.53, mul:1.00},
-    {name:'Иркутск', lat:52.28, lon:104.28, mul:0.95},{name:'Владивосток', lat:43.12, lon:131.89, mul:1.05}
-];
-const PHONE_BRANDS = [
-    {id:'iphone', name:'iPhone', color:'#333', logo:'🍎'},{id:'samsung', name:'Samsung', color:'#1428a0', logo:'📱'},
-    {id:'xiaomi', name:'Xiaomi', color:'#ff6900', logo:'🔶'},{id:'honor', name:'Honor', color:'#00aaff', logo:'🟦'},
-    {id:'huawei', name:'Huawei', color:'#cf0a2c', logo:'🌸'},{id:'google', name:'Google', color:'#4285f4', logo:'🔵'},
-    {id:'oneplus', name:'OnePlus', color:'#eb0028', logo:'🔴'},{id:'realme', name:'Realme', color:'#ffc107', logo:'🟡'},
-    {id:'poco', name:'POCO', color:'#ffcc00', logo:'🟡'},{id:'nokia', name:'Nokia', color:'#005aff', logo:'📞'}
-];
-const PHONE_MODELS = {
-    iphone:['iPhone 11','iPhone 12','iPhone 13','iPhone 14','iPhone 15','iPhone 15 Pro','iPhone 16','iPhone 16 Pro Max','iPhone SE'],
-    samsung:['Galaxy A54','Galaxy S22','Galaxy S23','Galaxy S24 Ultra','Galaxy Z Flip 5','Galaxy Z Fold 5'],
-    xiaomi:['Redmi Note 12','Redmi Note 13 Pro','Xiaomi 13T','Xiaomi 14','Xiaomi 14 Ultra'],
-    honor:['Honor X7','Honor 90','Honor Magic5'],huawei:['Nova 11','P60 Pro','Mate 60 Pro'],
-    google:['Pixel 7a','Pixel 8','Pixel 8 Pro','Pixel 9'],oneplus:['Nord 3','OnePlus 11','OnePlus 12'],
-    realme:['C55','11 Pro','GT 5'],poco:['C65','X6 Pro','F5'],nokia:['G42','X30']
-};
-const LAPTOP_BRANDS = [
-    {id:'lenovo', name:'Lenovo', color:'#e2231a', logo:'💻'},{id:'hp', name:'HP', color:'#0096d6', logo:'💻'},
-    {id:'asus', name:'ASUS', color:'#00539b', logo:'💻'},{id:'apple_l', name:'MacBook', color:'#333', logo:'🍏'},
-    {id:'dell', name:'Dell', color:'#007db8', logo:'💻'},{id:'msi', name:'MSI', color:'#ff0000', logo:'💻'}
-];
-const LAPTOP_MODELS = {lenovo:['IdeaPad 3','ThinkPad E14','Legion 5'],hp:['HP 15s','Pavilion 15','OMEN 16'],
-    asus:['Vivobook 15','ROG Strix G16'],apple_l:['MacBook Air M1','MacBook Air M2','MacBook Pro 14'],
-    dell:['Inspiron 15','XPS 13'],msi:['Modern 14','Katana GF66']};
-const PC_BRANDS = [
-    {id:'office', name:'Офисные', color:'#22c55e', logo:'🖥️'},{id:'gaming', name:'Игровые', color:'#0ea5e9', logo:'🎮'},
-    {id:'workstation', name:'Рабочие', color:'#8b5cf6', logo:'🚀'},{id:'premium_pc', name:'Премиум', color:'#f59e0b', logo:'⚡'},
-    {id:'ultra_pc', name:'Ультра', color:'#ef4444', logo:'🔥'}
-];
-const PC_MODELS = {office:['Офисный Celeron','Офисный i3-10100','i3+GTX 1050'],
-    gaming:['i5-12400F/RTX 3060','Ryzen 5/RTX 3060Ti','i5-13400F/RTX 4060'],
-    workstation:['i7-13700K/RTX 4070','i9-13900K/RTX 4080','Ryzen 9/RTX 4070Ti'],
-    premium_pc:['i9-14900K/RTX 4090','Ryzen 9 7950X/RTX 4090'],
-    ultra_pc:['Threadripper/4090','Сервер 2x Xeon','Квантовый ПК']};
-const PC_PARTS = [{id:'cpu', name:'Процессор', price:8500, icon:'🔧'},{id:'gpu', name:'Видеокарта', price:18000, icon:'🎮'},
-    {id:'ram', name:'ОЗУ', price:3000, icon:'📊'},{id:'storage', name:'Накопитель', price:2500, icon:'💾'},
-    {id:'case', name:'Корпус', price:5000, icon:'📦'},{id:'psu', name:'БП', price:5000, icon:'⚡'},
-    {id:'cooler', name:'Кулер', price:4000, icon:'🌀'}];
-const TABLET_BRANDS = [{id:'ipad', name:'iPad', color:'#333', logo:'📱'},{id:'samsung_t', name:'Samsung Tab', color:'#1428a0', logo:'📟'},
-    {id:'lenovo_t', name:'Lenovo Tab', color:'#e2231a', logo:'📟'},{id:'xiaomi_t', name:'Xiaomi Pad', color:'#ff6900', logo:'📟'}];
-const TABLET_MODELS = {ipad:['iPad 9','iPad 10','iPad Air 5','iPad Pro 11'],samsung_t:['Galaxy Tab A9','Galaxy Tab S9'],
-    lenovo_t:['Tab M10','Tab P11','Yoga Tab 13'],xiaomi_t:['Xiaomi Pad 6','Redmi Pad SE']};
-const HEADPHONE_BRANDS = [{id:'airpods', name:'AirPods', color:'#333', logo:'🎧'},{id:'sony_hp', name:'Sony', color:'#000', logo:'🎧'},
-    {id:'jbl', name:'JBL', color:'#ff6600', logo:'🎧'},{id:'bose', name:'Bose', color:'#1a1a1a', logo:'🎧'}];
-const HEADPHONE_MODELS = {airpods:['AirPods 2','AirPods 3','AirPods Pro 2','AirPods Max'],
-    sony_hp:['WH-1000XM4','WH-1000XM5','WF-1000XM4'],jbl:['Tune 510BT','Live 660NC'],bose:['QC 45','QC Ultra']};
-const CAR_BRANDS = [{id:'lada', name:'Lada', color:'#1e40af', logo:'🚗'},{id:'toyota', name:'Toyota', color:'#dc2626', logo:'🚙'},
-    {id:'bmw', name:'BMW', color:'#0ea5e9', logo:'🏎️'},{id:'mercedes', name:'Mercedes', color:'#64748b', logo:'🚘'},
-    {id:'audi', name:'Audi', color:'#dc2626', logo:'🚗'},{id:'kia', name:'Kia', color:'#ea580c', logo:'🚙'},
-    {id:'hyundai', name:'Hyundai', color:'#2563eb', logo:'🚘'},{id:'tesla', name:'Tesla', color:'#dc2626', logo:'⚡'}];
-const CAR_MODELS = {lada:['Granta','Vesta','Niva Legend','XRAY'],toyota:['Camry','Corolla','RAV4','Land Cruiser'],
-    bmw:['3 Series','5 Series','X3','X5','M3'],mercedes:['C-Class','E-Class','GLC','GLE'],
-    audi:['A4','A6','Q5','Q7'],kia:['Rio','Sportage','Sorento','K5'],
-    hyundai:['Solaris','Creta','Tucson','Santa Fe'],tesla:['Model 3','Model S','Model Y','Cybertruck']};
-const PHONE_PARTS = [{id:'camera', name:'Камера', price:500, icon:'📷'},{id:'battery', name:'Аккумулятор', price:1500, icon:'🔋'},
-    {id:'glass', name:'Стекло', price:250, icon:'🔍'},{id:'cover', name:'Задняя крышка', price:400, icon:'🛡️'},
-    {id:'screen', name:'Экран', price:2500, icon:'📱'},{id:'motherboard', name:'Мат. плата', price:5500, icon:'🔧'},
-    {id:'charging_port', name:'Порт зарядки', price:450, icon:'🔌'},{id:'fingerprint', name:'Сканер', price:1200, icon:'👆'},
-    {id:'vibration', name:'Вибрация', price:400, icon:'📳'},{id:'microphone', name:'Микрофон', price:500, icon:'🎤'}];
-const COUNTRIES = [{code:'ru', name:'Россия', flag:'🇷🇺', format:'+7 XXX XXX-XX-XX'},{code:'us', name:'США', flag:'🇺🇸', format:'+1 (XXX) XXX-XXXX'},
-    {code:'gb', name:'Великобритания', flag:'🇬🇧', format:'+44 XXXX XXXXXX'},{code:'de', name:'Германия', flag:'🇩🇪', format:'+49 XXX XXXXXXX'},
-    {code:'fr', name:'Франция', flag:'🇫🇷', format:'+33 X XX XX XX XX'},{code:'kz', name:'Казахстан', flag:'🇰🇿', format:'+7 XXX XXX-XX-XX'},
-    {code:'tr', name:'Турция', flag:'🇹🇷', format:'+90 XXX XXX XX XX'},{code:'ae', name:'ОАЭ', flag:'🇦🇪', format:'+971 XX XXX XXXX'},
-    {code:'cn', name:'Китай', flag:'🇨🇳', format:'+86 XXX XXXX XXXX'}];
-const BANKS = {'Россия':[{name:'Сбербанк',color:'#22c55e'},{name:'ВТБ',color:'#0ea5e9'},{name:'Альфа',color:'#dc2626'},{name:'Тинькофф',color:'#fbbf24'}],
-    'США':[{name:'Chase',color:'#1e40af'},{name:'BoA',color:'#dc2626'}],'Великобритания':[{name:'Barclays',color:'#0ea5e9'},{name:'HSBC',color:'#dc2626'}],
-    'Германия':[{name:'Deutsche',color:'#1e3a8a'},{name:'N26',color:'#0f172a'}],'Франция':[{name:'BNP',color:'#16a34a'}],
-    'Казахстан':[{name:'Kaspi',color:'#dc2626'}],'Турция':[{name:'Ziraat',color:'#dc2626'}],'ОАЭ':[{name:'Emirates NBD',color:'#dc2626'}],'Китай':[{name:'ICBC',color:'#dc2626'}]};
-const OPERATORS = {'Россия':[{name:'МТС',color:'#dc2626'},{name:'Билайн',color:'#fbbf24'},{name:'Мегафон',color:'#16a34a'},{name:'Т2',color:'#0f172a'},{name:'Ёта',color:'#0ea5e9'}],
-    'США':[{name:'AT&T',color:'#0ea5e9'},{name:'Verizon',color:'#dc2626'}],'Великобритания':[{name:'EE',color:'#0ea5e9'},{name:'O2',color:'#1e40af'}],
-    'Германия':[{name:'Telekom',color:'#ec4899'}],'Франция':[{name:'Orange',color:'#f97316'}],'Казахстан':[{name:'Beeline',color:'#fbbf24'}],
-    'Турция':[{name:'Turkcell',color:'#0ea5e9'}],'ОАЭ':[{name:'Etisalat',color:'#16a34a'}],'Китай':[{name:'China Mobile',color:'#0ea5e9'}]};
-const SIM_TARIFFS = [{gb:10,price:50},{gb:30,price:200},{gb:50,price:400},{gb:100,price:700},{gb:9999,price:1500,label:'Безлимит'}];
-const BUSINESSES = [{id:'larok', name:'🥤 Ларёк', price:50000, income:30000},{id:'fastfood', name:'🍔 Фастфуд', price:150000, income:100000},
-    {id:'coffee', name:'☕ Кофейня', price:300000, income:200000},{id:'clothes', name:'👕 Магазин одежды', price:600000, income:300000},
-    {id:'electronics', name:'📱 Электроника', price:1000000, income:500000},{id:'service', name:'🔧 Сервис', price:2000000, income:1000000},
-    {id:'supermarket', name:'🛒 Супермаркет', price:5000000, income:2500000},{id:'dealership', name:'🚗 Автосалон', price:10000000, income:5000000},
-    {id:'factory', name:'🏭 Завод', price:30000000, income:25000000},{id:'mall', name:'🏢 ТРЦ', price:100000000, income:500000000}];
-const OFFICES = [{id:0, name:'Гараж', price:0, limit:5, partsLimit:10, maxEmp:1},{id:1, name:'Квартира', price:100000, limit:20, partsLimit:30, maxEmp:2},
-    {id:2, name:'Офис', price:500000, limit:50, partsLimit:80, maxEmp:3},{id:3, name:'Штаб', price:2000000, limit:100, partsLimit:200, maxEmp:5}];
-const JOBS = [{id:'courier', name:'Курьер', salary:500, req:1, icon:'🚴'},{id:'seller', name:'Продавец', salary:1200, req:3, icon:'🛒'},
-    {id:'assembler', name:'Мастер', salary:2500, req:5, icon:'🔧'},{id:'it', name:'IT-спец', salary:4000, req:7, icon:'💻'},
-    {id:'director', name:'Директор', salary:8000, req:10, icon:'👔'}];
-const STORE_APPS = [{id:'tax', name:'Налоги', icon:'📋', color:'#ef4444', size:'12 МБ', desc:'Проверка налогов'},
-    {id:'used', name:'Б/У Рынок', icon:'♻️', color:'#f97316', size:'18 МБ', desc:'Покупка сломанных устройств'},
-    {id:'cars', name:'Авто', icon:'🚗', color:'#3b82f6', size:'25 МБ', desc:'Рынок автомобилей'},
-    {id:'repair', name:'Ремонт', icon:'🔧', color:'#8b5cf6', size:'15 МБ', desc:'Сервис и запчасти'},
-    {id:'stats', name:'Статистика', icon:'📊', color:'#10b981', size:'8 МБ', desc:'Статистика бизнеса'},
-    {id:'tetris', name:'Тетрис', icon:'🎮', color:'#ef4444', size:'5 МБ', desc:'Классика'},
-    {id:'snake', name:'Змейка', icon:'🐍', color:'#84cc16', size:'4 МБ', desc:'Легенда'}];
-const SELLER_NAMES = ['Алексей','Мария','Иван','Ольга','Дмитрий','Елена','Сергей','Катя','Никита','Света'];
-const BUYER_NAMES = ['Андрей','Виктор','Галина','Егор','Жанна','Игорь','Костя','Лена','Миша','Наташа'];
+let activeEvent = null;
+let jackpotCache = 0;
 
-/* ============ УТИЛИТЫ ============ */
-function fmt(n){n=Number(n)||0;
-    if(Math.abs(n)>=1e12)return(n/1e12).toFixed(1)+' трлн ₽';
-    if(Math.abs(n)>=1e9)return(n/1e9).toFixed(1)+' млрд ₽';
-    if(Math.abs(n)>=1e6)return(n/1e6).toFixed(1)+' млн ₽';
-    if(Math.abs(n)>=1e3)return(n/1e3).toFixed(1)+' тыс ₽';
-    return Math.round(n).toLocaleString('ru-RU')+' ₽';}
-function rand(arr){return arr[Math.floor(Math.random()*arr.length)];}
-function escHtml(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+/* ============================================================
+   УТИЛИТЫ
+   ============================================================ */
+function fmt(n){
+    n = Number(n) || 0;
+    if(Math.abs(n) >= 1e12) return (n/1e12).toFixed(1)+' трлн ₽';
+    if(Math.abs(n) >= 1e9) return (n/1e9).toFixed(1)+' млрд ₽';
+    if(Math.abs(n) >= 1e6) return (n/1e6).toFixed(1)+' млн ₽';
+    if(Math.abs(n) >= 1e3) return (n/1e3).toFixed(1)+' тыс ₽';
+    return Math.round(n).toLocaleString('ru-RU')+' ₽';
+}
+function fmtChips(n){
+    n = Number(n) || 0;
+    if(Math.abs(n) >= 1e6) return (n/1e6).toFixed(1)+' млн 🎰';
+    if(Math.abs(n) >= 1e3) return (n/1e3).toFixed(1)+' тыс 🎰';
+    return Math.round(n).toLocaleString('ru-RU')+' 🎰';
+}
+function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function escHtml(s){ return String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 function notify(text, sub, type){
     const el = document.getElementById('toast');
     el.textContent = text + (sub ? ' · ' + sub : '');
-    el.className = 'toast show';
-    el.style.borderLeft = '4px solid ' + (type === 'success' ? 'var(--success)' : type === 'warning' ? 'var(--warning)' : type === 'danger' ? 'var(--danger)' : 'var(--primary)');
+    el.className = 'toast show' + (type === 'gold' ? ' gold' : '');
+    el.style.borderLeft = '4px solid ' + (type === 'success' ? 'var(--success)' : type === 'warning' ? 'var(--warning)' : type === 'danger' ? 'var(--danger)' : type === 'gold' ? 'var(--gold)' : 'var(--primary)');
     clearTimeout(el._t);
-    el._t = setTimeout(() => el.classList.remove('show'), 2500);
+    el._t = setTimeout(() => el.classList.remove('show'), 3000);
+}
+function eventMultiplier(){ return activeEvent ? activeEvent.multiplier : 1; }
+
+/* ============================================================
+   ИГРОВОЕ ВРЕМЯ
+   ============================================================ */
+function checkGameDay(){
+    if(!state.gameDayStartedAt) state.gameDayStartedAt = Date.now();
+    const elapsed = Date.now() - state.gameDayStartedAt;
+    if(elapsed >= GAME_DAY_MS){
+        const daysPassed = Math.floor(elapsed / GAME_DAY_MS);
+        state.gameDay += daysPassed;
+        state.gameDayStartedAt += daysPassed * GAME_DAY_MS;
+        state.chipsWithdrawnToday = 0;
+        state.chipsWithdrawDay = state.gameDay;
+        generateDailyQuests();
+        if(state.gameDay % 7 === 0) generateWeeklyQuests();
+        state.businesses.forEach(b => {
+            const def = BUSINESSES.find(x => x.id === b.id);
+            if(def){
+                const inc = Math.round(def.income * (b.level || 1) * eventMultiplier() * daysPassed);
+                state.money += inc;
+            }
+        });
+        cloudSaveDebounced();
+        updateAllUI();
+        notify('☀️ Новый игровой день!', 'День ' + state.gameDay, 'gold');
+    }
+    updateDayTimers();
+}
+function updateDayTimers(){
+    const elapsed = Date.now() - state.gameDayStartedAt;
+    const left = Math.max(0, GAME_DAY_MS - (elapsed % GAME_DAY_MS));
+    const m = Math.floor(left / 60000);
+    const s = Math.floor((left % 60000) / 1000);
+    const str = m + ':' + s.toString().padStart(2, '0');
+    const el1 = document.getElementById('menuDayTimer');
+    if(el1) el1.textContent = str;
+    const el2 = document.getElementById('questsGameDay');
+    if(el2) el2.textContent = state.gameDay;
+    const el3 = document.getElementById('menuGameDay');
+    if(el3) el3.textContent = state.gameDay;
 }
 
-/* ============ AUTH ============ */
+/* ============================================================
+   FIREBASE AUTH
+   ============================================================ */
 function signInWithGoogle(){
     if(!fbAuth){ document.getElementById('loginStatus').textContent = '❌ Firebase не инициализирован'; return; }
     const provider = new firebase.auth.GoogleAuthProvider();
@@ -849,7 +689,6 @@ function watchAuth(){
             state.playerEmail = user.email || '';
             state.playerPhoto = user.photoURL || '';
             if(!state.playerName) state.playerName = user.displayName || 'Игрок';
-            console.log('👤', user.displayName);
             document.getElementById('loginScreen').classList.add('hidden');
             loadCloudSave()
                 .then(() => checkBan())
@@ -862,8 +701,6 @@ function watchAuth(){
         }
     });
 }
-
-/* ============ BAN CHECK ============ */
 async function checkBan(){
     if(!fbDB || !fbUser) return false;
     try {
@@ -879,32 +716,40 @@ async function checkBan(){
     } catch(e){ console.error('Ban check:', e); }
     return false;
 }
-
-/* ============ ON USER READY (ОБНОВЛЕНО: добавлен слушатель Firebase) ============ */
 function onUserReady(){
     boot();
     setSyncStatus('online');
-
-    // 🔥 СЛУШАТЕЛЬ ИЗМЕНЕНИЙ ИЗ FIREBASE
-    // Если админ меняет данные в базе — игра мгновенно подхватывает
     if(fbDB && fbUser){
         fbDB.ref('users/' + fbUser.uid + '/game').on('value', snap => {
             const data = snap.val();
             if(!data) return;
-            console.log('🔄 Обновление из Firebase', data);
-            Object.keys(data).forEach(k => {
-                if(k in state) state[k] = data[k];
+            Object.keys(data).forEach(k => { if(k in state) state[k] = data[k]; });
+            updateAllUI();
+        });
+        fbDB.ref('events').on('value', snap => {
+            const data = snap.val() || {};
+            const now = Date.now();
+            activeEvent = null;
+            Object.values(data).forEach(e => {
+                if(e.active && now < e.endsAt){
+                    if(!activeEvent || e.multiplier > activeEvent.multiplier) activeEvent = e;
+                }
             });
-            // Обновляем UI, если игрок сейчас на этих экранах
-            if(document.getElementById('player-screen')?.classList.contains('active')){
-                renderPlayerScreen();
-            }
-            if(document.getElementById('bank-screen')?.classList.contains('active')){
-                updateBankCard();
+            updateEventBanner();
+        });
+        fbDB.ref('jackpot').on('value', snap => {
+            const data = snap.val() || {};
+            jackpotCache = data.amount || 0;
+            const el = document.getElementById('jackpotAmount');
+            if(el) el.textContent = fmtChips(jackpotCache);
+            const tk = document.getElementById('jackpotTickets');
+            if(tk && fbUser){
+                const tickets = (data.tickets || {})[fbUser.uid] || 0;
+                tk.textContent = tickets;
+                state.jackpotTickets = tickets;
             }
         });
     }
-
     const lock = document.getElementById('lockScreen');
     if(lock){
         lock.style.display = 'flex';
@@ -916,8 +761,25 @@ function setSyncStatus(s){
     const dot = document.getElementById('syncDot');
     if(dot){ dot.className = 'sync-dot ' + s; }
 }
+function setupLockScreen(){
+    const ls = document.getElementById('lockScreen');
+    if(!ls) return;
+    if(ls._lockBound) return;
+    ls._lockBound = true;
+    let sy = null, moved = false;
+    const unlockNow = () => { ls.classList.add('up'); setTimeout(() => { ls.style.display = 'none'; }, 500); };
+    ls.addEventListener('touchstart', e => { sy = e.touches[0].clientY; moved = false; }, {passive: true});
+    ls.addEventListener('touchmove', e => { if(sy !== null && sy - e.touches[0].clientY > 15) moved = true; }, {passive: true});
+    ls.addEventListener('touchend', e => { if(sy === null) return; const dy = sy - e.changedTouches[0].clientY; sy = null; if(dy > 40 || (moved && dy > 20)) unlockNow(); });
+    ls.addEventListener('mousedown', e => { sy = e.clientY; moved = false; });
+    ls.addEventListener('mousemove', e => { if(sy !== null && sy - e.clientY > 15) moved = true; });
+    ls.addEventListener('mouseup', e => { if(sy === null) return; const dy = sy - e.clientY; sy = null; if(dy > 40 || (moved && dy > 20)) unlockNow(); });
+    ls.addEventListener('click', e => { if(e.clientY > window.innerHeight - 200) unlockNow(); });
+}
 
-/* ============ CLOUD SAVE ============ */
+/* ============================================================
+   CLOUD SAVE
+   ============================================================ */
 let saveTimeout = null;
 function cloudSaveDebounced(){
     setSyncStatus('saving');
@@ -944,7 +806,18 @@ function cloudSave(){
             quests: state.quests, achievements: state.achievements,
             lastDaily: state.lastDaily, usedPromos: state.usedPromos,
             animations: state.animations, sound: state.sound, notifications: state.notifications,
-            parts: state.parts, pcParts: state.pcParts
+            parts: state.parts, pcParts: state.pcParts,
+            chips: state.chips,
+            chipsTotalBought: state.chipsTotalBought,
+            chipsTotalWithdrawn: state.chipsTotalWithdrawn,
+            chipsWithdrawnToday: state.chipsWithdrawnToday,
+            chipsWithdrawDay: state.chipsWithdrawDay,
+            gameDay: state.gameDay,
+            gameDayStartedAt: state.gameDayStartedAt,
+            dailyQuests: state.dailyQuests,
+            weeklyQuests: state.weeklyQuests,
+            dailyQuestsDay: state.dailyQuestsDay,
+            weeklyQuestsDay: state.weeklyQuestsDay
         },
         lastSeen: Date.now()
     };
@@ -962,7 +835,6 @@ async function loadCloudSave(){
         if(!data || !data.game){ console.log('ℹ️ New account'); return false; }
         Object.keys(data.game).forEach(k => { if(k in state) state[k] = data.game[k]; });
         if(data.profile){ state.playerName = data.profile.name || state.playerName; state.level = data.profile.level || state.level; }
-        notify('☁️ Загружено из облака','','success');
         return true;
     } catch(e) { console.error('Load:', e); return false; }
 }
@@ -972,8 +844,6 @@ function syncNow(){
     cloudSave();
     notify('☁️ Синхронизировано','','success');
 }
-
-/* ============ LEADERBOARD ============ */
 async function updateLeaderboard(){
     if(!fbUser || !fbDB) return;
     try {
@@ -983,6 +853,451 @@ async function updateLeaderboard(){
         });
     } catch(e){}
 }
+
+/* ============================================================
+   UI
+   ============================================================ */
+function updateAllUI(){
+    const el1 = document.getElementById('menuBalance');
+    if(el1) el1.textContent = fmt(state.money);
+    const el2 = document.getElementById('casinoChips');
+    if(el2) el2.textContent = state.chips.toLocaleString('ru-RU');
+    const el3 = document.getElementById('casinoChipsRate');
+    if(el3) el3.textContent = '1 000 ₽ = 1 000 🎰 · вывод 1 500 🎰 = 1 000 ₽';
+    const el4 = document.getElementById('pBalance');
+    if(el4) el4.textContent = fmt(state.money);
+    const el5 = document.getElementById('pChips');
+    if(el5) el5.textContent = state.chips.toLocaleString('ru-RU');
+    const el6 = document.getElementById('pLevel');
+    if(el6) el6.textContent = state.level;
+    const el7 = document.getElementById('pGameDay');
+    if(el7) el7.textContent = state.gameDay;
+}
+function updateEventBanner(){
+    const banner = document.getElementById('eventBanner');
+    const text = document.getElementById('eventBannerText');
+    if(!banner || !text) return;
+    if(activeEvent){
+        const hoursLeft = Math.ceil((activeEvent.endsAt - Date.now()) / 3600000);
+        text.textContent = `${activeEvent.name} · ×${activeEvent.multiplier} к доходу · осталось ${hoursLeft} ч.`;
+        banner.style.display = 'block';
+    } else {
+        banner.style.display = 'none';
+    }
+}
+
+/* ============================================================
+   ЭКРАНЫ
+   ============================================================ */
+let selectedBrand = null;
+function openScreen(id){
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.classList.add('active');
+    const dock = document.getElementById('bottomDock');
+    const hideDock = ['camera-screen','tetris-screen','snake-screen','chat-screen','app-detail-screen','globalchat-screen'];
+    if(dock) dock.classList.toggle('hidden', hideDock.includes(id));
+    document.querySelectorAll('.dock-item').forEach(d => d.classList.remove('active'));
+    const dockMap = {'menu':'home','quests-screen':'quests','casino-screen':'casino','player-screen':'profile'};
+    if(dockMap[id]){
+        const d = document.querySelector(`.dock-item[data-dock="${dockMap[id]}"]`);
+        if(d) d.classList.add('active');
+    }
+    if(id === 'casino-screen') renderCasino();
+    if(id === 'quests-screen') renderQuests();
+    if(id === 'player-screen') renderPlayer();
+    if(id === 'leaderboard-screen') loadLeaderboard();
+    if(id === 'globalchat-screen') loadGlobalChatHistory();
+}
+function closeAll(){ openScreen('menu'); }
+
+/* ============================================================
+   КАЗИНО
+   ============================================================ */
+function renderCasino(){
+    updateAllUI();
+    const jp = document.getElementById('jackpotAmount');
+    if(jp) jp.textContent = fmtChips(jackpotCache);
+}
+function switchCasinoTab(tab, el){
+    document.querySelectorAll('.casino-tab').forEach(t => t.classList.remove('active'));
+    if(el) el.classList.add('active');
+    document.querySelectorAll('.casino-content').forEach(c => c.classList.add('hidden'));
+    const el2 = document.getElementById('casino-' + tab);
+    if(el2) el2.classList.remove('hidden');
+}
+function openChipsShop(){
+    const modal = document.getElementById('chipsShop');
+    const opts = document.getElementById('chipsShopOptions');
+    if(!modal || !opts) return;
+    const packages = [10000, 50000, 100000, 500000];
+    opts.innerHTML = packages.map(p => `
+        <button class="btn btn-primary" onclick="buyChips(${p});closeModal('chipsShop')">
+            ${fmt(p)}<br><span style="font-size:10px;opacity:.8">${fmt(p)} 🎰</span>
+        </button>
+    `).join('') + `
+        <button class="btn btn-gold" style="grid-column:span 2" onclick="openSellChips();closeModal('chipsShop')">
+            💸 Продать фишки (1 500 🎰 = 1 000 ₽)
+        </button>
+    `;
+    modal.classList.add('show');
+}
+function closeModal(id){
+    if(id){
+        const el = document.getElementById(id);
+        if(el) el.classList.remove('show');
+    } else {
+        document.querySelectorAll('.overlay').forEach(o => o.classList.remove('show'));
+    }
+}
+function buyChips(amountRub){
+    if(state.money < amountRub){ notify('❌ Не хватает ₽','','danger'); return; }
+    state.money -= amountRub;
+    state.chips += amountRub * CHIPS_RATE_BUY;
+    state.chipsTotalBought += amountRub;
+    cloudSaveDebounced();
+    updateAllUI();
+    notify('✅ +' + fmtChips(amountRub), 'Куплено', 'gold');
+}
+function openSellChips(){
+    const modal = document.getElementById('genModal');
+    document.getElementById('modalTitle').textContent = '💸 Продать фишки';
+    const left = Math.max(0, CHIPS_WITHDRAW_LIMIT - state.chipsWithdrawnToday);
+    document.getElementById('modalText').innerHTML = `Курс: <b>1 500 🎰 = 1 000 ₽</b><br>Лимит вывода: <b>${fmt(CHIPS_WITHDRAW_LIMIT)}</b> / игровой день<br>Осталось сегодня: <b style="color:var(--gold)">${fmt(left)}</b>`;
+    document.getElementById('modalExtra').innerHTML = `
+        <input type="number" id="sellChipsAmount" placeholder="Сколько фишек продать" style="text-align:center;font-size:18px;font-weight:900">
+    `;
+    document.getElementById('modalOk').textContent = 'Продать';
+    modal.classList.add('show');
+    window._modalCallback = () => {
+        const amt = parseInt(document.getElementById('sellChipsAmount').value) || 0;
+        sellChips(amt);
+    };
+}
+function sellChips(chipsAmount){
+    if(chipsAmount <= 0){ notify('❌ Введите сумму','','danger'); return; }
+    if(state.chips < chipsAmount){ notify('❌ Не хватает фишек','','danger'); return; }
+    const rubles = Math.floor(chipsAmount / CHIPS_RATE_SELL);
+    if(rubles <= 0){ notify('❌ Слишком мало','','danger'); return; }
+    const left = Math.max(0, CHIPS_WITHDRAW_LIMIT - state.chipsWithdrawnToday);
+    if(rubles > left){
+        notify('⚠️ Лимит ' + fmt(CHIPS_WITHDRAW_LIMIT) + ' в день', 'Осталось: ' + fmt(left), 'warning');
+        return;
+    }
+    state.chips -= chipsAmount;
+    state.money += rubles;
+    state.chipsTotalWithdrawn += rubles;
+    state.chipsWithdrawnToday += rubles;
+    state.chipsWithdrawDay = state.gameDay;
+    cloudSaveDebounced();
+    updateAllUI();
+    notify('💸 +' + fmt(rubles), 'Продано ' + fmtChips(chipsAmount), 'success');
+}
+
+let rouletteSpinning = false;
+function playRoulette(type){
+    if(rouletteSpinning) return;
+    const bet = parseInt(document.getElementById('rouletteBet').value) || 0;
+    if(bet < CASINO_MIN_BET || bet > CASINO_MAX_BET){ notify(`❌ Ставка ${CASINO_MIN_BET}-${CASINO_MAX_BET}`,'','danger'); return; }
+    if(state.chips < bet){ notify('❌ Не хватает фишек','','danger'); return; }
+    if(type === 'number'){
+        const num = prompt('Введите число от 0 до 36:');
+        if(num === null) return;
+        const n = parseInt(num);
+        if(isNaN(n) || n < 0 || n > 36){ notify('❌ Число 0-36','','danger'); return; }
+        window._rouletteNumber = n;
+    }
+    state.chips -= bet;
+    addJackpotContribution(bet);
+    rouletteSpinning = true;
+    const wheel = document.getElementById('rouletteWheel');
+    wheel.classList.add('spinning');
+    document.getElementById('rouletteResult').textContent = '🎲 Крутится...';
+    cloudSaveDebounced();
+    updateAllUI();
+    setTimeout(() => {
+        wheel.classList.remove('spinning');
+        wheel.style.transform = 'rotate(' + (Math.random()*360) + 'deg)';
+        const result = Math.floor(Math.random() * 37);
+        let win = 0, resp = '';
+        if(type === 'red'){
+            if(isRed(result)){ win = bet * 2; resp = '🔴 Красное! +' + fmtChips(win); }
+            else resp = '⚫ ' + result + ' — проигрыш';
+        } else if(type === 'black'){
+            if(!isRed(result) && result !== 0){ win = bet * 2; resp = '⚫ Чёрное! +' + fmtChips(win); }
+            else resp = '🔴 ' + result + ' — проигрыш';
+        } else if(type === 'green'){
+            if(result === 0){ win = bet * 36; resp = '🟢 ЗЕРО! +' + fmtChips(win); }
+            else resp = result + ' — проигрыш';
+        } else if(type === 'number'){
+            if(result === window._rouletteNumber){ win = bet * 36; resp = '🎯 ' + result + '! +' + fmtChips(win); }
+            else resp = '🎲 ' + result + ' — проигрыш';
+        }
+        if(win > 0){ state.chips += win; notify('🎉 Выигрыш!', '+' + fmtChips(win), 'gold'); }
+        else notify('😔 Проигрыш', '-' + fmtChips(bet), 'warning');
+        document.getElementById('rouletteResult').textContent = resp;
+        rouletteSpinning = false;
+        cloudSaveDebounced();
+        updateAllUI();
+    }, 3000);
+}
+function isRed(n){
+    const red = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+    return red.includes(n);
+}
+
+const SLOT_SYMBOLS = ['🍒','🍋','🔔','⭐','7️⃣','💎','🍀'];
+function playSlots(){
+    const bet = parseInt(document.getElementById('slotsBet').value) || 0;
+    if(bet < 50 || bet > 10000){ notify('❌ Ставка 50-10 000','','danger'); return; }
+    if(state.chips < bet){ notify('❌ Не хватает фишек','','danger'); return; }
+    state.chips -= bet;
+    addJackpotContribution(bet);
+    cloudSaveDebounced();
+    updateAllUI();
+    const reels = [1,2,3].map(i => document.getElementById('reel' + i));
+    reels.forEach(r => r.classList.add('spinning'));
+    document.getElementById('slotsResult').textContent = '🎰 Крутится...';
+    let spins = 0;
+    const iv = setInterval(() => {
+        reels.forEach(r => r.textContent = rand(SLOT_SYMBOLS));
+        spins++;
+        if(spins > 15){
+            clearInterval(iv);
+            reels.forEach(r => r.classList.remove('spinning'));
+            const r1 = rand(SLOT_SYMBOLS), r2 = rand(SLOT_SYMBOLS), r3 = rand(SLOT_SYMBOLS);
+            document.getElementById('reel1').textContent = r1;
+            document.getElementById('reel2').textContent = r2;
+            document.getElementById('reel3').textContent = r3;
+            let mult = 0;
+            if(r1 === r2 && r2 === r3) mult = r1 === '7️⃣' ? 50 : r1 === '💎' ? 30 : r1 === '⭐' ? 30 : r1 === '🔔' ? 20 : 10;
+            else if(r1 === r2 || r2 === r3 || r1 === r3) mult = 2;
+            const win = mult > 0 ? bet * mult : 0;
+            if(win > 0){ state.chips += win; notify('🎉 ×' + mult + '!', '+' + fmtChips(win), 'gold'); }
+            else notify('😔 Проигрыш', '-' + fmtChips(bet), 'warning');
+            document.getElementById('slotsResult').textContent = mult > 0 ? '✨ ×' + mult + ' — выигрыш ' + fmtChips(win) : '—';
+            cloudSaveDebounced();
+            updateAllUI();
+        }
+    }, 80);
+}
+
+let bjState = null;
+function startBlackjack(){
+    const bet = parseInt(document.getElementById('bjBet').value) || 0;
+    if(bet < 500 || bet > 20000){ notify('❌ Ставка 500-20 000','','danger'); return; }
+    if(state.chips < bet){ notify('❌ Не хватает фишек','','danger'); return; }
+    state.chips -= bet;
+    addJackpotContribution(bet);
+    cloudSaveDebounced();
+    updateAllUI();
+    bjState = { bet, player: [], dealer: [], deck: makeDeck() };
+    bjState.player.push(drawCard(), drawCard());
+    bjState.dealer.push(drawCard(), drawCard());
+    document.getElementById('bjControls').classList.add('hidden');
+    document.getElementById('bjActions').classList.remove('hidden');
+    document.getElementById('bjResult').textContent = '—';
+    updateBlackjackUI();
+}
+function makeDeck(){
+    const suits = ['♠','♥','♦','♣'];
+    const values = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+    const deck = [];
+    suits.forEach(s => values.forEach(v => deck.push({suit: s, value: v})));
+    return deck.sort(() => Math.random() - 0.5);
+}
+function drawCard(){ return bjState.deck.pop() || {suit:'♠', value:'A'}; }
+function cardValue(c){
+    if(['J','Q','K'].includes(c.value)) return 10;
+    if(c.value === 'A') return 11;
+    return parseInt(c.value);
+}
+function handTotal(hand){
+    let total = 0, aces = 0;
+    hand.forEach(c => { total += cardValue(c); if(c.value === 'A') aces++; });
+    while(total > 21 && aces > 0){ total -= 10; aces--; }
+    return total;
+}
+function updateBlackjackUI(){
+    document.getElementById('bjPlayerCards').textContent = bjState.player.map(c => c.suit + c.value).join(' ');
+    document.getElementById('bjPlayerScore').textContent = handTotal(bjState.player);
+    document.getElementById('bjDealerCards').textContent = bjState.dealer.map(c => c.suit + c.value).join(' ');
+    document.getElementById('bjDealerScore').textContent = handTotal(bjState.dealer);
+}
+function bjHit(){
+    if(!bjState) return;
+    bjState.player.push(drawCard());
+    updateBlackjackUI();
+    if(handTotal(bjState.player) > 21) endBlackjack('bust');
+}
+function bjStand(){
+    if(!bjState) return;
+    while(handTotal(bjState.dealer) < 17) bjState.dealer.push(drawCard());
+    updateBlackjackUI();
+    const pt = handTotal(bjState.player), dt = handTotal(bjState.dealer);
+    if(dt > 21) endBlackjack('dealerBust');
+    else if(pt > dt) endBlackjack('win');
+    else if(pt < dt) endBlackjack('lose');
+    else endBlackjack('push');
+}
+function endBlackjack(result){
+    const bet = bjState.bet;
+    let win = 0, msg = '';
+    if(result === 'bust'){ msg = '💥 Перебор!'; }
+    else if(result === 'dealerBust'){ win = bet * 2; msg = '🎉 Дилер перебрал! +' + fmtChips(win); }
+    else if(result === 'win'){ win = bet * 2; msg = '🎉 Победа! +' + fmtChips(win); }
+    else if(result === 'lose'){ msg = '😔 Проигрыш'; }
+    else if(result === 'push'){ win = bet; msg = '🤝 Ничья, возврат ставки'; }
+    if(win > 0) state.chips += win;
+    document.getElementById('bjResult').textContent = msg;
+    document.getElementById('bjActions').classList.add('hidden');
+    document.getElementById('bjControls').classList.remove('hidden');
+    cloudSaveDebounced();
+    updateAllUI();
+    bjState = null;
+}
+
+function addJackpotContribution(bet){
+    const contrib = Math.floor(bet * JACKPOT_CONTRIBUTION);
+    if(contrib <= 0) return;
+    if(fbDB){
+        fbDB.ref('jackpot/amount').transaction(cur => (cur || 0) + contrib);
+    }
+}
+function buyJackpotTicket(){
+    const cost = 2000;
+    if(state.chips < cost){ notify('❌ Нужно 2 000 фишек','','danger'); return; }
+    state.chips -= cost;
+    state.jackpotTickets++;
+    if(fbUser && fbDB){
+        fbDB.ref('jackpot/tickets/' + fbUser.uid).transaction(cur => (cur || 0) + 1);
+    }
+    cloudSaveDebounced();
+    updateAllUI();
+    notify('💎 Билет куплен!', 'Всего: ' + state.jackpotTickets, 'gold');
+}
+
+/* ============================================================
+   ЗАДАНИЯ
+   ============================================================ */
+const DAILY_QUEST_POOL = [
+    {id:'daily_sell_3', name:'Продай 3 товара', icon:'📦', target:3, reward:{money: 5000, chips: 500}},
+    {id:'daily_earn_50k', name:'Заработай 50 000 ₽', icon:'💰', target:50000, reward:{money: 8000, chips: 800}},
+    {id:'daily_work_5', name:'Поработай 5 раз', icon:'💼', target:5, reward:{money: 4000, chips: 400}},
+    {id:'daily_casino_5', name:'Сыграй в казино 5 раз', icon:'🎰', target:5, reward:{money: 3000, chips: 1000}},
+    {id:'daily_travel_2', name:'Съезди в 2 города', icon:'✈️', target:2, reward:{money: 6000, chips: 600}},
+    {id:'daily_buy_3', name:'Купи 3 товара', icon:'🛒', target:3, reward:{money: 5000, chips: 500}}
+];
+const WEEKLY_QUEST_POOL = [
+    {id:'weekly_sell_30', name:'Продай 30 товаров', icon:'📦', target:30, reward:{money: 50000, chips: 5000}},
+    {id:'weekly_earn_500k', name:'Заработай 500 000 ₽', icon:'💰', target:500000, reward:{money: 80000, chips: 8000}},
+    {id:'weekly_casino_50', name:'Сыграй в казино 50 раз', icon:'🎰', target:50, reward:{money: 30000, chips: 10000}},
+    {id:'weekly_business_1', name:'Открой новый бизнес', icon:'💼', target:1, reward:{money: 100000, chips: 10000}},
+    {id:'weekly_travel_10', name:'Съезди в 10 городов', icon:'✈️', target:10, reward:{money: 60000, chips: 6000}}
+];
+function generateDailyQuests(){
+    const shuffled = [...DAILY_QUEST_POOL].sort(() => Math.random() - 0.5).slice(0, 3);
+    state.dailyQuests = shuffled.map(q => ({...q, progress: 0, done: false, claimed: false}));
+    state.dailyQuestsDay = state.gameDay;
+    cloudSaveDebounced();
+    updateQuestBadge();
+}
+function generateWeeklyQuests(){
+    const shuffled = [...WEEKLY_QUEST_POOL].sort(() => Math.random() - 0.5).slice(0, 5);
+    state.weeklyQuests = shuffled.map(q => ({...q, progress: 0, done: false, claimed: false}));
+    state.weeklyQuestsDay = state.gameDay;
+    cloudSaveDebounced();
+    updateQuestBadge();
+}
+function updateQuestBadge(){
+    const count = (state.dailyQuests || []).filter(q => q.done && !q.claimed).length
+                + (state.weeklyQuests || []).filter(q => q.done && !q.claimed).length;
+    ['questsBadge','dockQuestsBadge'].forEach(id => {
+        const el = document.getElementById(id);
+        if(!el) return;
+        if(count > 0){ el.textContent = count; el.classList.remove('hidden'); }
+        else el.classList.add('hidden');
+    });
+}
+function checkQuestProgress(id, amount){
+    if(!amount) amount = 1;
+    [...(state.dailyQuests||[]), ...(state.weeklyQuests||[])].forEach(q => {
+        if(q.id === id && !q.done){ q.progress = Math.min(q.target, q.progress + amount); if(q.progress >= q.target) q.done = true; }
+    });
+    updateQuestBadge();
+}
+function switchQuestTab(tab, el){
+    document.querySelectorAll('.quest-tab').forEach(t => t.classList.remove('active'));
+    if(el) el.classList.add('active');
+    renderQuests(tab);
+}
+function renderQuests(tab){
+    if(!tab){
+        const active = document.querySelector('.quest-tab.active');
+        tab = active ? (active.textContent.includes('Ежеднев') ? 'daily' : active.textContent.includes('Еженедель') ? 'weekly' : 'ach') : 'daily';
+    }
+    const el = document.getElementById('questsList');
+    if(!el) return;
+    if(tab === 'daily'){
+        if(!state.dailyQuests || state.dailyQuests.length === 0) generateDailyQuests();
+        el.innerHTML = state.dailyQuests.map((q, i) => renderQuestCard(q, 'daily', i)).join('');
+    } else if(tab === 'weekly'){
+        if(!state.weeklyQuests || state.weeklyQuests.length === 0) generateWeeklyQuests();
+        el.innerHTML = state.weeklyQuests.map((q, i) => renderQuestCard(q, 'weekly', i)).join('');
+    } else {
+        el.innerHTML = '<div style="text-align:center;color:var(--text-lt);padding:40px">🏆 Достижения — в разработке</div>';
+    }
+    updateQuestBadge();
+}
+function renderQuestCard(q, type, idx){
+    const percent = Math.min(100, (q.progress / q.target) * 100);
+    const cls = q.claimed ? 'claimed' : q.done ? 'done' : '';
+    const btn = q.claimed ? '<button class="quest-claim-btn" disabled>✓</button>'
+              : q.done ? `<button class="quest-claim-btn" onclick="claimQuest('${type}',${idx})">Забрать</button>`
+              : `<button class="quest-claim-btn" disabled>${Math.floor(q.progress)}/${q.target}</button>`;
+    return `<div class="quest-card ${cls}">
+        <div class="quest-icon-box">${q.icon}</div>
+        <div class="quest-body">
+            <div class="quest-name">${q.name}</div>
+            <div class="quest-desc">Прогресс: ${Math.floor(q.progress)} / ${q.target}</div>
+            <div class="quest-progress"><i style="width:${percent}%"></i></div>
+            <div class="quest-reward">
+                <span class="money">💰 ${fmt(q.reward.money)}</span>
+                <span class="chips">🎰 ${q.reward.chips}</span>
+            </div>
+        </div>
+        ${btn}
+    </div>`;
+}
+function claimQuest(type, idx){
+    const arr = type === 'daily' ? state.dailyQuests : state.weeklyQuests;
+    const q = arr[idx];
+    if(!q || !q.done || q.claimed) return;
+    q.claimed = true;
+    state.money += q.reward.money;
+    state.chips += q.reward.chips;
+    cloudSaveDebounced();
+    updateAllUI();
+    renderQuests();
+    notify('🎁 Награда!', '+' + fmt(q.reward.money) + ' · +' + q.reward.chips + ' 🎰', 'gold');
+}
+
+/* ============================================================
+   ПРОФИЛЬ
+   ============================================================ */
+function renderPlayer(){
+    document.getElementById('profileName').value = state.playerName || '';
+    document.getElementById('profileId').textContent = 'UID: ' + (state.uid || '—').slice(0, 16);
+    const av = document.getElementById('profileAvatar');
+    if(state.playerPhoto) av.innerHTML = `<img src="${state.playerPhoto}">`;
+    else av.textContent = state.playerName ? state.playerName[0].toUpperCase() : '?';
+    updateAllUI();
+}
+
+/* ============================================================
+   LEADERBOARD
+   ============================================================ */
 async function loadLeaderboard(){
     const el = document.getElementById('leaderboardList');
     if(!el) return;
@@ -997,48 +1312,28 @@ async function loadLeaderboard(){
             const rank = i + 1;
             const rankClass = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : '';
             const isMe = fbUser && p.uid === fbUser.uid ? 'me' : '';
-            const initials = (p.name || 'A')[0].toUpperCase();
-            const avatarHtml = p.photo ? `<img src="${p.photo}">` : initials;
-            return `<div class="leader-row ${isMe}">
-                <div class="leader-rank ${rankClass}">${rank}</div>
-                <div class="leader-avatar">${avatarHtml}</div>
-                <div class="leader-name">${escHtml(p.name || 'Аноним')}${isMe ? ' (вы)' : ''}</div>
-                <div class="leader-money">${fmt(p.money)}</div>
-            </div>`;
+            return `<div class="leader-row ${isMe}"><div class="leader-rank ${rankClass}">${rank}</div><div class="leader-name">${escHtml(p.name || 'Аноним')}${isMe?' (вы)':''}</div><div class="leader-money">${fmt(p.money)}</div></div>`;
         }).join('');
-    } catch(e) {
-        el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--danger)">Ошибка: ' + e.message + '</div>';
-    }
+    } catch(e) { el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--danger)">Ошибка: ' + e.message + '</div>'; }
 }
 
-/* ============ GLOBAL CHAT ============ */
+/* ============================================================
+   GLOBAL CHAT
+   ============================================================ */
 let globalChatRef = null;
 function initGlobalChat(){
     if(!fbDB || !fbUser) return;
     if(globalChatRef) globalChatRef.off();
     globalChatRef = fbDB.ref('globalChat').limitToLast(50);
-    globalChatRef.on('child_added', snapshot => {
-        const msg = snapshot.val();
-        if(msg) appendGlobalMessage(msg);
-    });
+    globalChatRef.on('child_added', snap => { const msg = snap.val(); if(msg) appendGlobalMessage(msg); });
 }
 function appendGlobalMessage(msg){
     const area = document.getElementById('globalChatMessages');
     if(!area) return;
     const isMe = msg.uid === fbUser?.uid;
-    const isSystem = msg.isSystem === true;
     const div = document.createElement('div');
-    div.className = 'gchat-msg' + (isMe ? ' me' : '') + (isSystem ? ' system' : '');
-    const initials = (msg.name || 'A')[0].toUpperCase();
-    const avatarHtml = msg.photo ? `<img src="${msg.photo}">` : initials;
-    div.innerHTML = `
-        <div class="gchat-avatar">${avatarHtml}</div>
-        <div class="gchat-content">
-            <div class="gchat-name ${isMe ? 'me' : ''} ${isSystem ? 'system' : ''}">${escHtml(msg.name || 'Аноним')}</div>
-            <div class="gchat-text">${escHtml(msg.text || '')}</div>
-            <div class="gchat-time">${new Date(msg.time).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}</div>
-        </div>
-    `;
+    div.className = 'gchat-msg' + (isMe ? ' me' : '');
+    div.innerHTML = `<div class="gchat-name">${escHtml(msg.name||'Аноним')}</div><div class="gchat-text">${escHtml(msg.text||'')}</div>`;
     area.appendChild(div);
     area.scrollTop = area.scrollHeight;
 }
@@ -1047,1330 +1342,66 @@ function sendGlobalMessage(){
     const text = inp.value.trim();
     if(!text) return;
     if(!fbUser){ notify('❌ Войдите','','danger'); return; }
-    if(!fbDB){ notify('❌ Нет подключения','','danger'); return; }
-    fbDB.ref('globalChat').push({
-        uid: fbUser.uid, name: state.playerName || 'Аноним',
-        photo: state.playerPhoto || '', text: text, time: Date.now()
-    }).then(() => { inp.value = ''; }).catch(e => notify('❌ ' + e.message, '', 'danger'));
+    fbDB.ref('globalChat').push({ uid: fbUser.uid, name: state.playerName, photo: state.playerPhoto, text, time: Date.now() })
+        .then(() => { inp.value = ''; });
 }
 function loadGlobalChatHistory(){
     const area = document.getElementById('globalChatMessages');
     if(!area) return;
     area.innerHTML = '';
-    if(!fbDB || !fbUser) return;
+    if(!fbDB) return;
     fbDB.ref('globalChat').limitToLast(50).once('value').then(snap => {
         const data = snap.val() || {};
-        Object.values(data).sort((a, b) => a.time - b.time).forEach(appendGlobalMessage);
+        Object.values(data).sort((a,b) => a.time - b.time).forEach(appendGlobalMessage);
     });
 }
 
-/* ============ SCREEN NAV ============ */
-function openScreen(id){
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    const el = document.getElementById(id);
-    if(!el) return;
-    el.classList.add('active');
-    const dock = document.getElementById('bottomDock');
-    const hideDock = ['camera-screen','tetris-screen','snake-screen','chat-screen','app-detail-screen','globalchat-screen'];
-    if(dock) dock.classList.toggle('hidden', hideDock.includes(id));
-
-    if(id === 'home-screen'){ selectedBrand = null; renderBrandList(); }
-    if(id === 'cars-market-screen'){ selectedCarBrand = null; renderCarBrandList(); }
-    if(id === 'used-market-screen') renderUsedList();
-    if(id === 'repair-screen') renderRepairScreen();
-    if(id === 'bank-screen') renderBankScreen();
-    if(id === 'business-screen') renderBusinessList();
-    if(id === 'office-screen') renderOfficeScreen();
-    if(id === 'jobs-screen') renderJobsScreen();
-    if(id === 'travel-screen') renderCityList();
-    if(id === 'sim-screen') renderSimScreen();
-    if(id === 'store-screen') renderStore();
-    if(id === 'tax-screen') renderTaxScreen();
-    if(id === 'player-screen') renderPlayerScreen();
-    if(id === 'stats-screen') renderStatsScreen();
-    if(id === 'messages-screen') renderMessagesScreen();
-    if(id === 'gallery-screen') renderGalleryScreen();
-    if(id === 'settings-screen') renderSettingsScreen();
-    if(id === 'leaderboard-screen') loadLeaderboard();
-    if(id === 'globalchat-screen') loadGlobalChatHistory();
-}
-function closeAll(){
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    const dock = document.getElementById('bottomDock');
-    if(dock) dock.classList.remove('hidden');
-}
-
-/* ============ MODAL ============ */
-let modalResolve = null;
-function showModal(title, text, {ok = 'OK', cancel = 'Отмена', onOk = null, hideCancel = false, extraHtml = ''} = {}){
-    document.getElementById('modalTitle').textContent = title;
-    document.getElementById('modalText').textContent = text;
-    document.getElementById('modalExtra').innerHTML = extraHtml;
-    document.getElementById('modalOk').textContent = ok;
-    document.getElementById('modalCancel').textContent = cancel;
-    document.getElementById('modalCancel').style.display = hideCancel ? 'none' : 'block';
-    document.getElementById('genModal').classList.add('show');
-    modalResolve = (val) => { if(val && onOk) onOk(); };
-}
-function closeModal(ok){
-    document.getElementById('genModal').classList.remove('show');
-    if(modalResolve){ const r = modalResolve; modalResolve = null; r(ok); }
-}
-
-/* ============ MARKET ============ */
-const marketDB = [], carsDB = [], usedDB = [];
-function generateMarkets(){
-    marketDB.length = 0; carsDB.length = 0; usedDB.length = 0;
-    CITIES.forEach(city => {
-        const mul = city.mul;
-        PHONE_BRANDS.forEach(brand => {
-            PHONE_MODELS[brand.id].forEach(model => {
-                for(let i = 0; i < 2; i++){
-                    const base = 15000 + Math.random() * 60000;
-                    const broken = Math.random() < 0.35;
-                    marketDB.push({id:'ph_'+city.name+'_'+brand.id+'_'+model+'_'+i+'_'+Math.random().toString(36).slice(2,7),
-                        type:'phone',brand:brand.id,brandName:brand.name,brandColor:brand.color,brandLogo:brand.logo,
-                        fullName:model,price:Math.floor(base*mul/100)*100,seller:rand(SELLER_NAMES),
-                        sellerType:Math.random()<0.5?'good':'evil',broken,brokenParts:broken?[rand(PHONE_PARTS).id]:[],
-                        stars:(3+Math.random()*2).toFixed(1),city:city.name});
-                }
-            });
-        });
-        LAPTOP_BRANDS.forEach(brand => {
-            LAPTOP_MODELS[brand.id].forEach(model => {
-                const base = 30000 + Math.random() * 80000;
-                marketDB.push({id:'lp_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
-                    type:'laptop',brand:brand.id,brandName:brand.name,brandColor:brand.color,brandLogo:brand.logo,
-                    fullName:model,price:Math.floor(base*mul/100)*100,seller:rand(SELLER_NAMES),sellerType:'good',
-                    broken:false,brokenParts:[],stars:(4+Math.random()).toFixed(1),city:city.name});
-            });
-        });
-        if(['Москва','Санкт-Петербург','Новосибирск','Екатеринбург','Казань'].includes(city.name)){
-            PC_BRANDS.forEach(brand => {
-                PC_MODELS[brand.id].forEach(model => {
-                    const base = brand.id === 'office' ? 15000 + Math.random()*15000 :
-                                 brand.id === 'gaming' ? 70000 + Math.random()*40000 :
-                                 brand.id === 'workstation' ? 150000 + Math.random()*80000 :
-                                 brand.id === 'premium_pc' ? 300000 + Math.random()*150000 :
-                                 500000 + Math.random()*2000000;
-                    const broken = Math.random() < 0.35;
-                    const pool = PC_PARTS.map(p => p.id);
-                    marketDB.push({id:'pc_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
-                        type:'pc',brand:brand.id,brandName:brand.name,brandColor:brand.color,brandLogo:brand.logo,
-                        fullName:model,price:Math.floor(base*mul/100)*100,seller:rand(SELLER_NAMES),
-                        sellerType:Math.random()<0.5?'good':'evil',broken,
-                        brokenParts:broken?[...new Set([rand(pool),rand(pool)])]:[],
-                        stars:(3+Math.random()*2).toFixed(1),city:city.name});
-                });
-            });
-        }
-        TABLET_BRANDS.forEach(brand => {
-            TABLET_MODELS[brand.id].forEach(model => {
-                const base = 15000 + Math.random() * 40000;
-                marketDB.push({id:'tb_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
-                    type:'tablet',brand:brand.id,brandName:brand.name,brandColor:brand.color,brandLogo:brand.logo,
-                    fullName:model,price:Math.floor(base*mul/100)*100,seller:rand(SELLER_NAMES),sellerType:'good',
-                    broken:Math.random()<0.2,brokenParts:[],stars:(4+Math.random()).toFixed(1),city:city.name});
-            });
-        });
-        HEADPHONE_BRANDS.forEach(brand => {
-            HEADPHONE_MODELS[brand.id].forEach(model => {
-                const base = 3000 + Math.random() * 25000;
-                marketDB.push({id:'hp_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
-                    type:'headphones',brand:brand.id,brandName:brand.name,brandColor:brand.color,brandLogo:brand.logo,
-                    fullName:model,price:Math.floor(base*mul/100)*100,seller:rand(SELLER_NAMES),sellerType:'good',
-                    broken:false,brokenParts:[],stars:(4+Math.random()).toFixed(1),city:city.name});
-            });
-        });
-        CAR_BRANDS.forEach(brand => {
-            CAR_MODELS[brand.id].forEach(model => {
-                for(let i = 0; i < 2; i++){
-                    const base = brand.id === 'lada' ? 400000 + Math.random()*400000 :
-                                 brand.id === 'tesla' ? 2500000 + Math.random()*2000000 :
-                                 1200000 + Math.random()*1500000;
-                    const broken = Math.random() < 0.4;
-                    carsDB.push({id:'car_'+city.name+'_'+brand.id+'_'+model+'_'+i+'_'+Math.random().toString(36).slice(2,7),
-                        type:'car',brand:brand.id,brandName:brand.name,brandColor:brand.color,brandLogo:brand.logo,
-                        fullName:model,price:Math.floor(base*mul/100)*100,seller:rand(SELLER_NAMES),sellerType:'good',
-                        broken,brokenParts:broken?[rand(['engine','transmission','brakes','suspension','tires','body','electronics'])]:[],
-                        year:2015+Math.floor(Math.random()*10),mileage:Math.floor(20000+Math.random()*200000),
-                        stars:(3+Math.random()*2).toFixed(1),city:city.name});
-                }
-            });
-        });
-        PHONE_BRANDS.forEach(brand => {
-            PHONE_MODELS[brand.id].forEach(model => {
-                const base = 3000 + Math.random() * 12000;
-                usedDB.push({id:'us_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
-                    type:'phone',brand:brand.id,brandName:brand.name,brandColor:brand.color,brandLogo:brand.logo,
-                    fullName:model,price:Math.floor(base/100)*100,seller:rand(SELLER_NAMES),
-                    sellerType:Math.random()<0.5?'good':'evil',broken:true,
-                    brokenParts:[rand(PHONE_PARTS).id,rand(PHONE_PARTS).id],
-                    stars:(2+Math.random()*2).toFixed(1),city:city.name});
-            });
-        });
-    });
-}
-
-/* ============ APP STORE ============ */
-function updateAllAppIcons(){
-    ['tax','used','cars','repair','tetris','snake','stats'].forEach(id => {
-        const el = document.getElementById('app-icon-' + id);
-        if(!el) return;
-        el.classList.toggle('hidden', !state.installedApps[id]);
-    });
-}
-function renderStore(){
-    document.getElementById('storeList').innerHTML = STORE_APPS.map(a => {
-        const installed = state.installedApps[a.id];
-        return `<div class="card" onclick="openAppDetail('${a.id}')">
-            <div class="card-img" style="background:${a.color}">${a.icon}</div>
-            <h3 style="font-size:12px;font-weight:700;text-align:center">${a.name}</h3>
-            <div style="text-align:center;font-size:10px;color:var(--text-lt);margin-top:2px">${a.size}</div>
-            ${installed ? '<div style="text-align:center;color:var(--success);font-size:10px;margin-top:4px">✅</div>' : ''}
-        </div>`;
-    }).join('');
-}
-function openAppDetail(id){
-    const app = STORE_APPS.find(a => a.id === id);
-    const installed = state.installedApps[id];
-    document.getElementById('appDetailTitle').textContent = app.name;
-    document.getElementById('appDetailContent').innerHTML = `
-        <div style="text-align:center;padding:20px 0">
-            <div class="app-detail-icon" style="background:${app.color}">${app.icon}</div>
-            <div style="font-size:22px;font-weight:800">${app.name}</div>
-            <div style="font-size:12px;color:var(--text-sec);margin-top:4px">📦 ${app.size}</div>
-            <div style="font-size:13px;color:var(--text-sec);margin:14px 0">${app.desc}</div>
-            <div class="install-wrap" id="installWrap">
-                <div class="install-bar"><i id="installBar"></i></div>
-                <div class="install-label" id="installLabel">Загрузка... 0%</div>
-            </div>
-            <button class="btn ${installed ? 'btn-danger' : 'btn-primary'}" id="installBtn" style="margin-top:16px">
-                ${installed ? '🗑️ Удалить' : '⬇️ Установить'}
-            </button>
-        </div>`;
-    document.getElementById('installBtn').onclick = installed ? () => uninstallApp(id) : () => installApp(id);
-    openScreen('app-detail-screen');
-}
-function installApp(id){
-    const wrap = document.getElementById('installWrap');
-    const bar = document.getElementById('installBar');
-    const label = document.getElementById('installLabel');
-    const btn = document.getElementById('installBtn');
-    wrap.classList.add('show');
-    btn.disabled = true;
-    let p = 0;
-    const iv = setInterval(() => {
-        p += Math.random() * 12 + 3;
-        if(p >= 100){
-            p = 100;
-            clearInterval(iv);
-            setTimeout(() => {
-                state.installedApps[id] = true;
-                cloudSaveDebounced();
-                updateAllAppIcons();
-                notify('✅ Установлено', STORE_APPS.find(a => a.id === id).name, 'success');
-                btn.className = 'btn btn-danger';
-                btn.textContent = '🗑️ Удалить';
-                btn.disabled = false;
-                btn.onclick = () => uninstallApp(id);
-            }, 300);
-        }
-        bar.style.width = p + '%';
-        label.textContent = 'Загрузка... ' + Math.floor(p) + '%';
-    }, 100);
-}
-function uninstallApp(id){
-    const app = STORE_APPS.find(a => a.id === id);
-    showModal('Удалить?', app.name, { ok: 'Удалить', onOk: () => {
-        delete state.installedApps[id];
-        cloudSaveDebounced();
-        updateAllAppIcons();
-        openScreen('store-screen');
-    }});
-}
-function openGame(id){
-    if(!state.installedApps[id]){ notify('❌ Не установлено','','warning'); return; }
-    if(id === 'tetris'){ openScreen('tetris-screen'); setTimeout(tetrisReset, 100); }
-    if(id === 'snake'){ openScreen('snake-screen'); setTimeout(snakeReset, 100); }
-}
-
-/* ============ MARKET BROWSING ============ */
-let marketCategory = 'phone', selectedBrand = null, selectedCarBrand = null;
-function getBrandListByCategory(cat){
-    if(cat === 'phone') return PHONE_BRANDS;
-    if(cat === 'laptop') return LAPTOP_BRANDS;
-    if(cat === 'pc') return PC_BRANDS;
-    if(cat === 'tablet') return TABLET_BRANDS;
-    if(cat === 'headphones') return HEADPHONE_BRANDS;
-    return [];
-}
-function setMarketCat(cat, el){
-    marketCategory = cat;
-    document.querySelectorAll('#categoryTabs .filter-tab').forEach(t => t.classList.remove('active'));
-    if(el) el.classList.add('active');
-    selectedBrand = null;
-    document.getElementById('modelListView').classList.add('hidden');
-    renderBrandList();
-}
-function renderBrandList(search = ''){
-    const city = state.currentCity;
-    document.getElementById('homeCityLabel').textContent = city;
-    const q = (search || '').toLowerCase().trim();
-    const brands = getBrandListByCategory(marketCategory);
-    const listEl = document.getElementById('brandListView');
-    listEl.classList.remove('hidden');
-    document.getElementById('modelListView').classList.add('hidden');
-    const items = brands.map(brand => {
-        const cnt = marketDB.filter(m => m.city === city && m.type === marketCategory && m.brand === brand.id).length;
-        return { brand, count: cnt };
-    }).filter(x => x.count > 0 && (!q || x.brand.name.toLowerCase().includes(q)));
-    if(!items.length){ listEl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-lt)">Пусто</div>'; return; }
-    listEl.innerHTML = items.map(({brand, count}) => `
-        <div class="brand-row" onclick="openBrand('${brand.id}')">
-            <div class="brand-logo" style="background:${brand.color}">${brand.logo || brand.name[0]}</div>
-            <div class="brand-info"><div class="brand-name">${brand.name}</div><div class="brand-count">${count} предложений</div></div>
-            <div class="brand-arrow">›</div>
-        </div>`).join('');
-}
-function filterBrands(q){ renderBrandList(q); }
-function openBrand(brandId){
-    selectedBrand = brandId;
-    const brand = getBrandListByCategory(marketCategory).find(b => b.id === brandId);
-    document.getElementById('brandListView').classList.add('hidden');
-    const modelEl = document.getElementById('modelListView');
-    modelEl.classList.remove('hidden');
-    const city = state.currentCity;
-    const items = marketDB.filter(m => m.city === city && m.type === marketCategory && m.brand === brandId);
-    const grouped = {};
-    items.forEach(it => { if(!grouped[it.fullName]) grouped[it.fullName] = []; grouped[it.fullName].push(it); });
-    const typeIcon = {phone:'📱', laptop:'💻', pc:'🖥️', tablet:'📟', headphones:'🎧'}[marketCategory];
-    modelEl.innerHTML = `
-        <button class="btn btn-danger" style="margin-bottom:12px" onclick="backToBrands()">← К брендам</button>
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-            <div class="brand-logo" style="background:${brand.color}">${brand.logo}</div>
-            <div><div style="font-size:18px;font-weight:900">${brand.name}</div><div style="font-size:12px;color:var(--text-sec)">${Object.keys(grouped).length} моделей</div></div>
-        </div>
-        ${Object.keys(grouped).map(modelName => {
-            const offers = grouped[modelName];
-            const cheapest = offers.reduce((a,b) => a.price < b.price ? a : b);
-            return `<div class="model-row" onclick="openModel('${brandId}', ${JSON.stringify(modelName).replace(/"/g,'&quot;')})">
-                <div class="model-emoji">${typeIcon}</div>
-                <div class="model-info"><div class="model-title">${brand.name} ${modelName}</div><div class="model-meta">${offers.length} шт · от ${fmt(cheapest.price)}</div></div>
-                <div class="model-price">→</div>
-            </div>`;
-        }).join('')}`;
-}
-function backToBrands(){ renderBrandList(); }
-function openModel(brandId, modelName){
-    const city = state.currentCity;
-    const items = marketDB.filter(m => m.city === city && m.type === marketCategory && m.brand === brandId && m.fullName === modelName);
-    const brand = getBrandListByCategory(marketCategory).find(b => b.id === brandId);
-    const typeIcon = {phone:'📱', laptop:'💻', pc:'🖥️', tablet:'📟', headphones:'🎧'}[marketCategory];
-    document.getElementById('modelListView').innerHTML = `
-        <button class="btn btn-danger" style="margin-bottom:12px" onclick="openBrand('${brandId}')">← К моделям</button>
-        <div style="font-size:16px;font-weight:800;margin-bottom:12px">${brand.name} ${modelName}</div>
-        ${items.map(item => `<div class="model-row" onclick="startBuyChat('${item.id}')">
-            <div class="model-emoji">${typeIcon}</div>
-            <div class="model-info"><div class="model-title">${item.brandName} ${item.fullName}${item.broken?' ⚠️':''}</div>
-            <div class="model-meta">📍 ${item.seller} · ★ ${item.stars}</div></div>
-            <div class="model-price">${fmt(item.price)}</div>
-        </div>`).join('')}`;
-}
-
-/* ============ CARS ============ */
-function renderCarBrandList(search = ''){
-    const city = state.currentCity;
-    document.getElementById('carCityLabel').textContent = city;
-    document.getElementById('carBrandListView').classList.remove('hidden');
-    document.getElementById('carModelListView').classList.add('hidden');
-    const q = (search || '').toLowerCase().trim();
-    const items = CAR_BRANDS.map(b => ({ brand: b, count: carsDB.filter(m => m.city === city && m.brand === b.id).length }))
-        .filter(x => x.count > 0 && (!q || x.brand.name.toLowerCase().includes(q)));
-    document.getElementById('carBrandListView').innerHTML = items.map(({brand, count}) => `
-        <div class="brand-row" onclick="openCarBrand('${brand.id}')">
-            <div class="brand-logo" style="background:${brand.color}">${brand.logo}</div>
-            <div class="brand-info"><div class="brand-name">${brand.name}</div><div class="brand-count">${count} предложений</div></div>
-            <div class="brand-arrow">›</div>
-        </div>`).join('');
-}
-function filterCarBrands(q){ renderCarBrandList(q); }
-function openCarBrand(brandId){
-    const city = state.currentCity;
-    const brand = CAR_BRANDS.find(b => b.id === brandId);
-    document.getElementById('carBrandListView').classList.add('hidden');
-    const modelEl = document.getElementById('carModelListView');
-    modelEl.classList.remove('hidden');
-    const items = carsDB.filter(m => m.city === city && m.brand === brandId);
-    const grouped = {};
-    items.forEach(it => { if(!grouped[it.fullName]) grouped[it.fullName] = []; grouped[it.fullName].push(it); });
-    modelEl.innerHTML = `
-        <button class="btn btn-danger" style="margin-bottom:12px" onclick="backToCarBrands()">← К брендам</button>
-        <div style="font-size:16px;font-weight:800;margin-bottom:12px">${brand.name}</div>
-        ${Object.keys(grouped).map(modelName => {
-            const offers = grouped[modelName];
-            const cheapest = offers.reduce((a,b) => a.price < b.price ? a : b);
-            return `<div class="model-row" onclick="openCarModel('${brandId}', ${JSON.stringify(modelName).replace(/"/g,'&quot;')})">
-                <div class="model-emoji">${brand.logo}</div>
-                <div class="model-info"><div class="model-title">${brand.name} ${modelName}</div><div class="model-meta">от ${fmt(cheapest.price)}</div></div>
-                <div class="model-price">→</div>
-            </div>`;
-        }).join('')}`;
-}
-function backToCarBrands(){ renderCarBrandList(); }
-function openCarModel(brandId, modelName){
-    const city = state.currentCity;
-    const brand = CAR_BRANDS.find(b => b.id === brandId);
-    const items = carsDB.filter(m => m.city === city && m.brand === brandId && m.fullName === modelName);
-    document.getElementById('carModelListView').innerHTML = `
-        <button class="btn btn-danger" style="margin-bottom:12px" onclick="openCarBrand('${brandId}')">← К моделям</button>
-        <div style="font-size:16px;font-weight:800;margin-bottom:12px">${brand.name} ${modelName}</div>
-        ${items.map(item => `<div class="model-row" onclick="startCarBuyChat('${item.id}')">
-            <div class="model-emoji">${brand.logo}</div>
-            <div class="model-info"><div class="model-title">${item.brandName} ${item.fullName} ${item.year}${item.broken?' ⚠️':''}</div>
-            <div class="model-meta">${item.mileage.toLocaleString('ru-RU')} км · 📍 ${item.seller}</div></div>
-            <div class="model-price">${fmt(item.price)}</div>
-        </div>`).join('')}`;
-}
-
-/* ============ USED ============ */
-function renderUsedList(){
-    const city = state.currentCity;
-    const items = usedDB.filter(m => m.city === city).slice(0, 60);
-    const el = document.getElementById('usedList');
-    if(!items.length){ el.innerHTML = '<div style="grid-column:span 2;text-align:center;padding:30px;color:var(--text-lt)">Пусто</div>'; return; }
-    el.innerHTML = items.map(item => `
-        <div class="card" onclick="startUsedChat('${item.id}')">
-            <div class="card-img" style="background:${item.brandColor}">${item.brandLogo}</div>
-            <h3 style="font-size:12px;font-weight:700;text-align:center">${item.brandName} ${item.fullName}</h3>
-            <div style="text-align:center;color:var(--danger);font-size:10px;font-weight:700;margin-top:4px">⚠️ ${item.brokenParts.length} поломки</div>
-            <div style="text-align:center;font-weight:800;color:var(--success);margin-top:6px;font-size:13px">${fmt(item.price)}</div>
-        </div>`).join('');
-}
-
-/* ============ CHAT ============ */
-let currentChat = null;
-function startBuyChat(id){
-    const item = marketDB.find(m => m.id === id); if(!item) return;
-    if(!state.internetOn || state.airplaneMode){ notify('📵 Нет интернета','','danger'); return; }
-    currentChat = {mode:'buy',item:JSON.parse(JSON.stringify(item)),
-        minAccept:Math.round(item.price * (item.sellerType === 'evil' ? 0.88 : 0.68) / 100) * 100,
-        patience:item.sellerType === 'evil' ? 3 : 5,rounds:0,finalPrice:null,waiting:false};
-    openChatScreen();
-}
-function startCarBuyChat(id){
-    const item = carsDB.find(m => m.id === id); if(!item) return;
-    currentChat = {mode:'buyCar',item:JSON.parse(JSON.stringify(item)),
-        minAccept:Math.round(item.price * 0.85 / 100) * 100,patience:4,rounds:0,finalPrice:null,waiting:false};
-    openChatScreen();
-}
-function startUsedChat(id){
-    const item = usedDB.find(m => m.id === id); if(!item) return;
-    currentChat = {mode:'buyUsed',item:JSON.parse(JSON.stringify(item)),
-        minAccept:Math.round(item.price * (item.sellerType === 'evil' ? 0.95 : 0.8) / 100) * 100,
-        patience:item.sellerType === 'evil' ? 3 : 4,rounds:0,finalPrice:null,waiting:false};
-    openChatScreen();
-}
-function startSellFromInv(itemId){
-    const item = state.inventory.find(x => x.id === itemId);
-    if(item){
-        const buyerPool = [
-            {name: rand(BUYER_NAMES), type:'rich', mul:1.35, patience:6},
-            {name: rand(BUYER_NAMES), type:'normal', mul:1.05, patience:4},
-            {name: rand(BUYER_NAMES), type:'cheap', mul:0.78, patience:3},
-            {name: rand(BUYER_NAMES), type:'expert', mul:1.15, patience:7},
-            {name: rand(BUYER_NAMES), type:'drunk', mul:1.25, patience:2}
-        ];
-        const buyer = rand(buyerPool);
-        let basePrice = item.buyPrice * (1.2 + Math.random()*0.8);
-        if(item.hasSim) basePrice *= 1.15;
-        const targetAsk = Math.round(basePrice / 100) * 100;
-        currentChat = {mode:'sell',item,targetAsk,maxPay:Math.round(targetAsk * buyer.mul / 100) * 100,
-            patience:buyer.patience,rounds:0,finalPrice:null,buyerName:buyer.name,buyerType:buyer.type,waiting:false};
-        openChatScreen();
-        return;
-    }
-    const car = state.cars.find(x => x.id === itemId);
-    if(!car) return;
-    const targetAsk = Math.round(car.buyPrice * (1.15 + Math.random()*0.4) / 100) * 100;
-    currentChat = {mode:'sellCar',item:car,targetAsk,maxPay:Math.round(targetAsk * 1.1 / 100) * 100,
-        patience:4,rounds:0,finalPrice:null,buyerName:rand(BUYER_NAMES),buyerType:'normal',waiting:false};
-    openChatScreen();
-}
-function openChatScreen(){
-    const c = currentChat;
-    const typeIcon = {phone:'📱', laptop:'💻', tablet:'📟', pc:'🖥️', car:'🚗', headphones:'🎧'};
-    document.getElementById('chatAvatar').textContent = c.item.brandLogo || typeIcon[c.item.type] || '📦';
-    document.getElementById('chatAvatar').style.background = c.item.brandColor || '#333';
-    document.getElementById('chatName').textContent = c.mode.startsWith('sell') ? c.buyerName : c.item.seller;
-    let sub = (c.item.brandName || '') + ' ' + (c.item.fullName || '');
-    if(c.item.broken) sub += ' · ⚠️';
-    document.getElementById('chatSub').textContent = sub;
-    document.getElementById('chatBody').innerHTML = '';
-    document.getElementById('chatInput').value = '';
-    document.getElementById('chatAcceptBtn').classList.add('hidden');
-    document.getElementById('chatSendBtn').disabled = false;
-    document.getElementById('chatSendBtn').style.display = 'block';
-    document.getElementById('chatSendBtn').textContent = '💰 Предложить';
-    pushMsg('sys', '📍 ' + c.item.city);
-    if(c.item.broken) pushMsg('sys', '⚠️ Есть проблема');
-    pushMsg('sys', `${c.item.brandName} ${c.item.fullName}`);
-    if(c.mode === 'buy' || c.mode === 'buyCar'){
-        pushMsg('bot', c.item.sellerType === 'evil' ? `${c.item.fullName}. ${fmt(c.item.price)}. Быстро.` : `Здравствуйте! Продаю за ${fmt(c.item.price)}.`);
-    } else if(c.mode === 'buyUsed'){
-        pushMsg('bot', `Привет, ${c.item.fullName} за ${fmt(c.item.price)}, торг есть.`);
-    } else {
-        pushMsg('sys', `Куплено вами за ${fmt(c.item.buyPrice)}`);
-        const intro = { rich:'Здравствуйте! Сколько хотите?', normal:'Привет, какая цена?', cheap:'Здрасьте, дорого не возьму', expert:'Добрый день. Цена?', drunk:'Чо по цене, братан?' };
-        pushMsg('bot', intro[c.buyerType] || 'Сколько хотите?');
-    }
-    renderQuickChips();
-    openScreen('chat-screen');
-}
-function pushMsg(type, text){
-    currentChat.messages = currentChat.messages || [];
-    currentChat.messages.push({type, text});
-    const body = document.getElementById('chatBody');
-    const d = document.createElement('div');
-    d.className = 'msg ' + type;
-    d.textContent = text;
-    body.appendChild(d);
-    body.scrollTop = body.scrollHeight;
-}
-function renderQuickChips(){
-    const c = currentChat;
-    const chips = document.getElementById('quickChips');
-    let base, opts;
-    if(c.mode.startsWith('sell')){ base = c.targetAsk; opts = [Math.round(base*1.2), base, Math.round(base*0.85), Math.round(base*0.7)]; }
-    else { base = c.item.price; opts = [Math.round(base*0.5), Math.round(base*0.7), Math.round(base*0.85), base]; }
-    chips.innerHTML = opts.map(v => `<button class="chip" onclick="document.getElementById('chatInput').value=${v}">${fmt(v)}</button>`).join('');
-}
-function sendChatOffer(){
-    const c = currentChat;
-    if(c.waiting) return;
-    const v = parseInt(document.getElementById('chatInput').value);
-    if(!v || v <= 0){ notify('Введите цену','','danger'); return; }
-    c.waiting = true;
-    document.getElementById('chatSendBtn').disabled = true;
-    pushMsg('me', 'Предлагаю ' + fmt(v));
-    document.getElementById('chatInput').value = '';
-    if(c.mode.startsWith('buy')) handleBuyResponse(v);
-    else handleSellResponse(v);
-}
-function handleBuyResponse(v){
-    const c = currentChat, price = c.item.price, minAcc = c.minAccept;
-    c.rounds++;
-    let resp = '', accept = false, walkaway = false;
-    if(v >= price){ accept = true; resp = c.item.sellerType === 'evil' ? 'Давно бы так.' : 'Отлично, по рукам!'; }
-    else if(v >= minAcc){
-        const chance = ((v - minAcc) / Math.max(1, price - minAcc)) * 0.75 + 0.15;
-        if(Math.random() < chance){ accept = true; resp = 'Хорошо, договорились!'; }
-        else { const counter = Math.round((v + minAcc) / 2 / 100) * 100; resp = `${fmt(counter)} — и по рукам.`; c.item.price = counter; }
-    }
-    else if(c.rounds >= c.patience){ walkaway = true; resp = 'Извините, слишком мало.'; }
-    else { const counter = Math.round(Math.max(minAcc, (v + price) / 2) / 100) * 100; resp = `Мало. Могу уступить до ${fmt(counter)}.`; c.item.price = counter; }
-    setTimeout(() => {
-        pushMsg('bot', resp); c.waiting = false;
-        if(walkaway){ document.getElementById('chatSendBtn').disabled = true; document.getElementById('chatSendBtn').textContent = 'Ушёл'; setTimeout(closeChat, 2000); return; }
-        document.getElementById('chatSendBtn').disabled = false;
-        if(accept){ c.finalPrice = v; document.getElementById('chatSendBtn').style.display = 'none'; document.getElementById('chatAcceptBtn').classList.remove('hidden'); document.getElementById('chatAcceptBtn').textContent = '✅ Купить за ' + fmt(v); }
-        renderQuickChips();
-    }, 600);
-}
-function handleSellResponse(v){
-    const c = currentChat;
-    c.rounds++;
-    let resp = '', accept = false, walkaway = false;
-    if(v <= c.maxPay * 0.85){ accept = true; resp = 'Отлично, беру!'; }
-    else if(v <= c.maxPay){
-        const ratio = (v - c.maxPay * 0.85) / Math.max(1, c.maxPay * 0.15);
-        const chance = 1 - ratio * 0.7;
-        if(Math.random() < chance){ accept = true; resp = 'Договорились!'; }
-        else { const counter = Math.round((v + c.maxPay * 0.85) / 2 / 100) * 100; resp = `${fmt(counter)} — беру сейчас.`; c.maxPay = Math.min(c.maxPay, counter); }
-    }
-    else if(c.rounds >= c.patience){ walkaway = true; resp = 'Извините, не мой бюджет.'; }
-    else { resp = `Дорого. Рассчитывал на ${fmt(c.maxPay)}.`; }
-    setTimeout(() => {
-        pushMsg('bot', resp); c.waiting = false;
-        if(walkaway){ document.getElementById('chatSendBtn').disabled = true; document.getElementById('chatSendBtn').textContent = 'Ушёл'; setTimeout(closeChat, 2000); return; }
-        document.getElementById('chatSendBtn').disabled = false;
-        if(accept){ c.finalPrice = v; document.getElementById('chatSendBtn').style.display = 'none'; document.getElementById('chatAcceptBtn').classList.remove('hidden'); document.getElementById('chatAcceptBtn').textContent = '✅ Продать за ' + fmt(v); }
-    }, 600);
-}
-function acceptDeal(){
-    const c = currentChat;
-    if(!c.finalPrice) return;
-    if(c.mode.startsWith('buy')){
-        if(state.money < c.finalPrice){ notify('❌ Не хватает','','danger'); return; }
-        const office = OFFICES[state.officeLevel];
-        if(c.item.type === 'car'){ if(state.cars.length >= 10){ notify('❌ Полон','','danger'); return; } }
-        else { if(state.inventory.length >= office.limit){ notify('❌ Склад полон','','danger'); return; } }
-        state.money -= c.finalPrice;
-        const newItem = { ...c.item, id: 'inv_' + Date.now() + '_' + Math.random().toString(36).slice(2,7), buyPrice: c.finalPrice, brokenParts: [...(c.item.brokenParts || [])], hasSim: false };
-        if(c.item.type === 'car'){ state.cars.push(newItem); state.carsBought++; const i = carsDB.findIndex(x => x.id === c.item.id); if(i >= 0) carsDB.splice(i, 1); }
-        else { state.inventory.push(newItem); state.phonesBought++; const src = c.mode === 'buyUsed' ? usedDB : marketDB; const i = src.findIndex(x => x.id === c.item.id); if(i >= 0) src.splice(i, 1); }
-        addXP(15);
-        notify('✅ Куплено', fmt(c.finalPrice), 'success');
-        checkQuestProgress('first_buy'); checkQuestProgress('buys_10');
-    } else {
-        const price = c.finalPrice;
-        const tax = Math.round(price * TAX_RATE);
-        state.money += (price - tax);
-        state.totalEarned += (price - tax);
-        state.tax += tax;
-        addXP(20);
-        if(c.mode === 'sellCar'){ state.cars = state.cars.filter(x => x.id !== c.item.id); state.carsSold++; checkQuestProgress('car_sales_5'); }
-        else { state.inventory = state.inventory.filter(x => x.id !== c.item.id); state.phonesSold++; checkQuestProgress('first_sell'); checkQuestProgress('sales_10'); }
-        notify('✅ Продано', fmt(price - tax), 'success');
-    }
-    cloudSaveDebounced();
-    updateLeaderboard();
-    closeChat();
-}
-function closeChat(){ currentChat = null; openScreen('home-screen'); }
-
-/* ============ XP / QUESTS ============ */
-function addXP(n){
-    state.xp += n;
-    while(state.xp >= state.xpNext){ state.xp -= state.xpNext; state.level++; state.xpNext = Math.floor(state.xpNext * 1.5); notify('🎉 Уровень ' + state.level, '', 'success'); }
-    cloudSaveDebounced();
-}
-function checkQuestProgress(id){
-    if(!state.quests[id]) state.quests[id] = {current: 0, completed: false};
-    if(state.quests[id].completed) return;
-    state.quests[id].current++;
-    const targets = {first_buy:1, first_sell:1, buys_10:10, sales_10:10, repairs_5:5, car_sales_5:5, hire_employee:1, open_business:1, travel_3:3};
-    const rewards = {first_buy:500, first_sell:500, buys_10:3000, sales_10:3000, repairs_5:2000, car_sales_5:10000, hire_employee:2000, open_business:5000, travel_3:1500};
-    if(state.quests[id].current >= (targets[id] || 1)){ state.quests[id].completed = true; state.money += (rewards[id] || 0); notify('🏆 Квест!', '', 'success'); }
-    cloudSaveDebounced();
-}
-
-/* ============ BANK ============ */
-function renderBankScreen(){
-    if(state.bankCountry && state.bankName){
-        document.getElementById('bankCountryStep').classList.add('hidden');
-        document.getElementById('bankOperatorStep').classList.add('hidden');
-        document.getElementById('bankPinStep').classList.remove('hidden');
-        document.getElementById('bankMain').classList.add('hidden');
-        document.getElementById('bankNameDisplay').textContent = state.bankName;
-        startBankPin();
-    } else {
-        document.getElementById('bankCountryStep').classList.remove('hidden');
-        document.getElementById('bankOperatorStep').classList.add('hidden');
-        document.getElementById('bankPinStep').classList.add('hidden');
-        document.getElementById('bankMain').classList.add('hidden');
-        renderBankCountries();
-    }
-}
-function renderBankCountries(){
-    document.getElementById('bankCountryList').innerHTML = COUNTRIES.map(c => `
-        <div class="city-row" onclick="selectBankCountry('${c.name}')">
-            <span style="font-size:22px">${c.flag}</span>
-            <div style="flex:1;margin-left:8px"><b>${c.name}</b></div>
-        </div>`).join('');
-}
-function selectBankCountry(name){
-    state.bankCountry = name;
-    document.getElementById('bankCountryStep').classList.add('hidden');
-    document.getElementById('bankOperatorStep').classList.remove('hidden');
-    document.getElementById('bankList').innerHTML = (BANKS[name] || []).map(b => `
-        <div class="city-row" onclick="selectBank('${b.name}','${b.color}')">
-            <div style="width:30px;height:30px;border-radius:8px;background:${b.color}"></div>
-            <div style="flex:1;margin-left:8px"><b>${b.name}</b></div>
-        </div>`).join('');
-}
-function backToBankCountry(){ document.getElementById('bankOperatorStep').classList.add('hidden'); document.getElementById('bankCountryStep').classList.remove('hidden'); }
-function selectBank(name, color){
-    state.bankName = name; state.bankColor = color;
-    document.getElementById('bankOperatorStep').classList.add('hidden');
-    document.getElementById('bankPinStep').classList.remove('hidden');
-    document.getElementById('bankNameDisplay').textContent = name;
-    startBankPin();
-}
-let bankPinBuffer = '', bankPinConfirm = '';
-function startBankPin(){
-    bankPinBuffer = ''; bankPinConfirm = '';
-    updateBankPinDots();
-    document.getElementById('bankPinInstruction').textContent = state.bankPin ? 'Введите PIN' : 'Придумайте PIN';
-    const grid = document.getElementById('bankPinGrid');
-    grid.innerHTML = '';
-    ['1','2','3','4','5','6','7','8','9','C','0','OK'].forEach(k => {
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'pin-key' + (k === 'C' ? ' red' : k === 'OK' ? ' green' : '');
-        b.textContent = k;
-        b.onclick = () => bankPinInput(k);
-        grid.appendChild(b);
-    });
-}
-function updateBankPinDots(){
-    const len = bankPinBuffer.length;
-    document.getElementById('bankPinDots').textContent = '○ ○ ○ ○'.split(' ').map((o, i) => i < len ? '●' : '○').join(' ');
-}
-function bankPinInput(k){
-    if(k === 'C'){ bankPinBuffer = bankPinBuffer.slice(0, -1); updateBankPinDots(); return; }
-    if(k === 'OK'){ submitBankPin(); return; }
-    if(bankPinBuffer.length >= 4) return;
-    bankPinBuffer += k;
-    updateBankPinDots();
-    if(bankPinBuffer.length === 4) setTimeout(submitBankPin, 100);
-}
-function submitBankPin(){
-    if(!state.bankPin){
-        if(!bankPinConfirm){ bankPinConfirm = bankPinBuffer; bankPinBuffer = ''; updateBankPinDots(); document.getElementById('bankPinInstruction').textContent = 'Повторите PIN'; }
-        else if(bankPinBuffer === bankPinConfirm){ state.bankPin = bankPinBuffer; cloudSaveDebounced(); showBankMain(); }
-        else { bankPinBuffer = ''; bankPinConfirm = ''; updateBankPinDots(); document.getElementById('bankPinInstruction').textContent = 'Придумайте PIN'; notify('❌ Не совпал','','danger'); }
-    } else {
-        if(bankPinBuffer === state.bankPin) showBankMain();
-        else { bankPinBuffer = ''; updateBankPinDots(); notify('❌ Неверный','','danger'); }
-    }
-}
-function showBankMain(){ document.getElementById('bankPinStep').classList.add('hidden'); document.getElementById('bankMain').classList.remove('hidden'); updateBankCard(); }
-function updateBankCard(){
-    document.getElementById('cardBankName').textContent = state.bankName || 'BANK';
-    document.getElementById('cardOwner').textContent = (state.playerName || 'ИГРОК').toUpperCase();
-    document.getElementById('cardBalance').textContent = fmt(state.money);
-    document.getElementById('creditDisplay').textContent = fmt(state.credit);
-    document.getElementById('depositDisplay').textContent = fmt(state.deposit);
-    document.getElementById('ratingDisplay').textContent = state.creditRating;
-    document.getElementById('withdrawDepositBtn').style.display = state.deposit > 0 ? 'block' : 'none';
-    if(state.bankColor) document.getElementById('bankCard').style.background = `linear-gradient(135deg,${state.bankColor},${state.bankColor}dd)`;
-}
-function changeBank(){ showModal('Сменить банк?', '', { onOk: () => { state.bankCountry = state.bankName = state.bankColor = state.bankPin = null; cloudSaveDebounced(); renderBankScreen(); }}); }
-function takeLoan(){
-    if(state.credit > 0){ notify('❌ Погасите текущий','','danger'); return; }
-    showModal('Кредит', 'Макс 50000, ставка 20%', {
-        extraHtml: '<input type="number" id="loanAmount" value="10000">',
-        onOk: () => {
-            const amt = parseInt(document.getElementById('loanAmount').value);
-            if(!amt || amt < 1000 || amt > 50000){ notify('❌ 1000-50000','','danger'); return; }
-            state.credit = Math.round(amt * 1.2);
-            state.money += amt;
-            cloudSaveDebounced(); updateBankCard();
-            notify('✅ Выдано', fmt(amt), 'success');
-        }
-    });
-}
-function addDeposit(){
-    showModal('Вклад', '5% в месяц', {
-        extraHtml: '<input type="number" id="depAmount" value="5000">',
-        onOk: () => {
-            const amt = parseInt(document.getElementById('depAmount').value);
-            if(!amt || amt <= 0 || amt > state.money){ notify('❌','','danger'); return; }
-            state.money -= amt; state.deposit += amt; state.depositLastUpdate = Date.now();
-            cloudSaveDebounced(); updateBankCard();
-        }
-    });
-}
-function withdrawDeposit(){ if(state.deposit <= 0) return; state.money += state.deposit; state.deposit = 0; cloudSaveDebounced(); updateBankCard(); }
-
-/* ============ BUSINESS / OFFICE / JOBS ============ */
-function renderBusinessList(){
-    document.getElementById('bizList').innerHTML = BUSINESSES.map(b => {
-        const owned = state.businesses.find(x => x.id === b.id);
-        const can = state.money >= b.price;
-        if(owned) return `<div class="biz-card"><div class="biz-header"><div class="biz-icon" style="background:linear-gradient(135deg,#4f46e5,#3730a3)">${b.name.slice(0,2)}</div><div><div style="font-weight:800">${b.name}</div><div style="font-size:11px;color:var(--success)">✅ Ур. ${owned.level||1}</div></div></div><div class="biz-income">+${fmt(b.income*(owned.level||1))} / мес</div></div>`;
-        return `<div class="biz-card"><div class="biz-header"><div class="biz-icon" style="background:#334155">${b.name.slice(0,2)}</div><div><div style="font-weight:800">${b.name}</div><div style="font-size:11px">${fmt(b.income)}/мес</div></div></div><div style="font-size:20px;font-weight:900;color:var(--success);text-align:center;margin:10px 0">${fmt(b.price)}</div><button class="btn btn-primary" ${can?'':'disabled'} onclick="buyBusiness('${b.id}')">${can?'Открыть':'Не хватает'}</button></div>`;
-    }).join('');
-}
-function buyBusiness(id){
-    const b = BUSINESSES.find(x => x.id === id);
-    if(!b || state.money < b.price) return;
-    state.money -= b.price;
-    state.businesses.push({id: b.id, level: 1, nextIncome: Date.now() + MONTH});
-    addXP(50); checkQuestProgress('open_business'); cloudSaveDebounced(); renderBusinessList();
-}
-function renderOfficeScreen(){
-    const cur = OFFICES[state.officeLevel];
-    document.getElementById('officeName').textContent = cur.name;
-    document.getElementById('officeLimit').textContent = cur.limit;
-    document.getElementById('officePartsLimit').textContent = cur.partsLimit;
-    document.getElementById('officesList').innerHTML = OFFICES.map(o => {
-        const owned = o.id <= state.officeLevel;
-        const can = state.money >= o.price && !owned;
-        return `<div class="list-item" style="flex-direction:column;align-items:stretch"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><b>${o.name}</b><b style="color:var(--primary)">${o.price === 0 ? 'Бесплатно' : fmt(o.price)}</b></div><button class="btn ${owned?'btn-success':can?'btn-primary':'btn-danger'}" ${owned?'disabled':''} onclick="buyOffice(${o.id})">${owned?'Куплено':can?'Купить':'Не хватает'}</button></div>`;
-    }).join('');
-    document.getElementById('employeesList').innerHTML = state.employees.map((e, i) => `<div class="list-item"><div><b>${{manager:'Менеджер',buyer:'Закупщик',repairman:'Ремонтник'}[e.role]}</b></div><button class="btn btn-sm btn-danger" onclick="fireEmployee(${i})">Уволить</button></div>`).join('');
-}
-function buyOffice(id){
-    const o = OFFICES[id]; if(!o || state.money < o.price) return;
-    state.money -= o.price; state.officeLevel = id; cloudSaveDebounced(); renderOfficeScreen();
-}
-function fireEmployee(i){ state.employees.splice(i, 1); cloudSaveDebounced(); renderOfficeScreen(); }
-function renderJobsScreen(){
-    document.getElementById('jobsList').innerHTML = JOBS.map(j => {
-        const can = state.level >= j.req;
-        return `<div class="list-item"><div style="font-size:28px;width:40px;text-align:center">${j.icon}</div><div style="flex:1"><b>${j.name}</b><div style="font-size:11px;color:var(--success)">${fmt(j.salary)}/день</div></div><button class="btn btn-sm ${can?'btn-success':'btn-danger'}" ${can?'':'disabled'} onclick="workJob('${j.id}')">Работать</button></div>`;
-    }).join('');
-}
-function workJob(id){ const j = JOBS.find(x => x.id === id); if(!j || state.level < j.req) return; state.money += j.salary; addXP(5); cloudSaveDebounced(); }
-
-/* ============ TRAVEL ============ */
-function renderCityList(search = ''){
-    document.getElementById('travelCurrentCity').textContent = state.currentCity;
-    const q = (search || '').toLowerCase().trim();
-    const list = CITIES.filter(c => !q || c.name.toLowerCase().includes(q));
-    document.getElementById('cityList').innerHTML = list.map(c => {
-        const isCur = c.name === state.currentCity;
-        const price = calcTravelPrice(state.currentCity, c.name);
-        return `<div class="city-row ${isCur?'current':''}" ${isCur?'':`onclick="travelTo('${c.name}', ${price})"`}><div style="flex:1"><b>${c.name}</b><div style="font-size:11px;color:var(--text-sec)">Цены: ×${c.mul.toFixed(2)}</div></div>${isCur?'<span style="color:var(--success)">Здесь</span>':`<span style="color:var(--primary)">${fmt(price)}</span>`}</div>`;
-    }).join('');
-}
-function calcTravelPrice(from, to){
-    const a = CITIES.find(c => c.name === from), b = CITIES.find(c => c.name === to);
-    if(!a || !b) return 1000;
-    const R = 6371, dLat = (b.lat-a.lat)*Math.PI/180, dLon = (b.lon-a.lon)*Math.PI/180;
-    const la1 = a.lat*Math.PI/180, la2 = b.lat*Math.PI/180;
-    const h = Math.sin(dLat/2)**2 + Math.cos(la1)*Math.cos(la2)*Math.sin(dLon/2)**2;
-    return Math.max(500, Math.round(2*R*Math.asin(Math.sqrt(h)) * 5 / 100) * 100);
-}
-function travelTo(city, price){
-    if(state.money < price){ notify('❌ Не хватает','','danger'); return; }
-    state.money -= price; state.currentCity = city;
-    checkQuestProgress('travel_3'); cloudSaveDebounced();
-    notify('✅ ' + city, '', 'success');
-    renderCityList();
-}
-function openCityPicker(){ document.getElementById('cityOverlay').classList.add('show'); renderCityPickerList(''); }
-function closeCityPicker(){ document.getElementById('cityOverlay').classList.remove('show'); }
-function renderCityPickerList(search){
-    const q = (search || '').toLowerCase().trim();
-    const list = CITIES.filter(c => !q || c.name.toLowerCase().includes(q));
-    document.getElementById('cityPickerList').innerHTML = list.map(c => {
-        const isCur = c.name === state.currentCity;
-        const price = calcTravelPrice(state.currentCity, c.name);
-        return `<div class="city-row ${isCur?'current':''}" ${isCur?'':`onclick="pickCity('${c.name}', ${price})"`}><div style="flex:1"><b>${c.name}</b></div>${isCur?'<span style="color:var(--success)">Здесь</span>':`<span>${fmt(price)}</span>`}</div>`;
-    }).join('');
-}
-function pickCity(name, price){
-    closeCityPicker();
-    if(state.money < price){ notify('❌','','danger'); return; }
-    state.money -= price; state.currentCity = name;
-    cloudSaveDebounced();
-    notify('✅ ' + name, '', 'success');
-}
-
-/* ============ SIM ============ */
-function renderSimScreen(){
-    if(state.simOperator){ document.getElementById('simCountryStep').classList.add('hidden'); document.getElementById('simOperatorStep').classList.add('hidden'); document.getElementById('simMainStep').classList.remove('hidden'); updateSimDisplay(); }
-    else { document.getElementById('simCountryStep').classList.remove('hidden'); document.getElementById('simOperatorStep').classList.add('hidden'); document.getElementById('simMainStep').classList.add('hidden'); renderSimCountries(); }
-}
-function renderSimCountries(){ document.getElementById('simCountryList').innerHTML = COUNTRIES.map(c => `<div class="city-row" onclick="selectSimCountry('${c.name}')"><span style="font-size:22px">${c.flag}</span><div style="flex:1;margin-left:8px"><b>${c.name}</b></div></div>`).join(''); }
-function selectSimCountry(name){
-    state.simCountry = name;
-    document.getElementById('simCountryStep').classList.add('hidden');
-    document.getElementById('simOperatorStep').classList.remove('hidden');
-    document.getElementById('simOperatorList').innerHTML = (OPERATORS[name]||[]).map(o => `<div class="city-row" onclick="selectSimOperator('${o.name}','${o.color}')"><div style="width:30px;height:30px;border-radius:8px;background:${o.color}"></div><div style="flex:1;margin-left:8px"><b>${o.name}</b></div></div>`).join('');
-}
-function backToSimCountry(){ document.getElementById('simOperatorStep').classList.add('hidden'); document.getElementById('simCountryStep').classList.remove('hidden'); }
-function selectSimOperator(name, color){
-    if(state.money < 100){ notify('❌ Нужно 100₽','','danger'); return; }
-    state.money -= 100; state.simOperator = name; state.simOperatorColor = color;
-    const co = COUNTRIES.find(c => c.name === state.simCountry);
-    state.simNumber = co.format.replace(/X/g, () => Math.floor(Math.random()*10));
-    state.simBalance = 0; state.simGB = 30;
-    cloudSaveDebounced(); renderSimScreen();
-}
-function changeSimOperator(){ showModal('Сменить?','',{onOk:()=>{state.simOperator=state.simCountry=null;cloudSaveDebounced();renderSimScreen();}}); }
-function updateSimDisplay(){
-    document.getElementById('simOperatorDisplay').textContent = state.simOperator || '—';
-    document.getElementById('simOperatorAvatar').textContent = (state.simOperator||'С')[0];
-    document.getElementById('simCountryLabel').textContent = state.simCountry || '';
-    document.getElementById('simNumberDisplay').textContent = state.simNumber || '+X XXX ••• •••-••-••';
-    document.getElementById('simBalance').textContent = fmt(state.simBalance);
-    document.getElementById('simGB').textContent = state.simGB >= 9999 ? '∞' : state.simGB + ' ГБ';
-    if(state.simOperatorColor) document.getElementById('simCard').style.background = `linear-gradient(135deg,${state.simOperatorColor},${state.simOperatorColor}cc)`;
-}
-function showSimTariffs(){
-    const html = SIM_TARIFFS.map(t => `<div class="list-item"><b>${t.label||t.gb+' ГБ'}</b><b style="color:var(--primary)">${fmt(t.price)}</b><button class="btn btn-sm btn-success" onclick="buySimTariff(${t.gb},${t.price});closeModal(false)">Купить</button></div>`).join('');
-    showModal('Тарифы','',{extraHtml:'<div style="text-align:left;max-height:50vh;overflow-y:auto">'+html+'</div>',ok:'Закрыть',hideCancel:true});
-}
-function buySimTariff(gb, price){ if(state.simBalance < price) return; state.simBalance -= price; state.simGB = gb; cloudSaveDebounced(); updateSimDisplay(); }
-function changeSimNumber(){ if(state.money < 500) return; const co = COUNTRIES.find(c => c.name === state.simCountry); state.money -= 500; state.simNumber = co.format.replace(/X/g, () => Math.floor(Math.random()*10)); cloudSaveDebounced(); updateSimDisplay(); }
-function insertSimIntoPhone(phoneId){
-    if(!state.simOperator) return;
-    const phone = state.inventory.find(p => p.id === phoneId);
-    if(!phone || phone.type !== 'phone' || phone.hasSim) return;
-    if(state.simBalance < 200) return;
-    state.simBalance -= 200; phone.hasSim = true; cloudSaveDebounced(); renderPlayerScreen();
-}
-
-/* ============ PLAYER ============ */
-let playerTab = 'inv';
-function renderPlayerScreen(){
-    document.getElementById('profileName').value = state.playerName || '';
-    document.getElementById('profileId').textContent = 'UID: ' + (state.uid || '—').slice(0, 16);
-    const av = document.getElementById('profileAvatar');
-    if(state.playerPhoto) av.innerHTML = `<img src="${state.playerPhoto}">`;
-    else av.textContent = state.playerName ? state.playerName[0].toUpperCase() : '?';
-    document.getElementById('pBalance').textContent = fmt(state.money);
-    document.getElementById('pCity').textContent = state.currentCity;
-    document.getElementById('pLevel').textContent = state.level;
-    document.getElementById('pInvCount').textContent = state.inventory.length + '/' + OFFICES[state.officeLevel].limit;
-    document.getElementById('pXP').textContent = state.xp + ' / ' + state.xpNext;
-    document.getElementById('pLevelBar').style.width = (state.xp / state.xpNext * 100) + '%';
-    const today = new Date().toDateString();
-    const btn = document.getElementById('dailyBonus');
-    if(state.lastDaily === today){ btn.textContent = '✅ Получено'; btn.style.background = 'var(--surface)'; btn.style.color = 'var(--text-sec)'; }
-    else { btn.textContent = '🎁 Ежедневный бонус — 500₽'; btn.style.background = 'linear-gradient(135deg,#f59e0b,#ea580c)'; btn.style.color = '#fff'; }
-    renderPlayerInventory(); renderPlayerQuests(); renderPlayerAchievements();
-    document.getElementById('playerInv').classList.toggle('hidden', playerTab !== 'inv');
-    document.getElementById('playerQuests').classList.toggle('hidden', playerTab !== 'quests');
-    document.getElementById('playerAch').classList.toggle('hidden', playerTab !== 'ach');
-}
-function switchPlayerTab(tab, el){
-    playerTab = tab;
-    document.querySelectorAll('#player-screen .filter-tab').forEach(t => t.classList.remove('active'));
-    if(el) el.classList.add('active');
-    renderPlayerScreen();
-}
-function renderPlayerInventory(){
-    const el = document.getElementById('playerInv');
-    if(!state.inventory.length && !state.cars.length){ el.innerHTML = '<div style="text-align:center;color:var(--text-lt);padding:40px">📦 Склад пуст</div>'; return; }
-    let html = '';
-    if(state.inventory.length){
-        html += '<div class="section-title" style="margin-top:0">📦 Товары (' + state.inventory.length + ')</div>';
-        html += state.inventory.map(item => {
-            const icons = {phone:'📱', laptop:'💻', pc:'🖥️', tablet:'📟', headphones:'🎧'};
-            const icon = icons[item.type] || '📦';
-            const broken = item.broken || (item.brokenParts || []).length;
-            const simTag = item.hasSim ? '<span style="color:var(--success);font-size:10px;margin-left:4px">📶+15%</span>' : '';
-            const simBtn = (!item.hasSim && item.type === 'phone' && state.simOperator) ? `<button class="btn btn-sm btn-primary" onclick="event.stopPropagation();insertSimIntoPhone('${item.id}')">📶 SIM</button>` : '';
-            return `<div class="list-item" style="flex-direction:column;align-items:stretch"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="width:40px;height:40px;border-radius:10px;background:${item.brandColor};display:flex;align-items:center;justify-content:center;font-size:18px">${icon}</div><div style="flex:1"><div style="font-weight:700;font-size:13px">${item.brandName} ${item.fullName}${simTag}</div><div style="font-size:11px;color:var(--text-sec)">Куплено за ${fmt(item.buyPrice)}</div>${broken?'<div style="color:var(--danger);font-size:10px">⚠️ Сломан</div>':''}</div></div><div style="display:flex;gap:6px">${simBtn}<button class="btn btn-sm btn-success" style="flex:1" onclick="startSellFromInv('${item.id}')">💰 Продать</button></div></div>`;
-        }).join('');
-    }
-    if(state.cars.length){
-        html += '<div class="section-title">🚗 Авто (' + state.cars.length + ')</div>';
-        html += state.cars.map(item => `<div class="list-item"><div style="font-size:28px">${item.brandLogo}</div><div style="flex:1"><div style="font-weight:700">${item.brandName} ${item.fullName}</div><div style="font-size:11px;color:var(--text-sec)">${fmt(item.buyPrice)}</div></div><button class="btn btn-sm btn-success" onclick="startSellFromInv('${item.id}')">💰</button></div>`).join('');
-    }
-    el.innerHTML = html;
-}
-function renderPlayerQuests(){
-    const defs = [
-        {id:'first_buy', title:'Первая покупка', target:1, reward:500},
-        {id:'first_sell', title:'Первая продажа', target:1, reward:500},
-        {id:'buys_10', title:'10 покупок', target:10, reward:3000},
-        {id:'sales_10', title:'10 продаж', target:10, reward:3000},
-        {id:'open_business', title:'Открой бизнес', target:1, reward:5000}
-    ];
-    document.getElementById('playerQuests').innerHTML = defs.map(q => {
-        const s = state.quests[q.id] || {current: 0, completed: false};
-        return `<div class="quest-item"><div class="quest-icon">${s.completed?'✅':'📋'}</div><div class="quest-info"><div class="quest-title">${q.title}</div><div style="font-size:11px;color:var(--success);font-weight:700">+${fmt(q.reward)}</div><div class="quest-bar"><i style="width:${Math.min(100, s.current/q.target*100)}%"></i></div></div></div>`;
-    }).join('');
-}
-function renderPlayerAchievements(){
-    const defs = [
-        {id:'first_phone', icon:'📱', name:'Первый телефон', check: () => state.phonesBought >= 1},
-        {id:'first_car', icon:'🚗', name:'Первый авто', check: () => state.carsBought >= 1},
-        {id:'rich', icon:'💰', name:'100K ₽', check: () => state.money >= 100000},
-        {id:'millionaire', icon:'💎', name:'1M ₽', check: () => state.money >= 1000000}
-    ];
-    document.getElementById('playerAch').innerHTML = defs.map(a => {
-        const unlocked = a.check() || state.achievements[a.id];
-        if(unlocked) state.achievements[a.id] = true;
-        return `<div class="ach-item ${unlocked?'unlocked':''}"><div style="font-size:26px">${a.icon}</div><div style="flex:1"><div style="font-weight:700">${a.name}</div></div>${unlocked?'<span style="color:var(--success)">✓</span>':''}</div>`;
-    }).join('');
-}
-function claimDaily(){
-    const today = new Date().toDateString();
-    if(state.lastDaily === today){ notify('Уже','','warning'); return; }
-    state.lastDaily = today; state.money += 500;
-    cloudSaveDebounced(); renderPlayerScreen();
-    notify('🎁 +500₽','','success');
-}
-
-/* ============ STATS / TAX / MESSAGES / GALLERY / SETTINGS ============ */
-function renderStatsScreen(){
-    document.getElementById('statsContent').innerHTML = `
-        <div class="list-item"><span>📱 Куплено телефонов</span><b>${state.phonesBought}</b></div>
-        <div class="list-item"><span>💰 Продано</span><b>${state.phonesSold}</b></div>
-        <div class="list-item"><span>🚗 Куплено авто</span><b>${state.carsBought}</b></div>
-        <div class="list-item"><span>📦 На складе</span><b>${state.inventory.length}</b></div>
-        <div class="list-item"><span>💵 Заработано</span><b style="color:var(--success)">${fmt(state.totalEarned)}</b></div>`;
-}
-function renderTaxScreen(){ document.getElementById('taxAmount').textContent = fmt(state.tax); }
-function renderMessagesScreen(){ document.getElementById('messagesList').innerHTML = '<div style="text-align:center;color:var(--text-lt);padding:40px">💬 Пока пусто</div>'; }
-function renderGalleryScreen(){
-    const grid = document.getElementById('galleryGrid');
-    const empty = document.getElementById('galleryEmpty');
-    grid.innerHTML = '';
-    if(!state.gallery.length){ empty.style.display = 'block'; return; }
-    empty.style.display = 'none';
-    state.gallery.slice().reverse().forEach(item => {
-        const d = document.createElement('div');
-        d.className = 'gallery-item';
-        const img = document.createElement('img');
-        img.src = item.data; d.appendChild(img);
-        d.onclick = () => showModal('Фото','',{extraHtml:`<img src="${item.data}" style="width:100%;border-radius:12px">`,ok:'Закрыть',hideCancel:true});
-        grid.appendChild(d);
-    });
-}
-function renderSettingsScreen(){
-    document.getElementById('pinStatus').textContent = state.lockPin ? 'Установлен' : 'Не задан';
-    document.getElementById('toggleAnim').classList.toggle('on', state.animations);
-    document.getElementById('toggleSound').classList.toggle('on', state.sound);
-    document.getElementById('toggleNotif').classList.toggle('on', state.notifications);
-    document.getElementById('versionLabel').textContent = GAME_VERSION + ' · ' + GAME_TITLE;
-}
-function toggleSetting(k, el){ if(k === 'anim'){state.animations = !state.animations;} if(k === 'sound'){state.sound = !state.sound;} if(k === 'notif'){state.notifications = !state.notifications;} el.classList.toggle('on'); cloudSaveDebounced(); }
-function togglePinSetting(){
-    if(state.lockPin){ showModal('Удалить PIN?','',{onOk:()=>{state.lockPin=null;cloudSaveDebounced();renderSettingsScreen();}}); }
-    else showModal('Установить PIN','4 цифры',{extraHtml:'<input type="password" id="newPin" maxlength="4" style="text-align:center;font-size:24px">',onOk:()=>{const v=document.getElementById('newPin').value;if(!/^\d{4}$/.test(v))return;state.lockPin=v;cloudSaveDebounced();renderSettingsScreen();}});
-}
-
-/* ============ ПРОМОКОДЫ ИЗ FIREBASE ============ */
-async function applyPromo(){
-    const code = document.getElementById('promoInput').value.trim().toUpperCase();
-    if(!code){ notify('❌ Введите код','','danger'); return; }
-    document.getElementById('promoInput').value = '';
-
-    if(state.usedPromos.includes(code)){ notify('❌ Уже использован','','danger'); return; }
-
-    if(!fbDB){
-        if(code === 'TYCOON2025'){ state.usedPromos.push(code); state.money += 150000; notify('✅ +150 000₽','','success'); }
-        else if(code === 'WELCOME'){ state.usedPromos.push(code); state.money += 25000; notify('✅ +25 000₽','','success'); }
-        else notify('❌ Неверный промокод','','danger');
-        cloudSaveDebounced(); renderPlayerScreen();
-        return;
-    }
-
-    notify('⏳ Проверяем...','');
-
-    try {
-        const snap = await fbDB.ref('promos/' + code).once('value');
-        const promo = snap.val();
-
-        if(!promo){
-            notify('❌ Промокод не найден','','danger');
-            return;
-        }
-        if(!promo.active){
-            notify('❌ Промокод отключён','','danger');
-            return;
-        }
-        if(Date.now() > promo.expiresAt){
-            notify('❌ Промокод истёк','','danger');
-            return;
-        }
-        if(promo.usedBy && fbUser && promo.usedBy[fbUser.uid]){
-            notify('❌ Вы уже использовали этот код','','danger');
-            return;
-        }
-        const usedCount = Object.keys(promo.usedBy || {}).length;
-        if(usedCount >= promo.maxUses){
-            notify('❌ Лимит активаций исчерпан','','danger');
-            return;
-        }
-
-        state.money += promo.reward;
-        state.usedPromos.push(code);
-
-        if(fbUser){
-            await fbDB.ref('promos/' + code + '/usedBy/' + fbUser.uid).set(Date.now());
-        }
-
-        cloudSaveDebounced();
-        updateLeaderboard();
-
-        notify('🎁 +' + fmt(promo.reward) + ' за ' + code, 'success');
-        renderPlayerScreen();
-
-    } catch(e){
-        console.error('Promo error:', e);
-        notify('❌ Ошибка: ' + e.message, 'danger');
-    }
-}
-
+/* ============================================================
+   ЗАГЛУШКИ
+   ============================================================ */
+function pushMsg(){}
+function closeChat(){ openScreen('menu'); }
+function showModal(){}
+function openCityPicker(){}
+function renderBrandList(){}
+function filterBrands(){}
+function setMarketCat(){}
+function renderSimScreen(){}
+function renderCityList(){}
+function renderStore(){}
+function updateAllAppIcons(){}
+function openCamera(){}
+function closeShutter(){}
+function toggleShutter(){}
 function confirmReset(){
-    showModal('Сбросить?','Всё удалится, включая облако',{ok:'Удалить',onOk:()=>{
+    if(confirm('Сбросить прогресс?')){
         if(fbUser && fbDB) fbDB.ref('users/' + fbUser.uid).remove();
         localStorage.removeItem(SAVE_KEY);
         location.reload();
-    }});
-}
-
-/* ============ CAMERA ============ */
-let camStream = null, camFacing = 'environment', camFilter = 'none';
-async function openCamera(){
-    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ notify('📷 Не поддерживается','','danger'); return; }
-    if(camStream){ camStream.getTracks().forEach(t => t.stop()); camStream = null; }
-    try {
-        camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: camFacing } }, audio: false });
-        const v = document.getElementById('camPreview');
-        v.srcObject = camStream;
-        v.style.filter = camFilter === 'none' ? '' : camFilter;
-        renderCameraFilters();
-        openScreen('camera-screen');
-    } catch(err){
-        let msg = 'Ошибка камеры: ' + err.name;
-        if(err.name === 'NotAllowedError') msg = 'Разрешите доступ в браузере';
-        else if(err.name === 'NotFoundError') msg = 'Камера не найдена';
-        showModal('📷', msg, {ok:'OK', hideCancel:true});
     }
 }
-function switchCamera(){ camFacing = camFacing === 'environment' ? 'user' : 'environment'; if(camStream){ camStream.getTracks().forEach(t => t.stop()); camStream = null; } openCamera(); }
-function renderCameraFilters(){
-    const filters = [
-        {id:'none', name:'Обычно', css:''},
-        {id:'grayscale(100%)', name:'Ч/Б', css:'grayscale(100%)'},
-        {id:'sepia(100%)', name:'Сепия', css:'sepia(100%)'},
-        {id:'brightness(1.3)', name:'Ярко', css:'brightness(1.3)'},
-        {id:'saturate(2)', name:'Насыщ.', css:'saturate(2)'}
-    ];
-    document.getElementById('camFilters').innerHTML = filters.map(f => `<div class="cam-filter ${camFilter === f.css ? 'active' : ''}" onclick="setCamFilter('${f.css.replace(/'/g,'')}')">${f.name}</div>`).join('');
-}
-function setCamFilter(css){ camFilter = css; document.getElementById('camPreview').style.filter = css; renderCameraFilters(); }
-function closeCamera(){ if(camStream){ camStream.getTracks().forEach(t => t.stop()); camStream = null; } closeAll(); }
-function takePhoto(){
-    const v = document.getElementById('camPreview');
-    const cv = document.getElementById('camCanvas');
-    if(!v || !cv || !camStream) return;
-    cv.width = v.videoWidth || 640; cv.height = v.videoHeight || 480;
-    const ctx = cv.getContext('2d');
-    if(camFilter) ctx.filter = camFilter;
-    ctx.drawImage(v, 0, 0, cv.width, cv.height);
-    state.gallery.push({ id: Date.now() + Math.random(), data: cv.toDataURL('image/jpeg', 0.7), date: Date.now() });
-    cloudSaveDebounced();
-    notify('📷 Снято','','success');
+function showModal(title, text, opts){
+    const modal = document.getElementById('genModal');
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalText').textContent = text || '';
+    document.getElementById('modalExtra').innerHTML = (opts && opts.extraHtml) || '';
+    document.getElementById('modalOk').textContent = (opts && opts.ok) || 'OK';
+    document.getElementById('modalCancel').style.display = (opts && opts.hideCancel) ? 'none' : 'block';
+    modal.classList.add('show');
+    window._modalCallback = (opts && opts.onOk) || null;
 }
 
-/* ============ TETRIS ============ */
-let tetrisState = null, tetrisInterval = null, tetrisScore = 0;
-const TETRIS_COLS = 10, TETRIS_ROWS = 20, TILE = 28;
-const TETRIS_SHAPES = [
-    {shape:[[1,1,1,1]], color:'#06b6d4'}, {shape:[[1,1],[1,1]], color:'#fbbf24'},
-    {shape:[[0,1,0],[1,1,1]], color:'#a855f7'}, {shape:[[1,0,0],[1,1,1]], color:'#3b82f6'},
-    {shape:[[0,0,1],[1,1,1]], color:'#f97316'}, {shape:[[0,1,1],[1,1,0]], color:'#22c55e'},
-    {shape:[[1,1,0],[0,1,1]], color:'#ef4444'}
-];
-function stopTetris(){ if(tetrisInterval) clearInterval(tetrisInterval); tetrisInterval = null; }
-function tetrisReset(){
-    tetrisScore = 0;
-    document.getElementById('tetrisScore').textContent = '0';
-    tetrisState = { board: Array(TETRIS_ROWS).fill().map(() => Array(TETRIS_COLS).fill(null)), current: null };
-    tetrisSpawn();
-    if(tetrisInterval) clearInterval(tetrisInterval);
-    tetrisInterval = setInterval(tetrisTick, 500);
-    tetrisDraw();
-}
-function tetrisSpawn(){
-    const s = rand(TETRIS_SHAPES);
-    tetrisState.current = { shape: s.shape.map(r => [...r]), color: s.color, x: Math.floor((TETRIS_COLS - s.shape[0].length) / 2), y: 0 };
-    if(tetrisCollide(tetrisState.current.x, tetrisState.current.y, tetrisState.current.shape)){
-        notify('💀 Игра окончена','','warning'); setTimeout(tetrisReset, 800);
-    }
-}
-function tetrisCollide(x, y, shape){
-    for(let r = 0; r < shape.length; r++) for(let c = 0; c < shape[r].length; c++){
-        if(!shape[r][c]) continue;
-        const nx = x + c, ny = y + r;
-        if(nx < 0 || nx >= TETRIS_COLS || ny >= TETRIS_ROWS) return true;
-        if(ny >= 0 && tetrisState.board[ny][nx]) return true;
-    }
-    return false;
-}
-function tetrisTick(){
-    if(!tetrisState || !tetrisState.current) return;
-    const c = tetrisState.current;
-    if(!tetrisCollide(c.x, c.y + 1, c.shape)) c.y++; else tetrisLock();
-    tetrisDraw();
-}
-function tetrisLock(){
-    const c = tetrisState.current;
-    for(let r = 0; r < c.shape.length; r++) for(let cc = 0; cc < c.shape[r].length; cc++)
-        if(c.shape[r][cc] && c.y + r >= 0) tetrisState.board[c.y + r][c.x + cc] = c.color;
-    let cleared = 0;
-    for(let r = TETRIS_ROWS - 1; r >= 0; r--){
-        if(tetrisState.board[r].every(x => x)){
-            tetrisState.board.splice(r, 1); tetrisState.board.unshift(Array(TETRIS_COLS).fill(null));
-            cleared++; r++;
-        }
-    }
-    if(cleared){ tetrisScore += cleared * 100; document.getElementById('tetrisScore').textContent = tetrisScore; }
-    tetrisSpawn();
-}
-function tetrisMove(d){ if(!tetrisState || !tetrisState.current) return; const c = tetrisState.current; if(!tetrisCollide(c.x + d, c.y, c.shape)) c.x += d; tetrisDraw(); }
-function tetrisRotate(){ if(!tetrisState || !tetrisState.current) return; const c = tetrisState.current; const rot = c.shape[0].map((_, i) => c.shape.map(r => r[i]).reverse()); if(!tetrisCollide(c.x, c.y, rot)) c.shape = rot; tetrisDraw(); }
-function tetrisDrop(){ if(!tetrisState || !tetrisState.current) return; while(!tetrisCollide(tetrisState.current.x, tetrisState.current.y + 1, tetrisState.current.shape)) tetrisState.current.y++; tetrisLock(); tetrisDraw(); }
-function tetrisDraw(){
-    const cv = document.getElementById('tetrisCanvas');
-    if(!cv || !tetrisState) return;
-    const ctx = cv.getContext('2d');
-    ctx.fillStyle = '#0a0c12'; ctx.fillRect(0, 0, cv.width, cv.height);
-    ctx.strokeStyle = 'rgba(255,255,255,.04)';
-    for(let i = 0; i <= TETRIS_COLS; i++){ ctx.beginPath(); ctx.moveTo(i*TILE, 0); ctx.lineTo(i*TILE, cv.height); ctx.stroke(); }
-    for(let i = 0; i <= TETRIS_ROWS; i++){ ctx.beginPath(); ctx.moveTo(0, i*TILE); ctx.lineTo(cv.width, i*TILE); ctx.stroke(); }
-    for(let r = 0; r < TETRIS_ROWS; r++) for(let c = 0; c < TETRIS_COLS; c++)
-        if(tetrisState.board[r][c]){ ctx.fillStyle = tetrisState.board[r][c]; ctx.fillRect(c*TILE+1, r*TILE+1, TILE-2, TILE-2); }
-    const c = tetrisState.current;
-    if(c) for(let r = 0; r < c.shape.length; r++) for(let cc = 0; cc < c.shape[r].length; cc++)
-        if(c.shape[r][cc] && c.y + r >= 0){ ctx.fillStyle = c.color; ctx.fillRect((c.x + cc)*TILE+1, (c.y + r)*TILE+1, TILE-2, TILE-2); }
-}
-
-/* ============ SNAKE ============ */
-let snakeState = null, snakeInterval = null, snakeScore = 0;
-const SNAKE_COLS = 20, SNAKE_ROWS = 20;
-function stopSnake(){ if(snakeInterval) clearInterval(snakeInterval); snakeInterval = null; }
-function snakeReset(){
-    snakeScore = 0; document.getElementById('snakeScore').textContent = '0';
-    snakeState = { snake: [{x:10,y:10},{x:9,y:10},{x:8,y:10}], dir: {x:1,y:0}, nextDir: {x:1,y:0}, food: {x:15,y:10} };
-    if(snakeInterval) clearInterval(snakeInterval);
-    snakeInterval = setInterval(snakeTick, 130);
-    snakeDraw();
-}
-function snakeDir(dx, dy){ if(!snakeState) return; if(snakeState.dir.x === -dx && snakeState.dir.y === -dy) return; snakeState.nextDir = {x:dx, y:dy}; }
-function snakeTick(){
-    if(!snakeState) return;
-    snakeState.dir = {...snakeState.nextDir};
-    const head = { x: snakeState.snake[0].x + snakeState.dir.x, y: snakeState.snake[0].y + snakeState.dir.y };
-    if(head.x < 0 || head.x >= SNAKE_COLS || head.y < 0 || head.y >= SNAKE_ROWS || snakeState.snake.some(s => s.x === head.x && s.y === head.y)){
-        notify('💀 Игра окончена','','warning'); setTimeout(snakeReset, 800); return;
-    }
-    snakeState.snake.unshift(head);
-    if(head.x === snakeState.food.x && head.y === snakeState.food.y){
-        snakeScore += 10; document.getElementById('snakeScore').textContent = snakeScore;
-        do { snakeState.food = { x: Math.floor(Math.random()*SNAKE_COLS), y: Math.floor(Math.random()*SNAKE_ROWS) }; }
-        while(snakeState.snake.some(s => s.x === snakeState.food.x && s.y === snakeState.food.y));
-    } else snakeState.snake.pop();
-    snakeDraw();
-}
-function snakeDraw(){
-    const cv = document.getElementById('snakeCanvas');
-    if(!cv || !snakeState) return;
-    const ctx = cv.getContext('2d');
-    ctx.fillStyle = '#0a0c12'; ctx.fillRect(0, 0, cv.width, cv.height);
-    const cw = cv.width/SNAKE_COLS, ch = cv.height/SNAKE_ROWS;
-    ctx.fillStyle = '#ef4444';
-    ctx.fillRect(snakeState.food.x*cw+2, snakeState.food.y*ch+2, cw-4, ch-4);
-    snakeState.snake.forEach((s, i) => {
-        ctx.fillStyle = i === 0 ? '#84cc16' : '#16a34a';
-        ctx.fillRect(s.x*cw+1, s.y*ch+1, cw-2, ch-2);
-    });
-}
-
-/* ============ STATUS / SHUTTER ============ */
-let shutterOpen = false;
-function openShutter(){ document.getElementById('shutter').classList.add('open'); document.getElementById('shutterOverlay').classList.add('show'); shutterOpen = true; }
-function closeShutter(){ document.getElementById('shutter').classList.remove('open'); document.getElementById('shutterOverlay').classList.remove('show'); shutterOpen = false; }
-function toggleShutter(el){
-    el.classList.toggle('on');
-    const k = el.dataset.sh;
-    if(k === 'internet') state.internetOn = el.classList.contains('on');
-    if(k === 'airplane') state.airplaneMode = el.classList.contains('on');
-    if(k === 'location') state.locationOn = el.classList.contains('on');
-    if(k === 'saver') state.batterySaver = el.classList.contains('on');
-    if(k === 'flashlight'){ state.flashlightOn = el.classList.contains('on'); document.body.style.filter = state.flashlightOn ? 'brightness(1.3)' : 'none'; }
-}
-function updateStatusBar(){
-    const now = new Date();
-    const t = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-    document.getElementById('stTime').textContent = t;
-    document.getElementById('lockTime').textContent = t;
-    document.getElementById('lockTimeSmall').textContent = t;
-    const days = ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
-    const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
-    document.getElementById('lockDate').textContent = days[now.getDay()] + ', ' + now.getDate() + ' ' + months[now.getMonth()];
-}
-function batteryTick(){
-    const now = Date.now();
-    const el = now - state.batteryLastTick;
-    const TICK = state.batterySaver ? 6*60*1000 : 3*60*1000;
-    if(el >= TICK){
-        const spent = Math.floor(el / TICK);
-        state.battery = Math.max(0, state.battery - spent);
-        state.batteryLastTick = now;
-    }
-    const pct = Math.max(0, Math.min(100, Math.floor(state.battery)));
-    document.getElementById('battFill').style.width = (pct * 0.2) + 'px';
-    document.getElementById('battText').textContent = pct + '%';
-}
-function setupShutterSwipe(){
-    const sb = document.getElementById('statusBar');
-    const sh = document.getElementById('shutter');
-    let startY = 0, startTarget = null, didDrag = false;
-    const getY = e => (e.touches && e.touches[0] ? e.touches[0].clientY : (e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientY : e.clientY));
-    const onStart = e => { startY = getY(e); startTarget = e.target; didDrag = false; };
-    const onMove = e => {
-        if(!startY) return;
-        const dy = getY(e) - startY;
-        if(!shutterOpen && startY < 50 && dy > 30){ openShutter(); didDrag = true; startY = 0; }
-        if(Math.abs(dy) > 8) didDrag = true;
-    };
-    const onEnd = e => {
-        if(!startY){ startTarget = null; return; }
-        const dy = getY(e) - startY;
-        if(shutterOpen && startTarget && sh.contains(startTarget) && dy < -30) closeShutter();
-        startY = 0; startTarget = null;
-        setTimeout(() => { didDrag = false; }, 50);
-    };
-    document.addEventListener('touchstart', onStart, {passive: true});
-    document.addEventListener('touchmove', onMove, {passive: true});
-    document.addEventListener('touchend', onEnd);
-    document.addEventListener('mousedown', onStart);
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup', onEnd);
-    sb.addEventListener('click', () => { if(!didDrag){ shutterOpen ? closeShutter() : openShutter(); } });
-    document.addEventListener('keydown', e => { if(e.key === 'Escape' && shutterOpen) closeShutter(); });
-}
-function setupLockScreen(){
-    const ls = document.getElementById('lockScreen');
-    if(!ls) return;
-    if(ls._lockBound) return;
-    ls._lockBound = true;
-    let sy = null, moved = false;
-    const start = y => { sy = y; moved = false; };
-    const move = y => { if(sy === null) return; const dy = sy - y; if(dy > 15) moved = true; };
-    const end = y => {
-        if(sy === null) return;
-        const dy = sy - y;
-        sy = null;
-        if(dy > 40 || (moved && dy > 20)) unlockNow();
-    };
-    const unlockNow = () => { ls.classList.add('up'); setTimeout(() => { ls.style.display = 'none'; }, 500); };
-    ls.addEventListener('touchstart', e => start(e.touches[0].clientY), {passive: true});
-    ls.addEventListener('touchmove', e => move(e.touches[0].clientY), {passive: true});
-    ls.addEventListener('touchend', e => end(e.changedTouches[0].clientY));
-    ls.addEventListener('mousedown', e => start(e.clientY));
-    ls.addEventListener('mousemove', e => move(e.clientY));
-    ls.addEventListener('mouseup', e => end(e.clientY));
-    ls.addEventListener('click', e => { if(e.clientY > window.innerHeight - 200) unlockNow(); });
-}
-
-/* ============ ТАЙМЕРЫ ============ */
-setInterval(() => {
-    if(fbUser && fbDB){
-        state.businesses.forEach(b => {
-            if(Date.now() >= b.nextIncome){
-                const def = BUSINESSES.find(x => x.id === b.id);
-                if(def){
-                    const inc = def.income * (b.level || 1);
-                    state.money += inc;
-                    b.nextIncome = Date.now() + MONTH;
-                    cloudSaveDebounced();
-                }
-            }
-        });
-    }
-}, 60000);
-setInterval(() => { updateStatusBar(); batteryTick(); }, 1000);
-
-// 🔥 ИЗМЕНЕНО: автосохранение раз в 60 секунд вместо 30
-setInterval(() => { if(fbUser) cloudSave(); }, 60000);
-
-/* ============ BOOT ============ */
+/* ============================================================
+   BOOT
+   ============================================================ */
 function boot(){
     document.title = GAME_TITLE;
-    if(!marketDB.length) generateMarkets();
-    updateStatusBar();
-    updateAllAppIcons();
-    setupShutterSwipe();
-    document.querySelectorAll('.sht').forEach(el => {
-        const k = el.dataset.sh;
-        if(k === 'internet') el.classList.toggle('on', state.internetOn);
-        if(k === 'airplane') el.classList.toggle('on', state.airplaneMode);
-        if(k === 'location') el.classList.toggle('on', state.locationOn);
-        if(k === 'saver') el.classList.toggle('on', state.batterySaver);
-    });
+    updateAllUI();
+    if(!state.dailyQuests || state.dailyQuests.length === 0) generateDailyQuests();
+    if(!state.weeklyQuests || state.weeklyQuests.length === 0) generateWeeklyQuests();
+    updateQuestBadge();
+    updateEventBanner();
+    updateDayTimers();
     initGlobalChat();
     updateLeaderboard();
     console.log('✅ ' + GAME_TITLE + ' ' + GAME_VERSION + ' loaded');
@@ -2379,18 +1410,16 @@ function boot(){
 document.addEventListener('DOMContentLoaded', () => {
     const lock = document.getElementById('lockScreen');
     if(lock) lock.style.display = 'none';
-
     if(fbReady){ watchAuth(); }
     else {
         document.getElementById('loginScreen').classList.add('hidden');
         boot();
-        if(lock){
-            lock.style.display = 'flex';
-            lock.classList.remove('up');
-            setupLockScreen();
-        }
+        if(lock){ lock.style.display = 'flex'; lock.classList.remove('up'); setupLockScreen(); }
     }
 });
+
+setInterval(() => { if(fbUser){ checkGameDay(); } }, 1000);
+setInterval(() => { if(fbUser) cloudSave(); }, 60000);
 
 window.addEventListener('beforeunload', () => { if(fbUser) cloudSave(); });
 document.addEventListener('visibilitychange', () => { if(document.hidden && fbUser) cloudSave(); });
