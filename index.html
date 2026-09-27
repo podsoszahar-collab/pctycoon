@@ -880,9 +880,31 @@ async function checkBan(){
     return false;
 }
 
+/* ============ ON USER READY (ОБНОВЛЕНО: добавлен слушатель Firebase) ============ */
 function onUserReady(){
     boot();
     setSyncStatus('online');
+
+    // 🔥 СЛУШАТЕЛЬ ИЗМЕНЕНИЙ ИЗ FIREBASE
+    // Если админ меняет данные в базе — игра мгновенно подхватывает
+    if(fbDB && fbUser){
+        fbDB.ref('users/' + fbUser.uid + '/game').on('value', snap => {
+            const data = snap.val();
+            if(!data) return;
+            console.log('🔄 Обновление из Firebase', data);
+            Object.keys(data).forEach(k => {
+                if(k in state) state[k] = data[k];
+            });
+            // Обновляем UI, если игрок сейчас на этих экранах
+            if(document.getElementById('player-screen')?.classList.contains('active')){
+                renderPlayerScreen();
+            }
+            if(document.getElementById('bank-screen')?.classList.contains('active')){
+                updateBankCard();
+            }
+        });
+    }
+
     const lock = document.getElementById('lockScreen');
     if(lock){
         lock.style.display = 'flex';
@@ -2002,12 +2024,9 @@ async function applyPromo(){
     if(!code){ notify('❌ Введите код','','danger'); return; }
     document.getElementById('promoInput').value = '';
 
-    // 1. Локальная проверка на повтор
     if(state.usedPromos.includes(code)){ notify('❌ Уже использован','','danger'); return; }
 
-    // 2. Проверка в Firebase
     if(!fbDB){
-        // Фallback — если Firebase не подключён, проверяем хардкод
         if(code === 'TYCOON2025'){ state.usedPromos.push(code); state.money += 150000; notify('✅ +150 000₽','','success'); }
         else if(code === 'WELCOME'){ state.usedPromos.push(code); state.money += 25000; notify('✅ +25 000₽','','success'); }
         else notify('❌ Неверный промокод','','danger');
@@ -2043,16 +2062,13 @@ async function applyPromo(){
             return;
         }
 
-        // 3. Выдаём награду
         state.money += promo.reward;
         state.usedPromos.push(code);
 
-        // 4. Помечаем в базе
         if(fbUser){
             await fbDB.ref('promos/' + code + '/usedBy/' + fbUser.uid).set(Date.now());
         }
 
-        // 5. Сохраняем
         cloudSaveDebounced();
         updateLeaderboard();
 
@@ -2337,7 +2353,9 @@ setInterval(() => {
     }
 }, 60000);
 setInterval(() => { updateStatusBar(); batteryTick(); }, 1000);
-setInterval(() => { if(fbUser) cloudSave(); }, 30000);
+
+// 🔥 ИЗМЕНЕНО: автосохранение раз в 60 секунд вместо 30
+setInterval(() => { if(fbUser) cloudSave(); }, 60000);
 
 /* ============ BOOT ============ */
 function boot(){
