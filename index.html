@@ -49,6 +49,8 @@ input,select,textarea{font-family:inherit}
 .login-btn:active{transform:scale(.96)}
 .login-btn svg{width:22px;height:22px}
 .login-status{margin-top:24px;font-size:13px;color:#64748b;text-align:center;min-height:20px}
+#banScreen{position:fixed;inset:0;z-index:999999;background:#0a0c12;color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center}
+#banScreen.show{display:flex}
 #menu{width:100%;max-width:520px;padding:44px 12px 130px;margin:0 auto;height:100vh;overflow-y:auto}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .icon-item{background:transparent;border:none;padding:10px 4px;display:flex;flex-direction:column;align-items:center;height:92px;cursor:pointer;transition:transform .15s;position:relative}
@@ -204,11 +206,13 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
 .leader-money{font-weight:900;color:var(--success);font-size:14px}
 .gchat-msg{background:var(--surface);padding:10px 14px;border-radius:14px;margin-bottom:8px;border:1px solid var(--border);display:flex;gap:10px;align-items:flex-start}
 .gchat-msg.me{border-color:var(--primary)}
+.gchat-msg.system{border-color:var(--warning);background:linear-gradient(135deg,rgba(245,158,11,.1),transparent)}
 .gchat-avatar{width:32px;height:32px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
 .gchat-avatar img{width:100%;height:100%;object-fit:cover}
 .gchat-content{flex:1;min-width:0}
 .gchat-name{font-size:12px;font-weight:700;color:var(--primary)}
 .gchat-name.me{color:var(--success)}
+.gchat-name.system{color:var(--warning)}
 .gchat-text{font-size:13px;color:var(--text);margin-top:2px;word-wrap:break-word}
 .gchat-time{font-size:10px;color:var(--text-lt);margin-top:4px}
 </style>
@@ -240,19 +244,24 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
     </div>
 </div>
 
-<!-- LOGIN SCREEN -->
 <div id="loginScreen" class="hidden">
     <div class="login-logo">📱</div>
     <div class="login-title">Phone Reseller<br>Tycoon</div>
     <div class="login-sub">Войдите через Google, чтобы играть с любого устройства. Прогресс сохраняется в облаке.</div>
-    <button class="login-btn" id="googleLoginBtn" onclick="signInWithGoogle()">
+    <button class="login-btn" onclick="signInWithGoogle()">
         <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.4 29.3 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.4 1.1 7.3 2.8l5.7-5.7C33.6 6.9 29 5 24 5 12.9 5 4 13.9 4 25s8.9 20 20 20c11 0 20-9 20-20 0-1.3-.1-2.7-.4-4z"/><path fill="#FF3D00" d="M6.3 15.3l6.6 4.8C14.7 16.1 19 13 24 13c2.8 0 5.4 1.1 7.3 2.8l5.7-5.7C33.6 6.9 29 5 24 5c-7.6 0-14.2 4.3-17.7 10.3z"/><path fill="#4CAF50" d="M24 45c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 36.4 26.8 37 24 37c-5.3 0-9.7-3.4-11.3-8l-6.5 5C9.6 40.7 16.3 45 24 45z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.1 5.6l6.2 5.2C40.9 36.3 44 31.1 44 25c0-1.3-.1-2.7-.4-4.5z"/></svg>
         Войти через Google
     </button>
     <div class="login-status" id="loginStatus"></div>
 </div>
 
-<!-- LOCK SCREEN -->
+<div id="banScreen">
+    <div style="font-size:80px;margin-bottom:20px">🚫</div>
+    <h1 style="font-size:32px;font-weight:900;color:#f87171;margin-bottom:12px">Аккаунт заблокирован</h1>
+    <p style="font-size:14px;color:#94a3b8;max-width:400px;line-height:1.6;margin-bottom:20px" id="banReason">Причина: Нарушение правил</p>
+    <p style="font-size:12px;color:#64748b" id="banUid"></p>
+</div>
+
 <div id="lockScreen" style="display:none">
     <div style="position:absolute;top:14px;left:0;right:0;padding:0 20px;display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#fff">
         <span id="lockTimeSmall">00:00</span><span>📶 🔋</span>
@@ -606,7 +615,7 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
         </div>
         <div class="section-title">⚠️ Опасная зона</div>
         <button class="btn btn-danger" onclick="confirmReset()">🗑️ Сбросить прогресс</button>
-        <div style="text-align:center;color:var(--text-lt);font-size:11px;margin-top:20px" id="versionLabel">v4.0</div>
+        <div style="text-align:center;color:var(--text-lt);font-size:11px;margin-top:20px" id="versionLabel">v4.1</div>
     </div>
 </div>
 
@@ -636,9 +645,6 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
 <script>
 'use strict';
 
-/* ============================================================
-   FIREBASE
-============================================================ */
 const firebaseConfig = {
     apiKey: "AIzaSyAv0ChOvxUSEWjCnWWUXBml01PyTsgfGjo",
     authDomain: "pc-tycoon-11216.firebaseapp.com",
@@ -659,15 +665,10 @@ try {
         fbReady = true;
         console.log('✅ Firebase init');
     }
-} catch(e) {
-    console.error('❌ Firebase:', e);
-}
+} catch(e) { console.error('❌ Firebase:', e); }
 
-/* ============================================================
-   STATE
-============================================================ */
 const GAME_TITLE = 'Phone Reseller Tycoon';
-const GAME_VERSION = 'v4.0';
+const GAME_VERSION = 'v4.1';
 document.title = GAME_TITLE;
 
 const SAVE_KEY = 'prt_v4';
@@ -699,234 +700,120 @@ let state = {
     lastSaved: 0
 };
 
-/* ============================================================
-   DATA
-============================================================ */
+/* ============ ДАННЫЕ (сокращённо) ============ */
 const CITIES = [
-    {name:'Москва', lat:55.75, lon:37.62, mul:1.15},
-    {name:'Санкт-Петербург', lat:59.94, lon:30.31, mul:1.08},
-    {name:'Новосибирск', lat:55.03, lon:82.93, mul:0.92},
-    {name:'Екатеринбург', lat:56.84, lon:60.61, mul:0.95},
-    {name:'Казань', lat:55.79, lon:49.11, mul:0.98},
-    {name:'Нижний Новгород', lat:56.33, lon:44.00, mul:0.94},
-    {name:'Челябинск', lat:55.16, lon:61.40, mul:0.93},
-    {name:'Самара', lat:53.20, lon:50.15, mul:0.94},
-    {name:'Омск', lat:54.99, lon:73.37, mul:0.90},
-    {name:'Ростов-на-Дону', lat:47.23, lon:39.72, mul:0.96},
-    {name:'Уфа', lat:54.74, lon:55.97, mul:0.94},
-    {name:'Красноярск', lat:56.01, lon:92.87, mul:0.92},
-    {name:'Воронеж', lat:51.67, lon:39.18, mul:0.95},
-    {name:'Пермь', lat:58.01, lon:56.25, mul:0.93},
-    {name:'Волгоград', lat:48.71, lon:44.51, mul:0.92},
-    {name:'Краснодар', lat:45.04, lon:38.98, mul:1.02},
-    {name:'Саратов', lat:51.53, lon:46.03, mul:0.91},
-    {name:'Тюмень', lat:57.15, lon:65.53, mul:1.00},
-    {name:'Иркутск', lat:52.28, lon:104.28, mul:0.95},
-    {name:'Владивосток', lat:43.12, lon:131.89, mul:1.05}
+    {name:'Москва', lat:55.75, lon:37.62, mul:1.15},{name:'Санкт-Петербург', lat:59.94, lon:30.31, mul:1.08},
+    {name:'Новосибирск', lat:55.03, lon:82.93, mul:0.92},{name:'Екатеринбург', lat:56.84, lon:60.61, mul:0.95},
+    {name:'Казань', lat:55.79, lon:49.11, mul:0.98},{name:'Нижний Новгород', lat:56.33, lon:44.00, mul:0.94},
+    {name:'Челябинск', lat:55.16, lon:61.40, mul:0.93},{name:'Самара', lat:53.20, lon:50.15, mul:0.94},
+    {name:'Омск', lat:54.99, lon:73.37, mul:0.90},{name:'Ростов-на-Дону', lat:47.23, lon:39.72, mul:0.96},
+    {name:'Уфа', lat:54.74, lon:55.97, mul:0.94},{name:'Красноярск', lat:56.01, lon:92.87, mul:0.92},
+    {name:'Воронеж', lat:51.67, lon:39.18, mul:0.95},{name:'Пермь', lat:58.01, lon:56.25, mul:0.93},
+    {name:'Волгоград', lat:48.71, lon:44.51, mul:0.92},{name:'Краснодар', lat:45.04, lon:38.98, mul:1.02},
+    {name:'Саратов', lat:51.53, lon:46.03, mul:0.91},{name:'Тюмень', lat:57.15, lon:65.53, mul:1.00},
+    {name:'Иркутск', lat:52.28, lon:104.28, mul:0.95},{name:'Владивосток', lat:43.12, lon:131.89, mul:1.05}
 ];
-
 const PHONE_BRANDS = [
-    {id:'iphone', name:'iPhone', color:'#333', logo:'🍎'},
-    {id:'samsung', name:'Samsung', color:'#1428a0', logo:'📱'},
-    {id:'xiaomi', name:'Xiaomi', color:'#ff6900', logo:'🔶'},
-    {id:'honor', name:'Honor', color:'#00aaff', logo:'🟦'},
-    {id:'huawei', name:'Huawei', color:'#cf0a2c', logo:'🌸'},
-    {id:'google', name:'Google', color:'#4285f4', logo:'🔵'},
-    {id:'oneplus', name:'OnePlus', color:'#eb0028', logo:'🔴'},
-    {id:'realme', name:'Realme', color:'#ffc107', logo:'🟡'},
-    {id:'poco', name:'POCO', color:'#ffcc00', logo:'🟡'},
-    {id:'nokia', name:'Nokia', color:'#005aff', logo:'📞'}
+    {id:'iphone', name:'iPhone', color:'#333', logo:'🍎'},{id:'samsung', name:'Samsung', color:'#1428a0', logo:'📱'},
+    {id:'xiaomi', name:'Xiaomi', color:'#ff6900', logo:'🔶'},{id:'honor', name:'Honor', color:'#00aaff', logo:'🟦'},
+    {id:'huawei', name:'Huawei', color:'#cf0a2c', logo:'🌸'},{id:'google', name:'Google', color:'#4285f4', logo:'🔵'},
+    {id:'oneplus', name:'OnePlus', color:'#eb0028', logo:'🔴'},{id:'realme', name:'Realme', color:'#ffc107', logo:'🟡'},
+    {id:'poco', name:'POCO', color:'#ffcc00', logo:'🟡'},{id:'nokia', name:'Nokia', color:'#005aff', logo:'📞'}
 ];
 const PHONE_MODELS = {
     iphone:['iPhone 11','iPhone 12','iPhone 13','iPhone 14','iPhone 15','iPhone 15 Pro','iPhone 16','iPhone 16 Pro Max','iPhone SE'],
     samsung:['Galaxy A54','Galaxy S22','Galaxy S23','Galaxy S24 Ultra','Galaxy Z Flip 5','Galaxy Z Fold 5'],
     xiaomi:['Redmi Note 12','Redmi Note 13 Pro','Xiaomi 13T','Xiaomi 14','Xiaomi 14 Ultra'],
-    honor:['Honor X7','Honor 90','Honor Magic5'],
-    huawei:['Nova 11','P60 Pro','Mate 60 Pro'],
-    google:['Pixel 7a','Pixel 8','Pixel 8 Pro','Pixel 9'],
-    oneplus:['Nord 3','OnePlus 11','OnePlus 12'],
-    realme:['C55','11 Pro','GT 5'],
-    poco:['C65','X6 Pro','F5'],
-    nokia:['G42','X30']
+    honor:['Honor X7','Honor 90','Honor Magic5'],huawei:['Nova 11','P60 Pro','Mate 60 Pro'],
+    google:['Pixel 7a','Pixel 8','Pixel 8 Pro','Pixel 9'],oneplus:['Nord 3','OnePlus 11','OnePlus 12'],
+    realme:['C55','11 Pro','GT 5'],poco:['C65','X6 Pro','F5'],nokia:['G42','X30']
 };
 const LAPTOP_BRANDS = [
-    {id:'lenovo', name:'Lenovo', color:'#e2231a', logo:'💻'},
-    {id:'hp', name:'HP', color:'#0096d6', logo:'💻'},
-    {id:'asus', name:'ASUS', color:'#00539b', logo:'💻'},
-    {id:'apple_l', name:'MacBook', color:'#333', logo:'🍏'},
-    {id:'dell', name:'Dell', color:'#007db8', logo:'💻'},
-    {id:'msi', name:'MSI', color:'#ff0000', logo:'💻'}
+    {id:'lenovo', name:'Lenovo', color:'#e2231a', logo:'💻'},{id:'hp', name:'HP', color:'#0096d6', logo:'💻'},
+    {id:'asus', name:'ASUS', color:'#00539b', logo:'💻'},{id:'apple_l', name:'MacBook', color:'#333', logo:'🍏'},
+    {id:'dell', name:'Dell', color:'#007db8', logo:'💻'},{id:'msi', name:'MSI', color:'#ff0000', logo:'💻'}
 ];
-const LAPTOP_MODELS = {
-    lenovo:['IdeaPad 3','ThinkPad E14','Legion 5'],
-    hp:['HP 15s','Pavilion 15','OMEN 16'],
-    asus:['Vivobook 15','ROG Strix G16'],
-    apple_l:['MacBook Air M1','MacBook Air M2','MacBook Pro 14'],
-    dell:['Inspiron 15','XPS 13'],
-    msi:['Modern 14','Katana GF66']
-};
+const LAPTOP_MODELS = {lenovo:['IdeaPad 3','ThinkPad E14','Legion 5'],hp:['HP 15s','Pavilion 15','OMEN 16'],
+    asus:['Vivobook 15','ROG Strix G16'],apple_l:['MacBook Air M1','MacBook Air M2','MacBook Pro 14'],
+    dell:['Inspiron 15','XPS 13'],msi:['Modern 14','Katana GF66']};
 const PC_BRANDS = [
-    {id:'office', name:'Офисные', color:'#22c55e', logo:'🖥️'},
-    {id:'gaming', name:'Игровые', color:'#0ea5e9', logo:'🎮'},
-    {id:'workstation', name:'Рабочие', color:'#8b5cf6', logo:'🚀'},
-    {id:'premium_pc', name:'Премиум', color:'#f59e0b', logo:'⚡'},
+    {id:'office', name:'Офисные', color:'#22c55e', logo:'🖥️'},{id:'gaming', name:'Игровые', color:'#0ea5e9', logo:'🎮'},
+    {id:'workstation', name:'Рабочие', color:'#8b5cf6', logo:'🚀'},{id:'premium_pc', name:'Премиум', color:'#f59e0b', logo:'⚡'},
     {id:'ultra_pc', name:'Ультра', color:'#ef4444', logo:'🔥'}
 ];
-const PC_MODELS = {
-    office:['Офисный Celeron','Офисный i3-10100','i3+GTX 1050'],
+const PC_MODELS = {office:['Офисный Celeron','Офисный i3-10100','i3+GTX 1050'],
     gaming:['i5-12400F/RTX 3060','Ryzen 5/RTX 3060Ti','i5-13400F/RTX 4060'],
     workstation:['i7-13700K/RTX 4070','i9-13900K/RTX 4080','Ryzen 9/RTX 4070Ti'],
     premium_pc:['i9-14900K/RTX 4090','Ryzen 9 7950X/RTX 4090'],
-    ultra_pc:['Threadripper/4090','Сервер 2x Xeon','Квантовый ПК']
-};
-const PC_PARTS = [
-    {id:'cpu', name:'Процессор', price:8500, icon:'🔧'},
-    {id:'gpu', name:'Видеокарта', price:18000, icon:'🎮'},
-    {id:'ram', name:'ОЗУ', price:3000, icon:'📊'},
-    {id:'storage', name:'Накопитель', price:2500, icon:'💾'},
-    {id:'case', name:'Корпус', price:5000, icon:'📦'},
-    {id:'psu', name:'БП', price:5000, icon:'⚡'},
-    {id:'cooler', name:'Кулер', price:4000, icon:'🌀'}
-];
-const TABLET_BRANDS = [
-    {id:'ipad', name:'iPad', color:'#333', logo:'📱'},
-    {id:'samsung_t', name:'Samsung Tab', color:'#1428a0', logo:'📟'},
-    {id:'lenovo_t', name:'Lenovo Tab', color:'#e2231a', logo:'📟'},
-    {id:'xiaomi_t', name:'Xiaomi Pad', color:'#ff6900', logo:'📟'}
-];
-const TABLET_MODELS = {
-    ipad:['iPad 9','iPad 10','iPad Air 5','iPad Pro 11'],
-    samsung_t:['Galaxy Tab A9','Galaxy Tab S9'],
-    lenovo_t:['Tab M10','Tab P11','Yoga Tab 13'],
-    xiaomi_t:['Xiaomi Pad 6','Redmi Pad SE']
-};
-const HEADPHONE_BRANDS = [
-    {id:'airpods', name:'AirPods', color:'#333', logo:'🎧'},
-    {id:'sony_hp', name:'Sony', color:'#000', logo:'🎧'},
-    {id:'jbl', name:'JBL', color:'#ff6600', logo:'🎧'},
-    {id:'bose', name:'Bose', color:'#1a1a1a', logo:'🎧'}
-];
-const HEADPHONE_MODELS = {
-    airpods:['AirPods 2','AirPods 3','AirPods Pro 2','AirPods Max'],
-    sony_hp:['WH-1000XM4','WH-1000XM5','WF-1000XM4'],
-    jbl:['Tune 510BT','Live 660NC'],
-    bose:['QC 45','QC Ultra']
-};
-const CAR_BRANDS = [
-    {id:'lada', name:'Lada', color:'#1e40af', logo:'🚗'},
-    {id:'toyota', name:'Toyota', color:'#dc2626', logo:'🚙'},
-    {id:'bmw', name:'BMW', color:'#0ea5e9', logo:'🏎️'},
-    {id:'mercedes', name:'Mercedes', color:'#64748b', logo:'🚘'},
-    {id:'audi', name:'Audi', color:'#dc2626', logo:'🚗'},
-    {id:'kia', name:'Kia', color:'#ea580c', logo:'🚙'},
-    {id:'hyundai', name:'Hyundai', color:'#2563eb', logo:'🚘'},
-    {id:'tesla', name:'Tesla', color:'#dc2626', logo:'⚡'}
-];
-const CAR_MODELS = {
-    lada:['Granta','Vesta','Niva Legend','XRAY'],
-    toyota:['Camry','Corolla','RAV4','Land Cruiser'],
-    bmw:['3 Series','5 Series','X3','X5','M3'],
-    mercedes:['C-Class','E-Class','GLC','GLE'],
-    audi:['A4','A6','Q5','Q7'],
-    kia:['Rio','Sportage','Sorento','K5'],
-    hyundai:['Solaris','Creta','Tucson','Santa Fe'],
-    tesla:['Model 3','Model S','Model Y','Cybertruck']
-};
-const PHONE_PARTS = [
-    {id:'camera', name:'Камера', price:500, icon:'📷'},
-    {id:'battery', name:'Аккумулятор', price:1500, icon:'🔋'},
-    {id:'glass', name:'Стекло', price:250, icon:'🔍'},
-    {id:'cover', name:'Задняя крышка', price:400, icon:'🛡️'},
-    {id:'screen', name:'Экран', price:2500, icon:'📱'},
-    {id:'motherboard', name:'Мат. плата', price:5500, icon:'🔧'},
-    {id:'charging_port', name:'Порт зарядки', price:450, icon:'🔌'},
-    {id:'fingerprint', name:'Сканер', price:1200, icon:'👆'},
-    {id:'vibration', name:'Вибрация', price:400, icon:'📳'},
-    {id:'microphone', name:'Микрофон', price:500, icon:'🎤'}
-];
-const COUNTRIES = [
-    {code:'ru', name:'Россия', flag:'🇷🇺', format:'+7 XXX XXX-XX-XX'},
-    {code:'us', name:'США', flag:'🇺🇸', format:'+1 (XXX) XXX-XXXX'},
-    {code:'gb', name:'Великобритания', flag:'🇬🇧', format:'+44 XXXX XXXXXX'},
-    {code:'de', name:'Германия', flag:'🇩🇪', format:'+49 XXX XXXXXXX'},
-    {code:'fr', name:'Франция', flag:'🇫🇷', format:'+33 X XX XX XX XX'},
-    {code:'kz', name:'Казахстан', flag:'🇰🇿', format:'+7 XXX XXX-XX-XX'},
-    {code:'tr', name:'Турция', flag:'🇹🇷', format:'+90 XXX XXX XX XX'},
-    {code:'ae', name:'ОАЭ', flag:'🇦🇪', format:'+971 XX XXX XXXX'},
-    {code:'cn', name:'Китай', flag:'🇨🇳', format:'+86 XXX XXXX XXXX'}
-];
-const BANKS = {
-    'Россия':[{name:'Сбербанк',color:'#22c55e'},{name:'ВТБ',color:'#0ea5e9'},{name:'Альфа',color:'#dc2626'},{name:'Тинькофф',color:'#fbbf24'}],
-    'США':[{name:'Chase',color:'#1e40af'},{name:'BoA',color:'#dc2626'}],
-    'Великобритания':[{name:'Barclays',color:'#0ea5e9'},{name:'HSBC',color:'#dc2626'}],
-    'Германия':[{name:'Deutsche',color:'#1e3a8a'},{name:'N26',color:'#0f172a'}],
-    'Франция':[{name:'BNP',color:'#16a34a'}],
-    'Казахстан':[{name:'Kaspi',color:'#dc2626'}],
-    'Турция':[{name:'Ziraat',color:'#dc2626'}],
-    'ОАЭ':[{name:'Emirates NBD',color:'#dc2626'}],
-    'Китай':[{name:'ICBC',color:'#dc2626'}]
-};
-const OPERATORS = {
-    'Россия':[{name:'МТС',color:'#dc2626'},{name:'Билайн',color:'#fbbf24'},{name:'Мегафон',color:'#16a34a'},{name:'Т2',color:'#0f172a'},{name:'Ёта',color:'#0ea5e9'}],
-    'США':[{name:'AT&T',color:'#0ea5e9'},{name:'Verizon',color:'#dc2626'}],
-    'Великобритания':[{name:'EE',color:'#0ea5e9'},{name:'O2',color:'#1e40af'}],
-    'Германия':[{name:'Telekom',color:'#ec4899'}],
-    'Франция':[{name:'Orange',color:'#f97316'}],
-    'Казахстан':[{name:'Beeline',color:'#fbbf24'}],
-    'Турция':[{name:'Turkcell',color:'#0ea5e9'}],
-    'ОАЭ':[{name:'Etisalat',color:'#16a34a'}],
-    'Китай':[{name:'China Mobile',color:'#0ea5e9'}]
-};
+    ultra_pc:['Threadripper/4090','Сервер 2x Xeon','Квантовый ПК']};
+const PC_PARTS = [{id:'cpu', name:'Процессор', price:8500, icon:'🔧'},{id:'gpu', name:'Видеокарта', price:18000, icon:'🎮'},
+    {id:'ram', name:'ОЗУ', price:3000, icon:'📊'},{id:'storage', name:'Накопитель', price:2500, icon:'💾'},
+    {id:'case', name:'Корпус', price:5000, icon:'📦'},{id:'psu', name:'БП', price:5000, icon:'⚡'},
+    {id:'cooler', name:'Кулер', price:4000, icon:'🌀'}];
+const TABLET_BRANDS = [{id:'ipad', name:'iPad', color:'#333', logo:'📱'},{id:'samsung_t', name:'Samsung Tab', color:'#1428a0', logo:'📟'},
+    {id:'lenovo_t', name:'Lenovo Tab', color:'#e2231a', logo:'📟'},{id:'xiaomi_t', name:'Xiaomi Pad', color:'#ff6900', logo:'📟'}];
+const TABLET_MODELS = {ipad:['iPad 9','iPad 10','iPad Air 5','iPad Pro 11'],samsung_t:['Galaxy Tab A9','Galaxy Tab S9'],
+    lenovo_t:['Tab M10','Tab P11','Yoga Tab 13'],xiaomi_t:['Xiaomi Pad 6','Redmi Pad SE']};
+const HEADPHONE_BRANDS = [{id:'airpods', name:'AirPods', color:'#333', logo:'🎧'},{id:'sony_hp', name:'Sony', color:'#000', logo:'🎧'},
+    {id:'jbl', name:'JBL', color:'#ff6600', logo:'🎧'},{id:'bose', name:'Bose', color:'#1a1a1a', logo:'🎧'}];
+const HEADPHONE_MODELS = {airpods:['AirPods 2','AirPods 3','AirPods Pro 2','AirPods Max'],
+    sony_hp:['WH-1000XM4','WH-1000XM5','WF-1000XM4'],jbl:['Tune 510BT','Live 660NC'],bose:['QC 45','QC Ultra']};
+const CAR_BRANDS = [{id:'lada', name:'Lada', color:'#1e40af', logo:'🚗'},{id:'toyota', name:'Toyota', color:'#dc2626', logo:'🚙'},
+    {id:'bmw', name:'BMW', color:'#0ea5e9', logo:'🏎️'},{id:'mercedes', name:'Mercedes', color:'#64748b', logo:'🚘'},
+    {id:'audi', name:'Audi', color:'#dc2626', logo:'🚗'},{id:'kia', name:'Kia', color:'#ea580c', logo:'🚙'},
+    {id:'hyundai', name:'Hyundai', color:'#2563eb', logo:'🚘'},{id:'tesla', name:'Tesla', color:'#dc2626', logo:'⚡'}];
+const CAR_MODELS = {lada:['Granta','Vesta','Niva Legend','XRAY'],toyota:['Camry','Corolla','RAV4','Land Cruiser'],
+    bmw:['3 Series','5 Series','X3','X5','M3'],mercedes:['C-Class','E-Class','GLC','GLE'],
+    audi:['A4','A6','Q5','Q7'],kia:['Rio','Sportage','Sorento','K5'],
+    hyundai:['Solaris','Creta','Tucson','Santa Fe'],tesla:['Model 3','Model S','Model Y','Cybertruck']};
+const PHONE_PARTS = [{id:'camera', name:'Камера', price:500, icon:'📷'},{id:'battery', name:'Аккумулятор', price:1500, icon:'🔋'},
+    {id:'glass', name:'Стекло', price:250, icon:'🔍'},{id:'cover', name:'Задняя крышка', price:400, icon:'🛡️'},
+    {id:'screen', name:'Экран', price:2500, icon:'📱'},{id:'motherboard', name:'Мат. плата', price:5500, icon:'🔧'},
+    {id:'charging_port', name:'Порт зарядки', price:450, icon:'🔌'},{id:'fingerprint', name:'Сканер', price:1200, icon:'👆'},
+    {id:'vibration', name:'Вибрация', price:400, icon:'📳'},{id:'microphone', name:'Микрофон', price:500, icon:'🎤'}];
+const COUNTRIES = [{code:'ru', name:'Россия', flag:'🇷🇺', format:'+7 XXX XXX-XX-XX'},{code:'us', name:'США', flag:'🇺🇸', format:'+1 (XXX) XXX-XXXX'},
+    {code:'gb', name:'Великобритания', flag:'🇬🇧', format:'+44 XXXX XXXXXX'},{code:'de', name:'Германия', flag:'🇩🇪', format:'+49 XXX XXXXXXX'},
+    {code:'fr', name:'Франция', flag:'🇫🇷', format:'+33 X XX XX XX XX'},{code:'kz', name:'Казахстан', flag:'🇰🇿', format:'+7 XXX XXX-XX-XX'},
+    {code:'tr', name:'Турция', flag:'🇹🇷', format:'+90 XXX XXX XX XX'},{code:'ae', name:'ОАЭ', flag:'🇦🇪', format:'+971 XX XXX XXXX'},
+    {code:'cn', name:'Китай', flag:'🇨🇳', format:'+86 XXX XXXX XXXX'}];
+const BANKS = {'Россия':[{name:'Сбербанк',color:'#22c55e'},{name:'ВТБ',color:'#0ea5e9'},{name:'Альфа',color:'#dc2626'},{name:'Тинькофф',color:'#fbbf24'}],
+    'США':[{name:'Chase',color:'#1e40af'},{name:'BoA',color:'#dc2626'}],'Великобритания':[{name:'Barclays',color:'#0ea5e9'},{name:'HSBC',color:'#dc2626'}],
+    'Германия':[{name:'Deutsche',color:'#1e3a8a'},{name:'N26',color:'#0f172a'}],'Франция':[{name:'BNP',color:'#16a34a'}],
+    'Казахстан':[{name:'Kaspi',color:'#dc2626'}],'Турция':[{name:'Ziraat',color:'#dc2626'}],'ОАЭ':[{name:'Emirates NBD',color:'#dc2626'}],'Китай':[{name:'ICBC',color:'#dc2626'}]};
+const OPERATORS = {'Россия':[{name:'МТС',color:'#dc2626'},{name:'Билайн',color:'#fbbf24'},{name:'Мегафон',color:'#16a34a'},{name:'Т2',color:'#0f172a'},{name:'Ёта',color:'#0ea5e9'}],
+    'США':[{name:'AT&T',color:'#0ea5e9'},{name:'Verizon',color:'#dc2626'}],'Великобритания':[{name:'EE',color:'#0ea5e9'},{name:'O2',color:'#1e40af'}],
+    'Германия':[{name:'Telekom',color:'#ec4899'}],'Франция':[{name:'Orange',color:'#f97316'}],'Казахстан':[{name:'Beeline',color:'#fbbf24'}],
+    'Турция':[{name:'Turkcell',color:'#0ea5e9'}],'ОАЭ':[{name:'Etisalat',color:'#16a34a'}],'Китай':[{name:'China Mobile',color:'#0ea5e9'}]};
 const SIM_TARIFFS = [{gb:10,price:50},{gb:30,price:200},{gb:50,price:400},{gb:100,price:700},{gb:9999,price:1500,label:'Безлимит'}];
-const BUSINESSES = [
-    {id:'larok', name:'🥤 Ларёк', price:50000, income:30000},
-    {id:'fastfood', name:'🍔 Фастфуд', price:150000, income:100000},
-    {id:'coffee', name:'☕ Кофейня', price:300000, income:200000},
-    {id:'clothes', name:'👕 Магазин одежды', price:600000, income:300000},
-    {id:'electronics', name:'📱 Электроника', price:1000000, income:500000},
-    {id:'service', name:'🔧 Сервис', price:2000000, income:1000000},
-    {id:'supermarket', name:'🛒 Супермаркет', price:5000000, income:2500000},
-    {id:'dealership', name:'🚗 Автосалон', price:10000000, income:5000000},
-    {id:'factory', name:'🏭 Завод', price:30000000, income:25000000},
-    {id:'mall', name:'🏢 ТРЦ', price:100000000, income:500000000}
-];
-const OFFICES = [
-    {id:0, name:'Гараж', price:0, limit:5, partsLimit:10, maxEmp:1},
-    {id:1, name:'Квартира', price:100000, limit:20, partsLimit:30, maxEmp:2},
-    {id:2, name:'Офис', price:500000, limit:50, partsLimit:80, maxEmp:3},
-    {id:3, name:'Штаб', price:2000000, limit:100, partsLimit:200, maxEmp:5}
-];
-const JOBS = [
-    {id:'courier', name:'Курьер', salary:500, req:1, icon:'🚴'},
-    {id:'seller', name:'Продавец', salary:1200, req:3, icon:'🛒'},
-    {id:'assembler', name:'Мастер', salary:2500, req:5, icon:'🔧'},
-    {id:'it', name:'IT-спец', salary:4000, req:7, icon:'💻'},
-    {id:'director', name:'Директор', salary:8000, req:10, icon:'👔'}
-];
-const STORE_APPS = [
-    {id:'tax', name:'Налоги', icon:'📋', color:'#ef4444', size:'12 МБ', desc:'Проверка налогов'},
+const BUSINESSES = [{id:'larok', name:'🥤 Ларёк', price:50000, income:30000},{id:'fastfood', name:'🍔 Фастфуд', price:150000, income:100000},
+    {id:'coffee', name:'☕ Кофейня', price:300000, income:200000},{id:'clothes', name:'👕 Магазин одежды', price:600000, income:300000},
+    {id:'electronics', name:'📱 Электроника', price:1000000, income:500000},{id:'service', name:'🔧 Сервис', price:2000000, income:1000000},
+    {id:'supermarket', name:'🛒 Супермаркет', price:5000000, income:2500000},{id:'dealership', name:'🚗 Автосалон', price:10000000, income:5000000},
+    {id:'factory', name:'🏭 Завод', price:30000000, income:25000000},{id:'mall', name:'🏢 ТРЦ', price:100000000, income:500000000}];
+const OFFICES = [{id:0, name:'Гараж', price:0, limit:5, partsLimit:10, maxEmp:1},{id:1, name:'Квартира', price:100000, limit:20, partsLimit:30, maxEmp:2},
+    {id:2, name:'Офис', price:500000, limit:50, partsLimit:80, maxEmp:3},{id:3, name:'Штаб', price:2000000, limit:100, partsLimit:200, maxEmp:5}];
+const JOBS = [{id:'courier', name:'Курьер', salary:500, req:1, icon:'🚴'},{id:'seller', name:'Продавец', salary:1200, req:3, icon:'🛒'},
+    {id:'assembler', name:'Мастер', salary:2500, req:5, icon:'🔧'},{id:'it', name:'IT-спец', salary:4000, req:7, icon:'💻'},
+    {id:'director', name:'Директор', salary:8000, req:10, icon:'👔'}];
+const STORE_APPS = [{id:'tax', name:'Налоги', icon:'📋', color:'#ef4444', size:'12 МБ', desc:'Проверка налогов'},
     {id:'used', name:'Б/У Рынок', icon:'♻️', color:'#f97316', size:'18 МБ', desc:'Покупка сломанных устройств'},
     {id:'cars', name:'Авто', icon:'🚗', color:'#3b82f6', size:'25 МБ', desc:'Рынок автомобилей'},
     {id:'repair', name:'Ремонт', icon:'🔧', color:'#8b5cf6', size:'15 МБ', desc:'Сервис и запчасти'},
     {id:'stats', name:'Статистика', icon:'📊', color:'#10b981', size:'8 МБ', desc:'Статистика бизнеса'},
     {id:'tetris', name:'Тетрис', icon:'🎮', color:'#ef4444', size:'5 МБ', desc:'Классика'},
-    {id:'snake', name:'Змейка', icon:'🐍', color:'#84cc16', size:'4 МБ', desc:'Легенда'}
-];
+    {id:'snake', name:'Змейка', icon:'🐍', color:'#84cc16', size:'4 МБ', desc:'Легенда'}];
 const SELLER_NAMES = ['Алексей','Мария','Иван','Ольга','Дмитрий','Елена','Сергей','Катя','Никита','Света'];
 const BUYER_NAMES = ['Андрей','Виктор','Галина','Егор','Жанна','Игорь','Костя','Лена','Миша','Наташа'];
 
-/* ============================================================
-   UTILS
-============================================================ */
-function fmt(n){
-    n = Number(n) || 0;
-    if(Math.abs(n) >= 1e12) return (n/1e12).toFixed(1)+' трлн ₽';
-    if(Math.abs(n) >= 1e9) return (n/1e9).toFixed(1)+' млрд ₽';
-    if(Math.abs(n) >= 1e6) return (n/1e6).toFixed(1)+' млн ₽';
-    if(Math.abs(n) >= 1e3) return (n/1e3).toFixed(1)+' тыс ₽';
-    return Math.round(n).toLocaleString('ru-RU') + ' ₽';
-}
-function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+/* ============ УТИЛИТЫ ============ */
+function fmt(n){n=Number(n)||0;
+    if(Math.abs(n)>=1e12)return(n/1e12).toFixed(1)+' трлн ₽';
+    if(Math.abs(n)>=1e9)return(n/1e9).toFixed(1)+' млрд ₽';
+    if(Math.abs(n)>=1e6)return(n/1e6).toFixed(1)+' млн ₽';
+    if(Math.abs(n)>=1e3)return(n/1e3).toFixed(1)+' тыс ₽';
+    return Math.round(n).toLocaleString('ru-RU')+' ₽';}
+function rand(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function escHtml(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 function notify(text, sub, type){
     const el = document.getElementById('toast');
     el.textContent = text + (sub ? ' · ' + sub : '');
@@ -936,23 +823,22 @@ function notify(text, sub, type){
     el._t = setTimeout(() => el.classList.remove('show'), 2500);
 }
 
-/* ============================================================
-   AUTH
-============================================================ */
+/* ============ AUTH ============ */
 function signInWithGoogle(){
     if(!fbAuth){ document.getElementById('loginStatus').textContent = '❌ Firebase не инициализирован'; return; }
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     document.getElementById('loginStatus').textContent = '⏳ Входим...';
     fbAuth.signInWithPopup(provider).catch(err => {
-        console.error('❌ Auth:', err);
-        if(err.code === 'auth/popup-blocked') document.getElementById('loginStatus').textContent = '❌ Разрешите попапы';
-        else if(err.code === 'auth/popup-closed-by-user') document.getElementById('loginStatus').textContent = '❌ Окно закрыто';
-        else document.getElementById('loginStatus').textContent = '❌ ' + err.message;
+        console.error('Auth:', err);
+        const st = document.getElementById('loginStatus');
+        if(err.code === 'auth/popup-blocked') st.textContent = '❌ Разрешите попапы';
+        else if(err.code === 'auth/popup-closed-by-user') st.textContent = '❌ Окно закрыто';
+        else st.textContent = '❌ ' + err.message;
     });
 }
 function signOut(){
-    showModal('Выйти из аккаунта?', 'Прогресс сохранён в облаке', { ok: 'Выйти', onOk: () => { if(fbAuth) fbAuth.signOut().then(() => location.reload()); }});
+    showModal('Выйти?', 'Прогресс сохранён в облаке', { ok: 'Выйти', onOk: () => { if(fbAuth) fbAuth.signOut().then(() => location.reload()); }});
 }
 function watchAuth(){
     if(!fbAuth){ onUserReady(); return; }
@@ -963,9 +849,11 @@ function watchAuth(){
             state.playerEmail = user.email || '';
             state.playerPhoto = user.photoURL || '';
             if(!state.playerName) state.playerName = user.displayName || 'Игрок';
-            console.log('👤', user.displayName, user.email);
+            console.log('👤', user.displayName);
             document.getElementById('loginScreen').classList.add('hidden');
-            loadCloudSave().then(() => onUserReady());
+            loadCloudSave()
+                .then(() => checkBan())
+                .then(banned => { if(!banned) onUserReady(); });
         } else {
             fbUser = null;
             document.getElementById('loginScreen').classList.remove('hidden');
@@ -974,10 +862,27 @@ function watchAuth(){
         }
     });
 }
+
+/* ============ BAN CHECK ============ */
+async function checkBan(){
+    if(!fbDB || !fbUser) return false;
+    try {
+        const snap = await fbDB.ref('bans/' + fbUser.uid).once('value');
+        const ban = snap.val();
+        if(ban){
+            document.getElementById('banScreen').classList.add('show');
+            document.getElementById('banReason').textContent = 'Причина: ' + (ban.reason || 'Нарушение правил');
+            document.getElementById('banUid').textContent = 'UID: ' + fbUser.uid;
+            if(fbAuth) await fbAuth.signOut();
+            return true;
+        }
+    } catch(e){ console.error('Ban check:', e); }
+    return false;
+}
+
 function onUserReady(){
     boot();
     setSyncStatus('online');
-    // Показываем lock screen после входа
     const lock = document.getElementById('lockScreen');
     if(lock){
         lock.style.display = 'flex';
@@ -987,12 +892,10 @@ function onUserReady(){
 }
 function setSyncStatus(s){
     const dot = document.getElementById('syncDot');
-    if(dot){ dot.className = 'sync-dot ' + s; dot.title = s === 'online' ? 'Синхронизировано' : (s === 'saving' ? 'Сохранение...' : 'Офлайн'); }
+    if(dot){ dot.className = 'sync-dot ' + s; }
 }
 
-/* ============================================================
-   CLOUD SAVE
-============================================================ */
+/* ============ CLOUD SAVE ============ */
 let saveTimeout = null;
 function cloudSaveDebounced(){
     setSyncStatus('saving');
@@ -1027,7 +930,7 @@ function cloudSave(){
         setSyncStatus('online');
         state.lastSaved = Date.now();
         updateLeaderboard();
-    }).catch(err => { console.error('❌ Save:', err); setSyncStatus('offline'); });
+    }).catch(err => { console.error('Save:', err); setSyncStatus('offline'); });
 }
 async function loadCloudSave(){
     if(!fbUser || !fbDB) return false;
@@ -1039,7 +942,7 @@ async function loadCloudSave(){
         if(data.profile){ state.playerName = data.profile.name || state.playerName; state.level = data.profile.level || state.level; }
         notify('☁️ Загружено из облака','','success');
         return true;
-    } catch(e) { console.error('❌ Load:', e); return false; }
+    } catch(e) { console.error('Load:', e); return false; }
 }
 function syncNow(){
     if(!fbUser){ notify('❌ Войдите','','danger'); return; }
@@ -1048,17 +951,13 @@ function syncNow(){
     notify('☁️ Синхронизировано','','success');
 }
 
-/* ============================================================
-   LEADERBOARD
-============================================================ */
+/* ============ LEADERBOARD ============ */
 async function updateLeaderboard(){
     if(!fbUser || !fbDB) return;
     try {
         await fbDB.ref('leaderboard/' + fbUser.uid).set({
-            name: state.playerName || 'Аноним',
-            photo: state.playerPhoto || '',
-            money: state.money, level: state.level,
-            city: state.currentCity, updatedAt: Date.now()
+            name: state.playerName || 'Аноним', photo: state.playerPhoto || '',
+            money: state.money, level: state.level, city: state.currentCity, updatedAt: Date.now()
         });
     } catch(e){}
 }
@@ -1081,7 +980,7 @@ async function loadLeaderboard(){
             return `<div class="leader-row ${isMe}">
                 <div class="leader-rank ${rankClass}">${rank}</div>
                 <div class="leader-avatar">${avatarHtml}</div>
-                <div class="leader-name">${escapeHtml(p.name || 'Аноним')}${isMe ? ' (вы)' : ''}</div>
+                <div class="leader-name">${escHtml(p.name || 'Аноним')}${isMe ? ' (вы)' : ''}</div>
                 <div class="leader-money">${fmt(p.money)}</div>
             </div>`;
         }).join('');
@@ -1090,9 +989,7 @@ async function loadLeaderboard(){
     }
 }
 
-/* ============================================================
-   GLOBAL CHAT
-============================================================ */
+/* ============ GLOBAL CHAT ============ */
 let globalChatRef = null;
 function initGlobalChat(){
     if(!fbDB || !fbUser) return;
@@ -1107,22 +1004,22 @@ function appendGlobalMessage(msg){
     const area = document.getElementById('globalChatMessages');
     if(!area) return;
     const isMe = msg.uid === fbUser?.uid;
+    const isSystem = msg.isSystem === true;
     const div = document.createElement('div');
-    div.className = 'gchat-msg' + (isMe ? ' me' : '');
+    div.className = 'gchat-msg' + (isMe ? ' me' : '') + (isSystem ? ' system' : '');
     const initials = (msg.name || 'A')[0].toUpperCase();
     const avatarHtml = msg.photo ? `<img src="${msg.photo}">` : initials;
     div.innerHTML = `
         <div class="gchat-avatar">${avatarHtml}</div>
         <div class="gchat-content">
-            <div class="gchat-name ${isMe ? 'me' : ''}">${escapeHtml(msg.name || 'Аноним')}</div>
-            <div class="gchat-text">${escapeHtml(msg.text || '')}</div>
+            <div class="gchat-name ${isMe ? 'me' : ''} ${isSystem ? 'system' : ''}">${escHtml(msg.name || 'Аноним')}</div>
+            <div class="gchat-text">${escHtml(msg.text || '')}</div>
             <div class="gchat-time">${new Date(msg.time).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}</div>
         </div>
     `;
     area.appendChild(div);
     area.scrollTop = area.scrollHeight;
 }
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 function sendGlobalMessage(){
     const inp = document.getElementById('globalChatInput');
     const text = inp.value.trim();
@@ -1130,10 +1027,8 @@ function sendGlobalMessage(){
     if(!fbUser){ notify('❌ Войдите','','danger'); return; }
     if(!fbDB){ notify('❌ Нет подключения','','danger'); return; }
     fbDB.ref('globalChat').push({
-        uid: fbUser.uid,
-        name: state.playerName || 'Аноним',
-        photo: state.playerPhoto || '',
-        text: text, time: Date.now()
+        uid: fbUser.uid, name: state.playerName || 'Аноним',
+        photo: state.playerPhoto || '', text: text, time: Date.now()
     }).then(() => { inp.value = ''; }).catch(e => notify('❌ ' + e.message, '', 'danger'));
 }
 function loadGlobalChatHistory(){
@@ -1147,9 +1042,7 @@ function loadGlobalChatHistory(){
     });
 }
 
-/* ============================================================
-   SCREEN NAV
-============================================================ */
+/* ============ SCREEN NAV ============ */
 function openScreen(id){
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const el = document.getElementById(id);
@@ -1185,9 +1078,7 @@ function closeAll(){
     if(dock) dock.classList.remove('hidden');
 }
 
-/* ============================================================
-   MODAL
-============================================================ */
+/* ============ MODAL ============ */
 let modalResolve = null;
 function showModal(title, text, {ok = 'OK', cancel = 'Отмена', onOk = null, hideCancel = false, extraHtml = ''} = {}){
     document.getElementById('modalTitle').textContent = title;
@@ -1204,9 +1095,7 @@ function closeModal(ok){
     if(modalResolve){ const r = modalResolve; modalResolve = null; r(ok); }
 }
 
-/* ============================================================
-   MARKET
-============================================================ */
+/* ============ MARKET ============ */
 const marketDB = [], carsDB = [], usedDB = [];
 function generateMarkets(){
     marketDB.length = 0; carsDB.length = 0; usedDB.length = 0;
@@ -1217,28 +1106,21 @@ function generateMarkets(){
                 for(let i = 0; i < 2; i++){
                     const base = 15000 + Math.random() * 60000;
                     const broken = Math.random() < 0.35;
-                    marketDB.push({
-                        id: 'ph_'+city.name+'_'+brand.id+'_'+model+'_'+i+'_'+Math.random().toString(36).slice(2,7),
-                        type: 'phone', brand: brand.id, brandName: brand.name, brandColor: brand.color, brandLogo: brand.logo,
-                        fullName: model, price: Math.floor(base * mul / 100) * 100,
-                        seller: rand(SELLER_NAMES), sellerType: Math.random() < 0.5 ? 'good' : 'evil',
-                        broken, brokenParts: broken ? [rand(PHONE_PARTS).id] : [],
-                        stars: (3 + Math.random()*2).toFixed(1), city: city.name
-                    });
+                    marketDB.push({id:'ph_'+city.name+'_'+brand.id+'_'+model+'_'+i+'_'+Math.random().toString(36).slice(2,7),
+                        type:'phone',brand:brand.id,brandName:brand.name,brandColor:brand.color,brandLogo:brand.logo,
+                        fullName:model,price:Math.floor(base*mul/100)*100,seller:rand(SELLER_NAMES),
+                        sellerType:Math.random()<0.5?'good':'evil',broken,brokenParts:broken?[rand(PHONE_PARTS).id]:[],
+                        stars:(3+Math.random()*2).toFixed(1),city:city.name});
                 }
             });
         });
         LAPTOP_BRANDS.forEach(brand => {
             LAPTOP_MODELS[brand.id].forEach(model => {
                 const base = 30000 + Math.random() * 80000;
-                marketDB.push({
-                    id: 'lp_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
-                    type: 'laptop', brand: brand.id, brandName: brand.name, brandColor: brand.color, brandLogo: brand.logo,
-                    fullName: model, price: Math.floor(base * mul / 100) * 100,
-                    seller: rand(SELLER_NAMES), sellerType: 'good',
-                    broken: false, brokenParts: [],
-                    stars: (4 + Math.random()).toFixed(1), city: city.name
-                });
+                marketDB.push({id:'lp_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
+                    type:'laptop',brand:brand.id,brandName:brand.name,brandColor:brand.color,brandLogo:brand.logo,
+                    fullName:model,price:Math.floor(base*mul/100)*100,seller:rand(SELLER_NAMES),sellerType:'good',
+                    broken:false,brokenParts:[],stars:(4+Math.random()).toFixed(1),city:city.name});
             });
         });
         if(['Москва','Санкт-Петербург','Новосибирск','Екатеринбург','Казань'].includes(city.name)){
@@ -1251,41 +1133,31 @@ function generateMarkets(){
                                  500000 + Math.random()*2000000;
                     const broken = Math.random() < 0.35;
                     const pool = PC_PARTS.map(p => p.id);
-                    marketDB.push({
-                        id: 'pc_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
-                        type: 'pc', brand: brand.id, brandName: brand.name, brandColor: brand.color, brandLogo: brand.logo,
-                        fullName: model, price: Math.floor(base * mul / 100) * 100,
-                        seller: rand(SELLER_NAMES), sellerType: Math.random() < 0.5 ? 'good' : 'evil',
-                        broken, brokenParts: broken ? [...new Set([rand(pool), rand(pool)])] : [],
-                        stars: (3 + Math.random()*2).toFixed(1), city: city.name
-                    });
+                    marketDB.push({id:'pc_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
+                        type:'pc',brand:brand.id,brandName:brand.name,brandColor:brand.color,brandLogo:brand.logo,
+                        fullName:model,price:Math.floor(base*mul/100)*100,seller:rand(SELLER_NAMES),
+                        sellerType:Math.random()<0.5?'good':'evil',broken,
+                        brokenParts:broken?[...new Set([rand(pool),rand(pool)])]:[],
+                        stars:(3+Math.random()*2).toFixed(1),city:city.name});
                 });
             });
         }
         TABLET_BRANDS.forEach(brand => {
             TABLET_MODELS[brand.id].forEach(model => {
                 const base = 15000 + Math.random() * 40000;
-                marketDB.push({
-                    id: 'tb_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
-                    type: 'tablet', brand: brand.id, brandName: brand.name, brandColor: brand.color, brandLogo: brand.logo,
-                    fullName: model, price: Math.floor(base * mul / 100) * 100,
-                    seller: rand(SELLER_NAMES), sellerType: 'good',
-                    broken: Math.random() < 0.2, brokenParts: [],
-                    stars: (4 + Math.random()).toFixed(1), city: city.name
-                });
+                marketDB.push({id:'tb_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
+                    type:'tablet',brand:brand.id,brandName:brand.name,brandColor:brand.color,brandLogo:brand.logo,
+                    fullName:model,price:Math.floor(base*mul/100)*100,seller:rand(SELLER_NAMES),sellerType:'good',
+                    broken:Math.random()<0.2,brokenParts:[],stars:(4+Math.random()).toFixed(1),city:city.name});
             });
         });
         HEADPHONE_BRANDS.forEach(brand => {
             HEADPHONE_MODELS[brand.id].forEach(model => {
                 const base = 3000 + Math.random() * 25000;
-                marketDB.push({
-                    id: 'hp_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
-                    type: 'headphones', brand: brand.id, brandName: brand.name, brandColor: brand.color, brandLogo: brand.logo,
-                    fullName: model, price: Math.floor(base * mul / 100) * 100,
-                    seller: rand(SELLER_NAMES), sellerType: 'good',
-                    broken: false, brokenParts: [],
-                    stars: (4 + Math.random()).toFixed(1), city: city.name
-                });
+                marketDB.push({id:'hp_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
+                    type:'headphones',brand:brand.id,brandName:brand.name,brandColor:brand.color,brandLogo:brand.logo,
+                    fullName:model,price:Math.floor(base*mul/100)*100,seller:rand(SELLER_NAMES),sellerType:'good',
+                    broken:false,brokenParts:[],stars:(4+Math.random()).toFixed(1),city:city.name});
             });
         });
         CAR_BRANDS.forEach(brand => {
@@ -1295,38 +1167,30 @@ function generateMarkets(){
                                  brand.id === 'tesla' ? 2500000 + Math.random()*2000000 :
                                  1200000 + Math.random()*1500000;
                     const broken = Math.random() < 0.4;
-                    carsDB.push({
-                        id: 'car_'+city.name+'_'+brand.id+'_'+model+'_'+i+'_'+Math.random().toString(36).slice(2,7),
-                        type: 'car', brand: brand.id, brandName: brand.name, brandColor: brand.color, brandLogo: brand.logo,
-                        fullName: model, price: Math.floor(base * mul / 100) * 100,
-                        seller: rand(SELLER_NAMES), sellerType: 'good',
-                        broken, brokenParts: broken ? [rand(['engine','transmission','brakes','suspension','tires','body','electronics'])] : [],
-                        year: 2015 + Math.floor(Math.random()*10),
-                        mileage: Math.floor(20000 + Math.random()*200000),
-                        stars: (3 + Math.random()*2).toFixed(1), city: city.name
-                    });
+                    carsDB.push({id:'car_'+city.name+'_'+brand.id+'_'+model+'_'+i+'_'+Math.random().toString(36).slice(2,7),
+                        type:'car',brand:brand.id,brandName:brand.name,brandColor:brand.color,brandLogo:brand.logo,
+                        fullName:model,price:Math.floor(base*mul/100)*100,seller:rand(SELLER_NAMES),sellerType:'good',
+                        broken,brokenParts:broken?[rand(['engine','transmission','brakes','suspension','tires','body','electronics'])]:[],
+                        year:2015+Math.floor(Math.random()*10),mileage:Math.floor(20000+Math.random()*200000),
+                        stars:(3+Math.random()*2).toFixed(1),city:city.name});
                 }
             });
         });
         PHONE_BRANDS.forEach(brand => {
             PHONE_MODELS[brand.id].forEach(model => {
                 const base = 3000 + Math.random() * 12000;
-                usedDB.push({
-                    id: 'us_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
-                    type: 'phone', brand: brand.id, brandName: brand.name, brandColor: brand.color, brandLogo: brand.logo,
-                    fullName: model, price: Math.floor(base / 100) * 100,
-                    seller: rand(SELLER_NAMES), sellerType: Math.random() < 0.5 ? 'good' : 'evil',
-                    broken: true, brokenParts: [rand(PHONE_PARTS).id, rand(PHONE_PARTS).id],
-                    stars: (2 + Math.random()*2).toFixed(1), city: city.name
-                });
+                usedDB.push({id:'us_'+city.name+'_'+brand.id+'_'+model+'_'+Math.random().toString(36).slice(2,7),
+                    type:'phone',brand:brand.id,brandName:brand.name,brandColor:brand.color,brandLogo:brand.logo,
+                    fullName:model,price:Math.floor(base/100)*100,seller:rand(SELLER_NAMES),
+                    sellerType:Math.random()<0.5?'good':'evil',broken:true,
+                    brokenParts:[rand(PHONE_PARTS).id,rand(PHONE_PARTS).id],
+                    stars:(2+Math.random()*2).toFixed(1),city:city.name});
             });
         });
     });
 }
 
-/* ============================================================
-   APP STORE
-============================================================ */
+/* ============ APP STORE ============ */
 function updateAllAppIcons(){
     ['tax','used','cars','repair','tetris','snake','stats'].forEach(id => {
         const el = document.getElementById('app-icon-' + id);
@@ -1409,9 +1273,7 @@ function openGame(id){
     if(id === 'snake'){ openScreen('snake-screen'); setTimeout(snakeReset, 100); }
 }
 
-/* ============================================================
-   MARKET BROWSING
-============================================================ */
+/* ============ MARKET BROWSING ============ */
 let marketCategory = 'phone', selectedBrand = null, selectedCarBrand = null;
 function getBrandListByCategory(cat){
     if(cat === 'phone') return PHONE_BRANDS;
@@ -1445,10 +1307,7 @@ function renderBrandList(search = ''){
     listEl.innerHTML = items.map(({brand, count}) => `
         <div class="brand-row" onclick="openBrand('${brand.id}')">
             <div class="brand-logo" style="background:${brand.color}">${brand.logo || brand.name[0]}</div>
-            <div class="brand-info">
-                <div class="brand-name">${brand.name}</div>
-                <div class="brand-count">${count} предложений</div>
-            </div>
+            <div class="brand-info"><div class="brand-name">${brand.name}</div><div class="brand-count">${count} предложений</div></div>
             <div class="brand-arrow">›</div>
         </div>`).join('');
 }
@@ -1475,10 +1334,7 @@ function openBrand(brandId){
             const cheapest = offers.reduce((a,b) => a.price < b.price ? a : b);
             return `<div class="model-row" onclick="openModel('${brandId}', ${JSON.stringify(modelName).replace(/"/g,'&quot;')})">
                 <div class="model-emoji">${typeIcon}</div>
-                <div class="model-info">
-                    <div class="model-title">${brand.name} ${modelName}</div>
-                    <div class="model-meta">${offers.length} шт · от ${fmt(cheapest.price)}</div>
-                </div>
+                <div class="model-info"><div class="model-title">${brand.name} ${modelName}</div><div class="model-meta">${offers.length} шт · от ${fmt(cheapest.price)}</div></div>
                 <div class="model-price">→</div>
             </div>`;
         }).join('')}`;
@@ -1494,17 +1350,13 @@ function openModel(brandId, modelName){
         <div style="font-size:16px;font-weight:800;margin-bottom:12px">${brand.name} ${modelName}</div>
         ${items.map(item => `<div class="model-row" onclick="startBuyChat('${item.id}')">
             <div class="model-emoji">${typeIcon}</div>
-            <div class="model-info">
-                <div class="model-title">${item.brandName} ${item.fullName}${item.broken?' ⚠️':''}</div>
-                <div class="model-meta">📍 ${item.seller} · ★ ${item.stars}</div>
-            </div>
+            <div class="model-info"><div class="model-title">${item.brandName} ${item.fullName}${item.broken?' ⚠️':''}</div>
+            <div class="model-meta">📍 ${item.seller} · ★ ${item.stars}</div></div>
             <div class="model-price">${fmt(item.price)}</div>
         </div>`).join('')}`;
 }
 
-/* ============================================================
-   CARS
-============================================================ */
+/* ============ CARS ============ */
 function renderCarBrandList(search = ''){
     const city = state.currentCity;
     document.getElementById('carCityLabel').textContent = city;
@@ -1553,17 +1405,13 @@ function openCarModel(brandId, modelName){
         <div style="font-size:16px;font-weight:800;margin-bottom:12px">${brand.name} ${modelName}</div>
         ${items.map(item => `<div class="model-row" onclick="startCarBuyChat('${item.id}')">
             <div class="model-emoji">${brand.logo}</div>
-            <div class="model-info">
-                <div class="model-title">${item.brandName} ${item.fullName} ${item.year}${item.broken?' ⚠️':''}</div>
-                <div class="model-meta">${item.mileage.toLocaleString('ru-RU')} км · 📍 ${item.seller}</div>
-            </div>
+            <div class="model-info"><div class="model-title">${item.brandName} ${item.fullName} ${item.year}${item.broken?' ⚠️':''}</div>
+            <div class="model-meta">${item.mileage.toLocaleString('ru-RU')} км · 📍 ${item.seller}</div></div>
             <div class="model-price">${fmt(item.price)}</div>
         </div>`).join('')}`;
 }
 
-/* ============================================================
-   USED
-============================================================ */
+/* ============ USED ============ */
 function renderUsedList(){
     const city = state.currentCity;
     const items = usedDB.filter(m => m.city === city).slice(0, 60);
@@ -1578,32 +1426,27 @@ function renderUsedList(){
         </div>`).join('');
 }
 
-/* ============================================================
-   CHAT (торги)
-============================================================ */
+/* ============ CHAT ============ */
 let currentChat = null;
 function startBuyChat(id){
     const item = marketDB.find(m => m.id === id); if(!item) return;
     if(!state.internetOn || state.airplaneMode){ notify('📵 Нет интернета','','danger'); return; }
-    currentChat = {
-        mode: 'buy', item: JSON.parse(JSON.stringify(item)),
-        minAccept: Math.round(item.price * (item.sellerType === 'evil' ? 0.88 : 0.68) / 100) * 100,
-        patience: item.sellerType === 'evil' ? 3 : 5,
-        rounds: 0, finalPrice: null, waiting: false
-    };
+    currentChat = {mode:'buy',item:JSON.parse(JSON.stringify(item)),
+        minAccept:Math.round(item.price * (item.sellerType === 'evil' ? 0.88 : 0.68) / 100) * 100,
+        patience:item.sellerType === 'evil' ? 3 : 5,rounds:0,finalPrice:null,waiting:false};
     openChatScreen();
 }
 function startCarBuyChat(id){
     const item = carsDB.find(m => m.id === id); if(!item) return;
-    currentChat = { mode: 'buyCar', item: JSON.parse(JSON.stringify(item)),
-        minAccept: Math.round(item.price * 0.85 / 100) * 100, patience: 4, rounds: 0, finalPrice: null, waiting: false };
+    currentChat = {mode:'buyCar',item:JSON.parse(JSON.stringify(item)),
+        minAccept:Math.round(item.price * 0.85 / 100) * 100,patience:4,rounds:0,finalPrice:null,waiting:false};
     openChatScreen();
 }
 function startUsedChat(id){
     const item = usedDB.find(m => m.id === id); if(!item) return;
-    currentChat = { mode: 'buyUsed', item: JSON.parse(JSON.stringify(item)),
-        minAccept: Math.round(item.price * (item.sellerType === 'evil' ? 0.95 : 0.8) / 100) * 100,
-        patience: item.sellerType === 'evil' ? 3 : 4, rounds: 0, finalPrice: null, waiting: false };
+    currentChat = {mode:'buyUsed',item:JSON.parse(JSON.stringify(item)),
+        minAccept:Math.round(item.price * (item.sellerType === 'evil' ? 0.95 : 0.8) / 100) * 100,
+        patience:item.sellerType === 'evil' ? 3 : 4,rounds:0,finalPrice:null,waiting:false};
     openChatScreen();
 }
 function startSellFromInv(itemId){
@@ -1620,20 +1463,16 @@ function startSellFromInv(itemId){
         let basePrice = item.buyPrice * (1.2 + Math.random()*0.8);
         if(item.hasSim) basePrice *= 1.15;
         const targetAsk = Math.round(basePrice / 100) * 100;
-        currentChat = { mode: 'sell', item, targetAsk,
-            maxPay: Math.round(targetAsk * buyer.mul / 100) * 100,
-            patience: buyer.patience, rounds: 0, finalPrice: null,
-            buyerName: buyer.name, buyerType: buyer.type, waiting: false };
+        currentChat = {mode:'sell',item,targetAsk,maxPay:Math.round(targetAsk * buyer.mul / 100) * 100,
+            patience:buyer.patience,rounds:0,finalPrice:null,buyerName:buyer.name,buyerType:buyer.type,waiting:false};
         openChatScreen();
         return;
     }
     const car = state.cars.find(x => x.id === itemId);
     if(!car) return;
     const targetAsk = Math.round(car.buyPrice * (1.15 + Math.random()*0.4) / 100) * 100;
-    currentChat = { mode: 'sellCar', item: car, targetAsk,
-        maxPay: Math.round(targetAsk * 1.1 / 100) * 100,
-        patience: 4, rounds: 0, finalPrice: null,
-        buyerName: rand(BUYER_NAMES), buyerType: 'normal', waiting: false };
+    currentChat = {mode:'sellCar',item:car,targetAsk,maxPay:Math.round(targetAsk * 1.1 / 100) * 100,
+        patience:4,rounds:0,finalPrice:null,buyerName:rand(BUYER_NAMES),buyerType:'normal',waiting:false};
     openChatScreen();
 }
 function openChatScreen(){
@@ -1750,8 +1589,7 @@ function acceptDeal(){
         else { state.inventory.push(newItem); state.phonesBought++; const src = c.mode === 'buyUsed' ? usedDB : marketDB; const i = src.findIndex(x => x.id === c.item.id); if(i >= 0) src.splice(i, 1); }
         addXP(15);
         notify('✅ Куплено', fmt(c.finalPrice), 'success');
-        checkQuestProgress('first_buy');
-        checkQuestProgress('buys_10');
+        checkQuestProgress('first_buy'); checkQuestProgress('buys_10');
     } else {
         const price = c.finalPrice;
         const tax = Math.round(price * TAX_RATE);
@@ -1769,9 +1607,7 @@ function acceptDeal(){
 }
 function closeChat(){ currentChat = null; openScreen('home-screen'); }
 
-/* ============================================================
-   XP / QUESTS
-============================================================ */
+/* ============ XP / QUESTS ============ */
 function addXP(n){
     state.xp += n;
     while(state.xp >= state.xpNext){ state.xp -= state.xpNext; state.level++; state.xpNext = Math.floor(state.xpNext * 1.5); notify('🎉 Уровень ' + state.level, '', 'success'); }
@@ -1787,9 +1623,7 @@ function checkQuestProgress(id){
     cloudSaveDebounced();
 }
 
-/* ============================================================
-   BANK
-============================================================ */
+/* ============ BANK ============ */
 function renderBankScreen(){
     if(state.bankCountry && state.bankName){
         document.getElementById('bankCountryStep').classList.add('hidden');
@@ -1823,10 +1657,7 @@ function selectBankCountry(name){
             <div style="flex:1;margin-left:8px"><b>${b.name}</b></div>
         </div>`).join('');
 }
-function backToBankCountry(){
-    document.getElementById('bankOperatorStep').classList.add('hidden');
-    document.getElementById('bankCountryStep').classList.remove('hidden');
-}
+function backToBankCountry(){ document.getElementById('bankOperatorStep').classList.add('hidden'); document.getElementById('bankCountryStep').classList.remove('hidden'); }
 function selectBank(name, color){
     state.bankName = name; state.bankColor = color;
     document.getElementById('bankOperatorStep').classList.add('hidden');
@@ -1893,8 +1724,7 @@ function takeLoan(){
             if(!amt || amt < 1000 || amt > 50000){ notify('❌ 1000-50000','','danger'); return; }
             state.credit = Math.round(amt * 1.2);
             state.money += amt;
-            cloudSaveDebounced();
-            updateBankCard();
+            cloudSaveDebounced(); updateBankCard();
             notify('✅ Выдано', fmt(amt), 'success');
         }
     });
@@ -1906,16 +1736,13 @@ function addDeposit(){
             const amt = parseInt(document.getElementById('depAmount').value);
             if(!amt || amt <= 0 || amt > state.money){ notify('❌','','danger'); return; }
             state.money -= amt; state.deposit += amt; state.depositLastUpdate = Date.now();
-            cloudSaveDebounced();
-            updateBankCard();
+            cloudSaveDebounced(); updateBankCard();
         }
     });
 }
 function withdrawDeposit(){ if(state.deposit <= 0) return; state.money += state.deposit; state.deposit = 0; cloudSaveDebounced(); updateBankCard(); }
 
-/* ============================================================
-   BUSINESS / OFFICE / JOBS
-============================================================ */
+/* ============ BUSINESS / OFFICE / JOBS ============ */
 function renderBusinessList(){
     document.getElementById('bizList').innerHTML = BUSINESSES.map(b => {
         const owned = state.businesses.find(x => x.id === b.id);
@@ -1929,10 +1756,7 @@ function buyBusiness(id){
     if(!b || state.money < b.price) return;
     state.money -= b.price;
     state.businesses.push({id: b.id, level: 1, nextIncome: Date.now() + MONTH});
-    addXP(50);
-    checkQuestProgress('open_business');
-    cloudSaveDebounced();
-    renderBusinessList();
+    addXP(50); checkQuestProgress('open_business'); cloudSaveDebounced(); renderBusinessList();
 }
 function renderOfficeScreen(){
     const cur = OFFICES[state.officeLevel];
@@ -1959,9 +1783,7 @@ function renderJobsScreen(){
 }
 function workJob(id){ const j = JOBS.find(x => x.id === id); if(!j || state.level < j.req) return; state.money += j.salary; addXP(5); cloudSaveDebounced(); }
 
-/* ============================================================
-   TRAVEL
-============================================================ */
+/* ============ TRAVEL ============ */
 function renderCityList(search = ''){
     document.getElementById('travelCurrentCity').textContent = state.currentCity;
     const q = (search || '').toLowerCase().trim();
@@ -1983,8 +1805,7 @@ function calcTravelPrice(from, to){
 function travelTo(city, price){
     if(state.money < price){ notify('❌ Не хватает','','danger'); return; }
     state.money -= price; state.currentCity = city;
-    checkQuestProgress('travel_3');
-    cloudSaveDebounced();
+    checkQuestProgress('travel_3'); cloudSaveDebounced();
     notify('✅ ' + city, '', 'success');
     renderCityList();
 }
@@ -2007,9 +1828,7 @@ function pickCity(name, price){
     notify('✅ ' + name, '', 'success');
 }
 
-/* ============================================================
-   SIM
-============================================================ */
+/* ============ SIM ============ */
 function renderSimScreen(){
     if(state.simOperator){ document.getElementById('simCountryStep').classList.add('hidden'); document.getElementById('simOperatorStep').classList.add('hidden'); document.getElementById('simMainStep').classList.remove('hidden'); updateSimDisplay(); }
     else { document.getElementById('simCountryStep').classList.remove('hidden'); document.getElementById('simOperatorStep').classList.add('hidden'); document.getElementById('simMainStep').classList.add('hidden'); renderSimCountries(); }
@@ -2054,9 +1873,7 @@ function insertSimIntoPhone(phoneId){
     state.simBalance -= 200; phone.hasSim = true; cloudSaveDebounced(); renderPlayerScreen();
 }
 
-/* ============================================================
-   PLAYER
-============================================================ */
+/* ============ PLAYER ============ */
 let playerTab = 'inv';
 function renderPlayerScreen(){
     document.getElementById('profileName').value = state.playerName || '';
@@ -2140,9 +1957,7 @@ function claimDaily(){
     notify('🎁 +500₽','','success');
 }
 
-/* ============================================================
-   STATS / TAX / MESSAGES / GALLERY / SETTINGS
-============================================================ */
+/* ============ STATS / TAX / MESSAGES / GALLERY / SETTINGS ============ */
 function renderStatsScreen(){
     document.getElementById('statsContent').innerHTML = `
         <div class="list-item"><span>📱 Куплено телефонов</span><b>${state.phonesBought}</b></div>
@@ -2180,21 +1995,85 @@ function togglePinSetting(){
     if(state.lockPin){ showModal('Удалить PIN?','',{onOk:()=>{state.lockPin=null;cloudSaveDebounced();renderSettingsScreen();}}); }
     else showModal('Установить PIN','4 цифры',{extraHtml:'<input type="password" id="newPin" maxlength="4" style="text-align:center;font-size:24px">',onOk:()=>{const v=document.getElementById('newPin').value;if(!/^\d{4}$/.test(v))return;state.lockPin=v;cloudSaveDebounced();renderSettingsScreen();}});
 }
-function applyPromo(){
-    const code = document.getElementById('promoInput').value.trim();
-    if(!code) return;
-    if(state.usedPromos.includes(code)){ notify('Уже использован','','danger'); return; }
-    if(code === 'TYCOON2025'){ state.usedPromos.push(code); state.money += 150000; notify('✅ +150K','','success'); }
-    else if(code === 'WELCOME'){ state.usedPromos.push(code); state.money += 25000; notify('✅ +25K','','success'); }
-    else notify('❌ Неверный','','danger');
-    document.getElementById('promoInput').value = '';
-    cloudSaveDebounced();
-}
-function confirmReset(){ showModal('Сбросить?','Всё удалится, включая облако',{ok:'Удалить',onOk:()=>{ if(fbUser && fbDB) fbDB.ref('users/' + fbUser.uid).remove(); localStorage.removeItem(SAVE_KEY); location.reload(); }}); }
 
-/* ============================================================
-   CAMERA
-============================================================ */
+/* ============ ПРОМОКОДЫ ИЗ FIREBASE ============ */
+async function applyPromo(){
+    const code = document.getElementById('promoInput').value.trim().toUpperCase();
+    if(!code){ notify('❌ Введите код','','danger'); return; }
+    document.getElementById('promoInput').value = '';
+
+    // 1. Локальная проверка на повтор
+    if(state.usedPromos.includes(code)){ notify('❌ Уже использован','','danger'); return; }
+
+    // 2. Проверка в Firebase
+    if(!fbDB){
+        // Фallback — если Firebase не подключён, проверяем хардкод
+        if(code === 'TYCOON2025'){ state.usedPromos.push(code); state.money += 150000; notify('✅ +150 000₽','','success'); }
+        else if(code === 'WELCOME'){ state.usedPromos.push(code); state.money += 25000; notify('✅ +25 000₽','','success'); }
+        else notify('❌ Неверный промокод','','danger');
+        cloudSaveDebounced(); renderPlayerScreen();
+        return;
+    }
+
+    notify('⏳ Проверяем...','');
+
+    try {
+        const snap = await fbDB.ref('promos/' + code).once('value');
+        const promo = snap.val();
+
+        if(!promo){
+            notify('❌ Промокод не найден','','danger');
+            return;
+        }
+        if(!promo.active){
+            notify('❌ Промокод отключён','','danger');
+            return;
+        }
+        if(Date.now() > promo.expiresAt){
+            notify('❌ Промокод истёк','','danger');
+            return;
+        }
+        if(promo.usedBy && fbUser && promo.usedBy[fbUser.uid]){
+            notify('❌ Вы уже использовали этот код','','danger');
+            return;
+        }
+        const usedCount = Object.keys(promo.usedBy || {}).length;
+        if(usedCount >= promo.maxUses){
+            notify('❌ Лимит активаций исчерпан','','danger');
+            return;
+        }
+
+        // 3. Выдаём награду
+        state.money += promo.reward;
+        state.usedPromos.push(code);
+
+        // 4. Помечаем в базе
+        if(fbUser){
+            await fbDB.ref('promos/' + code + '/usedBy/' + fbUser.uid).set(Date.now());
+        }
+
+        // 5. Сохраняем
+        cloudSaveDebounced();
+        updateLeaderboard();
+
+        notify('🎁 +' + fmt(promo.reward) + ' за ' + code, 'success');
+        renderPlayerScreen();
+
+    } catch(e){
+        console.error('Promo error:', e);
+        notify('❌ Ошибка: ' + e.message, 'danger');
+    }
+}
+
+function confirmReset(){
+    showModal('Сбросить?','Всё удалится, включая облако',{ok:'Удалить',onOk:()=>{
+        if(fbUser && fbDB) fbDB.ref('users/' + fbUser.uid).remove();
+        localStorage.removeItem(SAVE_KEY);
+        location.reload();
+    }});
+}
+
+/* ============ CAMERA ============ */
 let camStream = null, camFacing = 'environment', camFilter = 'none';
 async function openCamera(){
     if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ notify('📷 Не поддерживается','','danger'); return; }
@@ -2239,9 +2118,7 @@ function takePhoto(){
     notify('📷 Снято','','success');
 }
 
-/* ============================================================
-   TETRIS
-============================================================ */
+/* ============ TETRIS ============ */
 let tetrisState = null, tetrisInterval = null, tetrisScore = 0;
 const TETRIS_COLS = 10, TETRIS_ROWS = 20, TILE = 28;
 const TETRIS_SHAPES = [
@@ -2314,9 +2191,7 @@ function tetrisDraw(){
         if(c.shape[r][cc] && c.y + r >= 0){ ctx.fillStyle = c.color; ctx.fillRect((c.x + cc)*TILE+1, (c.y + r)*TILE+1, TILE-2, TILE-2); }
 }
 
-/* ============================================================
-   SNAKE
-============================================================ */
+/* ============ SNAKE ============ */
 let snakeState = null, snakeInterval = null, snakeScore = 0;
 const SNAKE_COLS = 20, SNAKE_ROWS = 20;
 function stopSnake(){ if(snakeInterval) clearInterval(snakeInterval); snakeInterval = null; }
@@ -2357,9 +2232,7 @@ function snakeDraw(){
     });
 }
 
-/* ============================================================
-   STATUS BAR / SHUTTER
-============================================================ */
+/* ============ STATUS / SHUTTER ============ */
 let shutterOpen = false;
 function openShutter(){ document.getElementById('shutter').classList.add('open'); document.getElementById('shutterOverlay').classList.add('show'); shutterOpen = true; }
 function closeShutter(){ document.getElementById('shutter').classList.remove('open'); document.getElementById('shutterOverlay').classList.remove('show'); shutterOpen = false; }
@@ -2423,13 +2296,11 @@ function setupShutterSwipe(){
     sb.addEventListener('click', () => { if(!didDrag){ shutterOpen ? closeShutter() : openShutter(); } });
     document.addEventListener('keydown', e => { if(e.key === 'Escape' && shutterOpen) closeShutter(); });
 }
-/* ============ LOCK SCREEN (ФИКС) ============ */
 function setupLockScreen(){
     const ls = document.getElementById('lockScreen');
     if(!ls) return;
     if(ls._lockBound) return;
     ls._lockBound = true;
-
     let sy = null, moved = false;
     const start = y => { sy = y; moved = false; };
     const move = y => { if(sy === null) return; const dy = sy - y; if(dy > 15) moved = true; };
@@ -2439,27 +2310,17 @@ function setupLockScreen(){
         sy = null;
         if(dy > 40 || (moved && dy > 20)) unlockNow();
     };
-    const unlockNow = () => {
-        ls.classList.add('up');
-        setTimeout(() => { ls.style.display = 'none'; }, 500);
-    };
-
+    const unlockNow = () => { ls.classList.add('up'); setTimeout(() => { ls.style.display = 'none'; }, 500); };
     ls.addEventListener('touchstart', e => start(e.touches[0].clientY), {passive: true});
     ls.addEventListener('touchmove', e => move(e.touches[0].clientY), {passive: true});
     ls.addEventListener('touchend', e => end(e.changedTouches[0].clientY));
     ls.addEventListener('mousedown', e => start(e.clientY));
     ls.addEventListener('mousemove', e => move(e.clientY));
     ls.addEventListener('mouseup', e => end(e.clientY));
-
-    // Клик по нижней зоне — тоже разблокировка
-    ls.addEventListener('click', e => {
-        if(e.clientY > window.innerHeight - 200) unlockNow();
-    });
+    ls.addEventListener('click', e => { if(e.clientY > window.innerHeight - 200) unlockNow(); });
 }
 
-/* ============================================================
-   TIMERS
-============================================================ */
+/* ============ ТАЙМЕРЫ ============ */
 setInterval(() => {
     if(fbUser && fbDB){
         state.businesses.forEach(b => {
@@ -2478,9 +2339,7 @@ setInterval(() => {
 setInterval(() => { updateStatusBar(); batteryTick(); }, 1000);
 setInterval(() => { if(fbUser) cloudSave(); }, 30000);
 
-/* ============================================================
-   BOOT
-============================================================ */
+/* ============ BOOT ============ */
 function boot(){
     document.title = GAME_TITLE;
     if(!marketDB.length) generateMarkets();
@@ -2497,17 +2356,14 @@ function boot(){
     initGlobalChat();
     updateLeaderboard();
     console.log('✅ ' + GAME_TITLE + ' ' + GAME_VERSION + ' loaded');
-    console.log('👤', state.playerName, state.playerEmail);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Прячем lock при старте, пока идёт авторизация
     const lock = document.getElementById('lockScreen');
     if(lock) lock.style.display = 'none';
 
     if(fbReady){ watchAuth(); }
     else {
-        // Firebase не подключился — пускаем в игру сразу
         document.getElementById('loginScreen').classList.add('hidden');
         boot();
         if(lock){
