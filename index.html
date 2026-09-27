@@ -13,7 +13,7 @@
 body{background:var(--bg);color:var(--text);overflow:hidden;position:relative;height:100vh;-webkit-font-smoothing:antialiased}
 .hidden{display:none!important}
 button{font-family:inherit;cursor:pointer;border:none;outline:none}
-input,select{font-family:inherit}
+input,select,textarea{font-family:inherit}
 #statusBar{position:fixed;top:0;left:0;right:0;height:28px;background:rgba(10,12,18,.9);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:12px;font-weight:700;z-index:9000;color:#fff;cursor:pointer}
 #statusBar .right{display:flex;align-items:center;gap:8px}
 .batt{position:relative;width:24px;height:12px;border:2px solid #fff;border-radius:3px;display:inline-block}
@@ -22,6 +22,7 @@ input,select{font-family:inherit}
 .sync-dot{width:8px;height:8px;border-radius:50%;background:#64748b;display:inline-block;margin-right:4px;transition:background .3s}
 .sync-dot.online{background:#4ade80;box-shadow:0 0 8px #4ade80}
 .sync-dot.offline{background:#f87171}
+.sync-dot.saving{background:#f59e0b}
 #shutter{position:fixed;top:0;left:0;right:0;height:0;background:rgba(10,12,18,.98);backdrop-filter:blur(30px);z-index:9500;overflow:hidden;transition:height .35s cubic-bezier(.4,0,.2,1);border-bottom-left-radius:26px;border-bottom-right-radius:26px}
 #shutter.open{height:290px}
 #shutterOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9400;opacity:0;pointer-events:none;transition:opacity .3s}
@@ -32,12 +33,11 @@ input,select{font-family:inherit}
 .sht.on .circ{background:linear-gradient(135deg,#818cf8,#6366f1);box-shadow:0 0 16px var(--primary-glow)}
 .sht .lbl{font-size:10px;font-weight:700;color:var(--text-sec);text-align:center}
 .sht.on .lbl{color:#fff}
-.sht:active .circ{transform:scale(.92)}
 #lockScreen{position:fixed;inset:0;z-index:99999;background:linear-gradient(160deg,#1a1a2e,#16213e 40%,#0a0c12);display:flex;flex-direction:column;align-items:center;padding:60px 20px 40px;transition:transform .5s cubic-bezier(.4,0,.2,1),opacity .5s}
 #lockScreen.up{transform:translateY(-100%);opacity:0;pointer-events:none}
 .lock-time{font-size:76px;font-weight:200;letter-spacing:-4px;margin-top:12vh;color:#fff}
 .lock-date{font-size:18px;color:#cbd5e1;margin-top:8px;font-weight:500}
-.lock-hint{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:12px;color:#cbd5e1;font-size:13px;font-weight:600}
+.lock-hint{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:12px;color:#cbd5e1;font-size:13px;font-weight:600;width:100%;text-align:center;padding-bottom:20px}
 .lock-bar{width:110px;height:5px;border-radius:10px;background:#fff;opacity:.85;animation:pulseBar 2s ease-in-out infinite}
 @keyframes pulseBar{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 #loginScreen{position:fixed;inset:0;z-index:99998;background:linear-gradient(160deg,#0a0c12,#1a1a2e);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px}
@@ -77,7 +77,7 @@ input,select{font-family:inherit}
 .c-gal{background:linear-gradient(135deg,#8b5cf6,#6d28d9)}
 .c-leader{background:linear-gradient(135deg,#fbbf24,#f59e0b)}
 .c-gchat{background:linear-gradient(135deg,#06b6d4,#0891b2)}
-#bottomDock{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:18px;padding:12px 24px;background:rgba(30,35,48,.75);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-radius:28px;border:1px solid rgba(255,255,255,.08);z-index:200;box-shadow:0 10px 40px rgba(0,0,0,.45);transition:opacity .3s,transform .3s}
+#bottomDock{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:18px;padding:12px 24px;background:rgba(30,35,48,.75);backdrop-filter:blur(30px);border-radius:28px;border:1px solid rgba(255,255,255,.08);z-index:200;box-shadow:0 10px 40px rgba(0,0,0,.45);transition:opacity .3s,transform .3s}
 #bottomDock.hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(100px)}
 .dock-item{position:relative;cursor:pointer;transition:transform .15s}
 .dock-item:active{transform:scale(.88)}
@@ -106,9 +106,8 @@ input,select{font-family:inherit}
 .btn-warning{background:linear-gradient(135deg,#fbbf24,#d97706)}
 .btn-sm{padding:8px 14px;font-size:12px;width:auto;border-radius:11px}
 .chip{background:var(--surface2);color:var(--text);padding:8px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid var(--border);cursor:pointer}
-.chip.active{background:var(--primary);color:#fff}
 .brand-row{display:flex;align-items:center;gap:12px;background:var(--surface);padding:14px;border-radius:16px;margin-bottom:10px;cursor:pointer;border:1px solid var(--border)}
-.brand-row:active{transform:scale(.98);border-color:var(--primary);background:var(--surface2)}
+.brand-row:active{transform:scale(.98);border-color:var(--primary)}
 .brand-logo{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;flex-shrink:0}
 .brand-info{flex:1;min-width:0}
 .brand-name{font-size:15px;font-weight:800}
@@ -127,7 +126,7 @@ input,select{font-family:inherit}
 .msg.me{background:linear-gradient(135deg,#818cf8,#6366f1);color:#fff;align-self:flex-end;border-bottom-right-radius:6px}
 .msg.sys{background:transparent;color:var(--text-lt);font-size:11px;text-align:center;align-self:center;padding:3px 8px;font-weight:600}
 .chat-input{padding:14px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;padding-bottom:max(14px,env(safe-area-inset-bottom))}
-input[type=number],input[type=text],input[type=password],select,textarea{width:100%;padding:13px;border-radius:13px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;font-weight:600;outline:none;transition:all .2s;font-family:inherit}
+input[type=number],input[type=text],input[type=password],select,textarea{width:100%;padding:13px;border-radius:13px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;font-weight:600;outline:none;transition:all .2s}
 input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3)}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px}
 .overlay.show{display:flex}
@@ -151,7 +150,6 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
 .quest-icon{width:44px;height:44px;border-radius:12px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 .quest-info{flex:1;min-width:0}
 .quest-title{font-weight:700;font-size:13px}
-.quest-desc{font-size:11px;color:var(--text-sec);margin-top:2px}
 .quest-bar{height:4px;background:var(--surface2);border-radius:2px;margin-top:8px;overflow:hidden}
 .quest-bar i{display:block;height:100%;background:var(--primary);transition:width .3s}
 .ach-item{background:var(--surface);padding:14px;border-radius:16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;border:1px solid var(--border);opacity:.5}
@@ -194,21 +192,19 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
 .pin-key.red{background:var(--danger);color:#fff}
 .pin-key.green{background:var(--success);color:#fff}
 .pin-dots{font-size:30px;letter-spacing:8px;color:var(--primary);height:40px;margin-bottom:20px;text-align:center;font-weight:700}
-/* Leaderboard */
 .leader-row{background:var(--surface);padding:14px;border-radius:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;border:1px solid var(--border)}
 .leader-row.me{border-color:var(--primary);background:linear-gradient(135deg,rgba(129,140,248,.1),transparent)}
 .leader-rank{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;background:var(--surface2);flex-shrink:0}
 .leader-rank.gold{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000}
 .leader-rank.silver{background:linear-gradient(135deg,#e5e7eb,#9ca3af);color:#000}
 .leader-rank.bronze{background:linear-gradient(135deg,#c8956d,#92400e);color:#fff}
-.leader-avatar{width:40px;height:40px;border-radius:50%;overflow:hidden;flex-shrink:0}
+.leader-avatar{width:40px;height:40px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff}
 .leader-avatar img{width:100%;height:100%;object-fit:cover}
 .leader-name{flex:1;font-weight:700;font-size:14px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .leader-money{font-weight:900;color:var(--success);font-size:14px}
-/* Global chat */
 .gchat-msg{background:var(--surface);padding:10px 14px;border-radius:14px;margin-bottom:8px;border:1px solid var(--border);display:flex;gap:10px;align-items:flex-start}
 .gchat-msg.me{border-color:var(--primary)}
-.gchat-avatar{width:32px;height:32px;border-radius:50%;overflow:hidden;flex-shrink:0}
+.gchat-avatar{width:32px;height:32px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
 .gchat-avatar img{width:100%;height:100%;object-fit:cover}
 .gchat-content{flex:1;min-width:0}
 .gchat-name{font-size:12px;font-weight:700;color:var(--primary)}
@@ -223,7 +219,7 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
     <span id="stTime">00:00</span>
     <span class="right">
         <span class="sync-dot" id="syncDot"></span>
-        <span id="stInternet">📶</span>
+        <span>📶</span>
         <span>🔋</span>
         <span class="batt"><i id="battFill" style="width:20px"></i></span>
         <span id="battText">100%</span>
@@ -244,16 +240,8 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
     </div>
 </div>
 
-<div id="lockScreen">
-    <div style="position:absolute;top:14px;left:0;right:0;padding:0 20px;display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#fff">
-        <span id="lockTimeSmall">00:00</span><span>📶 🔋</span>
-    </div>
-    <div class="lock-time" id="lockTime">00:00</div>
-    <div class="lock-date" id="lockDate">—</div>
-    <div class="lock-hint"><span>Проведите вверх</span><div class="lock-bar"></div></div>
-</div>
-
-<div id="loginScreen">
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="hidden">
     <div class="login-logo">📱</div>
     <div class="login-title">Phone Reseller<br>Tycoon</div>
     <div class="login-sub">Войдите через Google, чтобы играть с любого устройства. Прогресс сохраняется в облаке.</div>
@@ -262,6 +250,16 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
         Войти через Google
     </button>
     <div class="login-status" id="loginStatus"></div>
+</div>
+
+<!-- LOCK SCREEN -->
+<div id="lockScreen" style="display:none">
+    <div style="position:absolute;top:14px;left:0;right:0;padding:0 20px;display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#fff">
+        <span id="lockTimeSmall">00:00</span><span>📶 🔋</span>
+    </div>
+    <div class="lock-time" id="lockTime">00:00</div>
+    <div class="lock-date" id="lockDate">—</div>
+    <div class="lock-hint"><span>Проведите вверх или нажмите здесь</span><div class="lock-bar"></div></div>
 </div>
 
 <div id="menu">
@@ -402,14 +400,14 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
     <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">🏆 Топ-100</div><button class="back-btn" onclick="loadLeaderboard()">🔄</button></div>
     <div class="content">
         <div style="background:linear-gradient(135deg,rgba(251,191,36,.15),transparent);padding:14px;border-radius:14px;border:1px solid rgba(251,191,36,.3);margin-bottom:14px;text-align:center;font-size:12px;color:var(--text-sec)">
-            🏆 Рейтинг обновляется каждые 30 сек
+            🏆 Рейтинг по балансу
         </div>
         <div id="leaderboardList"><div style="text-align:center;padding:40px;color:var(--text-lt)">Загрузка...</div></div>
     </div>
 </div>
 
 <div class="screen" id="globalchat-screen">
-    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">🌐 Общий чат</div><span id="gchatOnline" style="font-size:11px;color:var(--text-sec)"></span></div>
+    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">🌐 Общий чат</div></div>
     <div class="chat-area" id="globalChatMessages" style="padding-top:20px"></div>
     <div class="chat-input">
         <textarea id="globalChatInput" placeholder="Написать в чат..." rows="1" style="resize:none;max-height:80px"></textarea>
@@ -464,6 +462,7 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
 </div>
 
 <div class="screen" id="business-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Бизнес</div></div><div class="content" id="bizList"></div></div>
+
 <div class="screen" id="office-screen">
     <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Офис</div></div>
     <div class="content">
@@ -477,7 +476,9 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
         <div id="employeesList"></div>
     </div>
 </div>
+
 <div class="screen" id="jobs-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Работа</div></div><div class="content" id="jobsList"></div></div>
+
 <div class="screen" id="travel-screen">
     <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Поездки</div></div>
     <div class="content">
@@ -538,6 +539,7 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
 
 <div class="screen" id="stats-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Статистика</div></div><div class="content" id="statsContent"></div></div>
 <div class="screen" id="messages-screen"><div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Сообщения</div></div><div class="content" id="messagesList"></div></div>
+
 <div class="screen" id="gallery-screen">
     <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">Галерея</div></div>
     <div class="content">
@@ -635,7 +637,7 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
 'use strict';
 
 /* ============================================================
-   FIREBASE CONFIG (твой старый проект)
+   FIREBASE
 ============================================================ */
 const firebaseConfig = {
     apiKey: "AIzaSyAv0ChOvxUSEWjCnWWUXBml01PyTsgfGjo",
@@ -656,17 +658,13 @@ try {
         fbDB = firebase.database();
         fbReady = true;
         console.log('✅ Firebase init');
-    } else if(typeof firebase !== 'undefined'){
-        fbAuth = firebase.auth();
-        fbDB = firebase.database();
-        fbReady = true;
     }
 } catch(e) {
-    console.error('❌ Firebase init failed:', e);
+    console.error('❌ Firebase:', e);
 }
 
 /* ============================================================
-   GAME STATE
+   STATE
 ============================================================ */
 const GAME_TITLE = 'Phone Reseller Tycoon';
 const GAME_VERSION = 'v4.0';
@@ -677,27 +675,20 @@ const MONTH = 30 * 24 * 3600 * 1000;
 const TAX_RATE = 0.05;
 
 let state = {
-    uid: null,
-    playerName: '',
-    playerEmail: '',
-    playerPhoto: '',
-    level: 1, xp: 0, xpNext: 100,
-    money: 15000,
+    uid: null, playerName: '', playerEmail: '', playerPhoto: '',
+    level: 1, xp: 0, xpNext: 100, money: 15000,
     currentCity: 'Москва',
     inventory: [], cars: [],
-    phonesBought: 0, phonesSold: 0,
-    carsBought: 0, carsSold: 0,
+    phonesBought: 0, phonesSold: 0, carsBought: 0, carsSold: 0,
     totalEarned: 0, totalSpent: 0, tax: 0,
-    credit: 0, creditRating: 500, deposit: 0,
-    depositLastUpdate: Date.now(),
+    credit: 0, creditRating: 500, deposit: 0, depositLastUpdate: Date.now(),
     officeLevel: 0, employees: [], businesses: [],
     bankCountry: null, bankName: null, bankColor: null, bankPin: null,
     lockPin: null,
     simCountry: null, simOperator: null, simOperatorColor: null,
     simNumber: null, simBalance: 0, simGB: 30, simHistory: [],
     battery: 100, batteryLastTick: Date.now(),
-    internetOn: true, airplaneMode: false, locationOn: true,
-    batterySaver: false, flashlightOn: false,
+    internetOn: true, airplaneMode: false, locationOn: true, batterySaver: false, flashlightOn: false,
     messages: [], unreadMessages: 0, gallery: [],
     installedApps: {},
     quests: {}, achievements: {},
@@ -709,7 +700,7 @@ let state = {
 };
 
 /* ============================================================
-   DATA (сокращено для краткости — полный набор как в v3.1)
+   DATA
 ============================================================ */
 const CITIES = [
     {name:'Москва', lat:55.75, lon:37.62, mul:1.15},
@@ -953,31 +944,18 @@ function signInWithGoogle(){
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     document.getElementById('loginStatus').textContent = '⏳ Входим...';
-    fbAuth.signInWithPopup(provider)
-        .then(result => {
-            console.log('✅ Signed in:', result.user.displayName);
-        })
-        .catch(err => {
-            console.error('❌ Auth error:', err);
-            if(err.code === 'auth/popup-blocked'){
-                document.getElementById('loginStatus').textContent = '❌ Разрешите всплывающие окна';
-            } else if(err.code === 'auth/popup-closed-by-user'){
-                document.getElementById('loginStatus').textContent = '❌ Окно закрыто';
-            } else {
-                document.getElementById('loginStatus').textContent = '❌ ' + err.message;
-            }
-        });
-}
-function signOut(){
-    showModal('Выйти из аккаунта?', 'Прогресс сохранён в облаке', {
-        ok: 'Выйти',
-        onOk: () => {
-            if(fbAuth) fbAuth.signOut().then(() => location.reload());
-        }
+    fbAuth.signInWithPopup(provider).catch(err => {
+        console.error('❌ Auth:', err);
+        if(err.code === 'auth/popup-blocked') document.getElementById('loginStatus').textContent = '❌ Разрешите попапы';
+        else if(err.code === 'auth/popup-closed-by-user') document.getElementById('loginStatus').textContent = '❌ Окно закрыто';
+        else document.getElementById('loginStatus').textContent = '❌ ' + err.message;
     });
 }
+function signOut(){
+    showModal('Выйти из аккаунта?', 'Прогресс сохранён в облаке', { ok: 'Выйти', onOk: () => { if(fbAuth) fbAuth.signOut().then(() => location.reload()); }});
+}
 function watchAuth(){
-    if(!fbAuth) return;
+    if(!fbAuth){ onUserReady(); return; }
     fbAuth.onAuthStateChanged(user => {
         if(user){
             fbUser = user;
@@ -985,64 +963,59 @@ function watchAuth(){
             state.playerEmail = user.email || '';
             state.playerPhoto = user.photoURL || '';
             if(!state.playerName) state.playerName = user.displayName || 'Игрок';
-            console.log('👤 User:', user.displayName, user.email);
+            console.log('👤', user.displayName, user.email);
             document.getElementById('loginScreen').classList.add('hidden');
-            loadCloudSave().then(() => {
-                boot();
-                setSyncStatus('online');
-            });
+            loadCloudSave().then(() => onUserReady());
         } else {
             fbUser = null;
             document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('lockScreen').style.display = 'none';
             setSyncStatus('offline');
         }
     });
 }
+function onUserReady(){
+    boot();
+    setSyncStatus('online');
+    // Показываем lock screen после входа
+    const lock = document.getElementById('lockScreen');
+    if(lock){
+        lock.style.display = 'flex';
+        lock.classList.remove('up');
+        setupLockScreen();
+    }
+}
 function setSyncStatus(s){
     const dot = document.getElementById('syncDot');
-    if(dot){
-        dot.className = 'sync-dot ' + s;
-        dot.title = s === 'online' ? 'Синхронизировано' : (s === 'saving' ? 'Сохранение...' : 'Офлайн');
-    }
+    if(dot){ dot.className = 'sync-dot ' + s; dot.title = s === 'online' ? 'Синхронизировано' : (s === 'saving' ? 'Сохранение...' : 'Офлайн'); }
 }
 
 /* ============================================================
-   CLOUD SAVE/LOAD
+   CLOUD SAVE
 ============================================================ */
 let saveTimeout = null;
 function cloudSaveDebounced(){
     setSyncStatus('saving');
     clearTimeout(saveTimeout);
-    saveTimeout = setTimeout(cloudSave, 2000);
+    saveTimeout = setTimeout(cloudSave, 1500);
 }
 function cloudSave(){
     if(!fbUser || !fbDB) return;
     const data = {
-        profile: {
-            name: state.playerName,
-            email: state.playerEmail,
-            photo: state.playerPhoto,
-            level: state.level,
-            updatedAt: Date.now()
-        },
+        profile: { name: state.playerName, email: state.playerEmail, photo: state.playerPhoto, level: state.level, updatedAt: Date.now() },
         game: {
-            money: state.money,
-            xp: state.xp, xpNext: state.xpNext,
-            currentCity: state.currentCity,
-            inventory: state.inventory,
-            cars: state.cars,
+            money: state.money, xp: state.xp, xpNext: state.xpNext, currentCity: state.currentCity,
+            inventory: state.inventory, cars: state.cars,
             phonesBought: state.phonesBought, phonesSold: state.phonesSold,
             carsBought: state.carsBought, carsSold: state.carsSold,
             totalEarned: state.totalEarned, totalSpent: state.totalSpent, tax: state.tax,
-            credit: state.credit, creditRating: state.creditRating, deposit: state.deposit,
-            depositLastUpdate: state.depositLastUpdate,
+            credit: state.credit, creditRating: state.creditRating, deposit: state.deposit, depositLastUpdate: state.depositLastUpdate,
             officeLevel: state.officeLevel, employees: state.employees, businesses: state.businesses,
             bankCountry: state.bankCountry, bankName: state.bankName, bankColor: state.bankColor, bankPin: state.bankPin,
             lockPin: state.lockPin,
             simCountry: state.simCountry, simOperator: state.simOperator, simOperatorColor: state.simOperatorColor,
             simNumber: state.simNumber, simBalance: state.simBalance, simGB: state.simGB, simHistory: state.simHistory,
-            gallery: state.gallery,
-            installedApps: state.installedApps,
+            gallery: state.gallery, installedApps: state.installedApps,
             quests: state.quests, achievements: state.achievements,
             lastDaily: state.lastDaily, usedPromos: state.usedPromos,
             animations: state.animations, sound: state.sound, notifications: state.notifications,
@@ -1050,48 +1023,29 @@ function cloudSave(){
         },
         lastSeen: Date.now()
     };
-    fbDB.ref('users/' + fbUser.uid).set(data)
-        .then(() => {
-            setSyncStatus('online');
-            state.lastSaved = Date.now();
-            console.log('💾 Saved to cloud');
-            updateLeaderboard();
-        })
-        .catch(err => {
-            console.error('❌ Save error:', err);
-            setSyncStatus('offline');
-        });
+    fbDB.ref('users/' + fbUser.uid).set(data).then(() => {
+        setSyncStatus('online');
+        state.lastSaved = Date.now();
+        updateLeaderboard();
+    }).catch(err => { console.error('❌ Save:', err); setSyncStatus('offline'); });
 }
 async function loadCloudSave(){
     if(!fbUser || !fbDB) return false;
     try {
-        const snapshot = await fbDB.ref('users/' + fbUser.uid).once('value');
-        const data = snapshot.val();
-        if(!data || !data.game){
-            console.log('ℹ️ No cloud save, fresh start');
-            return false;
-        }
-        console.log('📥 Loading from cloud');
-        const g = data.game;
-        Object.keys(g).forEach(k => {
-            if(k in state) state[k] = g[k];
-        });
-        if(data.profile){
-            state.playerName = data.profile.name || state.playerName;
-            state.level = data.profile.level || state.level;
-        }
+        const snap = await fbDB.ref('users/' + fbUser.uid).once('value');
+        const data = snap.val();
+        if(!data || !data.game){ console.log('ℹ️ New account'); return false; }
+        Object.keys(data.game).forEach(k => { if(k in state) state[k] = data.game[k]; });
+        if(data.profile){ state.playerName = data.profile.name || state.playerName; state.level = data.profile.level || state.level; }
         notify('☁️ Загружено из облака','','success');
         return true;
-    } catch(e) {
-        console.error('❌ Load error:', e);
-        return false;
-    }
+    } catch(e) { console.error('❌ Load:', e); return false; }
 }
 function syncNow(){
-    if(!fbUser){ notify('❌ Нужно войти','','danger'); return; }
+    if(!fbUser){ notify('❌ Войдите','','danger'); return; }
     setSyncStatus('saving');
     cloudSave();
-    notify('☁️ Синхронизация...','','success');
+    notify('☁️ Синхронизировано','','success');
 }
 
 /* ============================================================
@@ -1103,12 +1057,10 @@ async function updateLeaderboard(){
         await fbDB.ref('leaderboard/' + fbUser.uid).set({
             name: state.playerName || 'Аноним',
             photo: state.playerPhoto || '',
-            money: state.money,
-            level: state.level,
-            city: state.currentCity,
-            updatedAt: Date.now()
+            money: state.money, level: state.level,
+            city: state.currentCity, updatedAt: Date.now()
         });
-    } catch(e){ console.error('Leaderboard update error:', e); }
+    } catch(e){}
 }
 async function loadLeaderboard(){
     const el = document.getElementById('leaderboardList');
@@ -1116,28 +1068,25 @@ async function loadLeaderboard(){
     el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-lt)">Загрузка...</div>';
     if(!fbDB){ el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-lt)">Нет подключения</div>'; return; }
     try {
-        const snapshot = await fbDB.ref('leaderboard').orderByChild('money').limitToLast(100).once('value');
-        const data = snapshot.val() || {};
-        const list = Object.keys(data).map(uid => ({ uid, ...data[uid] }))
-            .sort((a, b) => b.money - a.money);
-        if(!list.length){
-            el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-lt)">Пока никого нет — будь первым!</div>';
-            return;
-        }
+        const snap = await fbDB.ref('leaderboard').orderByChild('money').limitToLast(100).once('value');
+        const data = snap.val() || {};
+        const list = Object.keys(data).map(uid => ({ uid, ...data[uid] })).sort((a, b) => b.money - a.money);
+        if(!list.length){ el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-lt)">Пока никого нет</div>'; return; }
         el.innerHTML = list.map((p, i) => {
             const rank = i + 1;
             const rankClass = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : '';
             const isMe = fbUser && p.uid === fbUser.uid ? 'me' : '';
+            const initials = (p.name || 'A')[0].toUpperCase();
+            const avatarHtml = p.photo ? `<img src="${p.photo}">` : initials;
             return `<div class="leader-row ${isMe}">
                 <div class="leader-rank ${rankClass}">${rank}</div>
-                <div class="leader-avatar">${p.photo ? `<img src="${p.photo}">` : '<div style="width:100%;height:100%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:800">' + (p.name||'A')[0].toUpperCase() + '</div>'}</div>
-                <div class="leader-name">${p.name || 'Аноним'}${isMe ? ' (вы)' : ''}</div>
+                <div class="leader-avatar">${avatarHtml}</div>
+                <div class="leader-name">${escapeHtml(p.name || 'Аноним')}${isMe ? ' (вы)' : ''}</div>
                 <div class="leader-money">${fmt(p.money)}</div>
             </div>`;
         }).join('');
     } catch(e) {
-        console.error('Leaderboard error:', e);
-        el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--danger)">Ошибка загрузки: ' + e.message + '</div>';
+        el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--danger)">Ошибка: ' + e.message + '</div>';
     }
 }
 
@@ -1147,11 +1096,11 @@ async function loadLeaderboard(){
 let globalChatRef = null;
 function initGlobalChat(){
     if(!fbDB || !fbUser) return;
-    globalChatRef = fbDB.ref('globalchat').limitToLast(50);
-    globalChatRef.on('child_added', (snapshot) => {
+    if(globalChatRef) globalChatRef.off();
+    globalChatRef = fbDB.ref('globalChat').limitToLast(50);
+    globalChatRef.on('child_added', snapshot => {
         const msg = snapshot.val();
-        if(!msg) return;
-        appendGlobalMessage(msg);
+        if(msg) appendGlobalMessage(msg);
     });
 }
 function appendGlobalMessage(msg){
@@ -1161,13 +1110,11 @@ function appendGlobalMessage(msg){
     const div = document.createElement('div');
     div.className = 'gchat-msg' + (isMe ? ' me' : '');
     const initials = (msg.name || 'A')[0].toUpperCase();
-    const avatarHtml = msg.photo
-        ? `<img src="${msg.photo}">`
-        : `<div style="width:100%;height:100%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff">${initials}</div>`;
+    const avatarHtml = msg.photo ? `<img src="${msg.photo}">` : initials;
     div.innerHTML = `
         <div class="gchat-avatar">${avatarHtml}</div>
         <div class="gchat-content">
-            <div class="gchat-name ${isMe ? 'me' : ''}">${msg.name || 'Аноним'}</div>
+            <div class="gchat-name ${isMe ? 'me' : ''}">${escapeHtml(msg.name || 'Аноним')}</div>
             <div class="gchat-text">${escapeHtml(msg.text || '')}</div>
             <div class="gchat-time">${new Date(msg.time).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}</div>
         </div>
@@ -1175,30 +1122,26 @@ function appendGlobalMessage(msg){
     area.appendChild(div);
     area.scrollTop = area.scrollHeight;
 }
-function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 function sendGlobalMessage(){
     const inp = document.getElementById('globalChatInput');
     const text = inp.value.trim();
     if(!text) return;
-    if(!fbUser){ notify('❌ Войдите в аккаунт','','danger'); return; }
+    if(!fbUser){ notify('❌ Войдите','','danger'); return; }
     if(!fbDB){ notify('❌ Нет подключения','','danger'); return; }
-    fbDB.ref('globalchat').push({
+    fbDB.ref('globalChat').push({
         uid: fbUser.uid,
         name: state.playerName || 'Аноним',
         photo: state.playerPhoto || '',
-        text: text,
-        time: Date.now()
-    }).then(() => { inp.value = ''; })
-      .catch(e => notify('❌ ' + e.message, '', 'danger'));
+        text: text, time: Date.now()
+    }).then(() => { inp.value = ''; }).catch(e => notify('❌ ' + e.message, '', 'danger'));
 }
 function loadGlobalChatHistory(){
     const area = document.getElementById('globalChatMessages');
     if(!area) return;
     area.innerHTML = '';
-    if(!fbDB || !fbUser){ return; }
-    fbDB.ref('globalchat').limitToLast(50).once('value').then(snap => {
+    if(!fbDB || !fbUser) return;
+    fbDB.ref('globalChat').limitToLast(50).once('value').then(snap => {
         const data = snap.val() || {};
         Object.values(data).sort((a, b) => a.time - b.time).forEach(appendGlobalMessage);
     });
@@ -1262,10 +1205,9 @@ function closeModal(ok){
 }
 
 /* ============================================================
-   MARKET (сокращённая генерация)
+   MARKET
 ============================================================ */
 const marketDB = [], carsDB = [], usedDB = [];
-
 function generateMarkets(){
     marketDB.length = 0; carsDB.length = 0; usedDB.length = 0;
     CITIES.forEach(city => {
@@ -1383,10 +1325,8 @@ function generateMarkets(){
 }
 
 /* ============================================================
-   STUB ФУНКЦИИ — все ключевые функции из v3.1
-   (игровая логика идентична предыдущей версии)
+   APP STORE
 ============================================================ */
-/* --- Магазин приложений --- */
 function updateAllAppIcons(){
     ['tax','used','cars','repair','tetris','snake','stats'].forEach(id => {
         const el = document.getElementById('app-icon-' + id);
@@ -1469,7 +1409,9 @@ function openGame(id){
     if(id === 'snake'){ openScreen('snake-screen'); setTimeout(snakeReset, 100); }
 }
 
-/* --- Рынок --- */
+/* ============================================================
+   MARKET BROWSING
+============================================================ */
 let marketCategory = 'phone', selectedBrand = null, selectedCarBrand = null;
 function getBrandListByCategory(cat){
     if(cat === 'phone') return PHONE_BRANDS;
@@ -1560,7 +1502,9 @@ function openModel(brandId, modelName){
         </div>`).join('')}`;
 }
 
-/* --- Машины --- */
+/* ============================================================
+   CARS
+============================================================ */
 function renderCarBrandList(search = ''){
     const city = state.currentCity;
     document.getElementById('carCityLabel').textContent = city;
@@ -1617,7 +1561,9 @@ function openCarModel(brandId, modelName){
         </div>`).join('')}`;
 }
 
-/* --- Б/У --- */
+/* ============================================================
+   USED
+============================================================ */
 function renderUsedList(){
     const city = state.currentCity;
     const items = usedDB.filter(m => m.city === city).slice(0, 60);
@@ -1632,7 +1578,9 @@ function renderUsedList(){
         </div>`).join('');
 }
 
-/* --- Чат (торги) --- */
+/* ============================================================
+   CHAT (торги)
+============================================================ */
 let currentChat = null;
 function startBuyChat(id){
     const item = marketDB.find(m => m.id === id); if(!item) return;
@@ -1821,7 +1769,9 @@ function acceptDeal(){
 }
 function closeChat(){ currentChat = null; openScreen('home-screen'); }
 
-/* --- Вспомогательные (упрощены) --- */
+/* ============================================================
+   XP / QUESTS
+============================================================ */
 function addXP(n){
     state.xp += n;
     while(state.xp >= state.xpNext){ state.xp -= state.xpNext; state.level++; state.xpNext = Math.floor(state.xpNext * 1.5); notify('🎉 Уровень ' + state.level, '', 'success'); }
@@ -1833,11 +1783,13 @@ function checkQuestProgress(id){
     state.quests[id].current++;
     const targets = {first_buy:1, first_sell:1, buys_10:10, sales_10:10, repairs_5:5, car_sales_5:5, hire_employee:1, open_business:1, travel_3:3};
     const rewards = {first_buy:500, first_sell:500, buys_10:3000, sales_10:3000, repairs_5:2000, car_sales_5:10000, hire_employee:2000, open_business:5000, travel_3:1500};
-    if(state.quests[id].current >= (targets[id] || 1)){ state.quests[id].completed = true; state.money += (rewards[id] || 0); notify('🏆 Квест выполнен!', '', 'success'); }
+    if(state.quests[id].current >= (targets[id] || 1)){ state.quests[id].completed = true; state.money += (rewards[id] || 0); notify('🏆 Квест!', '', 'success'); }
     cloudSaveDebounced();
 }
 
-/* --- Банк --- */
+/* ============================================================
+   BANK
+============================================================ */
 function renderBankScreen(){
     if(state.bankCountry && state.bankName){
         document.getElementById('bankCountryStep').classList.add('hidden');
@@ -1961,7 +1913,9 @@ function addDeposit(){
 }
 function withdrawDeposit(){ if(state.deposit <= 0) return; state.money += state.deposit; state.deposit = 0; cloudSaveDebounced(); updateBankCard(); }
 
-/* --- Офис/Бизнес/Работа/Поездки/SIM/Магазин — упрощены до базового рендера --- */
+/* ============================================================
+   BUSINESS / OFFICE / JOBS
+============================================================ */
 function renderBusinessList(){
     document.getElementById('bizList').innerHTML = BUSINESSES.map(b => {
         const owned = state.businesses.find(x => x.id === b.id);
@@ -2004,6 +1958,10 @@ function renderJobsScreen(){
     }).join('');
 }
 function workJob(id){ const j = JOBS.find(x => x.id === id); if(!j || state.level < j.req) return; state.money += j.salary; addXP(5); cloudSaveDebounced(); }
+
+/* ============================================================
+   TRAVEL
+============================================================ */
 function renderCityList(search = ''){
     document.getElementById('travelCurrentCity').textContent = state.currentCity;
     const q = (search || '').toLowerCase().trim();
@@ -2049,7 +2007,9 @@ function pickCity(name, price){
     notify('✅ ' + name, '', 'success');
 }
 
-/* --- SIM --- */
+/* ============================================================
+   SIM
+============================================================ */
 function renderSimScreen(){
     if(state.simOperator){ document.getElementById('simCountryStep').classList.add('hidden'); document.getElementById('simOperatorStep').classList.add('hidden'); document.getElementById('simMainStep').classList.remove('hidden'); updateSimDisplay(); }
     else { document.getElementById('simCountryStep').classList.remove('hidden'); document.getElementById('simOperatorStep').classList.add('hidden'); document.getElementById('simMainStep').classList.add('hidden'); renderSimCountries(); }
@@ -2094,7 +2054,9 @@ function insertSimIntoPhone(phoneId){
     state.simBalance -= 200; phone.hasSim = true; cloudSaveDebounced(); renderPlayerScreen();
 }
 
-/* --- Игрок --- */
+/* ============================================================
+   PLAYER
+============================================================ */
 let playerTab = 'inv';
 function renderPlayerScreen(){
     document.getElementById('profileName').value = state.playerName || '';
@@ -2154,7 +2116,7 @@ function renderPlayerQuests(){
     ];
     document.getElementById('playerQuests').innerHTML = defs.map(q => {
         const s = state.quests[q.id] || {current: 0, completed: false};
-        return `<div class="quest-item"><div class="quest-icon">${s.completed?'✅':'📋'}</div><div class="quest-info"><div class="quest-title">${q.title}</div><div class="quest-desc">+${fmt(q.reward)}</div><div class="quest-bar"><i style="width:${Math.min(100, s.current/q.target*100)}%"></i></div></div></div>`;
+        return `<div class="quest-item"><div class="quest-icon">${s.completed?'✅':'📋'}</div><div class="quest-info"><div class="quest-title">${q.title}</div><div style="font-size:11px;color:var(--success);font-weight:700">+${fmt(q.reward)}</div><div class="quest-bar"><i style="width:${Math.min(100, s.current/q.target*100)}%"></i></div></div></div>`;
     }).join('');
 }
 function renderPlayerAchievements(){
@@ -2178,7 +2140,9 @@ function claimDaily(){
     notify('🎁 +500₽','','success');
 }
 
-/* --- Прочее --- */
+/* ============================================================
+   STATS / TAX / MESSAGES / GALLERY / SETTINGS
+============================================================ */
 function renderStatsScreen(){
     document.getElementById('statsContent').innerHTML = `
         <div class="list-item"><span>📱 Куплено телефонов</span><b>${state.phonesBought}</b></div>
@@ -2212,7 +2176,10 @@ function renderSettingsScreen(){
     document.getElementById('versionLabel').textContent = GAME_VERSION + ' · ' + GAME_TITLE;
 }
 function toggleSetting(k, el){ if(k === 'anim'){state.animations = !state.animations;} if(k === 'sound'){state.sound = !state.sound;} if(k === 'notif'){state.notifications = !state.notifications;} el.classList.toggle('on'); cloudSaveDebounced(); }
-function togglePinSetting(){ if(state.lockPin){ showModal('Удалить PIN?','',{onOk:()=>{state.lockPin=null;cloudSaveDebounced();renderSettingsScreen();}}); } else showModal('Установить PIN','4 цифры',{extraHtml:'<input type="password" id="newPin" maxlength="4" style="text-align:center;font-size:24px">',onOk:()=>{const v=document.getElementById('newPin').value;if(!/^\d{4}$/.test(v))return;state.lockPin=v;cloudSaveDebounced();renderSettingsScreen();}}); }
+function togglePinSetting(){
+    if(state.lockPin){ showModal('Удалить PIN?','',{onOk:()=>{state.lockPin=null;cloudSaveDebounced();renderSettingsScreen();}}); }
+    else showModal('Установить PIN','4 цифры',{extraHtml:'<input type="password" id="newPin" maxlength="4" style="text-align:center;font-size:24px">',onOk:()=>{const v=document.getElementById('newPin').value;if(!/^\d{4}$/.test(v))return;state.lockPin=v;cloudSaveDebounced();renderSettingsScreen();}});
+}
 function applyPromo(){
     const code = document.getElementById('promoInput').value.trim();
     if(!code) return;
@@ -2225,7 +2192,9 @@ function applyPromo(){
 }
 function confirmReset(){ showModal('Сбросить?','Всё удалится, включая облако',{ok:'Удалить',onOk:()=>{ if(fbUser && fbDB) fbDB.ref('users/' + fbUser.uid).remove(); localStorage.removeItem(SAVE_KEY); location.reload(); }}); }
 
-/* --- Камера --- */
+/* ============================================================
+   CAMERA
+============================================================ */
 let camStream = null, camFacing = 'environment', camFilter = 'none';
 async function openCamera(){
     if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ notify('📷 Не поддерживается','','danger'); return; }
@@ -2270,7 +2239,9 @@ function takePhoto(){
     notify('📷 Снято','','success');
 }
 
-/* --- Тетрис --- */
+/* ============================================================
+   TETRIS
+============================================================ */
 let tetrisState = null, tetrisInterval = null, tetrisScore = 0;
 const TETRIS_COLS = 10, TETRIS_ROWS = 20, TILE = 28;
 const TETRIS_SHAPES = [
@@ -2343,7 +2314,9 @@ function tetrisDraw(){
         if(c.shape[r][cc] && c.y + r >= 0){ ctx.fillStyle = c.color; ctx.fillRect((c.x + cc)*TILE+1, (c.y + r)*TILE+1, TILE-2, TILE-2); }
 }
 
-/* --- Змейка --- */
+/* ============================================================
+   SNAKE
+============================================================ */
 let snakeState = null, snakeInterval = null, snakeScore = 0;
 const SNAKE_COLS = 20, SNAKE_ROWS = 20;
 function stopSnake(){ if(snakeInterval) clearInterval(snakeInterval); snakeInterval = null; }
@@ -2384,7 +2357,9 @@ function snakeDraw(){
     });
 }
 
-/* --- Статус-бар / Шторка --- */
+/* ============================================================
+   STATUS BAR / SHUTTER
+============================================================ */
 let shutterOpen = false;
 function openShutter(){ document.getElementById('shutter').classList.add('open'); document.getElementById('shutterOverlay').classList.add('show'); shutterOpen = true; }
 function closeShutter(){ document.getElementById('shutter').classList.remove('open'); document.getElementById('shutterOverlay').classList.remove('show'); shutterOpen = false; }
@@ -2448,20 +2423,38 @@ function setupShutterSwipe(){
     sb.addEventListener('click', () => { if(!didDrag){ shutterOpen ? closeShutter() : openShutter(); } });
     document.addEventListener('keydown', e => { if(e.key === 'Escape' && shutterOpen) closeShutter(); });
 }
+/* ============ LOCK SCREEN (ФИКС) ============ */
 function setupLockScreen(){
     const ls = document.getElementById('lockScreen');
-    let sy = null;
-    const start = y => sy = y;
+    if(!ls) return;
+    if(ls._lockBound) return;
+    ls._lockBound = true;
+
+    let sy = null, moved = false;
+    const start = y => { sy = y; moved = false; };
+    const move = y => { if(sy === null) return; const dy = sy - y; if(dy > 15) moved = true; };
     const end = y => {
         if(sy === null) return;
         const dy = sy - y;
         sy = null;
-        if(dy > 60){ ls.classList.add('up'); setTimeout(() => { ls.style.display = 'none'; }, 500); }
+        if(dy > 40 || (moved && dy > 20)) unlockNow();
     };
+    const unlockNow = () => {
+        ls.classList.add('up');
+        setTimeout(() => { ls.style.display = 'none'; }, 500);
+    };
+
     ls.addEventListener('touchstart', e => start(e.touches[0].clientY), {passive: true});
+    ls.addEventListener('touchmove', e => move(e.touches[0].clientY), {passive: true});
     ls.addEventListener('touchend', e => end(e.changedTouches[0].clientY));
     ls.addEventListener('mousedown', e => start(e.clientY));
+    ls.addEventListener('mousemove', e => move(e.clientY));
     ls.addEventListener('mouseup', e => end(e.clientY));
+
+    // Клик по нижней зоне — тоже разблокировка
+    ls.addEventListener('click', e => {
+        if(e.clientY > window.innerHeight - 200) unlockNow();
+    });
 }
 
 /* ============================================================
@@ -2482,11 +2475,8 @@ setInterval(() => {
         });
     }
 }, 60000);
-setInterval(() => {
-    updateStatusBar();
-    batteryTick();
-}, 1000);
-setInterval(() => { if(fbUser) { cloudSave(); } }, 30000);
+setInterval(() => { updateStatusBar(); batteryTick(); }, 1000);
+setInterval(() => { if(fbUser) cloudSave(); }, 30000);
 
 /* ============================================================
    BOOT
@@ -2496,7 +2486,6 @@ function boot(){
     if(!marketDB.length) generateMarkets();
     updateStatusBar();
     updateAllAppIcons();
-    setupLockScreen();
     setupShutterSwipe();
     document.querySelectorAll('.sht').forEach(el => {
         const k = el.dataset.sh;
@@ -2505,7 +2494,6 @@ function boot(){
         if(k === 'location') el.classList.toggle('on', state.locationOn);
         if(k === 'saver') el.classList.toggle('on', state.batterySaver);
     });
-    // Настройки по умолчанию: светлая тема
     initGlobalChat();
     updateLeaderboard();
     console.log('✅ ' + GAME_TITLE + ' ' + GAME_VERSION + ' loaded');
@@ -2513,8 +2501,21 @@ function boot(){
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Прячем lock при старте, пока идёт авторизация
+    const lock = document.getElementById('lockScreen');
+    if(lock) lock.style.display = 'none';
+
     if(fbReady){ watchAuth(); }
-    else { document.getElementById('loginScreen').classList.add('hidden'); boot(); }
+    else {
+        // Firebase не подключился — пускаем в игру сразу
+        document.getElementById('loginScreen').classList.add('hidden');
+        boot();
+        if(lock){
+            lock.style.display = 'flex';
+            lock.classList.remove('up');
+            setupLockScreen();
+        }
+    }
 });
 
 window.addEventListener('beforeunload', () => { if(fbUser) cloudSave(); });
