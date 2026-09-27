@@ -204,7 +204,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
                     <input type="number" id="eventHours" placeholder="24" value="24">
                 </div>
             </div>
-            <button class="btn btn-warning" onclick="createEvent()">🎉 Запустить ивент</button>
+            <button class="btn btn-warning" onclick="createGameEvent()">🎉 Запустить ивент</button>
         </div>
         <div class="section">
             <h2>🎊 Активные ивенты</h2>
@@ -404,7 +404,6 @@ function runDiagnostics(){
     const results = [];
     let done = 0;
 
-    // 1. Соединение
     fbDB.ref('.info/connected').once('value')
         .then(s => {
             const ok = s.val() === true;
@@ -417,7 +416,6 @@ function runDiagnostics(){
             done++; finish();
         });
 
-    // 2. Чтение users
     fbDB.ref('users').once('value')
         .then(s => {
             const count = Object.keys(s.val() || {}).length;
@@ -431,7 +429,6 @@ function runDiagnostics(){
             done++; finish();
         });
 
-    // 3. Чтение leaderboard
     fbDB.ref('leaderboard').once('value')
         .then(s => {
             const count = Object.keys(s.val() || {}).length;
@@ -443,7 +440,6 @@ function runDiagnostics(){
             done++; finish();
         });
 
-    // 4. Запись тестовая
     const testRef = fbDB.ref('_admin_test_' + Date.now());
     testRef.set({ t: Date.now(), by: fbUser.uid })
         .then(() => {
@@ -477,7 +473,6 @@ function runDiagnostics(){
 function loadAll(){
     if(!fbDB) return;
 
-    // Отдельные запросы — если одна ветка блокируется, другие грузятся
     fbDB.ref('users').once('value')
         .then(snap => {
             playersCache = snap.val() || {};
@@ -614,14 +609,24 @@ function savePlayerChanges(){
     }).catch(e => toast('❌ ' + e.message, 'danger'));
 }
 function givePlayerMoney(amount){
-    if(!currentPlayerUid) return;
+    console.log('🔥 givePlayerMoney вызвана, amount =', amount);
+    console.log('   currentPlayerUid =', currentPlayerUid);
+    if(!currentPlayerUid){ console.warn('❌ UID пустой — выход'); toast('❌ Откройте игрока', 'danger'); return; }
     const current = playersCache[currentPlayerUid]?.game?.money || 0;
+    console.log('   текущий баланс =', current);
     const newMoney = current + amount;
-    fbDB.ref('users/' + currentPlayerUid + '/game/money').set(newMoney).then(() => {
-        document.getElementById('mMoney').value = newMoney;
-        toast('✅ +' + fmt(amount), 'success');
-        loadAll();
-    });
+    console.log('   новый баланс =', newMoney);
+    fbDB.ref('users/' + currentPlayerUid + '/game/money').set(newMoney)
+        .then(() => {
+            console.log('✅ записано');
+            document.getElementById('mMoney').value = newMoney;
+            toast('✅ +' + fmt(amount), 'success');
+            loadAll();
+        })
+        .catch(e => {
+            console.error('❌ ошибка записи:', e);
+            toast('❌ ' + e.message, 'danger');
+        });
 }
 function toggleBan(){
     if(!currentPlayerUid) return;
@@ -694,7 +699,8 @@ function deletePromo(code){
 }
 
 /* ========== EVENTS ========== */
-function createEvent(){
+function createGameEvent(){
+    console.log('🔥 createGameEvent вызвана');
     const name = document.getElementById('eventName').value.trim();
     const mult = parseFloat(document.getElementById('eventMult').value) || 2;
     const hours = parseInt(document.getElementById('eventHours').value) || 24;
@@ -702,6 +708,7 @@ function createEvent(){
     if(!name){ toast('❌ Введите название', 'danger'); return; }
 
     const id = 'event_' + Date.now();
+    console.log('   id =', id, 'name =', name, 'mult =', mult, 'hours =', hours);
     fbDB.ref('events/' + id).set({
         id: id,
         name: name,
@@ -710,9 +717,13 @@ function createEvent(){
         endsAt: Date.now() + hours * 3600000,
         active: true
     }).then(() => {
+        console.log('✅ event создан');
         toast('🎉 Ивент "' + name + '" запущен', 'success');
         document.getElementById('eventName').value = '';
-    }).catch(e => toast('❌ ' + e.message, 'danger'));
+    }).catch(e => {
+        console.error('❌ createGameEvent error:', e);
+        toast('❌ ' + e.message, 'danger');
+    });
 }
 function renderEvents(){
     const el = document.getElementById('eventsList');
@@ -740,6 +751,7 @@ function deleteEvent(id){
 
 /* ========== BROADCAST ========== */
 function broadcastMessage(){
+    console.log('🔥 broadcastMessage вызвана');
     const text = document.getElementById('broadcastText').value.trim();
     if(!text){ toast('❌ Введите текст', 'danger'); return; }
     if(!confirm('Отправить всем игрокам:\n\n' + text)) return;
@@ -752,9 +764,13 @@ function broadcastMessage(){
         time: Date.now(),
         isSystem: true
     }).then(() => {
+        console.log('✅ broadcast отправлен');
         toast('📢 Отправлено', 'success');
         document.getElementById('broadcastText').value = '';
-    }).catch(e => toast('❌ ' + e.message, 'danger'));
+    }).catch(e => {
+        console.error('❌ broadcast error:', e);
+        toast('❌ ' + e.message, 'danger');
+    });
 }
 function sendDirect(){
     const uid = document.getElementById('directUid').value.trim();
