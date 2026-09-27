@@ -577,7 +577,7 @@ function switchTab(tab, el){
 function runDiagnostics(){
     const results = [];
     let done = 0;
-    fbDB.ref('.info/connected').once('value').then(s => {
+    fbDB.ref('users').once('value').then(s => {
         const ok = s.val() === true;
         results.push({ok, text: ok ? 'Соединение' : 'Нет соединения'});
         done++; finish();
