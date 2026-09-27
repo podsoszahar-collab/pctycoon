@@ -14,7 +14,6 @@ body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 button{font-family:inherit;cursor:pointer;border:none;outline:none}
 input,select,textarea{font-family:inherit;width:100%;padding:13px;border-radius:12px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;font-weight:600;outline:none;transition:all .2s}
 input:focus,textarea:focus,select:focus{border-color:var(--primary);background:var(--surface3)}
-/* LOGIN */
 #loginScreen{position:fixed;inset:0;background:linear-gradient(160deg,#0a0c12,#1a1a2e);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;z-index:9999}
 .login-icon{font-size:80px;margin-bottom:20px}
 .login-title{font-size:28px;font-weight:900;color:#fff;text-align:center;margin-bottom:8px}
@@ -22,9 +21,8 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
 .login-btn{background:linear-gradient(135deg,#fff,#e2e8f0);color:#1a1d26;padding:16px 28px;border-radius:14px;font-weight:700;font-size:15px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.4);transition:transform .15s}
 .login-btn:active{transform:scale(.96)}
 .login-btn svg{width:22px;height:22px}
-.login-status{margin-top:24px;font-size:13px;color:#64748b;text-align:center;min-height:20px}
+.login-status{margin-top:24px;font-size:13px;color:#64748b;text-align:center;min-height:20px;max-width:400px;word-wrap:break-word}
 .login-status.error{color:#f87171}
-/* MAIN */
 #adminPanel{display:none;padding:20px;max-width:900px;margin:0 auto;padding-bottom:100px}
 #adminPanel.show{display:block}
 .header{display:flex;justify-content:space-between;align-items:center;padding:20px 0;border-bottom:1px solid var(--border);margin-bottom:20px;flex-wrap:wrap;gap:12px}
@@ -32,6 +30,10 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
 .admin-info{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--text-sec)}
 .admin-info img{width:36px;height:36px;border-radius:50%;border:2px solid var(--primary)}
 .logout-btn{background:var(--danger);color:#fff;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:700}
+.diag-box{background:var(--surface2);border-radius:12px;padding:12px 16px;margin-bottom:16px;border-left:4px solid var(--warning);font-size:12px;color:var(--text-sec);line-height:1.7}
+.diag-box.ok{border-left-color:var(--success)}
+.diag-box.err{border-left-color:var(--danger)}
+.diag-box b{color:var(--text)}
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
 .stat-card{background:var(--surface);border-radius:16px;padding:18px;border:1px solid var(--border);text-align:center}
 .stat-card .num{font-size:28px;font-weight:900;margin-bottom:4px}
@@ -69,7 +71,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
 .promo-info{font-size:11px;color:var(--text-sec);margin-top:4px}
 .promo-info.expired{color:var(--danger)}
 .event-row{background:linear-gradient(135deg,rgba(251,191,36,.1),transparent);border-radius:12px;padding:14px;margin-bottom:8px;border:1px solid rgba(251,191,36,.3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
-.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--surface);padding:14px 22px;border-radius:14px;box-shadow:0 15px 40px rgba(0,0,0,.6);z-index:10000;font-weight:700;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;border-left:4px solid var(--primary);max-width:90%}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--surface);padding:14px 22px;border-radius:14px;box-shadow:0 15px 40px rgba(0,0,0,.6);z-index:10000;font-weight:700;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;border-left:4px solid var(--primary);max-width:90%;text-align:center}
 .toast.show{opacity:1}
 .toast.success{border-left-color:var(--success)}
 .toast.danger{border-left-color:var(--danger)}
@@ -84,12 +86,12 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
 .row{display:flex;gap:8px;flex-wrap:wrap}
 .row>*{flex:1;min-width:120px}
 .empty{text-align:center;padding:40px 20px;color:var(--text-lt);font-size:14px}
+.empty.error{color:var(--danger)}
 .loading{text-align:center;padding:40px;color:var(--text-lt)}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="loginScreen">
     <div class="login-icon">🛡️</div>
     <div class="login-title">Admin Panel</div>
@@ -101,7 +103,6 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
     <div class="login-status" id="loginStatus"></div>
 </div>
 
-<!-- PANEL -->
 <div id="adminPanel">
     <div class="header">
         <h1>🛡️ Admin Panel</h1>
@@ -113,6 +114,10 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
             </div>
             <button class="logout-btn" onclick="signOut()">Выйти</button>
         </div>
+    </div>
+
+    <div class="diag-box" id="diagBox">
+        <div>⏳ <b>Диагностика:</b> подключение к базе...</div>
     </div>
 
     <div class="stats-grid">
@@ -142,7 +147,6 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
         <div class="tab" onclick="switchTab('tools', this)">🛠️ Инструменты</div>
     </div>
 
-    <!-- PLAYERS -->
     <div class="tab-content active" id="tab-players">
         <div class="section">
             <h2>🔍 Поиск игрока</h2>
@@ -154,7 +158,6 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
         </div>
     </div>
 
-    <!-- PROMOS -->
     <div class="tab-content" id="tab-promos">
         <div class="section">
             <h2>➕ Создать промокод</h2>
@@ -184,7 +187,6 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
         </div>
     </div>
 
-    <!-- EVENTS -->
     <div class="tab-content" id="tab-events">
         <div class="section">
             <h2>🎉 Создать ивент</h2>
@@ -210,7 +212,6 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
         </div>
     </div>
 
-    <!-- BROADCAST -->
     <div class="tab-content" id="tab-broadcast">
         <div class="section">
             <h2>📢 Системное сообщение в общий чат</h2>
@@ -221,7 +222,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
             <button class="btn" onclick="broadcastMessage()">📤 Отправить всем</button>
         </div>
         <div class="section">
-            <h2>📬 Отправить сообщение одному игроку</h2>
+            <h2>📬 Сообщение одному игроку</h2>
             <div class="form-group">
                 <label>UID игрока</label>
                 <input type="text" id="directUid" placeholder="Ewo6P6PnX3..." maxlength="64">
@@ -234,7 +235,6 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
         </div>
     </div>
 
-    <!-- TOOLS -->
     <div class="tab-content" id="tab-tools">
         <div class="section">
             <h2>🔧 Массовые операции</h2>
@@ -256,7 +256,6 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
     </div>
 </div>
 
-<!-- MODAL -->
 <div class="modal-overlay" id="playerModal">
     <div class="modal">
         <h3><span id="modalPlayerName"></span> <button class="modal-close" onclick="closePlayerModal()">✕</button></h3>
@@ -342,6 +341,11 @@ function toast(text, type){
     el._t = setTimeout(() => el.classList.remove('show'), 3000);
 }
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function setDiag(html, cls){
+    const el = document.getElementById('diagBox');
+    el.className = 'diag-box' + (cls ? ' ' + cls : '');
+    el.innerHTML = html;
+}
 
 /* ========== AUTH ========== */
 function signInAdmin(){
@@ -365,21 +369,28 @@ function watchAuth(){
     fbAuth.onAuthStateChanged(user => {
         if(user){
             if(user.uid !== ADMIN_UID){
-                document.getElementById('loginStatus').textContent = '❌ Доступ запрещён. Этот аккаунт не админ.';
+                document.getElementById('loginStatus').textContent = '❌ Доступ запрещён. UID: ' + user.uid;
                 document.getElementById('loginStatus').className = 'login-status error';
                 fbAuth.signOut();
                 return;
             }
             fbUser = user;
             console.log('✅ Admin:', user.displayName);
+            console.log('🔑 UID:', user.uid);
+            console.log('🔑 ADMIN_UID в коде:', ADMIN_UID);
+            console.log('🔑 Совпадает?', user.uid === ADMIN_UID);
+
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('adminPanel').classList.add('show');
             document.getElementById('adminAvatar').src = user.photoURL || '';
             document.getElementById('adminName').textContent = user.displayName || 'Admin';
             document.getElementById('adminUid').textContent = user.uid;
+
+            setDiag('⏳ <b>Проверяю Firebase...</b>');
+            runDiagnostics();
+
             loadAll();
-            // Автообновление каждые 15 секунд
-            setInterval(loadAll, 15000);
+            setInterval(loadAll, 20000);
         } else {
             fbUser = null;
             document.getElementById('loginScreen').style.display = 'flex';
@@ -388,29 +399,116 @@ function watchAuth(){
     });
 }
 
+/* ========== DIAGNOSTICS ========== */
+function runDiagnostics(){
+    const results = [];
+    let done = 0;
+
+    // 1. Соединение
+    fbDB.ref('.info/connected').once('value')
+        .then(s => {
+            const ok = s.val() === true;
+            console.log('📡 Firebase соединение:', ok ? '✅ есть' : '❌ нет');
+            results.push({ key: 'connection', ok: ok, text: ok ? 'Соединение' : 'Нет соединения' });
+            done++; finish();
+        })
+        .catch(e => {
+            results.push({ key: 'connection', ok: false, text: 'Ошибка соединения: ' + e.message });
+            done++; finish();
+        });
+
+    // 2. Чтение users
+    fbDB.ref('users').once('value')
+        .then(s => {
+            const count = Object.keys(s.val() || {}).length;
+            console.log('📖 users прочитан, игроков:', count);
+            results.push({ key: 'users', ok: true, text: 'users читается (игроков: ' + count + ')' });
+            done++; finish();
+        })
+        .catch(e => {
+            console.error('🚫 users не читается:', e.code, e.message);
+            results.push({ key: 'users', ok: false, text: 'users НЕ читается: ' + e.code });
+            done++; finish();
+        });
+
+    // 3. Чтение leaderboard
+    fbDB.ref('leaderboard').once('value')
+        .then(s => {
+            const count = Object.keys(s.val() || {}).length;
+            results.push({ key: 'leaderboard', ok: true, text: 'leaderboard читается (записей: ' + count + ')' });
+            done++; finish();
+        })
+        .catch(e => {
+            results.push({ key: 'leaderboard', ok: false, text: 'leaderboard НЕ читается: ' + e.code });
+            done++; finish();
+        });
+
+    // 4. Запись тестовая
+    const testRef = fbDB.ref('_admin_test_' + Date.now());
+    testRef.set({ t: Date.now(), by: fbUser.uid })
+        .then(() => {
+            results.push({ key: 'write', ok: true, text: 'Запись разрешена' });
+            testRef.remove();
+            done++; finish();
+        })
+        .catch(e => {
+            results.push({ key: 'write', ok: false, text: 'Запись ЗАПРЕЩЕНА: ' + e.code });
+            done++; finish();
+        });
+
+    function finish(){
+        if(done < 4) return;
+        const allOk = results.every(r => r.ok);
+        let html = '<div style="font-size:13px;font-weight:800;margin-bottom:8px">🔎 Диагностика Firebase</div>';
+        results.forEach(r => {
+            html += '<div>' + (r.ok ? '✅' : '❌') + ' <b>' + r.text + '</b></div>';
+        });
+        if(allOk){
+            html += '<div style="margin-top:8px;color:var(--success)">🎉 Всё работает, база доступна!</div>';
+            setDiag(html, 'ok');
+        } else {
+            html += '<div style="margin-top:8px;color:var(--danger)">⚠️ Проблемы с доступом. Проверь Rules в Firebase Console → Realtime Database → Rules. Убедись, что правила сохранены (Publish).</div>';
+            setDiag(html, 'err');
+        }
+    }
+}
+
 /* ========== LOAD DATA ========== */
 function loadAll(){
     if(!fbDB) return;
-    fbDB.ref('users').once('value').then(snap => {
-        playersCache = snap.val() || {};
-        renderPlayers();
-        updateStats();
-    }).catch(e => console.error('loadAll users:', e));
 
-    fbDB.ref('promos').on('value', snap => {
-        promosCache = snap.val() || {};
-        renderPromos();
-    });
+    // Отдельные запросы — если одна ветка блокируется, другие грузятся
+    fbDB.ref('users').once('value')
+        .then(snap => {
+            playersCache = snap.val() || {};
+            console.log('✅ users loaded:', Object.keys(playersCache).length);
+            renderPlayers();
+            updateStats();
+        })
+        .catch(e => {
+            console.error('❌ users error:', e);
+            document.getElementById('playersList').innerHTML =
+                '<div class="empty error">❌ Ошибка загрузки игроков:<br><b>' + e.message + '</b><br><br>Проверь Rules в Firebase Console (Realtime Database → Rules).</div>';
+            setDiag('<div>❌ <b>users не читается:</b> ' + e.code + '</div><div style="margin-top:8px;color:var(--danger)">Правила базы блокируют доступ. Открой Firebase Console → Realtime Database → Rules и опубликуй правила.</div>', 'err');
+        });
 
-    fbDB.ref('events').on('value', snap => {
-        eventsCache = snap.val() || {};
-        renderEvents();
-    });
+    fbDB.ref('promos').on('value',
+        snap => { promosCache = snap.val() || {}; renderPromos(); },
+        err => console.error('❌ promos:', err)
+    );
 
-    fbDB.ref('bans').on('value', snap => {
-        const bans = snap.val() || {};
-        document.getElementById('statBanned').textContent = Object.keys(bans).length;
-    });
+    fbDB.ref('events').on('value',
+        snap => { eventsCache = snap.val() || {}; renderEvents(); },
+        err => console.error('❌ events:', err)
+    );
+
+    fbDB.ref('bans').on('value',
+        snap => {
+            const bans = snap.val() || {};
+            document.getElementById('statBanned').textContent = Object.keys(bans).length;
+        },
+        err => console.error('❌ bans:', err)
+    );
 }
 
 function updateStats(){
@@ -438,10 +536,13 @@ function renderPlayers(){
     });
     document.getElementById('playersCount').textContent = `(${entries.length})`;
     if(!entries.length){
-        list.innerHTML = '<div class="empty">Ничего не найдено</div>';
+        if(Object.keys(playersCache).length === 0){
+            list.innerHTML = '<div class="empty">Пока нет игроков. Зайди в игру, чтобы создать аккаунт.</div>';
+        } else {
+            list.innerHTML = '<div class="empty">Ничего не найдено</div>';
+        }
         return;
     }
-    // Сортируем по балансу
     entries.sort((a, b) => (b[1].game?.money || 0) - (a[1].game?.money || 0));
     list.innerHTML = entries.map(([uid, data]) => {
         const name = data.profile?.name || 'Аноним';
@@ -476,7 +577,6 @@ function openPlayer(uid){
     document.getElementById('mCity').value = data.game?.currentCity || '';
     document.getElementById('mInvCount').value = (data.game?.inventory || []).length;
 
-    // Проверка бана
     fbDB.ref('bans/' + uid).once('value').then(snap => {
         const banned = snap.val();
         const st = document.getElementById('mBanStatus');
@@ -565,7 +665,7 @@ function createPromo(){
         }).then(() => {
             toast('✅ Промокод ' + code + ' создан', 'success');
             document.getElementById('promoCode').value = '';
-        });
+        }).catch(e => toast('❌ ' + e.message, 'danger'));
     });
 }
 function renderPromos(){
@@ -612,7 +712,7 @@ function createEvent(){
     }).then(() => {
         toast('🎉 Ивент "' + name + '" запущен', 'success');
         document.getElementById('eventName').value = '';
-    });
+    }).catch(e => toast('❌ ' + e.message, 'danger'));
 }
 function renderEvents(){
     const el = document.getElementById('eventsList');
@@ -654,7 +754,7 @@ function broadcastMessage(){
     }).then(() => {
         toast('📢 Отправлено', 'success');
         document.getElementById('broadcastText').value = '';
-    });
+    }).catch(e => toast('❌ ' + e.message, 'danger'));
 }
 function sendDirect(){
     const uid = document.getElementById('directUid').value.trim();
@@ -670,7 +770,7 @@ function sendDirect(){
     }).then(() => {
         toast('📩 Отправлено игроку', 'success');
         document.getElementById('directText').value = '';
-    });
+    }).catch(e => toast('❌ ' + e.message, 'danger'));
 }
 
 /* ========== TOOLS ========== */
@@ -681,13 +781,15 @@ function giveAll(amount){
         const current = playersCache[uid]?.game?.money || 0;
         updates['users/' + uid + '/game/money'] = current + amount;
     });
+    if(Object.keys(updates).length === 0){ toast('❌ Нет игроков', 'danger'); return; }
     fbDB.ref().update(updates).then(() => {
         toast('✅ Выдано ' + fmt(amount) + ' всем', 'success');
         loadAll();
-    });
+    }).catch(e => toast('❌ ' + e.message, 'danger'));
 }
 function refreshAll(){
     toast('🔄 Обновление...');
+    runDiagnostics();
     loadAll();
 }
 function rebuildLeaderboard(){
@@ -724,10 +826,8 @@ function exportAll(){
     toast('📤 Экспорт готов', 'success');
 }
 function clearAll(){
-    const confirm1 = confirm('Точно удалить ВСЮ базу? Это необратимо!');
-    if(!confirm1) return;
-    const confirm2 = confirm('Последнее предупреждение. Точно?');
-    if(!confirm2) return;
+    if(!confirm('Точно удалить ВСЮ базу? Это необратимо!')) return;
+    if(!confirm('Последнее предупреждение. Точно?')) return;
     fbDB.ref().remove().then(() => {
         toast('💣 База очищена', 'danger');
         setTimeout(() => location.reload(), 2000);
