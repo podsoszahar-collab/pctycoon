@@ -2,482 +2,751 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>PC Tycoon v1.4.1 — Админ-панель</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>🛡️ Admin Panel · Phone Reseller Tycoon</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#0a0b12;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:16px;max-width:1300px;margin:0 auto;font-size:13px}
-h1{color:#f1c40f;font-size:18px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
-.sub{color:#8e94a8;font-size:11px;margin-bottom:16px}
-h2{color:#f1c40f;font-size:14px;margin:18px 0 8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-h2 .count{color:#5a6070;font-size:11px;font-weight:normal}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:14px}
-.stat-card{background:#181b28;border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(255,255,255,.05)}
-.stat-num{font-size:20px;font-weight:800}
-.stat-lbl{font-size:9px;color:#8e94a8;margin-top:3px}
-.control-group{background:#181b28;border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid rgba(255,255,255,.05)}
-.control-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px}
-.control-row:last-child{margin-bottom:0}
-.control-row label{font-size:10px;color:#8e94a8;min-width:90px}
-.time-display{font-size:13px;font-weight:bold;color:#f1c40f;background:rgba(241,196,15,.08);padding:5px 10px;border-radius:8px;font-family:monospace}
-input[type=text],input[type=number],select{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#fff;padding:6px 10px;border-radius:8px;font-size:12px;outline:none;font-family:inherit}
-input[type=text]:focus,input[type=number]:focus{border-color:#f1c40f}
-button{background:linear-gradient(135deg,#f1c40f,#d4ac0d);border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:10px;color:#000;transition:opacity .15s;font-family:inherit}
-button:hover{opacity:.85}
-button:disabled{opacity:.3;cursor:not-allowed}
-.danger{background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff}
-.green{background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff}
-.purple{background:linear-gradient(135deg,#9b59b6,#8e44ad);color:#fff}
-.blue{background:linear-gradient(135deg,#3498db,#2980b9);color:#fff}
-.orange{background:linear-gradient(135deg,#f39c12,#e67e22);color:#fff}
-.gray{background:rgba(255,255,255,.08);color:#c5c9d4}
-.player{background:#181b28;padding:10px 12px;margin-bottom:6px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border:1px solid rgba(255,255,255,.05)}
-.player.banned{border-color:rgba(231,76,60,.4);opacity:.6}
-.player-info{font-size:12px;line-height:1.5;flex:1;min-width:250px}
-.player-info span{color:#8e94a8;font-size:10px}
-.player-info b{font-size:13px}
-.actions{display:flex;gap:4px;flex-wrap:wrap;max-width:640px}
-.log{background:#0f111a;border-radius:10px;padding:10px 12px;max-height:240px;overflow-y:auto;font-size:11px;font-family:monospace;color:#8e94a8;border:1px solid rgba(255,255,255,.05)}
-.log-entry{padding:3px 0;border-bottom:1px solid rgba(255,255,255,.03)}
-.log-entry .time{color:#5a6070;margin-right:6px}
-.log-entry .ok{color:#2ecc71}
-.log-entry .bad{color:#e74c3c}
-.toolbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
-.badge{display:inline-block;padding:2px 7px;border-radius:6px;font-size:9px;font-weight:600;margin-left:4px}
-.badge-reg{background:rgba(46,204,113,.15);color:#2ecc71}
-.badge-noreg{background:rgba(241,196,15,.15);color:#f1c40f}
-.badge-online{background:rgba(46,204,113,.15);color:#2ecc71}
-.badge-offline{background:rgba(90,96,112,.2);color:#8e94a8}
-.badge-ban{background:rgba(231,76,60,.2);color:#e74c3c}
-.warn-box{background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.2);border-radius:10px;padding:10px;font-size:11px;color:#e74c3c;margin-bottom:12px}
-::-webkit-scrollbar{width:6px;height:6px}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:6px}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:-apple-system,'Segoe UI',Roboto,sans-serif}
+:root{--bg:#0a0c12;--surface:#161a24;--surface2:#1e2330;--surface3:#262c3a;--text:#f1f5f9;--text-sec:#94a3b8;--text-lt:#64748b;--primary:#818cf8;--success:#4ade80;--danger:#f87171;--warning:#f59e0b;--border:rgba(255,255,255,.07)}
+body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+button{font-family:inherit;cursor:pointer;border:none;outline:none}
+input,select,textarea{font-family:inherit;width:100%;padding:13px;border-radius:12px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;font-weight:600;outline:none;transition:all .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--primary);background:var(--surface3)}
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;background:linear-gradient(160deg,#0a0c12,#1a1a2e);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;z-index:9999}
+.login-icon{font-size:80px;margin-bottom:20px}
+.login-title{font-size:28px;font-weight:900;color:#fff;text-align:center;margin-bottom:8px}
+.login-sub{font-size:14px;color:#94a3b8;text-align:center;margin-bottom:40px;max-width:320px}
+.login-btn{background:linear-gradient(135deg,#fff,#e2e8f0);color:#1a1d26;padding:16px 28px;border-radius:14px;font-weight:700;font-size:15px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.4);transition:transform .15s}
+.login-btn:active{transform:scale(.96)}
+.login-btn svg{width:22px;height:22px}
+.login-status{margin-top:24px;font-size:13px;color:#64748b;text-align:center;min-height:20px}
+.login-status.error{color:#f87171}
+/* MAIN */
+#adminPanel{display:none;padding:20px;max-width:900px;margin:0 auto;padding-bottom:100px}
+#adminPanel.show{display:block}
+.header{display:flex;justify-content:space-between;align-items:center;padding:20px 0;border-bottom:1px solid var(--border);margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.header h1{font-size:22px;font-weight:900;display:flex;align-items:center;gap:10px}
+.admin-info{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--text-sec)}
+.admin-info img{width:36px;height:36px;border-radius:50%;border:2px solid var(--primary)}
+.logout-btn{background:var(--danger);color:#fff;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:700}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+.stat-card{background:var(--surface);border-radius:16px;padding:18px;border:1px solid var(--border);text-align:center}
+.stat-card .num{font-size:28px;font-weight:900;margin-bottom:4px}
+.stat-card .lbl{font-size:11px;color:var(--text-sec);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.stat-card.primary .num{color:var(--primary)}
+.stat-card.success .num{color:var(--success)}
+.stat-card.warning .num{color:var(--warning)}
+.stat-card.danger .num{color:var(--danger)}
+.tabs{display:flex;gap:6px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;padding:10px 18px;border-radius:12px;background:var(--surface);color:var(--text-sec);font-weight:700;font-size:13px;border:1px solid var(--border);cursor:pointer;white-space:nowrap}
+.tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.section{background:var(--surface);border-radius:16px;padding:18px;margin-bottom:16px;border:1px solid var(--border)}
+.section h2{font-size:16px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.btn{width:100%;padding:13px;border-radius:12px;font-weight:700;font-size:14px;color:#fff;background:linear-gradient(135deg,#818cf8,#6366f1);transition:transform .1s;margin-bottom:8px;display:block}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-success{background:linear-gradient(135deg,#4ade80,#16a34a)}
+.btn-danger{background:linear-gradient(135deg,#f87171,#dc2626)}
+.btn-warning{background:linear-gradient(135deg,#fbbf24,#d97706)}
+.btn-sm{padding:8px 14px;font-size:12px;width:auto;border-radius:10px;margin:0 4px 4px 0;display:inline-block}
+.player-row{background:var(--surface2);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;border:1px solid var(--border);cursor:pointer;transition:all .15s}
+.player-row:hover{background:var(--surface3);border-color:var(--primary)}
+.player-avatar{width:44px;height:44px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px}
+.player-avatar img{width:100%;height:100%;object-fit:cover}
+.player-info{flex:1;min-width:0}
+.player-name{font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.player-uid{font-size:10px;color:var(--text-lt);font-family:monospace;overflow:hidden;text-overflow:ellipsis}
+.player-money{font-weight:900;color:var(--success);font-size:14px;text-align:right;flex-shrink:0}
+.player-level{font-size:11px;color:var(--text-sec);text-align:right}
+.promo-row{background:var(--surface2);border-radius:12px;padding:12px 14px;margin-bottom:8px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.promo-code{font-family:monospace;font-weight:900;font-size:16px;color:var(--primary);letter-spacing:1px}
+.promo-info{font-size:11px;color:var(--text-sec);margin-top:4px}
+.promo-info.expired{color:var(--danger)}
+.event-row{background:linear-gradient(135deg,rgba(251,191,36,.1),transparent);border-radius:12px;padding:14px;margin-bottom:8px;border:1px solid rgba(251,191,36,.3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--surface);padding:14px 22px;border-radius:14px;box-shadow:0 15px 40px rgba(0,0,0,.6);z-index:10000;font-weight:700;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;border-left:4px solid var(--primary);max-width:90%}
+.toast.show{opacity:1}
+.toast.success{border-left-color:var(--success)}
+.toast.danger{border-left-color:var(--danger)}
+.toast.warning{border-left-color:var(--warning)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);z-index:10001;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.show{display:flex}
+.modal{background:var(--surface);border-radius:20px;padding:24px;max-width:500px;width:100%;max-height:85vh;overflow-y:auto}
+.modal h3{font-size:18px;font-weight:800;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.modal-close{background:var(--surface2);color:var(--text);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:12px;color:var(--text-sec);font-weight:700;text-transform:uppercase;margin-bottom:6px;letter-spacing:.5px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row>*{flex:1;min-width:120px}
+.empty{text-align:center;padding:40px 20px;color:var(--text-lt);font-size:14px}
+.loading{text-align:center;padding:40px;color:var(--text-lt)}
 </style>
 </head>
 <body>
-<h1>👑 PC Tycoon v1.4.1 — Админ-панель</h1>
-<div class="sub">Управление игроками, временем и миром в реальном времени</div>
 
-<!-- СТАТИСТИКА -->
-<div class="stats-grid">
-    <div class="stat-card"><div class="stat-num" style="color:#f1c40f;" id="statTotal">0</div><div class="stat-lbl">Всего игроков</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:#2ecc71;" id="statOnline">0</div><div class="stat-lbl">Онлайн</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:#3498db;font-size:15px;" id="statMoney">0 ₽</div><div class="stat-lbl">Капитал мира</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:#9b59b6;font-size:15px;" id="statAvg">0 ₽</div><div class="stat-lbl">Средний баланс</div></div>
+<!-- LOGIN -->
+<div id="loginScreen">
+    <div class="login-icon">🛡️</div>
+    <div class="login-title">Admin Panel</div>
+    <div class="login-sub">Вход только для администратора Phone Reseller Tycoon</div>
+    <button class="login-btn" onclick="signInAdmin()">
+        <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.4 29.3 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.4 1.1 7.3 2.8l5.7-5.7C33.6 6.9 29 5 24 5 12.9 5 4 13.9 4 25s8.9 20 20 20c11 0 20-9 20-20 0-1.3-.1-2.7-.4-4z"/><path fill="#FF3D00" d="M6.3 15.3l6.6 4.8C14.7 16.1 19 13 24 13c2.8 0 5.4 1.1 7.3 2.8l5.7-5.7C33.6 6.9 29 5 24 5c-7.6 0-14.2 4.3-17.7 10.3z"/><path fill="#4CAF50" d="M24 45c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 36.4 26.8 37 24 37c-5.3 0-9.7-3.4-11.3-8l-6.5 5C9.6 40.7 16.3 45 24 45z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.1 5.6l6.2 5.2C40.9 36.3 44 31.1 44 25c0-1.3-.1-2.7-.4-4.5z"/></svg>
+        Войти через Google
+    </button>
+    <div class="login-status" id="loginStatus"></div>
 </div>
 
-<!-- ГЛОБАЛЬНОЕ ВРЕМЯ -->
-<h2>🌍 Глобальное время <span class="count">— влияет на всех игроков сразу</span></h2>
-<div class="control-group">
-    <div class="control-row">
-        <label>Сейчас в мире:</label>
-        <span class="time-display" id="worldTime">—</span>
-        <span class="time-display" id="worldDate">—</span>
-        <span class="time-display" id="worldTotal">—</span>
-        <button class="blue" onclick="syncTimeDisplay()">🔄</button>
-    </div>
-    <div class="control-row">
-        <label>Сдвиг времени:</label>
-        <button class="orange" onclick="shiftTime(-60)">−1 час</button>
-        <button class="orange" onclick="shiftTime(60)">+1 час</button>
-        <button class="purple" onclick="shiftDay(-1)">−1 день</button>
-        <button class="purple" onclick="shiftDay(1)">+1 день</button>
-    </div>
-    <div class="control-row">
-        <label>Установить всего дней:</label>
-        <input type="number" id="setTotalDays" min="1" max="99999" value="1" style="width:90px;">
-        <button class="green" onclick="setTotalDaysExact()">📅 Применить</button>
-        <label style="min-width:auto;">Час:</label>
-        <input type="number" id="setHour" min="0" max="23" value="6" style="width:70px;">
-        <button class="green" onclick="setHourExact()">⏰</button>
-    </div>
-    <div class="control-row">
-        <button class="danger" onclick="resetGlobalTime()">🗑️ Сбросить время (День 1, 06:00)</button>
-        <button class="green" onclick="forceMarketRefresh()">💹 Обновить рынок всем</button>
-    </div>
-</div>
-
-<div class="warn-box">⚠️ Изменение времени мгновенно применяется ко всем игрокам.</div>
-
-<!-- МАССОВЫЕ ДЕЙСТВИЯ -->
-<h2>🎁 Массовые действия</h2>
-<div class="control-group">
-    <div class="control-row">
-        <label>Выдать всем:</label>
-        <input type="number" id="massAmount" placeholder="Сумма" style="width:120px;" value="10000">
-        <button class="green" onclick="massGiveMoney()">💰 +₽ всем</button>
-        <button class="danger" onclick="massTakeMoney()">💸 −₽ всем</button>
-    </div>
-    <div class="control-row">
-        <button class="purple" onclick="clearAllMarkets()">🔄 Сбросить рынок (NPC заново)</button>
-        <button class="orange" onclick="clearAllChats()">💬 Очистить глобальный чат</button>
-    </div>
-</div>
-
-<!-- ИГРОКИ -->
-<h2>👥 Игроки <span class="count" id="playerCount">—</span></h2>
-<div class="toolbar">
-    <input type="text" id="searchInput" placeholder="🔍 Поиск по имени..." style="min-width:200px;" oninput="renderPlayers()">
-    <select id="sortSelect" onchange="renderPlayers()">
-        <option value="balance">💰 По балансу</option>
-        <option value="recent">🕒 По времени захода</option>
-        <option value="name">🔤 По имени</option>
-        <option value="level">🎮 По уровню</option>
-    </select>
-    <button id="autoBtn" class="blue" onclick="toggleAuto()">⏸️ Автообновление: ВКЛ</button>
-</div>
-<div id="players">Загрузка...</div>
-
-<!-- ТОПЫ -->
-<h2>🏆 Топы</h2>
-<div class="control-group">
-    <div class="control-row">
-        <button class="blue" onclick="showTop('balance')">💰 По балансу</button>
-        <button class="purple" onclick="showTop('level')">🎮 По уровню</button>
-        <button class="orange" onclick="showTop('pcsSold')">📦 По продажам</button>
-        <button class="gray" onclick="hideTop()">✖ Скрыть</button>
-    </div>
-    <div id="topList" style="margin-top:8px;"></div>
-</div>
-
-<!-- ЛОГ -->
-<h2>📜 Лог действий <span class="count">— последние 20</span></h2>
-<div class="log" id="log"><div class="log-entry" style="color:#5a6070;">Здесь появятся ваши действия...</div></div>
-
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-<script>
-const firebaseConfig={apiKey:"AIzaSyAv0ChOvxUSEWjCnWWUXBml01PyTsgfGjo",authDomain:"pc-tycoon-11216.firebaseapp.com",databaseURL:"https://pc-tycoon-11216-default-rtdb.firebaseio.com",projectId:"pc-tycoon-11216",storageBucket:"pc-tycoon-11216.firebasestorage.app",messagingSenderId:"587863804885",appId:"1:587863804885:web:ab92c591d56098cd4fcb5c"};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.database();
-
-const MONTHS=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
-const MS_PER_GAME_MINUTE=10000;
-
-let playersCache=[];
-let autoRefresh=true;
-let logEntries=[];
-let worldTimeCache=null;
-let topMode=null;
-
-function timeStrFromMinutes(m){const h=Math.floor(m/60)%24,mm=Math.floor(m%60);return String(h).padStart(2,'0')+':'+String(mm).padStart(2,'0');}
-function normalizeDate(totalDays){
-    let year=2026+Math.floor((totalDays-1)/360);
-    let rem=(totalDays-1)%360;
-    let month=Math.floor(rem/30)+1;
-    let day=(rem%30)+1;
-    return {day,month,year};
-}
-function addLog(text,ok=true){
-    const t=new Date().toLocaleTimeString();
-    logEntries.unshift({t,text,ok});
-    if(logEntries.length>20)logEntries.pop();
-    document.getElementById('log').innerHTML=logEntries.map(l=>`<div class="log-entry"><span class="time">${l.t}</span><span class="${l.ok?'ok':'bad'}">${l.text}</span></div>`).join('');
-}
-
-// ===== ГЛОБАЛЬНОЕ ВРЕМЯ =====
-function listenGlobalTime(){
-    db.ref('globalTime').on('value',snap=>{worldTimeCache=snap.val();syncTimeDisplay();});
-}
-function syncTimeDisplay(){
-    if(!worldTimeCache||typeof worldTimeCache.totalDays!=='number'){
-        document.getElementById('worldTime').textContent='—';
-        document.getElementById('worldDate').textContent='—';
-        document.getElementById('worldTotal').textContent='—';
-        return;
-    }
-    const now=Date.now();
-    const elapsedMs=now-(worldTimeCache.dayStart||now);
-    const elapsedGameMinutes=elapsedMs/MS_PER_GAME_MINUTE;
-    const fullDaysPassed=Math.floor(elapsedGameMinutes/(24*60));
-    const totalDays=worldTimeCache.totalDays+fullDaysPassed;
-    const minutesInDay=elapsedGameMinutes%(24*60);
-    const date=normalizeDate(totalDays);
-    document.getElementById('worldTime').textContent='⏰ '+timeStrFromMinutes(minutesInDay);
-    document.getElementById('worldDate').textContent='📅 '+date.day+' '+MONTHS[date.month-1]+' '+date.year;
-    document.getElementById('worldTotal').textContent='Σ Дней: '+totalDays;
-    document.getElementById('setTotalDays').value=totalDays;
-    document.getElementById('setHour').value=Math.floor(minutesInDay/60);
-}
-function shiftTime(minutes){
-    if(!worldTimeCache)return;
-    const realMs=minutes*MS_PER_GAME_MINUTE;
-    const newDayStart=worldTimeCache.dayStart-realMs;
-    db.ref('globalTime').update({dayStart:newDayStart}).then(()=>{
-        addLog('⏰ Сдвиг времени на '+(minutes>0?'+':'')+minutes+' мин (всем)',true);
-    });
-}
-function shiftDay(days){
-    if(!worldTimeCache)return;
-    const now=Date.now();
-    const elapsedMs=now-(worldTimeCache.dayStart||now);
-    const elapsedGameMinutes=elapsedMs/MS_PER_GAME_MINUTE;
-    const fullDaysPassed=Math.floor(elapsedGameMinutes/(24*60));
-    const currentTotal=worldTimeCache.totalDays+fullDaysPassed;
-    const newTotal=Math.max(1,currentTotal+days);
-    const minutesInDay=elapsedGameMinutes%(24*60);
-    // Сохраняем текущее время суток, сдвигаем только totalDays
-    const newDayStart=now-(minutesInDay*MS_PER_GAME_MINUTE);
-    db.ref('globalTime').update({totalDays:newTotal,dayStart:newDayStart}).then(()=>{
-        addLog('📅 День изменён на '+newTotal+' (всем)',true);
-    });
-}
-function setTotalDaysExact(){
-    const d=parseInt(document.getElementById('setTotalDays').value);
-    if(isNaN(d)||d<1){addLog('❌ Неверный день',false);return;}
-    if(!confirm('Установить общий день #'+d+' для ВСЕХ игроков?'))return;
-    const now=Date.now();
-    const elapsedMs=now-(worldTimeCache.dayStart||now);
-    const elapsedGameMinutes=elapsedMs/MS_PER_GAME_MINUTE;
-    const minutesInDay=elapsedGameMinutes%(24*60);
-    const newDayStart=now-(minutesInDay*MS_PER_GAME_MINUTE);
-    db.ref('globalTime').update({totalDays:d,dayStart:newDayStart}).then(()=>{
-        addLog('📅 Установлен день #'+d+' (всем)',true);
-    });
-}
-function setHourExact(){
-    const h=parseInt(document.getElementById('setHour').value);
-    if(isNaN(h)||h<0||h>23){addLog('❌ Час 0-23',false);return;}
-    if(!worldTimeCache)return;
-    const now=Date.now();
-    const elapsedMs=now-(worldTimeCache.dayStart||now);
-    const elapsedGameMinutes=elapsedMs/MS_PER_GAME_MINUTE;
-    const fullDaysPassed=Math.floor(elapsedGameMinutes/(24*60));
-    const minutesInDay=elapsedGameMinutes%(24*60);
-    // Сдвигаем так, чтобы текущие минуты стали h*60
-    const diffMinutes=h*60-minutesInDay;
-    const newDayStart=worldTimeCache.dayStart-(diffMinutes*MS_PER_GAME_MINUTE);
-    db.ref('globalTime').update({dayStart:newDayStart}).then(()=>{
-        addLog('⏰ Установлено время '+String(h).padStart(2,'0')+':00 (всем)',true);
-    });
-}
-function resetGlobalTime(){
-    if(!confirm('Сбросить глобальное время для ВСЕХ игроков?\n\nБудет: День 1, 06:00'))return;
-    // Чтобы сейчас было 06:00 — dayStart = now - 6*60*MS_PER_GAME_MINUTE
-    db.ref('globalTime').set({
-        totalDays:1,
-        dayStart:Date.now()-6*60*MS_PER_GAME_MINUTE,
-        createdAt:Date.now()
-    }).then(()=>{addLog('🗑️ Глобальное время сброшено (День 1, 06:00)',true);});
-}
-function forceMarketRefresh(){
-    if(!confirm('Обновить рынок всем игрокам?\n\nДень сдвинется на +1.'))return;
-    shiftDay(1);
-}
-
-// ===== МАССОВЫЕ =====
-function massGiveMoney(){massMoney(true);}
-function massTakeMoney(){massMoney(false);}
-function massMoney(add){
-    const amt=parseInt(document.getElementById('massAmount').value);
-    if(isNaN(amt)||amt<=0){addLog('❌ Неверная сумма',false);return;}
-    const verb=add?'+':'-';
-    if(!confirm(verb+amt.toLocaleString()+' ₽ ВСЕМ игрокам?'))return;
-    let count=0;
-    const updates={};
-    playersCache.forEach(p=>{
-        const nb=(p.balance||0)+(add?amt:-amt);
-        updates['players/'+p._id+'/balance']=Math.max(0,nb);
-        updates['players/'+p._id+'/adminModified']=Date.now();
-        count++;
-    });
-    if(count===0){addLog('❌ Нет игроков',false);return;}
-    db.ref().update(updates).then(()=>{
-        addLog(verb+amt.toLocaleString()+' ₽ всем ('+count+' игроков)',add);
-    });
-}
-function clearAllMarkets(){
-    if(!confirm('Сбросить рынок у всех? Объявления NPC удалятся.'))return;
-    // Обнуляем локальные рынки у игроков — фактически сбрасываем день
-    shiftDay(1);
-    addLog('🔄 Рынок обновлён (день +1)',true);
-}
-function clearAllChats(){
-    if(!confirm('Очистить глобальный чат?'))return;
-    db.ref('globalChat').remove().then(()=>{addLog('💬 Глобальный чат очищен',true);});
-}
-
-// ===== ИГРОКИ =====
-db.ref('players').on('value',(snapshot)=>{
-    const data=snapshot.val();
-    if(!data){
-        playersCache=[];
-        document.getElementById('players').innerHTML='<div style="color:#8e94a8;padding:20px;text-align:center;">Пока нет игроков. Запустите игру.</div>';
-        document.getElementById('statTotal').textContent='0';
-        document.getElementById('statOnline').textContent='0';
-        document.getElementById('statMoney').textContent='0 ₽';
-        document.getElementById('statAvg').textContent='0 ₽';
-        document.getElementById('playerCount').textContent='—';
-        return;
-    }
-    playersCache=Object.keys(data).map(k=>({...data[k],_id:k}));
-    const now=Date.now();
-    document.getElementById('statTotal').textContent=playersCache.length;
-    document.getElementById('statOnline').textContent=playersCache.filter(p=>now-(p.lastUpdate||0)<60000).length;
-    const totalMoney=playersCache.reduce((s,p)=>s+(p.balance||0),0);
-    document.getElementById('statMoney').textContent=totalMoney.toLocaleString()+' ₽';
-    document.getElementById('statAvg').textContent=playersCache.length?Math.round(totalMoney/playersCache.length).toLocaleString()+' ₽':'0 ₽';
-    renderPlayers();
-});
-
-function renderPlayers(){
-    const now=Date.now();
-    const search=(document.getElementById('searchInput')?.value||'').toLowerCase().trim();
-    const sortBy=document.getElementById('sortSelect')?.value||'balance';
-    let list=[...playersCache];
-    if(search)list=list.filter(p=>(p.name||'').toLowerCase().includes(search));
-    if(sortBy==='balance')list.sort((a,b)=>(b.balance||0)-(a.balance||0));
-    else if(sortBy==='recent')list.sort((a,b)=>(b.lastUpdate||0)-(a.lastUpdate||0));
-    else if(sortBy==='name')list.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
-    else if(sortBy==='level')list.sort((a,b)=>(b.level||0)-(a.level||0));
-
-    document.getElementById('playerCount').textContent='Найдено: '+list.length;
-    if(list.length===0){document.getElementById('players').innerHTML='<div style="color:#8e94a8;padding:20px;text-align:center;">Никого не найдено</div>';return;}
-
-    let html='';
-    list.forEach(p=>{
-        const date=new Date(p.lastUpdate||Date.now()).toLocaleString();
-        const isOnline=now-(p.lastUpdate||0)<60000;
-        const regBadge=p.registered?'<span class="badge badge-reg">✅</span>':'<span class="badge badge-noreg">⏳</span>';
-        const onlineBadge=isOnline?'<span class="badge badge-online">🟢 Онлайн</span>':'<span class="badge badge-offline">⚫ Офлайн</span>';
-        const banBadge=p.banned?'<span class="badge badge-ban">🚫 БАН</span>':'';
-        const job=p.job?('💼 '+p.job):'';
-        html+=`<div class="player ${p.banned?'banned':''}">
-            <div class="player-info">
-                <b>${p.name||'Без имени'}</b> ${onlineBadge} ${regBadge} ${banBadge}<br>
-                <span>🎂 ${p.age||'?'} | 🏠 ${p.homeCity||'?'} | 🎮 Ур. ${p.level||1} | ⭐ ${p.reputation||0}% | ${job}</span><br>
-                <span>💰 <b style="color:#f1c40f;font-size:13px;">${(p.balance||0).toLocaleString()} ₽</b> | 📅 День ${p.totalDays||p.day||1} (${p.day||1} ${MONTHS[(p.month||1)-1]}) | 📍 ${p.city||'?'}</span><br>
-                <span style="color:#5a6070;font-size:10px;">ID: ${p._id} | ${date}</span>
+<!-- PANEL -->
+<div id="adminPanel">
+    <div class="header">
+        <h1>🛡️ Admin Panel</h1>
+        <div class="admin-info">
+            <img id="adminAvatar" src="" alt="">
+            <div>
+                <div id="adminName" style="font-weight:700;color:#fff"></div>
+                <div id="adminUid" style="font-size:10px;font-family:monospace;color:var(--text-lt)"></div>
             </div>
-            <div class="actions">
-                <button class="green" onclick="addMoney('${p._id}',10000)">+10k</button>
-                <button class="green" onclick="addMoney('${p._id}',100000)">+100k</button>
-                <button class="green" onclick="addMoney('${p._id}',1000000)">+1M</button>
-                <button class="danger" onclick="addMoney('${p._id}',-100000)">−100k</button>
-                <button class="green" onclick="addRep('${p._id}',20)">+20⭐</button>
-                <button class="danger" onclick="addRep('${p._id}',-20)">−20⭐</button>
-                <button class="purple" onclick="addLevel('${p._id}',1)">+1ур</button>
-                <button class="danger" onclick="addLevel('${p._id}',-1)">−1ур</button>
-                <button class="blue" onclick="setBalance('${p._id}')">💰 Задать</button>
-                <button class="purple" onclick="setCity('${p._id}')">📍 Город</button>
-                <button class="green" onclick="setJob('${p._id}')">💼 Работа</button>
-                <button class="orange" onclick="kickPlayer('${p._id}')">👢 Кик</button>
-                <button class="danger" onclick="toggleBan('${p._id}',${!!p.banned})">${p.banned?'✅ Разбан':'🚫 Бан'}</button>
-                <button class="danger" onclick="resetPlayer('${p._id}')">🔄 Сброс</button>
-                <button class="danger" onclick="deletePlayer('${p._id}')">🗑️</button>
+            <button class="logout-btn" onclick="signOut()">Выйти</button>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card primary">
+            <div class="num" id="statPlayers">—</div>
+            <div class="lbl">Игроков</div>
+        </div>
+        <div class="stat-card success">
+            <div class="num" id="statTotalMoney">—</div>
+            <div class="lbl">Всего в игре</div>
+        </div>
+        <div class="stat-card warning">
+            <div class="num" id="statTopMoney">—</div>
+            <div class="lbl">Топ-баланс</div>
+        </div>
+        <div class="stat-card danger">
+            <div class="num" id="statBanned">0</div>
+            <div class="lbl">Забанено</div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('players', this)">👥 Игроки</div>
+        <div class="tab" onclick="switchTab('promos', this)">🎟️ Промокоды</div>
+        <div class="tab" onclick="switchTab('events', this)">🎉 Ивенты</div>
+        <div class="tab" onclick="switchTab('broadcast', this)">📢 Рассылка</div>
+        <div class="tab" onclick="switchTab('tools', this)">🛠️ Инструменты</div>
+    </div>
+
+    <!-- PLAYERS -->
+    <div class="tab-content active" id="tab-players">
+        <div class="section">
+            <h2>🔍 Поиск игрока</h2>
+            <input type="text" id="playerSearch" placeholder="Имя, email или UID..." oninput="renderPlayers()">
+        </div>
+        <div class="section">
+            <h2>👥 Игроки <span id="playersCount" style="color:var(--text-sec);font-weight:normal;font-size:13px"></span></h2>
+            <div id="playersList"><div class="loading">Загрузка...</div></div>
+        </div>
+    </div>
+
+    <!-- PROMOS -->
+    <div class="tab-content" id="tab-promos">
+        <div class="section">
+            <h2>➕ Создать промокод</h2>
+            <div class="form-group">
+                <label>Код</label>
+                <input type="text" id="promoCode" placeholder="WELCOME2026" maxlength="20" style="text-transform:uppercase">
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label>Награда (₽)</label>
+                    <input type="number" id="promoReward" placeholder="10000" value="10000">
+                </div>
+                <div class="form-group">
+                    <label>Срок (дней)</label>
+                    <input type="number" id="promoDays" placeholder="30" value="30">
+                </div>
+                <div class="form-group">
+                    <label>Лимит активаций</label>
+                    <input type="number" id="promoLimit" placeholder="100" value="100">
+                </div>
+            </div>
+            <button class="btn btn-success" onclick="createPromo()">🎁 Создать промокод</button>
+        </div>
+        <div class="section">
+            <h2>🎟️ Активные промокоды</h2>
+            <div id="promosList"><div class="loading">Загрузка...</div></div>
+        </div>
+    </div>
+
+    <!-- EVENTS -->
+    <div class="tab-content" id="tab-events">
+        <div class="section">
+            <h2>🎉 Создать ивент</h2>
+            <div class="form-group">
+                <label>Название</label>
+                <input type="text" id="eventName" placeholder="Новый год" maxlength="40">
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label>Множитель дохода</label>
+                    <input type="number" id="eventMult" placeholder="2.0" value="2" step="0.1" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Длительность (часов)</label>
+                    <input type="number" id="eventHours" placeholder="24" value="24">
+                </div>
+            </div>
+            <button class="btn btn-warning" onclick="createEvent()">🎉 Запустить ивент</button>
+        </div>
+        <div class="section">
+            <h2>🎊 Активные ивенты</h2>
+            <div id="eventsList"><div class="loading">Загрузка...</div></div>
+        </div>
+    </div>
+
+    <!-- BROADCAST -->
+    <div class="tab-content" id="tab-broadcast">
+        <div class="section">
+            <h2>📢 Системное сообщение в общий чат</h2>
+            <div class="form-group">
+                <label>Текст</label>
+                <textarea id="broadcastText" rows="3" placeholder="Всем привет! Сегодня двойной доход 🎉"></textarea>
+            </div>
+            <button class="btn" onclick="broadcastMessage()">📤 Отправить всем</button>
+        </div>
+        <div class="section">
+            <h2>📬 Отправить сообщение одному игроку</h2>
+            <div class="form-group">
+                <label>UID игрока</label>
+                <input type="text" id="directUid" placeholder="Ewo6P6PnX3..." maxlength="64">
+            </div>
+            <div class="form-group">
+                <label>Текст</label>
+                <textarea id="directText" rows="2" placeholder="Вам выдано 100 000₽ бонусом!"></textarea>
+            </div>
+            <button class="btn" onclick="sendDirect()">📩 Отправить</button>
+        </div>
+    </div>
+
+    <!-- TOOLS -->
+    <div class="tab-content" id="tab-tools">
+        <div class="section">
+            <h2>🔧 Массовые операции</h2>
+            <button class="btn btn-success" onclick="giveAll(10000)">💰 +10 000 ₽ всем</button>
+            <button class="btn btn-success" onclick="giveAll(100000)">💰 +100 000 ₽ всем</button>
+            <button class="btn btn-success" onclick="giveAll(1000000)">💰 +1 000 000 ₽ всем</button>
+        </div>
+        <div class="section">
+            <h2>🔄 Синхронизация</h2>
+            <button class="btn" onclick="refreshAll()">🔄 Обновить данные</button>
+            <button class="btn" onclick="rebuildLeaderboard()">🏆 Пересобрать лидерборд</button>
+            <button class="btn btn-danger" onclick="clearGlobalChat()">🗑️ Очистить общий чат</button>
+        </div>
+        <div class="section">
+            <h2>🛠️ Опасные действия</h2>
+            <button class="btn btn-danger" onclick="exportAll()">📤 Экспорт базы</button>
+            <button class="btn btn-danger" onclick="if(confirm('Точно удалить ВСЮ базу?'))clearAll()">💣 Удалить всё</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="playerModal">
+    <div class="modal">
+        <h3><span id="modalPlayerName"></span> <button class="modal-close" onclick="closePlayerModal()">✕</button></h3>
+        <div class="form-group">
+            <label>UID</label>
+            <input type="text" id="mUid" readonly style="font-family:monospace;font-size:12px">
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <label>Баланс (₽)</label>
+                <input type="number" id="mMoney">
+            </div>
+            <div class="form-group">
+                <label>Уровень</label>
+                <input type="number" id="mLevel">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Имя</label>
+            <input type="text" id="mName" maxlength="30">
+        </div>
+        <div class="form-group">
+            <label>Город</label>
+            <input type="text" id="mCity" maxlength="30">
+        </div>
+        <div class="form-group">
+            <label>Инвентарь (кол-во)</label>
+            <input type="number" id="mInvCount" readonly>
+        </div>
+        <button class="btn btn-success" onclick="savePlayerChanges()">💾 Сохранить</button>
+        <button class="btn btn-warning" onclick="givePlayerMoney(10000)">+10 000 ₽</button>
+        <button class="btn btn-warning" onclick="givePlayerMoney(100000)">+100 000 ₽</button>
+        <button class="btn btn-danger" onclick="toggleBan()">🚫 Забанить / Разбанить</button>
+        <div id="mBanStatus" style="text-align:center;margin-top:10px;font-weight:700"></div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+const ADMIN_UID = 'Ewo6P6PnX3TCN6IZsLnwwuwYo9P2';
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAv0ChOvxUSEWjCnWWUXBml01PyTsgfGjo",
+    authDomain: "pc-tycoon-11216.firebaseapp.com",
+    databaseURL: "https://pc-tycoon-11216-default-rtdb.firebaseio.com",
+    projectId: "pc-tycoon-11216",
+    storageBucket: "pc-tycoon-11216.firebasestorage.app",
+    messagingSenderId: "587863804885",
+    appId: "1:587863804885:web:ab92c591d56098cd4fcb5c"
+};
+
+let fbAuth = null, fbDB = null, fbUser = null;
+let playersCache = {};
+let promosCache = {};
+let eventsCache = {};
+let currentPlayerUid = null;
+
+try {
+    if(typeof firebase !== 'undefined' && !firebase.apps.length){
+        firebase.initializeApp(firebaseConfig);
+        fbAuth = firebase.auth();
+        fbDB = firebase.database();
+        console.log('✅ Firebase init');
+    }
+} catch(e){ console.error('❌ Firebase:', e); }
+
+/* ========== UTILS ========== */
+function fmt(n){
+    n = Number(n) || 0;
+    if(Math.abs(n) >= 1e9) return (n/1e9).toFixed(1)+' млрд ₽';
+    if(Math.abs(n) >= 1e6) return (n/1e6).toFixed(1)+' млн ₽';
+    if(Math.abs(n) >= 1e3) return (n/1e3).toFixed(1)+' тыс ₽';
+    return Math.round(n).toLocaleString('ru-RU') + ' ₽';
+}
+function toast(text, type){
+    const el = document.getElementById('toast');
+    el.textContent = text;
+    el.className = 'toast show ' + (type || '');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), 3000);
+}
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+/* ========== AUTH ========== */
+function signInAdmin(){
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    document.getElementById('loginStatus').textContent = '⏳ Входим...';
+    document.getElementById('loginStatus').className = 'login-status';
+    fbAuth.signInWithPopup(provider).catch(err => {
+        console.error(err);
+        const st = document.getElementById('loginStatus');
+        st.textContent = '❌ ' + (err.code === 'auth/popup-blocked' ? 'Разрешите попапы' : err.message);
+        st.className = 'login-status error';
+    });
+}
+function signOut(){
+    if(confirm('Выйти из админки?')){
+        fbAuth.signOut().then(() => location.reload());
+    }
+}
+function watchAuth(){
+    fbAuth.onAuthStateChanged(user => {
+        if(user){
+            if(user.uid !== ADMIN_UID){
+                document.getElementById('loginStatus').textContent = '❌ Доступ запрещён. Этот аккаунт не админ.';
+                document.getElementById('loginStatus').className = 'login-status error';
+                fbAuth.signOut();
+                return;
+            }
+            fbUser = user;
+            console.log('✅ Admin:', user.displayName);
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminPanel').classList.add('show');
+            document.getElementById('adminAvatar').src = user.photoURL || '';
+            document.getElementById('adminName').textContent = user.displayName || 'Admin';
+            document.getElementById('adminUid').textContent = user.uid;
+            loadAll();
+            // Автообновление каждые 15 секунд
+            setInterval(loadAll, 15000);
+        } else {
+            fbUser = null;
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('adminPanel').classList.remove('show');
+        }
+    });
+}
+
+/* ========== LOAD DATA ========== */
+function loadAll(){
+    if(!fbDB) return;
+    fbDB.ref('users').once('value').then(snap => {
+        playersCache = snap.val() || {};
+        renderPlayers();
+        updateStats();
+    }).catch(e => console.error('loadAll users:', e));
+
+    fbDB.ref('promos').on('value', snap => {
+        promosCache = snap.val() || {};
+        renderPromos();
+    });
+
+    fbDB.ref('events').on('value', snap => {
+        eventsCache = snap.val() || {};
+        renderEvents();
+    });
+
+    fbDB.ref('bans').on('value', snap => {
+        const bans = snap.val() || {};
+        document.getElementById('statBanned').textContent = Object.keys(bans).length;
+    });
+}
+
+function updateStats(){
+    const uids = Object.keys(playersCache);
+    document.getElementById('statPlayers').textContent = uids.length;
+    let totalMoney = 0, topMoney = 0;
+    uids.forEach(uid => {
+        const money = playersCache[uid]?.game?.money || 0;
+        totalMoney += money;
+        if(money > topMoney) topMoney = money;
+    });
+    document.getElementById('statTotalMoney').textContent = fmt(totalMoney);
+    document.getElementById('statTopMoney').textContent = fmt(topMoney);
+}
+
+/* ========== PLAYERS ========== */
+function renderPlayers(){
+    const q = (document.getElementById('playerSearch').value || '').toLowerCase().trim();
+    const list = document.getElementById('playersList');
+    const entries = Object.entries(playersCache).filter(([uid, data]) => {
+        if(!q) return true;
+        const name = (data.profile?.name || '').toLowerCase();
+        const email = (data.profile?.email || '').toLowerCase();
+        return name.includes(q) || email.includes(q) || uid.toLowerCase().includes(q);
+    });
+    document.getElementById('playersCount').textContent = `(${entries.length})`;
+    if(!entries.length){
+        list.innerHTML = '<div class="empty">Ничего не найдено</div>';
+        return;
+    }
+    // Сортируем по балансу
+    entries.sort((a, b) => (b[1].game?.money || 0) - (a[1].game?.money || 0));
+    list.innerHTML = entries.map(([uid, data]) => {
+        const name = data.profile?.name || 'Аноним';
+        const photo = data.profile?.photo || '';
+        const money = data.game?.money || 0;
+        const level = data.game?.level || 1;
+        const initials = name[0].toUpperCase();
+        const avatar = photo ? `<img src="${photo}" onerror="this.parentNode.textContent='${initials}'">` : initials;
+        return `<div class="player-row" onclick="openPlayer('${uid}')">
+            <div class="player-avatar">${avatar}</div>
+            <div class="player-info">
+                <div class="player-name">${esc(name)}</div>
+                <div class="player-uid">${uid.slice(0, 16)}...</div>
+            </div>
+            <div>
+                <div class="player-money">${fmt(money)}</div>
+                <div class="player-level">Ур. ${level}</div>
             </div>
         </div>`;
-    });
-    document.getElementById('players').innerHTML=html;
+    }).join('');
 }
 
-function getP(id){return playersCache.find(p=>p._id===id);}
-function getPName(id){const p=getP(id);return p?(p.name||'#'+id.slice(-4)):'#'+id.slice(-4);}
+function openPlayer(uid){
+    const data = playersCache[uid];
+    if(!data) return;
+    currentPlayerUid = uid;
+    document.getElementById('modalPlayerName').textContent = data.profile?.name || 'Аноним';
+    document.getElementById('mUid').value = uid;
+    document.getElementById('mMoney').value = data.game?.money || 0;
+    document.getElementById('mLevel').value = data.game?.level || 1;
+    document.getElementById('mName').value = data.profile?.name || '';
+    document.getElementById('mCity').value = data.game?.currentCity || '';
+    document.getElementById('mInvCount').value = (data.game?.inventory || []).length;
 
-// ===== ДЕЙСТВИЯ =====
-function addMoney(id,amount){
-    const p=getP(id);if(!p)return;
-    const nb=Math.max(0,(p.balance||0)+amount);
-    db.ref('players/'+id).update({balance:nb,adminModified:Date.now()}).then(()=>{
-        addLog((amount>0?'💰 +':'💸 ')+amount.toLocaleString()+' ₽ → '+getPName(id)+' (итог: '+nb.toLocaleString()+')',amount>0);
+    // Проверка бана
+    fbDB.ref('bans/' + uid).once('value').then(snap => {
+        const banned = snap.val();
+        const st = document.getElementById('mBanStatus');
+        if(banned){
+            st.textContent = '🚫 ИГРОК ЗАБАНЕН';
+            st.style.color = 'var(--danger)';
+        } else {
+            st.textContent = '✅ Игрок активен';
+            st.style.color = 'var(--success)';
+        }
+    });
+
+    document.getElementById('playerModal').classList.add('show');
+}
+function closePlayerModal(){
+    document.getElementById('playerModal').classList.remove('show');
+    currentPlayerUid = null;
+}
+function savePlayerChanges(){
+    if(!currentPlayerUid) return;
+    const money = parseInt(document.getElementById('mMoney').value) || 0;
+    const level = parseInt(document.getElementById('mLevel').value) || 1;
+    const name = document.getElementById('mName').value.trim() || 'Аноним';
+    const city = document.getElementById('mCity').value.trim() || 'Москва';
+
+    fbDB.ref('users/' + currentPlayerUid).update({
+        'profile/name': name,
+        'profile/level': level,
+        'game/money': money,
+        'game/level': level,
+        'game/currentCity': city
+    }).then(() => {
+        toast('✅ Сохранено', 'success');
+        loadAll();
+    }).catch(e => toast('❌ ' + e.message, 'danger'));
+}
+function givePlayerMoney(amount){
+    if(!currentPlayerUid) return;
+    const current = playersCache[currentPlayerUid]?.game?.money || 0;
+    const newMoney = current + amount;
+    fbDB.ref('users/' + currentPlayerUid + '/game/money').set(newMoney).then(() => {
+        document.getElementById('mMoney').value = newMoney;
+        toast('✅ +' + fmt(amount), 'success');
+        loadAll();
     });
 }
-function addRep(id,amount){
-    const p=getP(id);if(!p)return;
-    const nr=Math.max(0,Math.min(100,(p.reputation||0)+amount));
-    db.ref('players/'+id).update({reputation:nr,adminModified:Date.now()}).then(()=>{
-        addLog((amount>0?'⭐ +':'💀 ')+amount+'⭐ → '+getPName(id)+' ('+nr+'%)',amount>0);
+function toggleBan(){
+    if(!currentPlayerUid) return;
+    fbDB.ref('bans/' + currentPlayerUid).once('value').then(snap => {
+        if(snap.val()){
+            fbDB.ref('bans/' + currentPlayerUid).remove().then(() => {
+                toast('✅ Разбанен', 'success');
+                document.getElementById('mBanStatus').textContent = '✅ Игрок активен';
+                document.getElementById('mBanStatus').style.color = 'var(--success)';
+            });
+        } else {
+            fbDB.ref('bans/' + currentPlayerUid).set({ bannedAt: Date.now(), reason: 'Нарушение правил' }).then(() => {
+                toast('🚫 Забанен', 'warning');
+                document.getElementById('mBanStatus').textContent = '🚫 ИГРОК ЗАБАНЕН';
+                document.getElementById('mBanStatus').style.color = 'var(--danger)';
+            });
+        }
     });
-}
-function addLevel(id,amount){
-    const p=getP(id);if(!p)return;
-    const nl=Math.max(1,(p.level||1)+amount);
-    db.ref('players/'+id).update({level:nl,setLevel:nl,adminModified:Date.now()}).then(()=>{
-        addLog('🎮 Уровень '+getPName(id)+' → '+nl,amount>0);
-    });
-}
-function setBalance(id){
-    const p=getP(id);if(!p)return;
-    const v=prompt('Новый баланс для '+getPName(id)+':',p.balance||0);
-    if(v===null)return;
-    const nb=parseInt(v.replace(/\D/g,''));
-    if(isNaN(nb)||nb<0){addLog('❌ Неверная сумма',false);return;}
-    db.ref('players/'+id).update({balance:nb,adminModified:Date.now()}).then(()=>{
-        addLog('💰 Баланс '+getPName(id)+' = '+nb.toLocaleString()+' ₽',true);
-    });
-}
-function setCity(id){
-    const p=getP(id);if(!p)return;
-    const cities=['Москва','Санкт-Петербург','Новосибирск','Екатеринбург','Казань','Самара','Челябинск','Омск','Ростов-на-Дону','Уфа','Красноярск','Пермь','Воронеж','Волгоград','Краснодар'];
-    const v=prompt('Введите город для '+getPName(id)+':\n'+cities.join(', '),p.city||'Москва');
-    if(v===null)return;
-    if(!cities.includes(v)){addLog('❌ Город не найден: '+v,false);return;}
-    db.ref('players/'+id).update({city:v,adminModified:Date.now()}).then(()=>{
-        addLog('📍 '+getPName(id)+' → '+v,true);
-    });
-}
-function setJob(id){
-    const p=getP(id);if(!p)return;
-    const jobs=['courier','seller','assembler','it','director','(нет)'];
-    const v=prompt('Работа для '+getPName(id)+':\n- courier (Курьер)\n- seller (Продавец)\n- assembler (Мастер)\n- it (IT-спец)\n- director (Директор)\n- (нет) — уволить',p.job||'(нет)');
-    if(v===null)return;
-    if(!jobs.includes(v)){addLog('❌ Неверная работа',false);return;}
-    const val=v==='(нет)'?null:v;
-    db.ref('players/'+id).update({job:val,setJob:val,adminModified:Date.now()}).then(()=>{
-        addLog('💼 '+getPName(id)+' → '+(val||'уволен'),true);
-    });
-}
-function kickPlayer(id){
-    if(!confirm('Кикнуть '+getPName(id)+'?'))return;
-    db.ref('players/'+id).update({lastUpdate:0,online:false}).then(()=>{
-        addLog('👢 Кик: '+getPName(id),false);
-    });
-}
-function toggleBan(id,banned){
-    const verb=banned?'разбанить':'забанить';
-    if(!confirm('Точно '+verb+' '+getPName(id)+'?'))return;
-    db.ref('players/'+id).update({banned:!banned,adminModified:Date.now()}).then(()=>{
-        addLog((banned?'✅ Разбан: ':'🚫 Бан: ')+getPName(id),!banned);
-    });
-}
-function resetPlayer(id){
-    if(!confirm('Сбросить прогресс '+getPName(id)+'?\nБаланс=30000, реп=50, день=1, уровень=1'))return;
-    db.ref('players/'+id).update({
-        balance:30000,reputation:50,day:1,month:1,year:2026,totalDays:1,level:1,xp:0,
-        pcsSold:0,pcsBought:0,job:null,setJob:null,adminModified:Date.now()
-    }).then(()=>{addLog('🔄 Сброс: '+getPName(id),false);});
-}
-function deletePlayer(id){
-    if(!confirm('УДАЛИТЬ '+getPName(id)+' навсегда?'))return;
-    const name=getPName(id);
-    db.ref('players/'+id).remove().then(()=>{addLog('🗑️ Удалён: '+name,false);});
 }
 
-// ===== ТОПЫ =====
-function showTop(mode){
-    topMode=mode;
-    let list=[...playersCache];
-    if(mode==='balance')list.sort((a,b)=>(b.balance||0)-(a.balance||0));
-    else if(mode==='level')list.sort((a,b)=>(b.level||0)-(a.level||0));
-    else if(mode==='pcsSold')list.sort((a,b)=>(b.pcsSold||0)-(a.pcsSold||0));
-    list=list.slice(0,10);
-    const labels={balance:'💰 Топ-10 по балансу',level:'🎮 Топ-10 по уровню',pcsSold:'📦 Топ-10 по продажам'};
-    const vals={balance:p=>(p.balance||0).toLocaleString()+' ₽',level:p=>'Ур. '+(p.level||1),pcsSold:p=>(p.pcsSold||0)+' ПК'};
-    document.getElementById('topList').innerHTML='<div style="font-size:12px;font-weight:bold;color:#f1c40f;margin-bottom:6px;">'+labels[mode]+'</div>'+
-        list.map((p,i)=>`<div class="player"><div class="player-info"><b>${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)} ${p.name||'Аноним'}</b> <span>${p.age||'?'} лет</span></div><div style="font-size:13px;font-weight:bold;color:#f1c40f;">${vals[mode](p)}</div></div>`).join('');
-}
-function hideTop(){document.getElementById('topList').innerHTML='';}
+/* ========== PROMOS ========== */
+function createPromo(){
+    const code = document.getElementById('promoCode').value.trim().toUpperCase();
+    const reward = parseInt(document.getElementById('promoReward').value) || 0;
+    const days = parseInt(document.getElementById('promoDays').value) || 30;
+    const limit = parseInt(document.getElementById('promoLimit').value) || 100;
 
-// ===== АВТО =====
-function toggleAuto(){
-    autoRefresh=!autoRefresh;
-    document.getElementById('autoBtn').textContent=autoRefresh?'⏸️ Автообновление: ВКЛ':'▶️ Автообновление: ВЫКЛ';
-}
-setInterval(()=>{if(autoRefresh){renderPlayers();syncTimeDisplay();}},5000);
+    if(!code || code.length < 3){ toast('❌ Код слишком короткий', 'danger'); return; }
+    if(reward <= 0){ toast('❌ Награда должна быть > 0', 'danger'); return; }
 
-// ===== СТАРТ =====
-listenGlobalTime();
-addLog('🚀 Админ-панель v1.4.1 запущена',true);
+    fbDB.ref('promos/' + code).once('value').then(snap => {
+        if(snap.val()){ toast('❌ Такой код уже есть', 'danger'); return; }
+        fbDB.ref('promos/' + code).set({
+            code: code,
+            reward: reward,
+            createdAt: Date.now(),
+            expiresAt: Date.now() + days * 86400000,
+            maxUses: limit,
+            usedBy: {},
+            active: true
+        }).then(() => {
+            toast('✅ Промокод ' + code + ' создан', 'success');
+            document.getElementById('promoCode').value = '';
+        });
+    });
+}
+function renderPromos(){
+    const el = document.getElementById('promosList');
+    const codes = Object.keys(promosCache);
+    if(!codes.length){ el.innerHTML = '<div class="empty">Пока нет промокодов</div>'; return; }
+    el.innerHTML = codes.map(code => {
+        const p = promosCache[code];
+        const expiresIn = Math.ceil((p.expiresAt - Date.now()) / 86400000);
+        const usedCount = Object.keys(p.usedBy || {}).length;
+        const expired = expiresIn <= 0 || !p.active;
+        return `<div class="promo-row">
+            <div>
+                <div class="promo-code">${esc(code)}</div>
+                <div class="promo-info ${expired ? 'expired' : ''}">
+                    💰 ${fmt(p.reward)} · ⏰ ${expired ? 'Истёк' : expiresIn + ' дн.'} · 📊 ${usedCount}/${p.maxUses}
+                </div>
+            </div>
+            <button class="btn btn-sm btn-danger" onclick="deletePromo('${code}')">🗑️</button>
+        </div>`;
+    }).join('');
+}
+function deletePromo(code){
+    if(!confirm('Удалить промокод ' + code + '?')) return;
+    fbDB.ref('promos/' + code).remove().then(() => toast('🗑️ Удалён', 'warning'));
+}
+
+/* ========== EVENTS ========== */
+function createEvent(){
+    const name = document.getElementById('eventName').value.trim();
+    const mult = parseFloat(document.getElementById('eventMult').value) || 2;
+    const hours = parseInt(document.getElementById('eventHours').value) || 24;
+
+    if(!name){ toast('❌ Введите название', 'danger'); return; }
+
+    const id = 'event_' + Date.now();
+    fbDB.ref('events/' + id).set({
+        id: id,
+        name: name,
+        multiplier: mult,
+        createdAt: Date.now(),
+        endsAt: Date.now() + hours * 3600000,
+        active: true
+    }).then(() => {
+        toast('🎉 Ивент "' + name + '" запущен', 'success');
+        document.getElementById('eventName').value = '';
+    });
+}
+function renderEvents(){
+    const el = document.getElementById('eventsList');
+    const ids = Object.keys(eventsCache);
+    if(!ids.length){ el.innerHTML = '<div class="empty">Пока нет ивентов</div>'; return; }
+    el.innerHTML = ids.map(id => {
+        const e = eventsCache[id];
+        const hoursLeft = Math.ceil((e.endsAt - Date.now()) / 3600000);
+        const expired = hoursLeft <= 0;
+        return `<div class="event-row">
+            <div>
+                <div style="font-weight:900;font-size:15px">🎉 ${esc(e.name)}</div>
+                <div style="font-size:12px;color:var(--text-sec);margin-top:4px">
+                    ×${e.multiplier} к доходу · ${expired ? 'Истёк' : hoursLeft + ' ч.'}
+                </div>
+            </div>
+            <button class="btn btn-sm btn-danger" onclick="deleteEvent('${id}')">🗑️</button>
+        </div>`;
+    }).join('');
+}
+function deleteEvent(id){
+    if(!confirm('Удалить ивент?')) return;
+    fbDB.ref('events/' + id).remove().then(() => toast('🗑️ Удалён', 'warning'));
+}
+
+/* ========== BROADCAST ========== */
+function broadcastMessage(){
+    const text = document.getElementById('broadcastText').value.trim();
+    if(!text){ toast('❌ Введите текст', 'danger'); return; }
+    if(!confirm('Отправить всем игрокам:\n\n' + text)) return;
+
+    fbDB.ref('globalChat').push({
+        uid: 'SYSTEM',
+        name: '🛡️ Система',
+        photo: '',
+        text: text,
+        time: Date.now(),
+        isSystem: true
+    }).then(() => {
+        toast('📢 Отправлено', 'success');
+        document.getElementById('broadcastText').value = '';
+    });
+}
+function sendDirect(){
+    const uid = document.getElementById('directUid').value.trim();
+    const text = document.getElementById('directText').value.trim();
+    if(!uid || !text){ toast('❌ Заполните поля', 'danger'); return; }
+    if(!playersCache[uid]){ toast('❌ Игрок не найден', 'danger'); return; }
+
+    fbDB.ref('users/' + uid + '/messages').push({
+        from: '🛡️ Система',
+        text: text,
+        date: Date.now(),
+        read: false
+    }).then(() => {
+        toast('📩 Отправлено игроку', 'success');
+        document.getElementById('directText').value = '';
+    });
+}
+
+/* ========== TOOLS ========== */
+function giveAll(amount){
+    if(!confirm('Выдать ' + fmt(amount) + ' ВСЕМ игрокам?')) return;
+    const updates = {};
+    Object.keys(playersCache).forEach(uid => {
+        const current = playersCache[uid]?.game?.money || 0;
+        updates['users/' + uid + '/game/money'] = current + amount;
+    });
+    fbDB.ref().update(updates).then(() => {
+        toast('✅ Выдано ' + fmt(amount) + ' всем', 'success');
+        loadAll();
+    });
+}
+function refreshAll(){
+    toast('🔄 Обновление...');
+    loadAll();
+}
+function rebuildLeaderboard(){
+    if(!confirm('Пересобрать лидерборд?')) return;
+    const updates = {};
+    Object.entries(playersCache).forEach(([uid, data]) => {
+        updates['leaderboard/' + uid] = {
+            name: data.profile?.name || 'Аноним',
+            photo: data.profile?.photo || '',
+            money: data.game?.money || 0,
+            level: data.game?.level || 1,
+            city: data.game?.currentCity || 'Москва',
+            updatedAt: Date.now()
+        };
+    });
+    fbDB.ref().update(updates).then(() => toast('🏆 Лидерборд пересобран', 'success'));
+}
+function clearGlobalChat(){
+    if(!confirm('Очистить общий чат? Все сообщения удалятся.')) return;
+    fbDB.ref('globalChat').remove().then(() => toast('🗑️ Чат очищен', 'warning'));
+}
+function exportAll(){
+    const data = {
+        exported: new Date().toISOString(),
+        players: playersCache,
+        promos: promosCache,
+        events: eventsCache
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'tycoon-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click();
+    toast('📤 Экспорт готов', 'success');
+}
+function clearAll(){
+    const confirm1 = confirm('Точно удалить ВСЮ базу? Это необратимо!');
+    if(!confirm1) return;
+    const confirm2 = confirm('Последнее предупреждение. Точно?');
+    if(!confirm2) return;
+    fbDB.ref().remove().then(() => {
+        toast('💣 База очищена', 'danger');
+        setTimeout(() => location.reload(), 2000);
+    });
+}
+
+/* ========== TABS ========== */
+function switchTab(tab, el){
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+}
+
+/* ========== BOOT ========== */
+document.addEventListener('DOMContentLoaded', () => {
+    if(fbAuth) watchAuth();
+    else document.getElementById('loginStatus').textContent = '❌ Firebase не загрузился';
+});
 </script>
 </body>
 </html>
