@@ -34,7 +34,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .sidebar-admin .name{font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sidebar-admin .uid{font-size:9px;color:var(--text-lt);font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nav{display:flex;flex-direction:column;gap:2px;padding:0 12px}
-.nav-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:12px;cursor:pointer;color:var(--text-sec);font-weight:700;font-size:13px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:12px;cursor:pointer;color:var(--text-sec);font-weight:700;font-size:13px;transition:all .2s}
 .nav-item:hover{background:var(--surface2);color:var(--text)}
 .nav-item.active{background:linear-gradient(135deg,#818cf8,#6366f1);color:#fff}
 .nav-item .icon{font-size:18px;width:22px;text-align:center}
@@ -68,7 +68,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .row>*{flex:1;min-width:140px}
 .form-group{margin-bottom:14px}
 .form-group label{display:block;font-size:11px;color:var(--text-sec);font-weight:800;text-transform:uppercase;margin-bottom:6px}
-.btn{padding:12px 20px;border-radius:12px;font-weight:700;font-size:13px;color:#fff;background:linear-gradient(135deg,#818cf8,#6366f1);display:inline-block}
+.btn{padding:12px 20px;border-radius:12px;font-weight:700;font-size:13px;color:#fff;background:linear-gradient(135deg,#818cf8,#6366f1);display:inline-block;transition:transform .1s}
 .btn:active{transform:scale(.97)}
 .btn:disabled{opacity:.4}
 .btn-success{background:linear-gradient(135deg,#4ade80,#16a34a)}
@@ -77,7 +77,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .btn-gold{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000}
 .btn-sm{padding:8px 14px;font-size:12px}
 .btn-block{width:100%;display:block}
-.player-row{background:var(--surface2);border-radius:14px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:14px;cursor:pointer}
+.player-row{background:var(--surface2);border-radius:14px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .15s}
 .player-row:hover{background:var(--surface3)}
 .player-avatar{width:44px;height:44px;border-radius:50%;overflow:hidden;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;flex-shrink:0}
 .player-avatar img{width:100%;height:100%;object-fit:cover}
@@ -119,7 +119,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
 </style>
 </head>
 <body>
-
 <div id="loginScreen">
     <div class="login-icon">🛡️</div>
     <div class="login-title">Admin Panel v6.0</div>
@@ -162,7 +161,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
                 <div class="nav-section">УПРАВЛЕНИЕ</div>
                 <a class="nav-item" onclick="switchTab('events', this)"><span class="icon">🎉</span> Ивенты</a>
                 <a class="nav-item" onclick="switchTab('promos', this)"><span class="icon">🎟️</span> Промокоды</a>
-                <a class="nav-item" onclick="switchTab('time', this)"><span class="icon">⏱️</span> Время</a>
                 <a class="nav-item" onclick="switchTab('broadcast', this)"><span class="icon">📢</span> Рассылка</a>
                 <a class="nav-item" onclick="switchTab('tools', this)"><span class="icon">🛠️</span> Инструменты</a>
             </nav>
@@ -182,7 +180,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
 
             <div class="diag-box" id="diagBox"><div>⏳ <b>Диагностика:</b> подключение...</div></div>
 
-            <!-- DASHBOARD -->
             <div class="tab-content active" id="tab-dashboard">
                 <div class="stats-grid">
                     <div class="stat-card primary"><div class="icon">👥</div><div class="num" id="statPlayers">—</div><div class="lbl">Игроков</div></div>
@@ -198,7 +195,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
                 </div>
             </div>
 
-            <!-- PLAYERS -->
             <div class="tab-content" id="tab-players">
                 <div class="section">
                     <h3>🔍 Поиск</h3>
@@ -210,7 +206,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
                 </div>
             </div>
 
-            <!-- ANALYTICS -->
             <div class="tab-content" id="tab-analytics">
                 <div class="section">
                     <h3>📈 Топ по категориям</h3>
@@ -226,19 +221,30 @@ input:focus,textarea:focus{border-color:var(--primary)}
                 </div>
             </div>
 
-            <!-- CASINO -->
             <div class="tab-content" id="tab-casino">
                 <div class="jackpot-card">
                     <div class="lbl">💎 ДЖЕКПОТ</div>
                     <div class="amt" id="casinoJackpotAmount">0</div>
                 </div>
                 <div class="section">
-                    <h3>🎰 Управление</h3>
-                    <button class="btn btn-gold btn-block" style="margin-bottom:8px" onclick="drawJackpotNow()">💎 Разыграть джекпот</button>
-                    <button class="btn btn-danger btn-block" onclick="resetJackpot()">🗑️ Обнулить</button>
+                    <h3>🎰 Управление джекпотом</h3>
+                    <div class="row">
+                        <button class="btn btn-gold" onclick="drawJackpotNow()">💎 Разыграть сейчас</button>
+                        <button class="btn btn-danger" onclick="resetJackpot()">🗑️ Обнулить</button>
+                        <button class="btn btn-warning" onclick="addToJackpot()">➕ Добавить</button>
+                    </div>
                 </div>
                 <div class="section">
-                    <h3>📊 Статистика</h3>
+                    <h3>⚙️ Лимиты казино</h3>
+                    <div class="row">
+                        <div class="form-group"><label>Мин. ставка</label><input type="number" id="cfgMinBet" value="100"></div>
+                        <div class="form-group"><label>Макс. ставка</label><input type="number" id="cfgMaxBet" value="50000"></div>
+                        <div class="form-group"><label>Лимит вывода / день</label><input type="number" id="cfgWithdrawLimit" value="20000"></div>
+                    </div>
+                    <button class="btn btn-success" onclick="saveCasinoLimits()">💾 Сохранить</button>
+                </div>
+                <div class="section">
+                    <h3>📊 Статистика казино</h3>
                     <div class="stats-grid">
                         <div class="stat-card gold"><div class="num" id="statChipsBought">—</div><div class="lbl">Куплено 🎰</div></div>
                         <div class="stat-card success"><div class="num" id="statChipsWithdrawn">—</div><div class="lbl">Выведено ₽</div></div>
@@ -246,7 +252,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
                 </div>
             </div>
 
-            <!-- QUESTS -->
             <div class="tab-content" id="tab-quests">
                 <div class="section">
                     <h3>🎯 Управление заданиями</h3>
@@ -259,7 +264,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
                 </div>
             </div>
 
-            <!-- CARS -->
             <div class="tab-content" id="tab-cars">
                 <div class="section">
                     <h3>🚗 Гаражи игроков</h3>
@@ -267,12 +271,11 @@ input:focus,textarea:focus{border-color:var(--primary)}
                 </div>
             </div>
 
-            <!-- USED -->
             <div class="tab-content" id="tab-used">
                 <div class="section">
-                    <h3>♻️ Б/У Рынок — статистика</h3>
+                    <h3>♻️ Б/У — статистика</h3>
                     <div class="stats-grid">
-                        <div class="stat-card success"><div class="num" id="usedTotal">—</div><div class="lbl">Лотов у игроков</div></div>
+                        <div class="stat-card success"><div class="num" id="usedTotal">—</div><div class="lbl">Товаров у игроков</div></div>
                         <div class="stat-card warning"><div class="num" id="usedBroken">—</div><div class="lbl">Сломанных</div></div>
                     </div>
                 </div>
@@ -282,7 +285,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
                 </div>
             </div>
 
-            <!-- REPAIR -->
             <div class="tab-content" id="tab-repair">
                 <div class="section">
                     <h3>🔧 Очередь ремонтов</h3>
@@ -290,7 +292,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
                 </div>
             </div>
 
-            <!-- BUSINESS -->
             <div class="tab-content" id="tab-business">
                 <div class="section">
                     <h3>🏢 Бизнесы игроков</h3>
@@ -298,7 +299,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
                 </div>
             </div>
 
-            <!-- EXCHANGE -->
             <div class="tab-content" id="tab-exchange">
                 <div class="section">
                     <h3>📈 Курсы валют</h3>
@@ -306,7 +306,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
                 </div>
             </div>
 
-            <!-- ARENA -->
             <div class="tab-content" id="tab-arena">
                 <div class="section">
                     <h3>⚔️ Топ по дуэлям</h3>
@@ -314,7 +313,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
                 </div>
             </div>
 
-            <!-- WORLD -->
             <div class="tab-content" id="tab-world">
                 <div class="section">
                     <h3>🌍 Визы игроков</h3>
@@ -322,7 +320,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
                 </div>
             </div>
 
-            <!-- SEASON -->
             <div class="tab-content" id="tab-season">
                 <div class="section">
                     <h3>🎁 Сезон — прогресс игроков</h3>
@@ -330,7 +327,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
                 </div>
             </div>
 
-            <!-- EVENTS -->
             <div class="tab-content" id="tab-events">
                 <div class="section">
                     <h3>🎉 Создать ивент</h3>
@@ -347,7 +343,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
                 </div>
             </div>
 
-            <!-- PROMOS -->
             <div class="tab-content" id="tab-promos">
                 <div class="section">
                     <h3>➕ Создать промокод</h3>
@@ -365,18 +360,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
                 </div>
             </div>
 
-            <!-- TIME -->
-            <div class="tab-content" id="tab-time">
-                <div class="section">
-                    <h3>⏱️ Игровое время</h3>
-                    <p style="font-size:12px;color:var(--text-sec);margin-bottom:14px">1 игровой день = 15 минут реального времени.</p>
-                    <button class="btn btn-warning btn-block" style="margin-bottom:8px" onclick="advanceDayAll(1)">⏩ +1 день всем</button>
-                    <button class="btn btn-success btn-block" style="margin-bottom:8px" onclick="advanceDayAll(7)">⏩ +7 дней всем</button>
-                    <button class="btn btn-danger btn-block" onclick="resetDayAll()">🔄 Сбросить счётчики</button>
-                </div>
-            </div>
-
-            <!-- BROADCAST -->
             <div class="tab-content" id="tab-broadcast">
                 <div class="section">
                     <h3>📢 В общий чат</h3>
@@ -391,7 +374,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
                 </div>
             </div>
 
-            <!-- TOOLS -->
             <div class="tab-content" id="tab-tools">
                 <div class="section">
                     <h3>🔧 Массовые операции</h3>
@@ -415,7 +397,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
     </div>
 </div>
 
-<!-- PLAYER MODAL -->
 <div class="modal-overlay" id="playerModal">
     <div class="modal">
         <h3><span id="modalPlayerName">Игрок</span> <button class="modal-close" onclick="closePlayerModal()">✕</button></h3>
@@ -456,7 +437,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
 </div>
 
 <div class="toast" id="toast"></div>
-
 <script>
 'use strict';
 
@@ -512,6 +492,7 @@ function setDiag(html, cls){
     el.innerHTML = html;
 }
 
+/* AUTH */
 function signInAdmin(){
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
@@ -535,7 +516,6 @@ function watchAuth(){
                 return;
             }
             fbUser = user;
-            console.log('✅ Admin:', user.displayName);
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('adminPanel').classList.add('show');
             document.getElementById('adminAvatar').src = user.photoURL || '';
@@ -550,6 +530,8 @@ function watchAuth(){
         }
     });
 }
+
+/* UI */
 function toggleSidebar(){
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('sidebarOverlay').classList.toggle('show');
@@ -560,7 +542,7 @@ function switchTab(tab, el){
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     const target = document.getElementById('tab-' + tab);
     if(target) target.classList.add('active');
-    const titles = {dashboard:'📊 Дашборд', players:'👥 Игроки', analytics:'📈 Аналитика', casino:'🎰 Казино', quests:'🎯 Задания', cars:'🚗 Авто', used:'♻️ Б/У', repair:'🔧 Мастерская', business:'🏢 Бизнес', exchange:'📈 Биржа', arena:'⚔️ Арена', world:'🌍 Мир', season:'🎁 Сезон', events:'🎉 Ивенты', promos:'🎟️ Промокоды', time:'⏱️ Время', broadcast:'📢 Рассылка', tools:'🛠️ Инструменты'};
+    const titles = {dashboard:'📊 Дашборд', players:'👥 Игроки', analytics:'📈 Аналитика', casino:'🎰 Казино', quests:'🎯 Задания', cars:'🚗 Авто', used:'♻️ Б/У', repair:'🔧 Мастерская', business:'🏢 Бизнес', exchange:'📈 Биржа', arena:'⚔️ Арена', world:'🌍 Мир', season:'🎁 Сезон', events:'🎉 Ивенты', promos:'🎟️ Промокоды', broadcast:'📢 Рассылка', tools:'🛠️ Инструменты'};
     document.getElementById('pageTitle').textContent = titles[tab] || tab;
     if(tab === 'analytics') renderAnalytics('money');
     if(tab === 'cars') renderCarsTab();
@@ -574,15 +556,10 @@ function switchTab(tab, el){
     if(window.innerWidth <= 900) toggleSidebar();
 }
 
+/* DIAGNOSTICS */
 function runDiagnostics(){
     const results = [];
     let done = 0;
-    fbDB.ref('users').once('value').then(s => {
-        const ok = s.val() === true;
-        results.push({ok, text: ok ? 'Соединение' : 'Нет соединения'});
-        done++; finish();
-    }).catch(() => { results.push({ok:false, text:'Ошибка соединения'}); done++; finish(); });
-
     fbDB.ref('users').once('value').then(s => {
         const count = Object.keys(s.val() || {}).length;
         results.push({ok:true, text:'users читается (' + count + ')'});
@@ -601,6 +578,11 @@ function runDiagnostics(){
         done++; finish();
     }).catch(e => { results.push({ok:false, text:'Запись ЗАПРЕЩЕНА: ' + e.code}); done++; finish(); });
 
+    fbDB.ref('leaderboard').once('value').then(() => {
+        results.push({ok:true, text:'leaderboard читается'});
+        done++; finish();
+    }).catch(() => { results.push({ok:false, text:'leaderboard НЕ читается'}); done++; finish(); });
+
     function finish(){
         if(done < 4) return;
         const allOk = results.every(r => r.ok);
@@ -611,6 +593,7 @@ function runDiagnostics(){
     }
 }
 
+/* LOAD */
 function loadAll(){
     if(!fbDB) return;
     fbDB.ref('users').on('value', snap => {
@@ -765,7 +748,7 @@ function givePlayerChips(amount){
     const cur = playersCache[currentPlayerUid]?.game?.chips || 0;
     fbDB.ref('users/' + currentPlayerUid + '/game/chips').set(cur + amount).then(() => {
         document.getElementById('mChips').value = cur + amount;
-        toast('✅ +' + fmtChips(amount), 'gold');
+        toast('✅ +' + fmtChips(amount), 'success');
     });
 }
 function toggleBan(){
@@ -787,6 +770,7 @@ function toggleBan(){
     });
 }
 
+/* ANALYTICS */
 function renderAnalytics(cat){
     const el = document.getElementById('analyticsList');
     const entries = Object.entries(playersCache).map(([uid, d]) => ({uid, ...d}));
@@ -816,6 +800,7 @@ function renderAnalytics(cat){
     }).join('');
 }
 
+/* QUESTS */
 function renderQuests(){
     const el = document.getElementById('questsList');
     if(!el) return;
@@ -837,17 +822,8 @@ function resetAllQuests(){
     Object.keys(playersCache).forEach(uid => { updates['users/' + uid + '/game/dailyQuests'] = null; });
     fbDB.ref().update(updates).then(() => toast('🔄 Сброшено', 'warning'));
 }
-function giveChipsAll(amount){
-    if(!confirm('Выдать ' + fmtChips(amount) + ' ВСЕМ?')) return;
-    const updates = {};
-    Object.keys(playersCache).forEach(uid => {
-        const cur = playersCache[uid]?.game?.chips || 0;
-        updates['users/' + uid + '/game/chips'] = cur + amount;
-    });
-    if(!Object.keys(updates).length){ toast('❌ Нет игроков', 'danger'); return; }
-    fbDB.ref().update(updates).then(() => toast('✅ Выдано', 'gold'));
-}
 
+/* CARS */
 function renderCarsTab(){
     const el = document.getElementById('carsList');
     if(!el) return;
@@ -856,13 +832,11 @@ function renderCarsTab(){
     el.innerHTML = entries.map(([uid, d]) => {
         const name = d.profile?.name || 'Аноним';
         const cars = d.game.cars || [];
-        return `<div class="section" style="padding:14px;margin-bottom:10px">
-            <div style="font-weight:800;margin-bottom:8px">${esc(name)} (${cars.length})</div>
-            ${cars.map(c => `<div style="font-size:12px;color:var(--text-sec);padding:6px 0">${c.brandLogo || '🚗'} ${esc(c.brandName||'')} ${esc(c.fullName||'')} · ${fmt(c.buyPrice||0)}</div>`).join('')}
-        </div>`;
+        return `<div class="section" style="padding:14px;margin-bottom:10px"><div style="font-weight:800;margin-bottom:8px">${esc(name)} (${cars.length})</div>${cars.map(c => `<div style="font-size:12px;color:var(--text-sec);padding:6px 0">${c.brandLogo || '🚗'} ${esc(c.brandName||'')} ${esc(c.fullName||'')} · ${fmt(c.buyPrice||0)}</div>`).join('')}</div>`;
     }).join('');
 }
 
+/* USED */
 function renderUsedTab(){
     const el = document.getElementById('usedList');
     if(!el) return;
@@ -889,6 +863,7 @@ function renderUsedTab(){
     }).join('');
 }
 
+/* REPAIR */
 function renderRepairTab(){
     const el = document.getElementById('repairList');
     if(!el) return;
@@ -904,6 +879,7 @@ function renderRepairTab(){
     }).join('');
 }
 
+/* BUSINESS */
 function renderBusinessTab(){
     const el = document.getElementById('businessList');
     if(!el) return;
@@ -919,6 +895,7 @@ function renderBusinessTab(){
     }).join('');
 }
 
+/* EXCHANGE */
 function renderExchangeTab(){
     const el = document.getElementById('exchangeRates');
     if(!el) return;
@@ -931,6 +908,7 @@ function renderExchangeTab(){
     `;
 }
 
+/* ARENA */
 function renderArenaTab(){
     const el = document.getElementById('arenaList');
     if(!el) return;
@@ -949,6 +927,7 @@ function renderArenaTab(){
     }).join('');
 }
 
+/* WORLD */
 function renderWorldTab(){
     const el = document.getElementById('worldList');
     if(!el) return;
@@ -964,6 +943,7 @@ function renderWorldTab(){
     }).join('');
 }
 
+/* SEASON */
 function renderSeasonTab(){
     const el = document.getElementById('seasonList');
     if(!el) return;
@@ -982,6 +962,7 @@ function renderSeasonTab(){
     }).join('');
 }
 
+/* JACKPOT */
 function drawJackpotNow(){
     if(!confirm('Разыграть джекпот сейчас?')) return;
     const tickets = jackpotCache.tickets || {};
@@ -1001,7 +982,7 @@ function drawJackpotNow(){
     fbDB.ref('users/' + winnerUid + '/game/money').set(winnerMoney + prize).then(() => {
         fbDB.ref('jackpot').set({amount: 0, tickets: {}, lastWinner: winnerUid, lastDraw: Date.now()});
         const winnerName = playersCache[winnerUid]?.profile?.name || 'Аноним';
-        toast('💎 ' + fmt(prize) + ' → ' + winnerName, 'gold');
+        toast('💎 ' + fmt(prize) + ' → ' + winnerName, 'success');
         fbDB.ref('globalChat').push({uid:'SYSTEM', name:'🛡️ Система', text:'💎 Джекпот ' + fmt(prize) + ' выиграл ' + winnerName + '!', time: Date.now(), isSystem: true});
     });
 }
@@ -1009,7 +990,19 @@ function resetJackpot(){
     if(!confirm('Обнулить джекпот?')) return;
     fbDB.ref('jackpot').set({amount: 0, tickets: {}}).then(() => toast('🗑️ Обнулён', 'warning'));
 }
+function addToJackpot(){
+    const amt = prompt('Сколько фишек добавить?', '10000');
+    if(!amt) return;
+    fbDB.ref('jackpot/amount').transaction(cur => (cur || 0) + parseInt(amt)).then(() => toast('✅ Добавлено', 'success'));
+}
+function saveCasinoLimits(){
+    const min = parseInt(document.getElementById('cfgMinBet').value);
+    const max = parseInt(document.getElementById('cfgMaxBet').value);
+    const wd = parseInt(document.getElementById('cfgWithdrawLimit').value);
+    fbDB.ref('config/casino').set({minBet: min, maxBet: max, withdrawLimit: wd}).then(() => toast('✅ Сохранено', 'success'));
+}
 
+/* EVENTS */
 function createGameEvent(){
     const name = document.getElementById('eventName').value.trim();
     const mult = parseFloat(document.getElementById('eventMult').value) || 2;
@@ -1027,14 +1020,12 @@ function renderEvents(){
         const e = eventsCache[id];
         const hoursLeft = Math.ceil((e.endsAt - Date.now()) / 3600000);
         const expired = hoursLeft <= 0;
-        return `<div class="event-row"><div>
-            <div style="font-weight:900;font-size:15px">🎉 ${esc(e.name)}</div>
-            <div style="font-size:12px;color:var(--text-sec);margin-top:4px">×${e.multiplier} · ${expired ? 'Истёк' : hoursLeft + ' ч.'}</div>
-        </div><button class="btn btn-sm btn-danger" onclick="deleteEvent('${id}')">🗑️</button></div>`;
+        return `<div class="event-row"><div><div style="font-weight:900;font-size:15px">🎉 ${esc(e.name)}</div><div style="font-size:12px;color:var(--text-sec);margin-top:4px">×${e.multiplier} · ${expired ? 'Истёк' : hoursLeft + ' ч.'}</div></div><button class="btn btn-sm btn-danger" onclick="deleteEvent('${id}')">🗑️</button></div>`;
     }).join('');
 }
 function deleteEvent(id){ if(!confirm('Удалить?')) return; fbDB.ref('events/' + id).remove().then(() => toast('🗑️ Удалён', 'warning')); }
 
+/* PROMOS */
 function createPromo(){
     const code = document.getElementById('promoCode').value.trim().toUpperCase();
     const reward = parseInt(document.getElementById('promoReward').value) || 0;
@@ -1057,34 +1048,12 @@ function renderPromos(){
         const exp = Math.ceil((p.expiresAt - Date.now()) / 86400000);
         const used = Object.keys(p.usedBy || {}).length;
         const expired = exp <= 0 || !p.active;
-        return `<div class="promo-row"><div>
-            <div class="promo-code">${esc(code)}</div>
-            <div class="promo-info ${expired ? 'expired' : ''}">💰 ${fmt(p.reward)} · ⏰ ${expired ? 'Истёк' : exp + ' дн.'} · 📊 ${used}/${p.maxUses}</div>
-        </div><button class="btn btn-sm btn-danger" onclick="deletePromo('${code}')">🗑️</button></div>`;
+        return `<div class="promo-row"><div><div class="promo-code">${esc(code)}</div><div class="promo-info ${expired ? 'expired' : ''}">💰 ${fmt(p.reward)} · ⏰ ${expired ? 'Истёк' : exp + ' дн.'} · 📊 ${used}/${p.maxUses}</div></div><button class="btn btn-sm btn-danger" onclick="deletePromo('${code}')">🗑️</button></div>`;
     }).join('');
 }
 function deletePromo(code){ if(!confirm('Удалить ' + code + '?')) return; fbDB.ref('promos/' + code).remove().then(() => toast('🗑️ Удалён', 'warning')); }
 
-function advanceDayAll(days = 1){
-    if(!confirm('Продвинуть +' + days + ' день ВСЕМ?')) return;
-    const updates = {};
-    Object.keys(playersCache).forEach(uid => {
-        const cur = playersCache[uid]?.game?.gameDay || 1;
-        updates['users/' + uid + '/game/gameDay'] = cur + days;
-    });
-    fbDB.ref().update(updates).then(() => toast('⏩ Продвинуто', 'success'));
-}
-function resetDayAll(){
-    if(!confirm('Сбросить счётчики дня?')) return;
-    const updates = {};
-    Object.keys(playersCache).forEach(uid => {
-        updates['users/' + uid + '/game/gameDay'] = 1;
-        updates['users/' + uid + '/game/gameDayStartedAt'] = Date.now();
-        updates['users/' + uid + '/game/chipsWithdrawnToday'] = 0;
-    });
-    fbDB.ref().update(updates).then(() => toast('🔄 Сброшено', 'warning'));
-}
-
+/* BROADCAST */
 function broadcastMessage(){
     const text = document.getElementById('broadcastText').value.trim();
     if(!text){ toast('❌ Введите текст', 'danger'); return; }
@@ -1101,12 +1070,23 @@ function sendDirect(){
         .then(() => { toast('📩 Отправлено', 'success'); document.getElementById('directText').value = ''; });
 }
 
+/* TOOLS */
 function giveAll(amount){
     if(!confirm('Выдать ' + fmt(amount) + ' ВСЕМ?')) return;
     const updates = {};
     Object.keys(playersCache).forEach(uid => {
         const cur = playersCache[uid]?.game?.money || 0;
         updates['users/' + uid + '/game/money'] = cur + amount;
+    });
+    if(!Object.keys(updates).length){ toast('❌ Нет игроков', 'danger'); return; }
+    fbDB.ref().update(updates).then(() => toast('✅ Выдано', 'success'));
+}
+function giveChipsAll(amount){
+    if(!confirm('Выдать ' + fmtChips(amount) + ' ВСЕМ?')) return;
+    const updates = {};
+    Object.keys(playersCache).forEach(uid => {
+        const cur = playersCache[uid]?.game?.chips || 0;
+        updates['users/' + uid + '/game/chips'] = cur + amount;
     });
     if(!Object.keys(updates).length){ toast('❌ Нет игроков', 'danger'); return; }
     fbDB.ref().update(updates).then(() => toast('✅ Выдано', 'success'));
