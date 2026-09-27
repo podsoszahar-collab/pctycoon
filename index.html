@@ -211,6 +211,42 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
 .filter-tabs::-webkit-scrollbar{display:none}
 .filter-tab{flex:0 0 auto;padding:9px 16px;border-radius:20px;background:var(--surface);color:var(--text-sec);font-weight:700;font-size:12px;border:1px solid var(--border);white-space:nowrap;cursor:pointer}
 .filter-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+/* ===== Б/У РЫНОК v6.0 ===== */
+.used-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.used-card{background:var(--surface);border-radius:16px;padding:12px;border:1px solid var(--border);cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.used-card:active{transform:scale(.97);border-color:#10b981}
+.used-card.hot{border-color:var(--danger);box-shadow:0 0 16px rgba(239,68,68,.3)}
+.used-emoji{font-size:40px;text-align:center;margin-bottom:8px}
+.used-name{font-size:12px;font-weight:800;text-align:center}
+.used-meta{font-size:10px;color:var(--text-sec);text-align:center;margin-top:4px}
+.used-price{font-size:14px;font-weight:900;color:var(--success);text-align:center;margin-top:6px}
+.used-badge{position:absolute;top:6px;right:6px;background:var(--danger);color:#fff;font-size:9px;font-weight:800;padding:3px 7px;border-radius:8px}
+.blind-card{background:linear-gradient(135deg,#1a1a2e,#2d1b4e);border-radius:18px;padding:20px;text-align:center;border:2px dashed rgba(139,92,246,.5);cursor:pointer;margin-bottom:12px}
+.blind-card:active{transform:scale(.98)}
+.blind-card .icon{font-size:48px;margin-bottom:8px}
+.blind-card .title{font-size:14px;font-weight:900;color:#a78bfa}
+.blind-card .desc{font-size:11px;color:var(--text-sec);margin-top:6px}
+
+/* ===== МАСТЕРСКАЯ v6.0 ===== */
+.repair-bar{position:relative;height:60px;background:var(--surface2);border-radius:14px;margin:20px 0;overflow:hidden;border:2px solid var(--border)}
+.repair-zone{position:absolute;top:0;bottom:0;background:linear-gradient(135deg,rgba(74,222,128,.3),rgba(74,222,128,.5));border-left:2px solid var(--success);border-right:2px solid var(--success)}
+.repair-cursor{position:absolute;top:0;bottom:0;width:4px;background:#fff;box-shadow:0 0 12px #fff;transition:left .016s linear}
+.repair-hint{text-align:center;font-size:12px;color:var(--text-sec);margin-bottom:8px;font-weight:700}
+
+/* ===== БИЗНЕС / БИРЖА / АРЕНА / МИР / СЕЗОН v6.0 ===== */
+.arena-card{background:linear-gradient(135deg,#ef4444,#f97316);border-radius:18px;padding:20px;color:#fff;text-align:center;margin-bottom:14px;box-shadow:0 0 30px rgba(239,68,68,.3)}
+.arena-card .icon{font-size:48px}
+.arena-card .title{font-size:20px;font-weight:900;margin:8px 0}
+.arena-card .sub{font-size:12px;opacity:.9}
+.season-card{background:linear-gradient(135deg,#fbbf24,#f59e0b);border-radius:18px;padding:20px;color:#000;text-align:center;margin-bottom:14px;box-shadow:0 0 30px rgba(251,191,36,.3)}
+.season-card .lvl{font-size:36px;font-weight:900;margin:8px 0}
+.season-bar{background:rgba(0,0,0,.15);height:8px;border-radius:4px;margin-top:10px;overflow:hidden}
+.season-bar i{display:block;height:100%;background:#000;border-radius:4px;transition:width .4s}
+.world-card{background:var(--surface);border-radius:16px;padding:16px;margin-bottom:10px;border:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.world-flag{font-size:32px;flex-shrink:0}
+.world-info{flex:1;min-width:0}
+.world-info .name{font-weight:800;font-size:14px}
+.world-info .meta{font-size:11px;color:var(--text-sec);margin-top:2px}
 </style>
 </head>
 <body>
@@ -281,8 +317,14 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
 
     <div class="grid" id="mainGrid">
         <div class="icon-item" onclick="openScreen('home-screen')"><div class="icon-circle c-market">🏠</div><span>Рынок</span></div>
+<div class="icon-item" onclick="openScreen('used-market-screen')"><div class="icon-circle" style="background:linear-gradient(135deg,#10b981,#059669)">♻️</div><span>Б/У</span></div>
+<div class="icon-item" onclick="openScreen('repair-screen')"><div class="icon-circle" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">🔧</div><span>Мастерская</span></div>
+<div class="icon-item" onclick="openScreen('business-screen')"><div class="icon-circle" style="background:linear-gradient(135deg,#6366f1,#4f46e5)">🏢</div><span>Бизнес</span></div>
+<div class="icon-item" onclick="openScreen('exchange-screen')"><div class="icon-circle" style="background:linear-gradient(135deg,#10b981,#059669)">📈</div><span>Биржа</span></div>
+<div class="icon-item" onclick="openScreen('arena-screen')"><div class="icon-circle" style="background:linear-gradient(135deg,#ef4444,#f97316)">⚔️</div><span>Арена</span></div>
+<div class="icon-item" onclick="openScreen('world-screen')"><div class="icon-circle" style="background:linear-gradient(135deg,#06b6d4,#0891b2)">🌍</div><span>Мир</span></div>
+<div class="icon-item" onclick="openScreen('season-screen')"><div class="icon-circle" style="background:linear-gradient(135deg,#fbbf24,#f59e0b)">🎁</div><span>Сезон</span></div>
         <div class="icon-item" onclick="openScreen('bank-screen')"><div class="icon-circle c-bank">🏦</div><span>Банк</span></div>
-        <div class="icon-item" onclick="openScreen('business-screen')"><div class="icon-circle c-biz">💼</div><span>Бизнес</span></div>
         <div class="icon-item" onclick="openScreen('office-screen')"><div class="icon-circle c-office">🏢</div><span>Офис</span></div>
         <div class="icon-item" onclick="openScreen('jobs-screen')"><div class="icon-circle c-jobs">💼</div><span>Работа</span></div>
         <div class="icon-item" onclick="openScreen('travel-screen')"><div class="icon-circle c-travel">✈️</div><span>Поездки</span></div>
@@ -507,7 +549,95 @@ input:focus,textarea:focus{border-color:var(--primary);background:var(--surface3
         </div>
     </div>
 </div>
+<!-- Б/У РЫНОК v6.0 -->
+<div class="screen" id="used-market-screen">
+    <div class="header">
+        <button class="back-btn" onclick="closeAll()">←</button>
+        <div class="page-title">♻️ Б/У Рынок</div>
+        <button class="back-btn" onclick="openBlindLot()">🎁</button>
+    </div>
+    <div class="content">
+        <div class="blind-card" onclick="openBlindLot()">
+            <div class="icon">🎁</div>
+            <div class="title">Слепой лот — 5 000 ₽</div>
+            <div class="desc">Что-то сломанное. Может iPhone, может кирпич.</div>
+        </div>
+        <div class="blind-card" style="background:linear-gradient(135deg,#0d1b2a,#1e3a5f);border-color:rgba(59,130,246,.5)" onclick="buySurpriseBox()">
+            <div class="icon">📦</div>
+            <div class="title" style="color:#60a5fa">Коробка сюрпризов — 15 000 ₽</div>
+            <div class="desc">1–3 сломанных телефона</div>
+        </div>
+        <div style="font-size:13px;font-weight:800;margin:16px 0 10px">🔥 Горячие лоты</div>
+        <div class="used-grid" id="usedGrid"></div>
+    </div>
+</div>
 
+<!-- МАСТЕРСКАЯ v6.0 -->
+<div class="screen" id="repair-screen">
+    <div class="header">
+        <button class="back-btn" onclick="closeAll()">←</button>
+        <div class="page-title">🔧 Мастерская</div>
+    </div>
+    <div class="content">
+        <div id="repairList"></div>
+    </div>
+</div>
+
+<!-- БИЗНЕС v6.0 -->
+<div class="screen" id="business-screen">
+    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">🏢 Бизнес</div></div>
+    <div class="content" id="bizContent"></div>
+</div>
+
+<!-- БИРЖА v6.0 -->
+<div class="screen" id="exchange-screen">
+    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">📈 Биржа</div></div>
+    <div class="content" id="exchangeContent"></div>
+</div>
+
+<!-- АРЕНА v6.0 -->
+<div class="screen" id="arena-screen">
+    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">⚔️ Арена</div></div>
+    <div class="content" id="arenaContent"></div>
+</div>
+
+<!-- МИР v6.0 -->
+<div class="screen" id="world-screen">
+    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">🌍 Мир</div></div>
+    <div class="content" id="worldContent"></div>
+</div>
+
+<!-- СЕЗОН v6.0 -->
+<div class="screen" id="season-screen">
+    <div class="header"><button class="back-btn" onclick="closeAll()">←</button><div class="page-title">🎁 Сезон</div></div>
+    <div class="content" id="seasonContent"></div>
+</div>
+
+<!-- МОДАЛКА МИНИ-ИГРЫ РЕМОНТА v6.0 -->
+<div class="overlay" id="repairMinigame">
+    <div class="modal">
+        <h3 id="repairMinigameTitle">🔧 Ремонт</h3>
+        <p id="repairMinigameText">Нажми СТОП, когда курсор в зелёной зоне.</p>
+        <div class="repair-bar" id="repairBar">
+            <div class="repair-zone" id="repairZone"></div>
+            <div class="repair-cursor" id="repairCursor"></div>
+        </div>
+        <div class="repair-hint" id="repairHint">Жми «СТОП» в зелёной зоне</div>
+        <button class="btn btn-gold" id="repairStopBtn">СТОП</button>
+    </div>
+</div>
+
+<!-- МОДАЛКА ЛОТА v6.0 -->
+<div class="overlay" id="usedBuyModal">
+    <div class="modal">
+        <h3 id="usedBuyTitle">Лот</h3>
+        <div id="usedBuyBody"></div>
+        <div class="modal-actions" style="margin-top:16px">
+            <button class="btn btn-danger" onclick="closeModal('usedBuyModal')">Отмена</button>
+            <button class="btn btn-success" id="usedBuyConfirmBtn">Купить</button>
+        </div>
+    </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1423,6 +1553,431 @@ setInterval(() => { if(fbUser) cloudSave(); }, 60000);
 
 window.addEventListener('beforeunload', () => { if(fbUser) cloudSave(); });
 document.addEventListener('visibilitychange', () => { if(document.hidden && fbUser) cloudSave(); });
+/* ============================================================
+   ДОПОЛНЕНИЯ v6.0 — Б/У, Мастерская, Бизнес, Биржа, Арена, Мир, Сезон
+   ============================================================ */
+
+// === РАСШИРЕНИЕ STATE ===
+if(!state.visas) state.visas = {};
+if(!state.exchangeRates) state.exchangeRates = {usd: 90, cny: 12.5, eur: 100};
+if(!state.seasonXP) state.seasonXP = 0;
+if(!state.seasonLevel) state.seasonLevel = 1;
+if(!state.arenaWins) state.arenaWins = 0;
+if(!state.arenaLosses) state.arenaLosses = 0;
+
+// === ДАННЫЕ ===
+const BLIND_ITEMS = ['iPhone 12','iPhone 13','Samsung S22','Xiaomi 13','Redmi Note 12','iPhone 14','Pixel 7','OnePlus 11'];
+const WORLD_COUNTRIES = [
+    {code:'us', name:'США', flag:'🇺🇸', taxRate:0.10},
+    {code:'cn', name:'Китай', flag:'🇨🇳', taxRate:0.08},
+    {code:'ae', name:'ОАЭ', flag:'🇦🇪', taxRate:0.02},
+    {code:'de', name:'Германия', flag:'🇩🇪', taxRate:0.12}
+];
+const SEASON_REWARDS = [
+    {level:1, reward:'5 000 ₽'},
+    {level:3, reward:'10 000 🎰'},
+    {level:5, reward:'25 000 ₽'},
+    {level:10, reward:'100 000 ₽ + 50 000 🎰'},
+    {level:20, reward:'500 000 ₽'},
+    {level:50, reward:'10 000 000 ₽'},
+    {level:100, reward:'100 000 000 ₽ + титул'}
+];
+
+// === Б/У РЫНОК ===
+let usedLots = [];
+function generateUsedLots(){
+    usedLots = [];
+    for(let i = 0; i < 20; i++){
+        const isHot = Math.random() < 0.3;
+        const brand = rand(['iPhone','Samsung','Xiaomi','Redmi','Google']);
+        const model = rand(['11','12','13','14','S22','Note 12','Pixel 7']);
+        const basePrice = isHot ? 3000 + Math.random()*5000 : 8000 + Math.random()*15000;
+        usedLots.push({
+            id: 'used_' + Date.now() + '_' + i,
+            brand, fullName: brand + ' ' + model,
+            price: Math.floor(basePrice / 100) * 100,
+            brokenParts: [rand(PHONE_PARTS).id, rand(PHONE_PARTS).id],
+            hot: isHot,
+            city: state.currentCity
+        });
+    }
+}
+function renderUsed(){
+    if(!usedLots.length) generateUsedLots();
+    const grid = document.getElementById('usedGrid');
+    if(!grid) return;
+    const lots = usedLots.filter(l => l.city === state.currentCity);
+    if(!lots.length){ grid.innerHTML = '<div style="grid-column:span 2;text-align:center;padding:30px;color:var(--text-lt)">Нет лотов</div>'; return; }
+    grid.innerHTML = lots.map(lot => `
+        <div class="used-card ${lot.hot ? 'hot' : ''}" onclick="openUsedLot('${lot.id}')">
+            ${lot.hot ? '<div class="used-badge">🔥 HOT</div>' : ''}
+            <div class="used-emoji">📱</div>
+            <div class="used-name">${escHtml(lot.fullName)}</div>
+            <div class="used-meta">⚠️ ${lot.brokenParts.length} поломки</div>
+            <div class="used-price">${fmt(lot.price)}</div>
+        </div>
+    `).join('');
+}
+function openUsedLot(id){
+    const lot = usedLots.find(l => l.id === id);
+    if(!lot) return;
+    const modal = document.getElementById('usedBuyModal');
+    document.getElementById('usedBuyTitle').textContent = lot.fullName;
+    document.getElementById('usedBuyBody').innerHTML = `
+        <div style="font-size:56px;text-align:center;margin:12px 0">📱</div>
+        <div class="stat-grid">
+            <div class="stat-box"><div class="lbl">Цена</div><div class="val" style="color:var(--success)">${fmt(lot.price)}</div></div>
+            <div class="stat-box"><div class="lbl">Поломки</div><div class="val" style="color:var(--danger)">${lot.brokenParts.length}</div></div>
+        </div>
+    `;
+    modal.classList.add('show');
+    document.getElementById('usedBuyConfirmBtn').onclick = () => {
+        if(state.money < lot.price){ notify('❌ Не хватает','','danger'); return; }
+        if(state.inventory.length >= 20){ notify('❌ Склад полон','','danger'); return; }
+        state.money -= lot.price;
+        state.inventory.push({
+            id: 'inv_' + Date.now(),
+            brandName: lot.brand, fullName: lot.fullName,
+            buyPrice: lot.price, type: 'phone',
+            brandColor: '#10b981', brandLogo: '📱',
+            brokenParts: [...lot.brokenParts],
+            hasSim: false
+        });
+        usedLots = usedLots.filter(l => l.id !== lot.id);
+        cloudSaveDebounced(); updateAllUI();
+        notify('✅ Куплено', lot.fullName, 'success');
+        closeModal('usedBuyModal');
+        renderUsed();
+    };
+}
+function openBlindLot(){
+    if(state.money < 5000){ notify('❌ Нужно 5 000 ₽','','danger'); return; }
+    if(state.inventory.length >= 20){ notify('❌ Склад полон','','danger'); return; }
+    if(!confirm('Купить слепой лот за 5 000 ₽?')) return;
+    state.money -= 5000;
+    const isTrash = Math.random() < 0.15;
+    if(isTrash){
+        state.money += 500;
+        notify('😔 Кирпич!', '+500 ₽ компенсация', 'warning');
+    } else {
+        const model = rand(BLIND_ITEMS);
+        state.inventory.push({
+            id: 'inv_' + Date.now(),
+            brandName: model.split(' ')[0], fullName: model,
+            buyPrice: 5000, type: 'phone',
+            brandColor: '#8b5cf6', brandLogo: '📱',
+            brokenParts: [rand(PHONE_PARTS).id, rand(PHONE_PARTS).id],
+            hasSim: false
+        });
+        notify('🎁 Слепой лот!', model, 'gold');
+    }
+    cloudSaveDebounced(); updateAllUI();
+}
+function buySurpriseBox(){
+    if(state.money < 15000){ notify('❌ Нужно 15 000 ₽','','danger'); return; }
+    if(!confirm('Купить коробку за 15 000 ₽?')) return;
+    state.money -= 15000;
+    const cnt = 1 + Math.floor(Math.random() * 3);
+    let added = 0;
+    for(let i = 0; i < cnt; i++){
+        if(state.inventory.length >= 20) break;
+        const model = rand(BLIND_ITEMS);
+        state.inventory.push({
+            id: 'inv_' + Date.now() + '_' + i,
+            brandName: model.split(' ')[0], fullName: model,
+            buyPrice: 5000, type: 'phone',
+            brandColor: '#3b82f6', brandLogo: '📱',
+            brokenParts: [rand(PHONE_PARTS).id], hasSim: false
+        });
+        added++;
+    }
+    cloudSaveDebounced(); updateAllUI();
+    notify('📦 Коробка!', added + ' телефонов', 'gold');
+}
+
+// === МАСТЕРСКАЯ ===
+let repairGame = null;
+function renderRepair(){
+    const el = document.getElementById('repairList');
+    if(!el) return;
+    const broken = state.inventory.filter(i => i.brokenParts && i.brokenParts.length > 0);
+    if(!broken.length){
+        el.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text-lt)">🔧 Нет сломанных товаров</div>';
+        return;
+    }
+    el.innerHTML = broken.map(item => {
+        const totalCost = item.brokenParts.reduce((sum, id) => sum + ((PHONE_PARTS.find(p => p.id === id) || {}).price || 0), 0);
+        return `<div class="list-item" style="flex-direction:column;align-items:stretch">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <div style="width:44px;height:44px;border-radius:12px;background:${item.brandColor || '#8b5cf6'};display:flex;align-items:center;justify-content:center;font-size:20px">📱</div>
+                <div style="flex:1">
+                    <div style="font-weight:700">${escHtml(item.brandName)} ${escHtml(item.fullName)}</div>
+                    <div style="font-size:11px;color:var(--danger)">⚠️ ${item.brokenParts.length} поломки</div>
+                </div>
+            </div>
+            <div style="font-size:11px;color:var(--text-sec);margin-bottom:8px">Ремонт: <b style="color:var(--warning)">${fmt(totalCost)}</b></div>
+            <button class="btn btn-primary btn-sm" onclick="startRepairGame('${item.id}')">🔧 Починить</button>
+        </div>`;
+    }).join('');
+}
+function startRepairGame(itemId){
+    const item = state.inventory.find(i => i.id === itemId);
+    if(!item) return;
+    let totalCost = 0;
+    item.brokenParts.forEach(id => { totalCost += ((PHONE_PARTS.find(p => p.id === id) || {}).price || 0); });
+    repairGame = { itemId, item, cursorPos: 0, direction: 1, speed: 1.2, zoneStart: 40, zoneWidth: 20, running: true, totalCost };
+    document.getElementById('repairMinigameTitle').textContent = '🔧 ' + item.fullName;
+    document.getElementById('repairZone').style.left = repairGame.zoneStart + '%';
+    document.getElementById('repairZone').style.width = repairGame.zoneWidth + '%';
+    document.getElementById('repairCursor').style.left = '0%';
+    document.getElementById('repairHint').textContent = 'Жми «СТОП» в зелёной зоне';
+    document.getElementById('repairMinigame').classList.add('show');
+    document.getElementById('repairStopBtn').onclick = stopRepairGame;
+    if(repairGame._interval) clearInterval(repairGame._interval);
+    repairGame._interval = setInterval(() => {
+        if(!repairGame || !repairGame.running) return;
+        repairGame.cursorPos += repairGame.speed * repairGame.direction;
+        if(repairGame.cursorPos >= 100){ repairGame.cursorPos = 100; repairGame.direction = -1; }
+        if(repairGame.cursorPos <= 0){ repairGame.cursorPos = 0; repairGame.direction = 1; }
+        const cur = document.getElementById('repairCursor');
+        if(cur) cur.style.left = repairGame.cursorPos + '%';
+    }, 16);
+}
+function stopRepairGame(){
+    if(!repairGame) return;
+    repairGame.running = false;
+    clearInterval(repairGame._interval);
+    const inZone = repairGame.cursorPos >= repairGame.zoneStart && repairGame.cursorPos <= repairGame.zoneStart + repairGame.zoneWidth;
+    let accuracy = 0;
+    if(inZone){
+        const center = repairGame.zoneStart + repairGame.zoneWidth / 2;
+        const dist = Math.abs(repairGame.cursorPos - center);
+        accuracy = 1 - dist / (repairGame.zoneWidth / 2);
+    }
+    const finalCost = Math.round(repairGame.totalCost * (1 - accuracy * 0.7));
+    if(state.money < finalCost){ notify('❌ Нужно ' + fmt(finalCost),'','danger'); repairGame = null; closeModal('repairMinigame'); return; }
+    state.money -= finalCost;
+    const item = repairGame.item;
+    item.brokenParts = [];
+    item.broken = false;
+    document.getElementById('repairHint').textContent = inZone ? '✅ Скидка ' + Math.round(accuracy*70) + '%' : '❌ Промах';
+    setTimeout(() => {
+        closeModal('repairMinigame');
+        cloudSaveDebounced(); updateAllUI();
+        notify(inZone ? '✅ Починено со скидкой' : '🔧 Починено', '-' + fmt(finalCost), 'success');
+        renderRepair();
+        repairGame = null;
+    }, 800);
+}
+
+// === БИЗНЕС ===
+function renderBusiness(){
+    const el = document.getElementById('bizContent');
+    if(!el) return;
+    el.innerHTML = BUSINESSES.map(b => {
+        const owned = (state.businesses || []).find(x => x.id === b.id);
+        const can = state.money >= b.price;
+        if(owned){
+            return `<div class="list-item" style="flex-direction:column;align-items:stretch">
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                    <b>${b.name}</b><span style="color:var(--success);font-size:12px">✅ Ур. ${owned.level || 1}</span>
+                </div>
+                <div style="font-size:12px;color:var(--success);margin-bottom:6px">+${fmt(b.income * (owned.level || 1))} / день</div>
+                <button class="btn btn-warning btn-sm" onclick="upgradeBiz('${b.id}')">⬆️ Улучшить</button>
+            </div>`;
+        }
+        return `<div class="list-item" style="flex-direction:column;align-items:stretch">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px"><b>${b.name}</b><b style="color:var(--primary)">${fmt(b.price)}</b></div>
+            <button class="btn ${can ? 'btn-primary' : 'btn-danger'}" onclick="buyBiz('${b.id}')">${can ? 'Открыть' : 'Не хватает'}</button>
+        </div>`;
+    }).join('');
+}
+function buyBiz(id){
+    const b = BUSINESSES.find(x => x.id === id);
+    if(!b || state.money < b.price) return;
+    state.money -= b.price;
+    if(!state.businesses) state.businesses = [];
+    state.businesses.push({id: b.id, level: 1});
+    cloudSaveDebounced(); updateAllUI(); renderBusiness();
+    notify('🏢 Открыто!', b.name, 'success');
+}
+function upgradeBiz(id){
+    const b = BUSINESSES.find(x => x.id === id);
+    const owned = state.businesses.find(x => x.id === id);
+    if(!b || !owned) return;
+    const cost = b.price * (owned.level || 1) * 1.5;
+    if(state.money < cost){ notify('❌ Нужно ' + fmt(cost),'','danger'); return; }
+    state.money -= cost;
+    owned.level = (owned.level || 1) + 1;
+    cloudSaveDebounced(); updateAllUI(); renderBusiness();
+    notify('⬆️ Улучшено!', 'Ур. ' + owned.level, 'success');
+}
+
+// === БИРЖА ===
+function renderExchange(){
+    const el = document.getElementById('exchangeContent');
+    if(!el) return;
+    const rates = state.exchangeRates || {usd: 90, cny: 12.5, eur: 100};
+    el.innerHTML = `
+        <div style="background:var(--surface);border-radius:14px;padding:16px;margin-bottom:14px;border:1px solid var(--border)">
+            <div style="font-size:12px;color:var(--text-sec);font-weight:700;margin-bottom:10px">КУРСЫ ВАЛЮТ</div>
+            <div class="list-item"><span>🇺🇸 USD</span><b>${rates.usd.toFixed(1)} ₽</b></div>
+            <div class="list-item"><span>🇨🇳 CNY</span><b>${rates.cny.toFixed(1)} ₽</b></div>
+            <div class="list-item"><span>🇪🇺 EUR</span><b>${rates.eur.toFixed(1)} ₽</b></div>
+            <button class="btn btn-primary" onclick="updateRates()">🔄 Обновить</button>
+        </div>
+        <div style="font-size:13px;font-weight:800;margin-bottom:10px">📈 Ставки на курс</div>
+        <div class="list-item"><span>USD ↑</span><button class="btn btn-sm btn-success" onclick="placeBet()">Ставка 1 000 ₽</button></div>
+        <div class="list-item"><span>CNY ↑</span><button class="btn btn-sm btn-success" onclick="placeBet()">Ставка 1 000 ₽</button></div>
+        <div class="list-item"><span>EUR ↑</span><button class="btn btn-sm btn-success" onclick="placeBet()">Ставка 1 000 ₽</button></div>
+    `;
+}
+function updateRates(){
+    const r = state.exchangeRates || {usd: 90, cny: 12.5, eur: 100};
+    r.usd = Math.max(70, Math.min(120, r.usd + (Math.random() - 0.5) * 10));
+    r.cny = Math.max(8, Math.min(18, r.cny + (Math.random() - 0.5) * 2));
+    r.eur = Math.max(80, Math.min(140, r.eur + (Math.random() - 0.5) * 12));
+    state.exchangeRates = r;
+    cloudSaveDebounced(); renderExchange();
+    notify('🔄 Курсы обновлены', '', 'success');
+}
+function placeBet(){
+    if(state.money < 1000){ notify('❌ Нужно 1 000 ₽','','danger'); return; }
+    state.money -= 1000;
+    cloudSaveDebounced(); updateAllUI();
+    notify('💸 Ставка сделана', 'Результат через 5 сек', 'gold');
+    setTimeout(() => {
+        const won = Math.random() < 0.5;
+        if(won){ state.money += 2000; notify('🎉 Зашла!', '+2 000 ₽', 'gold'); }
+        else notify('😔 Не зашла', '-1 000 ₽', 'warning');
+        cloudSaveDebounced(); updateAllUI();
+    }, 5000);
+}
+
+// === АРЕНА ===
+function renderArena(){
+    const el = document.getElementById('arenaContent');
+    if(!el) return;
+    el.innerHTML = `
+        <div class="arena-card">
+            <div class="icon">⚔️</div>
+            <div class="title">Дуэль</div>
+            <div class="sub">Победитель забирает банк</div>
+        </div>
+        <div class="stat-grid" style="margin-bottom:14px">
+            <div class="stat-box"><div class="lbl">Побед</div><div class="val" style="color:var(--success)">${state.arenaWins || 0}</div></div>
+            <div class="stat-box"><div class="lbl">Поражений</div><div class="val" style="color:var(--danger)">${state.arenaLosses || 0}</div></div>
+        </div>
+        <button class="btn btn-danger" onclick="startDuel(1000)">⚔️ Дуэль 1 000 ₽</button>
+        <button class="btn btn-danger" style="margin-top:8px" onclick="startDuel(10000)">⚔️ Дуэль 10 000 ₽</button>
+                <button class="btn btn-danger" style="margin-top:8px" onclick="startDuel(100000)">⚔️ Дуэль 100 000 ₽</button>
+    `;
+}
+function startDuel(bet){
+    if(state.money < bet){ notify('❌ Не хватает','','danger'); return; }
+    if(!confirm('Начать дуэль на ' + fmt(bet) + '?')) return;
+    state.money -= bet;
+    const won = Math.random() < 0.5;
+    if(won){
+        state.money += bet * 2;
+        state.arenaWins = (state.arenaWins || 0) + 1;
+        notify('🏆 Победа!', '+' + fmt(bet), 'gold');
+    } else {
+        state.arenaLosses = (state.arenaLosses || 0) + 1;
+        notify('😔 Поражение', '-' + fmt(bet), 'warning');
+    }
+    cloudSaveDebounced(); updateAllUI(); renderArena();
+}
+function renderWorld(){
+    const el = document.getElementById('worldContent');
+    if(!el) return;
+    el.innerHTML = WORLD_COUNTRIES.map(c => {
+        const hasVisa = state.visas && state.visas[c.code];
+        return `<div class="world-card">
+            <div class="world-flag">${c.flag}</div>
+            <div class="world-info">
+                <div class="name">${c.name}</div>
+                <div class="meta">Налог: ${Math.round(c.taxRate*100)}%</div>
+            </div>
+            ${hasVisa
+                ? '<span style="color:var(--success);font-size:12px">✅ Виза</span>'
+                : `<button class="btn btn-sm btn-primary" onclick="buyVisa('${c.code}')">🎫 50 000 ₽</button>`}
+        </div>`;
+    }).join('');
+}
+function buyVisa(code){
+    if(state.money < 50000){ notify('❌ Нужно 50 000 ₽','','danger'); return; }
+    state.money -= 50000;
+    if(!state.visas) state.visas = {};
+    state.visas[code] = true;
+    cloudSaveDebounced(); updateAllUI(); renderWorld();
+    notify('🎫 Виза куплена!', '', 'success');
+}
+function renderSeason(){
+    const el = document.getElementById('seasonContent');
+    if(!el) return;
+    const currentXP = state.seasonXP || 0;
+    const currentLevel = state.seasonLevel || 1;
+    const nextXP = currentLevel * 1000;
+    el.innerHTML = `
+        <div class="season-card">
+            <div style="font-size:11px;font-weight:800;text-transform:uppercase">Сезон 1</div>
+            <div class="lvl">Уровень ${currentLevel}</div>
+            <div style="font-size:12px;font-weight:700">${currentXP} / ${nextXP} XP</div>
+            <div class="season-bar"><i style="width:${Math.min(100, currentXP/nextXP*100)}%"></i></div>
+        </div>
+        <div style="font-size:13px;font-weight:800;margin-bottom:10px">🎁 Награды сезона</div>
+        ${SEASON_REWARDS.map(r => {
+            const unlocked = currentLevel >= r.level;
+            return `<div class="list-item" style="opacity:${unlocked ? 1 : 0.5}">
+                <div style="display:flex;align-items:center;gap:10px">
+                    <div style="width:36px;height:36px;border-radius:50%;background:${unlocked ? 'linear-gradient(135deg,#fbbf24,#f59e0b)' : 'var(--surface2)'};display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px">${r.level}</div>
+                    <div style="font-size:12px;font-weight:700">${r.reward}</div>
+                </div>
+                ${unlocked ? '<span style="color:var(--success)">✓</span>' : '<span style="color:var(--text-lt);font-size:11px">🔒</span>'}
+            </div>`;
+        }).join('')}
+        <button class="btn btn-gold" style="margin-top:14px" onclick="addSeasonXP(500)">🎁 +500 XP (демо)</button>
+    `;
+}
+function addSeasonXP(amount){
+    state.seasonXP = (state.seasonXP || 0) + amount;
+    while(state.seasonXP >= (state.seasonLevel || 1) * 1000){
+        state.seasonXP -= (state.seasonLevel || 1) * 1000;
+        state.seasonLevel = (state.seasonLevel || 1) + 1;
+        notify('🎉 Уровень сезона ' + state.seasonLevel, '', 'gold');
+    }
+    cloudSaveDebounced(); renderSeason();
+}
+(function(){
+    const _oldOpenScreen = window.openScreen;
+    window.openScreen = function(id){
+        _oldOpenScreen(id);
+        if(id === 'used-market-screen') renderUsed();
+        if(id === 'repair-screen') renderRepair();
+        if(id === 'business-screen') renderBusiness();
+        if(id === 'exchange-screen') renderExchange();
+        if(id === 'arena-screen') renderArena();
+        if(id === 'world-screen') renderWorld();
+        if(id === 'season-screen') renderSeason();
+    };
+})();
+(function(){
+    const _oldCloudSave = window.cloudSave;
+    window.cloudSave = function(){
+        if(!fbUser || !fbDB) return;
+        fbDB.ref('users/' + fbUser.uid + '/game').update({
+            visas: state.visas || {},
+            exchangeRates: state.exchangeRates || {},
+            seasonXP: state.seasonXP || 0,
+            seasonLevel: state.seasonLevel || 1,
+            arenaWins: state.arenaWins || 0,
+            arenaLosses: state.arenaLosses || 0
+        }).catch(() => {});
+        _oldCloudSave();
+    };
+})();
+console.log('✅ v6.0 дополнения загружены');
 </script>
 </body>
 </html>
