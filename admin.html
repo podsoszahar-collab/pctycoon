@@ -2,171 +2,129 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>🛡️ Admin Panel v5.0 · Phone Reseller Tycoon</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🛡️ Admin Panel v6.0 · Phone Reseller Tycoon</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:-apple-system,'Segoe UI',Roboto,sans-serif}
-:root{--bg:#0a0c12;--surface:#161a24;--surface2:#1e2330;--surface3:#262c3a;--text:#f1f5f9;--text-sec:#94a3b8;--text-lt:#64748b;--primary:#818cf8;--primary-glow:rgba(129,140,248,.4);--success:#4ade80;--danger:#f87171;--warning:#f59e0b;--gold:#fbbf24;--gold-glow:rgba(251,191,36,.5);--pink:#ec4899;--border:rgba(255,255,255,.07)}
-[data-theme="light"]{--bg:#f1f5f9;--surface:#ffffff;--surface2:#f8fafc;--surface3:#e2e8f0;--text:#0f172a;--text-sec:#64748b;--text-lt:#94a3b8;--border:rgba(0,0,0,.08)}
-body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
-button{font-family:inherit;cursor:pointer;border:none;outline:none}
-input,select,textarea{font-family:inherit;width:100%;padding:13px;border-radius:12px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;font-weight:600;outline:none;transition:all .2s}
-input:focus,textarea:focus,select:focus{border-color:var(--primary);background:var(--surface3)}
-
-/* LOGIN */
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,'Segoe UI',Roboto,sans-serif}
+:root{--bg:#0a0c12;--surface:#161a24;--surface2:#1e2330;--surface3:#262c3a;--text:#f1f5f9;--text-sec:#94a3b8;--text-lt:#64748b;--primary:#818cf8;--success:#4ade80;--danger:#f87171;--warning:#f59e0b;--gold:#fbbf24;--border:rgba(255,255,255,.07)}
+body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+button{cursor:pointer;border:none;outline:none;font-family:inherit}
+input,select,textarea{font-family:inherit;width:100%;padding:12px;border-radius:12px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;outline:none}
+input:focus,textarea:focus{border-color:var(--primary)}
 #loginScreen{position:fixed;inset:0;background:linear-gradient(160deg,#0a0c12,#1a1a2e);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;z-index:9999}
 .login-icon{font-size:80px;margin-bottom:20px}
 .login-title{font-size:28px;font-weight:900;color:#fff;text-align:center;margin-bottom:8px}
 .login-sub{font-size:14px;color:#94a3b8;text-align:center;margin-bottom:40px;max-width:320px}
-.login-btn{background:linear-gradient(135deg,#fff,#e2e8f0);color:#1a1d26;padding:16px 28px;border-radius:14px;font-weight:700;font-size:15px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.4);transition:transform .15s}
-.login-btn:active{transform:scale(.96)}
-.login-btn svg{width:22px;height:22px}
-.login-status{margin-top:24px;font-size:13px;color:#64748b;text-align:center;min-height:20px;max-width:400px;word-wrap:break-word}
+.login-btn{background:linear-gradient(135deg,#fff,#e2e8f0);color:#1a1d26;padding:16px 28px;border-radius:14px;font-weight:700;font-size:15px}
+.login-status{margin-top:24px;font-size:13px;color:#64748b;text-align:center;max-width:400px;word-wrap:break-word}
 .login-status.error{color:#f87171}
-
-/* LAYOUT */
 #adminPanel{display:none}
 #adminPanel.show{display:block}
 .layout{display:flex;min-height:100vh}
-.sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);padding:20px 0;position:fixed;top:0;bottom:0;left:0;overflow-y:auto;z-index:100;transition:transform .3s}
+.sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);padding:20px 0;position:fixed;top:0;bottom:0;left:0;overflow-y:auto;z-index:100}
 .sidebar-header{padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:16px}
-.sidebar-header h1{font-size:20px;font-weight:900;display:flex;align-items:center;gap:8px}
+.sidebar-header h1{font-size:20px;font-weight:900}
 .sidebar-header .sub{font-size:11px;color:var(--text-sec);margin-top:4px}
 .sidebar-admin{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
 .sidebar-admin img{width:36px;height:36px;border-radius:50%;border:2px solid var(--primary)}
 .sidebar-admin .info{flex:1;min-width:0}
-.sidebar-admin .info .name{font-size:12px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sidebar-admin .info .uid{font-size:9px;color:var(--text-lt);font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sidebar-admin .name{font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sidebar-admin .uid{font-size:9px;color:var(--text-lt);font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nav{display:flex;flex-direction:column;gap:2px;padding:0 12px}
-.nav-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;cursor:pointer;color:var(--text-sec);font-weight:700;font-size:14px;transition:all .2s;text-decoration:none}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:12px;cursor:pointer;color:var(--text-sec);font-weight:700;font-size:13px}
 .nav-item:hover{background:var(--surface2);color:var(--text)}
 .nav-item.active{background:linear-gradient(135deg,#818cf8,#6366f1);color:#fff}
-.nav-item .icon{font-size:20px;width:24px;text-align:center}
-.nav-item .badge{margin-left:auto;background:var(--danger);color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:10px}
-.nav-divider{height:1px;background:var(--border);margin:12px 20px}
-.nav-section{padding:8px 20px 4px;font-size:10px;font-weight:800;color:var(--text-lt);text-transform:uppercase;letter-spacing:1px}
-
-.main{flex:1;margin-left:240px;padding:24px;max-width:1400px;width:100%}
+.nav-item .icon{font-size:18px;width:22px;text-align:center}
+.nav-section{padding:10px 20px 4px;font-size:10px;font-weight:800;color:var(--text-lt);text-transform:uppercase;letter-spacing:1px}
+.main{flex:1;margin-left:240px;padding:24px;max-width:1500px;width:100%}
 .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
-.topbar h2{font-size:26px;font-weight:900}
-.topbar .actions{display:flex;gap:8px;flex-wrap:wrap}
-.icon-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:all .2s}
-.icon-btn:hover{background:var(--surface2);border-color:var(--primary)}
-.mobile-menu-btn{display:none;background:var(--surface);border:1px solid var(--border);color:var(--text);width:42px;height:42px;border-radius:12px;font-size:20px;cursor:pointer}
-.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;backdrop-filter:blur(4px)}
+.topbar h2{font-size:24px;font-weight:900}
+.topbar .actions{display:flex;gap:8px}
+.icon-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);width:42px;height:42px;border-radius:12px;font-size:18px}
+.icon-btn:hover{background:var(--surface2)}
+.mobile-menu-btn{display:none;background:var(--surface);border:1px solid var(--border);color:var(--text);width:42px;height:42px;border-radius:12px;font-size:20px}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99}
 .sidebar-overlay.show{display:block}
-
-/* CARDS */
 .diag-box{background:var(--surface2);border-radius:14px;padding:14px 18px;margin-bottom:20px;border-left:4px solid var(--warning);font-size:12px;color:var(--text-sec);line-height:1.8}
 .diag-box.ok{border-left-color:var(--success)}
 .diag-box.err{border-left-color:var(--danger)}
 .diag-box b{color:var(--text)}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px}
-.stat-card{background:var(--surface);border-radius:18px;padding:20px;border:1px solid var(--border);position:relative;overflow:hidden;transition:transform .2s}
-.stat-card:hover{transform:translateY(-2px)}
-.stat-card .icon{font-size:28px;margin-bottom:8px}
-.stat-card .num{font-size:32px;font-weight:900;margin-bottom:4px;line-height:1}
-.stat-card .lbl{font-size:11px;color:var(--text-sec);font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:var(--surface);border-radius:18px;padding:18px;border:1px solid var(--border)}
+.stat-card .icon{font-size:26px;margin-bottom:6px}
+.stat-card .num{font-size:28px;font-weight:900;line-height:1}
+.stat-card .lbl{font-size:11px;color:var(--text-sec);font-weight:800;text-transform:uppercase;margin-top:4px}
 .stat-card.primary .num{color:var(--primary)}
 .stat-card.success .num{color:var(--success)}
 .stat-card.warning .num{color:var(--warning)}
 .stat-card.danger .num{color:var(--danger)}
 .stat-card.gold .num{color:var(--gold)}
-.stat-card.gold{border-color:rgba(251,191,36,.3)}
-.stat-card .trend{font-size:11px;font-weight:700;color:var(--success);margin-top:6px}
-.stat-card .trend.down{color:var(--danger)}
 .section{background:var(--surface);border-radius:18px;padding:20px;margin-bottom:20px;border:1px solid var(--border)}
-.section h3{font-size:16px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.section h3{font-size:16px;font-weight:800;margin-bottom:16px}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .row>*{flex:1;min-width:140px}
 .form-group{margin-bottom:14px}
-.form-group label{display:block;font-size:11px;color:var(--text-sec);font-weight:800;text-transform:uppercase;margin-bottom:6px;letter-spacing:.5px}
-.btn{padding:12px 20px;border-radius:12px;font-weight:700;font-size:13px;color:#fff;background:linear-gradient(135deg,#818cf8,#6366f1);transition:transform .1s;display:inline-block;cursor:pointer}
+.form-group label{display:block;font-size:11px;color:var(--text-sec);font-weight:800;text-transform:uppercase;margin-bottom:6px}
+.btn{padding:12px 20px;border-radius:12px;font-weight:700;font-size:13px;color:#fff;background:linear-gradient(135deg,#818cf8,#6366f1);display:inline-block}
 .btn:active{transform:scale(.97)}
-.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn:disabled{opacity:.4}
 .btn-success{background:linear-gradient(135deg,#4ade80,#16a34a)}
 .btn-danger{background:linear-gradient(135deg,#f87171,#dc2626)}
 .btn-warning{background:linear-gradient(135deg,#fbbf24,#d97706)}
 .btn-gold{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000}
-.btn-sm{padding:8px 14px;font-size:12px;border-radius:10px}
-.btn-block{width:100%}
-
-/* PLAYER ROW */
-.player-row{background:var(--surface2);border-radius:14px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:14px;border:1px solid var(--border);cursor:pointer;transition:all .15s}
-.player-row:hover{background:var(--surface3);border-color:var(--primary);transform:translateX(2px)}
-.player-avatar{width:44px;height:44px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px}
+.btn-sm{padding:8px 14px;font-size:12px}
+.btn-block{width:100%;display:block}
+.player-row{background:var(--surface2);border-radius:14px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:14px;cursor:pointer}
+.player-row:hover{background:var(--surface3)}
+.player-avatar{width:44px;height:44px;border-radius:50%;overflow:hidden;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;flex-shrink:0}
 .player-avatar img{width:100%;height:100%;object-fit:cover}
 .player-info{flex:1;min-width:0}
 .player-name{font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.player-uid{font-size:10px;color:var(--text-lt);font-family:monospace;overflow:hidden;text-overflow:ellipsis}
+.player-uid{font-size:10px;color:var(--text-lt);font-family:monospace}
 .player-stats{display:flex;gap:14px;flex-shrink:0;text-align:right}
 .player-stat .val{font-weight:900;font-size:14px}
 .player-stat .lbl{font-size:9px;color:var(--text-sec);text-transform:uppercase;font-weight:700}
-.player-stat.money .val{color:var(--success)}
-.player-stat.chips .val{color:var(--gold)}
-.player-stat.level .val{color:var(--primary)}
-
-/* PROMO / EVENT ROWS */
-.promo-row{background:var(--surface2);border-radius:14px;padding:14px;margin-bottom:8px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.promo-row,.event-row{background:var(--surface2);border-radius:14px;padding:14px;margin-bottom:8px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .promo-code{font-family:monospace;font-weight:900;font-size:16px;color:var(--primary);letter-spacing:1px}
 .promo-info{font-size:11px;color:var(--text-sec);margin-top:4px}
-.promo-info.expired{color:var(--danger)}
-.event-row{background:linear-gradient(135deg,rgba(251,191,36,.1),transparent);border-radius:14px;padding:14px;margin-bottom:8px;border:1px solid rgba(251,191,36,.3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
-
-/* JACKPOT */
-.jackpot-card{background:linear-gradient(135deg,#ec4899,#a855f7);border-radius:20px;padding:30px;text-align:center;color:#fff;margin-bottom:16px;box-shadow:0 0 40px rgba(236,72,153,.3);position:relative;overflow:hidden}
-.jackpot-card::before{content:'💎';position:absolute;font-size:180px;opacity:.08;top:-40px;right:-40px}
-.jackpot-card .lbl{font-size:11px;color:rgba(255,255,255,.85);font-weight:800;text-transform:uppercase;letter-spacing:3px}
-.jackpot-card .amt{font-size:52px;font-weight:900;margin:12px 0;text-shadow:0 0 30px rgba(255,255,255,.5)}
-.jackpot-card .sub{font-size:12px;color:rgba(255,255,255,.75);font-weight:700}
-
-/* MODAL */
+.jackpot-card{background:linear-gradient(135deg,#ec4899,#a855f7);border-radius:20px;padding:30px;text-align:center;color:#fff;margin-bottom:16px}
+.jackpot-card .lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:3px}
+.jackpot-card .amt{font-size:48px;font-weight:900;margin:12px 0}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);z-index:10001;display:none;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.show{display:flex}
 .modal{background:var(--surface);border-radius:22px;padding:24px;max-width:520px;width:100%;max-height:88vh;overflow-y:auto;border:1px solid var(--border)}
-.modal h3{font-size:20px;font-weight:800;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.modal h3{font-size:20px;font-weight:800;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
 .modal-close{background:var(--surface2);color:var(--text);border-radius:10px;padding:8px 12px;font-size:13px;font-weight:700}
-
-/* TOAST */
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--surface);padding:14px 24px;border-radius:14px;box-shadow:0 15px 40px rgba(0,0,0,.5);z-index:10002;font-weight:700;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;border-left:4px solid var(--primary);max-width:90%;text-align:center}
 .toast.show{opacity:1}
 .toast.success{border-left-color:var(--success)}
 .toast.danger{border-left-color:var(--danger)}
 .toast.warning{border-left-color:var(--warning)}
-.toast.gold{border-left-color:var(--gold);color:var(--gold)}
-
-/* TAB CONTENT */
 .tab-content{display:none}
 .tab-content.active{display:block}
 .empty{text-align:center;padding:50px 20px;color:var(--text-lt);font-size:14px}
 .empty.error{color:var(--danger)}
 .loading{text-align:center;padding:40px;color:var(--text-lt)}
-
-/* MOBILE */
 @media(max-width:900px){
-    .sidebar{transform:translateX(-100%)}
+    .sidebar{transform:translateX(-100%);transition:transform .3s}
     .sidebar.open{transform:translateX(0)}
     .main{margin-left:0;padding:16px}
     .mobile-menu-btn{display:flex}
-    .topbar h2{font-size:20px}
     .player-stats{display:none}
-    .stat-card .num{font-size:24px}
+    .topbar h2{font-size:18px}
 }
 </style>
 </head>
-<body data-theme="dark">
+<body>
 
 <div id="loginScreen">
     <div class="login-icon">🛡️</div>
-    <div class="login-title">Admin Panel v5.0</div>
+    <div class="login-title">Admin Panel v6.0</div>
     <div class="login-sub">Вход только для администратора Phone Reseller Tycoon</div>
-    <button class="login-btn" onclick="signInAdmin()">
-        <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.4 29.3 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.4 1.1 7.3 2.8l5.7-5.7C33.6 6.9 29 5 24 5 12.9 5 4 13.9 4 25s8.9 20 20 20c11 0 20-9 20-20 0-1.3-.1-2.7-.4-4z"/><path fill="#FF3D00" d="M6.3 15.3l6.6 4.8C14.7 16.1 19 13 24 13c2.8 0 5.4 1.1 7.3 2.8l5.7-5.7C33.6 6.9 29 5 24 5c-7.6 0-14.2 4.3-17.7 10.3z"/><path fill="#4CAF50" d="M24 45c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 36.4 26.8 37 24 37c-5.3 0-9.7-3.4-11.3-8l-6.5 5C9.6 40.7 16.3 45 24 45z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.1 5.6l6.2 5.2C40.9 36.3 44 31.1 44 25c0-1.3-.1-2.7-.4-4.5z"/></svg>
-        Войти через Google
-    </button>
+    <button class="login-btn" onclick="signInAdmin()">🔐 Войти через Google</button>
     <div class="login-status" id="loginStatus"></div>
 </div>
 
@@ -175,7 +133,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
     <div class="layout">
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <h1>🛡️ Admin v5.0</h1>
+                <h1>🛡️ Admin v6.0</h1>
                 <div class="sub">Phone Reseller Tycoon</div>
                 <div class="sidebar-admin">
                     <img id="adminAvatar" src="" alt="">
@@ -186,18 +144,26 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
                 </div>
             </div>
             <nav class="nav">
+                <div class="nav-section">ОБЗОР</div>
                 <a class="nav-item active" onclick="switchTab('dashboard', this)"><span class="icon">📊</span> Дашборд</a>
-                <a class="nav-item" onclick="switchTab('players', this)"><span class="icon">👥</span> Игроки <span class="badge" id="navPlayersBadge" style="display:none">0</span></a>
-                <div class="nav-section">УПРАВЛЕНИЕ</div>
+                <a class="nav-item" onclick="switchTab('players', this)"><span class="icon">👥</span> Игроки</a>
+                <a class="nav-item" onclick="switchTab('analytics', this)"><span class="icon">📈</span> Аналитика</a>
+                <div class="nav-section">ИГРА</div>
                 <a class="nav-item" onclick="switchTab('casino', this)"><span class="icon">🎰</span> Казино</a>
                 <a class="nav-item" onclick="switchTab('quests', this)"><span class="icon">🎯</span> Задания</a>
+                <a class="nav-item" onclick="switchTab('cars', this)"><span class="icon">🚗</span> Авто</a>
+                <a class="nav-item" onclick="switchTab('used', this)"><span class="icon">♻️</span> Б/У</a>
+                <a class="nav-item" onclick="switchTab('repair', this)"><span class="icon">🔧</span> Мастерская</a>
+                <a class="nav-item" onclick="switchTab('business', this)"><span class="icon">🏢</span> Бизнес</a>
+                <a class="nav-item" onclick="switchTab('exchange', this)"><span class="icon">📈</span> Биржа</a>
+                <a class="nav-item" onclick="switchTab('arena', this)"><span class="icon">⚔️</span> Арена</a>
+                <a class="nav-item" onclick="switchTab('world', this)"><span class="icon">🌍</span> Мир</a>
+                <a class="nav-item" onclick="switchTab('season', this)"><span class="icon">🎁</span> Сезон</a>
+                <div class="nav-section">УПРАВЛЕНИЕ</div>
                 <a class="nav-item" onclick="switchTab('events', this)"><span class="icon">🎉</span> Ивенты</a>
                 <a class="nav-item" onclick="switchTab('promos', this)"><span class="icon">🎟️</span> Промокоды</a>
                 <a class="nav-item" onclick="switchTab('time', this)"><span class="icon">⏱️</span> Время</a>
-                <div class="nav-section">КОММУНИКАЦИЯ</div>
                 <a class="nav-item" onclick="switchTab('broadcast', this)"><span class="icon">📢</span> Рассылка</a>
-                <div class="nav-section">СИСТЕМА</div>
-                <a class="nav-item" onclick="switchTab('analytics', this)"><span class="icon">📈</span> Аналитика</a>
                 <a class="nav-item" onclick="switchTab('tools', this)"><span class="icon">🛠️</span> Инструменты</a>
             </nav>
         </aside>
@@ -209,28 +175,25 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
                     <h2 id="pageTitle">📊 Дашборд</h2>
                 </div>
                 <div class="actions">
-                    <button class="icon-btn" onclick="toggleTheme()" title="Тема">🌓</button>
                     <button class="icon-btn" onclick="refreshAll()" title="Обновить">🔄</button>
                     <button class="icon-btn" onclick="signOut()" title="Выйти">🚪</button>
                 </div>
             </div>
 
-            <div class="diag-box" id="diagBox">
-                <div>⏳ <b>Диагностика:</b> подключение к базе...</div>
-            </div>
+            <div class="diag-box" id="diagBox"><div>⏳ <b>Диагностика:</b> подключение...</div></div>
 
             <!-- DASHBOARD -->
             <div class="tab-content active" id="tab-dashboard">
                 <div class="stats-grid">
                     <div class="stat-card primary"><div class="icon">👥</div><div class="num" id="statPlayers">—</div><div class="lbl">Игроков</div></div>
                     <div class="stat-card success"><div class="icon">💰</div><div class="num" id="statTotalMoney">—</div><div class="lbl">Всего в игре</div></div>
-                    <div class="stat-card gold"><div class="icon">🎰</div><div class="num" id="statTotalChips">—</div><div class="lbl">Фишек у игроков</div></div>
+                    <div class="stat-card gold"><div class="icon">🎰</div><div class="num" id="statTotalChips">—</div><div class="lbl">Фишек</div></div>
                     <div class="stat-card warning"><div class="icon">💎</div><div class="num" id="statJackpot">—</div><div class="lbl">Джекпот</div></div>
                     <div class="stat-card danger"><div class="icon">🚫</div><div class="num" id="statBanned">0</div><div class="lbl">Забанено</div></div>
-                    <div class="stat-card primary"><div class="icon">🎉</div><div class="num" id="statEvents">0</div><div class="lbl">Активных ивентов</div></div>
+                    <div class="stat-card primary"><div class="icon">🎉</div><div class="num" id="statEvents">0</div><div class="lbl">Ивентов</div></div>
                 </div>
                 <div class="section">
-                    <h3>🔥 Топ-5 игроков по балансу</h3>
+                    <h3>🔥 Топ-5 игроков</h3>
                     <div id="topPlayersList"><div class="loading">Загрузка...</div></div>
                 </div>
             </div>
@@ -238,7 +201,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
             <!-- PLAYERS -->
             <div class="tab-content" id="tab-players">
                 <div class="section">
-                    <h3>🔍 Поиск игрока</h3>
+                    <h3>🔍 Поиск</h3>
                     <input type="text" id="playerSearch" placeholder="Имя, email или UID..." oninput="renderPlayers()">
                 </div>
                 <div class="section">
@@ -247,36 +210,38 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
                 </div>
             </div>
 
+            <!-- ANALYTICS -->
+            <div class="tab-content" id="tab-analytics">
+                <div class="section">
+                    <h3>📈 Топ по категориям</h3>
+                    <div class="row" style="margin-bottom:14px">
+                        <button class="btn btn-sm btn-primary" onclick="renderAnalytics('money')">💰 Деньги</button>
+                        <button class="btn btn-sm btn-gold" onclick="renderAnalytics('chips')">🎰 Фишки</button>
+                        <button class="btn btn-sm btn-success" onclick="renderAnalytics('level')">⭐ Уровень</button>
+                        <button class="btn btn-sm btn-warning" onclick="renderAnalytics('cars')">🚗 Авто</button>
+                        <button class="btn btn-sm btn-danger" onclick="renderAnalytics('arena')">⚔️ Арена</button>
+                        <button class="btn btn-sm" onclick="renderAnalytics('season')">🎁 Сезон</button>
+                    </div>
+                    <div id="analyticsList"><div class="empty">Выберите категорию</div></div>
+                </div>
+            </div>
+
             <!-- CASINO -->
             <div class="tab-content" id="tab-casino">
                 <div class="jackpot-card">
-                    <div class="lbl">💎 ТЕКУЩИЙ ДЖЕКПОТ</div>
+                    <div class="lbl">💎 ДЖЕКПОТ</div>
                     <div class="amt" id="casinoJackpotAmount">0</div>
-                    <div class="sub">Копится от 2% каждой ставки</div>
                 </div>
                 <div class="section">
-                    <h3>🎰 Управление джекпотом</h3>
-                    <div class="row">
-                        <button class="btn btn-gold" onclick="drawJackpotNow()">💎 Разыграть сейчас</button>
-                        <button class="btn btn-danger" onclick="resetJackpot()">🗑️ Обнулить джекпот</button>
-                        <button class="btn btn-warning" onclick="addToJackpot()">➕ Добавить в джекпот</button>
-                    </div>
+                    <h3>🎰 Управление</h3>
+                    <button class="btn btn-gold btn-block" style="margin-bottom:8px" onclick="drawJackpotNow()">💎 Разыграть джекпот</button>
+                    <button class="btn btn-danger btn-block" onclick="resetJackpot()">🗑️ Обнулить</button>
                 </div>
                 <div class="section">
-                    <h3>⚙️ Лимиты казино</h3>
-                    <div class="row">
-                        <div class="form-group"><label>Мин. ставка</label><input type="number" id="cfgMinBet" value="100"></div>
-                        <div class="form-group"><label>Макс. ставка</label><input type="number" id="cfgMaxBet" value="50000"></div>
-                        <div class="form-group"><label>Лимит вывода / день</label><input type="number" id="cfgWithdrawLimit" value="20000"></div>
-                    </div>
-                    <button class="btn btn-success" onclick="saveCasinoLimits()">💾 Сохранить</button>
-                </div>
-                <div class="section">
-                    <h3>📊 Статистика казино</h3>
+                    <h3>📊 Статистика</h3>
                     <div class="stats-grid">
-                        <div class="stat-card gold"><div class="num" id="statChipsBought">—</div><div class="lbl">Куплено фишек</div></div>
+                        <div class="stat-card gold"><div class="num" id="statChipsBought">—</div><div class="lbl">Куплено 🎰</div></div>
                         <div class="stat-card success"><div class="num" id="statChipsWithdrawn">—</div><div class="lbl">Выведено ₽</div></div>
-                        <div class="stat-card danger"><div class="num" id="statChipsLost">—</div><div class="lbl">Слив фишек</div></div>
                     </div>
                 </div>
             </div>
@@ -285,14 +250,83 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
             <div class="tab-content" id="tab-quests">
                 <div class="section">
                     <h3>🎯 Управление заданиями</h3>
-                    <div class="row">
-                        <button class="btn btn-warning" onclick="resetAllQuests()">🔄 Сбросить дейлики всем</button>
-                        <button class="btn btn-success" onclick="giveChipsAll(1000)">🎰 +1000 фишек всем</button>
+                    <button class="btn btn-warning btn-block" style="margin-bottom:8px" onclick="resetAllQuests()">🔄 Сбросить дейлики всем</button>
+                    <button class="btn btn-gold btn-block" onclick="giveChipsAll(1000)">🎰 +1000 фишек всем</button>
+                </div>
+                <div class="section">
+                    <h3>📋 Прогресс игроков</h3>
+                    <div id="questsList"><div class="loading">Загрузка...</div></div>
+                </div>
+            </div>
+
+            <!-- CARS -->
+            <div class="tab-content" id="tab-cars">
+                <div class="section">
+                    <h3>🚗 Гаражи игроков</h3>
+                    <div id="carsList"><div class="loading">Загрузка...</div></div>
+                </div>
+            </div>
+
+            <!-- USED -->
+            <div class="tab-content" id="tab-used">
+                <div class="section">
+                    <h3>♻️ Б/У Рынок — статистика</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card success"><div class="num" id="usedTotal">—</div><div class="lbl">Лотов у игроков</div></div>
+                        <div class="stat-card warning"><div class="num" id="usedBroken">—</div><div class="lbl">Сломанных</div></div>
                     </div>
                 </div>
                 <div class="section">
-                    <h3>📋 Активные дейлики игроков</h3>
-                    <div id="questsList"><div class="loading">Загрузка...</div></div>
+                    <h3>📦 Инвентарь игроков</h3>
+                    <div id="usedList"><div class="loading">Загрузка...</div></div>
+                </div>
+            </div>
+
+            <!-- REPAIR -->
+            <div class="tab-content" id="tab-repair">
+                <div class="section">
+                    <h3>🔧 Очередь ремонтов</h3>
+                    <div id="repairList"><div class="loading">Загрузка...</div></div>
+                </div>
+            </div>
+
+            <!-- BUSINESS -->
+            <div class="tab-content" id="tab-business">
+                <div class="section">
+                    <h3>🏢 Бизнесы игроков</h3>
+                    <div id="businessList"><div class="loading">Загрузка...</div></div>
+                </div>
+            </div>
+
+            <!-- EXCHANGE -->
+            <div class="tab-content" id="tab-exchange">
+                <div class="section">
+                    <h3>📈 Курсы валют</h3>
+                    <div id="exchangeRates"></div>
+                </div>
+            </div>
+
+            <!-- ARENA -->
+            <div class="tab-content" id="tab-arena">
+                <div class="section">
+                    <h3>⚔️ Топ по дуэлям</h3>
+                    <div id="arenaList"><div class="loading">Загрузка...</div></div>
+                </div>
+            </div>
+
+            <!-- WORLD -->
+            <div class="tab-content" id="tab-world">
+                <div class="section">
+                    <h3>🌍 Визы игроков</h3>
+                    <div id="worldList"><div class="loading">Загрузка...</div></div>
+                </div>
+            </div>
+
+            <!-- SEASON -->
+            <div class="tab-content" id="tab-season">
+                <div class="section">
+                    <h3>🎁 Сезон — прогресс игроков</h3>
+                    <div id="seasonList"><div class="loading">Загрузка...</div></div>
                 </div>
             </div>
 
@@ -300,12 +334,12 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
             <div class="tab-content" id="tab-events">
                 <div class="section">
                     <h3>🎉 Создать ивент</h3>
-                    <div class="form-group"><label>Название</label><input type="text" id="eventName" placeholder="Новый год" maxlength="40"></div>
+                    <div class="form-group"><label>Название</label><input type="text" id="eventName" placeholder="Новый год"></div>
                     <div class="row">
-                        <div class="form-group"><label>Множитель дохода</label><input type="number" id="eventMult" value="2" step="0.1" min="1"></div>
-                        <div class="form-group"><label>Длительность (часов)</label><input type="number" id="eventHours" value="24"></div>
+                        <div class="form-group"><label>Множитель</label><input type="number" id="eventMult" value="2" step="0.1" min="1"></div>
+                        <div class="form-group"><label>Часов</label><input type="number" id="eventHours" value="24"></div>
                     </div>
-                    <button class="btn btn-warning" onclick="createGameEvent()">🎉 Запустить ивент</button>
+                    <button class="btn btn-warning btn-block" onclick="createGameEvent()">🎉 Запустить</button>
                 </div>
                 <div class="section">
                     <h3>🎊 Активные ивенты</h3>
@@ -317,13 +351,13 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
             <div class="tab-content" id="tab-promos">
                 <div class="section">
                     <h3>➕ Создать промокод</h3>
-                    <div class="form-group"><label>Код</label><input type="text" id="promoCode" placeholder="WELCOME2026" maxlength="20" style="text-transform:uppercase"></div>
+                    <div class="form-group"><label>Код</label><input type="text" id="promoCode" placeholder="WELCOME2026" style="text-transform:uppercase"></div>
                     <div class="row">
                         <div class="form-group"><label>Награда (₽)</label><input type="number" id="promoReward" value="10000"></div>
-                        <div class="form-group"><label>Срок (дней)</label><input type="number" id="promoDays" value="30"></div>
-                        <div class="form-group"><label>Лимит активаций</label><input type="number" id="promoLimit" value="100"></div>
+                        <div class="form-group"><label>Дней</label><input type="number" id="promoDays" value="30"></div>
+                        <div class="form-group"><label>Лимит</label><input type="number" id="promoLimit" value="100"></div>
                     </div>
-                    <button class="btn btn-success" onclick="createPromo()">🎁 Создать промокод</button>
+                    <button class="btn btn-success btn-block" onclick="createPromo()">🎁 Создать</button>
                 </div>
                 <div class="section">
                     <h3>🎟️ Активные промокоды</h3>
@@ -334,50 +368,26 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
             <!-- TIME -->
             <div class="tab-content" id="tab-time">
                 <div class="section">
-                    <h3>⏱️ Управление игровым временем</h3>
-                    <p style="font-size:12px;color:var(--text-sec);margin-bottom:16px;line-height:1.6">
-                        Сейчас: <b>1 игровой день = 15 минут</b> реального времени.<br>
-                        Изменения применятся ко всем игрокам при следующем заходе.
-                    </p>
-                    <div class="form-group"><label>Длительность 1 игрового дня (минут)</label><input type="number" id="cfgGameDayMinutes" value="15" min="1" max="1440"></div>
-                    <button class="btn btn-primary" onclick="saveGameDayConfig()">💾 Сохранить</button>
-                </div>
-                <div class="section">
-                    <h3>🚀 Принудительное ускорение</h3>
-                    <div class="row">
-                        <button class="btn btn-warning" onclick="advanceDayAll()">⏩ +1 день всем</button>
-                        <button class="btn btn-success" onclick="advanceDayAll(7)">⏩ +7 дней всем</button>
-                        <button class="btn btn-danger" onclick="resetDayAll()">🔄 Сбросить счётчики</button>
-                    </div>
+                    <h3>⏱️ Игровое время</h3>
+                    <p style="font-size:12px;color:var(--text-sec);margin-bottom:14px">1 игровой день = 15 минут реального времени.</p>
+                    <button class="btn btn-warning btn-block" style="margin-bottom:8px" onclick="advanceDayAll(1)">⏩ +1 день всем</button>
+                    <button class="btn btn-success btn-block" style="margin-bottom:8px" onclick="advanceDayAll(7)">⏩ +7 дней всем</button>
+                    <button class="btn btn-danger btn-block" onclick="resetDayAll()">🔄 Сбросить счётчики</button>
                 </div>
             </div>
 
             <!-- BROADCAST -->
             <div class="tab-content" id="tab-broadcast">
                 <div class="section">
-                    <h3>📢 Системное сообщение в общий чат</h3>
-                    <div class="form-group"><label>Текст</label><textarea id="broadcastText" rows="3" placeholder="Всем привет! Сегодня двойной доход 🎉"></textarea></div>
-                    <button class="btn btn-primary" onclick="broadcastMessage()">📤 Отправить всем</button>
+                    <h3>📢 В общий чат</h3>
+                    <div class="form-group"><textarea id="broadcastText" rows="3" placeholder="Всем привет!"></textarea></div>
+                    <button class="btn btn-primary btn-block" onclick="broadcastMessage()">📤 Отправить</button>
                 </div>
                 <div class="section">
-                    <h3>📬 Сообщение одному игроку</h3>
-                    <div class="form-group"><label>UID игрока</label><input type="text" id="directUid" placeholder="Ewo6P6PnX3..." maxlength="64"></div>
-                    <div class="form-group"><label>Текст</label><textarea id="directText" rows="2" placeholder="Вам выдано 100 000₽ бонусом!"></textarea></div>
-                    <button class="btn btn-primary" onclick="sendDirect()">📩 Отправить</button>
-                </div>
-            </div>
-
-            <!-- ANALYTICS -->
-            <div class="tab-content" id="tab-analytics">
-                <div class="section">
-                    <h3>📈 Топ игроков по категориям</h3>
-                    <div class="row" style="margin-bottom:14px">
-                        <button class="btn btn-sm btn-primary" onclick="renderAnalytics('money')">💰 По деньгам</button>
-                        <button class="btn btn-sm btn-gold" onclick="renderAnalytics('chips')">🎰 По фишкам</button>
-                        <button class="btn btn-sm btn-success" onclick="renderAnalytics('level')">⭐ По уровню</button>
-                        <button class="btn btn-sm btn-warning" onclick="renderAnalytics('inventory')">📦 По инвентарю</button>
-                    </div>
-                    <div id="analyticsList"><div class="empty">Выберите категорию</div></div>
+                    <h3>📬 Одному игроку</h3>
+                    <div class="form-group"><label>UID</label><input type="text" id="directUid" placeholder="UID"></div>
+                    <div class="form-group"><label>Текст</label><textarea id="directText" rows="2"></textarea></div>
+                    <button class="btn btn-primary btn-block" onclick="sendDirect()">📩 Отправить</button>
                 </div>
             </div>
 
@@ -387,19 +397,18 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
                     <h3>🔧 Массовые операции</h3>
                     <button class="btn btn-success btn-block" style="margin-bottom:8px" onclick="giveAll(10000)">💰 +10 000 ₽ всем</button>
                     <button class="btn btn-success btn-block" style="margin-bottom:8px" onclick="giveAll(100000)">💰 +100 000 ₽ всем</button>
-                    <button class="btn btn-success btn-block" style="margin-bottom:8px" onclick="giveAll(1000000)">💰 +1 000 000 ₽ всем</button>
                     <button class="btn btn-gold btn-block" onclick="giveChipsAll(10000)">🎰 +10 000 фишек всем</button>
                 </div>
                 <div class="section">
                     <h3>🔄 Синхронизация</h3>
-                    <button class="btn btn-primary btn-block" style="margin-bottom:8px" onclick="refreshAll()">🔄 Обновить данные</button>
+                    <button class="btn btn-primary btn-block" style="margin-bottom:8px" onclick="refreshAll()">🔄 Обновить</button>
                     <button class="btn btn-primary btn-block" style="margin-bottom:8px" onclick="rebuildLeaderboard()">🏆 Пересобрать лидерборд</button>
-                    <button class="btn btn-danger btn-block" onclick="clearGlobalChat()">🗑️ Очистить общий чат</button>
+                    <button class="btn btn-danger btn-block" onclick="clearGlobalChat()">🗑️ Очистить чат</button>
                 </div>
                 <div class="section">
-                    <h3>🛠️ Опасные действия</h3>
+                    <h3>🛠️ Опасные</h3>
                     <button class="btn btn-danger btn-block" style="margin-bottom:8px" onclick="exportAll()">📤 Экспорт базы</button>
-                    <button class="btn btn-danger btn-block" onclick="if(confirm('Точно удалить ВСЮ базу?'))clearAll()">💣 Удалить всё</button>
+                    <button class="btn btn-danger btn-block" onclick="if(confirm('Удалить ВСЮ базу?'))clearAll()">💣 Удалить всё</button>
                 </div>
             </div>
         </main>
@@ -419,11 +428,18 @@ input:focus,textarea:focus,select:focus{border-color:var(--primary);background:v
             <div class="form-group"><label>Уровень</label><input type="number" id="mLevel"></div>
             <div class="form-group"><label>Игровой день</label><input type="number" id="mGameDay"></div>
         </div>
-        <div class="form-group"><label>Имя</label><input type="text" id="mName" maxlength="30"></div>
-        <div class="form-group"><label>Город</label><input type="text" id="mCity" maxlength="30"></div>
+        <div class="form-group"><label>Имя</label><input type="text" id="mName"></div>
+        <div class="row">
+            <div class="form-group"><label>Сезон ур.</label><input type="number" id="mSeasonLevel"></div>
+            <div class="form-group"><label>Сезон XP</label><input type="number" id="mSeasonXP"></div>
+        </div>
+        <div class="row">
+            <div class="form-group"><label>Побед на арене</label><input type="number" id="mArenaWins"></div>
+            <div class="form-group"><label>Поражений</label><input type="number" id="mArenaLosses"></div>
+        </div>
         <div class="row">
             <div class="form-group"><label>Инвентарь</label><input type="number" id="mInvCount" readonly></div>
-            <div class="form-group"><label>Выведено сегодня</label><input type="number" id="mWithdrawnToday" readonly></div>
+            <div class="form-group"><label>Авто</label><input type="number" id="mCarsCount" readonly></div>
         </div>
         <button class="btn btn-success btn-block" style="margin-bottom:8px" onclick="savePlayerChanges()">💾 Сохранить</button>
         <div class="row" style="margin-bottom:8px">
@@ -501,14 +517,13 @@ function signInAdmin(){
     provider.setCustomParameters({ prompt: 'select_account' });
     document.getElementById('loginStatus').textContent = '⏳ Входим...';
     fbAuth.signInWithPopup(provider).catch(err => {
-        console.error(err);
         const st = document.getElementById('loginStatus');
-        st.textContent = '❌ ' + (err.code === 'auth/popup-blocked' ? 'Разрешите попапы' : err.message);
+        st.textContent = '❌ ' + err.message;
         st.className = 'login-status error';
     });
 }
 function signOut(){
-    if(confirm('Выйти из админки?')) fbAuth.signOut().then(() => location.reload());
+    if(confirm('Выйти?')) fbAuth.signOut().then(() => location.reload());
 }
 function watchAuth(){
     fbAuth.onAuthStateChanged(user => {
@@ -526,7 +541,6 @@ function watchAuth(){
             document.getElementById('adminAvatar').src = user.photoURL || '';
             document.getElementById('adminName').textContent = user.displayName || 'Admin';
             document.getElementById('adminUid').textContent = user.uid.slice(0, 16) + '...';
-            setDiag('⏳ <b>Проверяю Firebase...</b>');
             runDiagnostics();
             loadAll();
         } else {
@@ -536,30 +550,27 @@ function watchAuth(){
         }
     });
 }
-
 function toggleSidebar(){
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('sidebarOverlay').classList.toggle('show');
 }
-function toggleTheme(){
-    const html = document.body;
-    const cur = html.getAttribute('data-theme');
-    html.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
-    localStorage.setItem('admin_theme', html.getAttribute('data-theme'));
-}
-(function initTheme(){
-    const saved = localStorage.getItem('admin_theme');
-    if(saved) document.body.setAttribute('data-theme', saved);
-})();
-
 function switchTab(tab, el){
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     if(el) el.classList.add('active');
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    document.getElementById('tab-' + tab).classList.add('active');
-    const titles = {dashboard:'📊 Дашборд', players:'👥 Игроки', casino:'🎰 Казино', quests:'🎯 Задания', events:'🎉 Ивенты', promos:'🎟️ Промокоды', time:'⏱️ Время', broadcast:'📢 Рассылка', analytics:'📈 Аналитика', tools:'🛠️ Инструменты'};
+    const target = document.getElementById('tab-' + tab);
+    if(target) target.classList.add('active');
+    const titles = {dashboard:'📊 Дашборд', players:'👥 Игроки', analytics:'📈 Аналитика', casino:'🎰 Казино', quests:'🎯 Задания', cars:'🚗 Авто', used:'♻️ Б/У', repair:'🔧 Мастерская', business:'🏢 Бизнес', exchange:'📈 Биржа', arena:'⚔️ Арена', world:'🌍 Мир', season:'🎁 Сезон', events:'🎉 Ивенты', promos:'🎟️ Промокоды', time:'⏱️ Время', broadcast:'📢 Рассылка', tools:'🛠️ Инструменты'};
     document.getElementById('pageTitle').textContent = titles[tab] || tab;
     if(tab === 'analytics') renderAnalytics('money');
+    if(tab === 'cars') renderCarsTab();
+    if(tab === 'used') renderUsedTab();
+    if(tab === 'repair') renderRepairTab();
+    if(tab === 'business') renderBusinessTab();
+    if(tab === 'exchange') renderExchangeTab();
+    if(tab === 'arena') renderArenaTab();
+    if(tab === 'world') renderWorldTab();
+    if(tab === 'season') renderSeasonTab();
     if(window.innerWidth <= 900) toggleSidebar();
 }
 
@@ -568,27 +579,27 @@ function runDiagnostics(){
     let done = 0;
     fbDB.ref('.info/connected').once('value').then(s => {
         const ok = s.val() === true;
-        results.push({key:'conn', ok, text: ok ? 'Соединение' : 'Нет соединения'});
+        results.push({ok, text: ok ? 'Соединение' : 'Нет соединения'});
         done++; finish();
-    }).catch(e => { results.push({key:'conn', ok:false, text:'Ошибка соединения'}); done++; finish(); });
+    }).catch(() => { results.push({ok:false, text:'Ошибка соединения'}); done++; finish(); });
 
     fbDB.ref('users').once('value').then(s => {
         const count = Object.keys(s.val() || {}).length;
-        results.push({key:'users', ok:true, text:'users читается (игроков: ' + count + ')'});
+        results.push({ok:true, text:'users читается (' + count + ')'});
         done++; finish();
-    }).catch(e => { results.push({key:'users', ok:false, text:'users НЕ читается: ' + e.code}); done++; finish(); });
+    }).catch(e => { results.push({ok:false, text:'users НЕ читается: ' + e.code}); done++; finish(); });
 
     fbDB.ref('jackpot').once('value').then(() => {
-        results.push({key:'jp', ok:true, text:'jackpot читается'});
+        results.push({ok:true, text:'jackpot читается'});
         done++; finish();
-    }).catch(e => { results.push({key:'jp', ok:false, text:'jackpot НЕ читается'}); done++; finish(); });
+    }).catch(() => { results.push({ok:false, text:'jackpot НЕ читается'}); done++; finish(); });
 
     const testRef = fbDB.ref('_admin_test_' + Date.now());
     testRef.set({t: Date.now()}).then(() => {
-        results.push({key:'write', ok:true, text:'Запись разрешена'});
+        results.push({ok:true, text:'Запись разрешена'});
         testRef.remove();
         done++; finish();
-    }).catch(e => { results.push({key:'write', ok:false, text:'Запись ЗАПРЕЩЕНА: ' + e.code}); done++; finish(); });
+    }).catch(e => { results.push({ok:false, text:'Запись ЗАПРЕЩЕНА: ' + e.code}); done++; finish(); });
 
     function finish(){
         if(done < 4) return;
@@ -606,13 +617,13 @@ function loadAll(){
         playersCache = snap.val() || {};
         renderPlayers();
         updateStats();
-        renderQuests();
         renderTopPlayers();
+        renderQuests();
     }, err => {
-        document.getElementById('playersList').innerHTML = '<div class="empty error">❌ Ошибка: ' + err.message + '</div>';
+        document.getElementById('playersList').innerHTML = '<div class="empty error">❌ ' + err.message + '</div>';
     });
     fbDB.ref('promos').on('value', snap => { promosCache = snap.val() || {}; renderPromos(); });
-    fbDB.ref('events').on('value', snap => { eventsCache = snap.val() || {}; renderEvents(); });
+    fbDB.ref('events').on('value', snap => { eventsCache = snap.val() || {}; renderEvents(); updateStats(); });
     fbDB.ref('jackpot').on('value', snap => {
         jackpotCache = snap.val() || {};
         const amt = jackpotCache.amount || 0;
@@ -630,16 +641,20 @@ function loadAll(){
 function updateStats(){
     const uids = Object.keys(playersCache);
     document.getElementById('statPlayers').textContent = uids.length;
-    let totalMoney = 0, totalChips = 0;
+    let totalMoney = 0, totalChips = 0, chipsBought = 0, chipsWithdrawn = 0;
     uids.forEach(uid => {
         totalMoney += playersCache[uid]?.game?.money || 0;
         totalChips += playersCache[uid]?.game?.chips || 0;
+        chipsBought += playersCache[uid]?.game?.chipsTotalBought || 0;
+        chipsWithdrawn += playersCache[uid]?.game?.chipsTotalWithdrawn || 0;
     });
     document.getElementById('statTotalMoney').textContent = fmt(totalMoney);
     document.getElementById('statTotalChips').textContent = fmtChips(totalChips);
     document.getElementById('statEvents').textContent = Object.keys(eventsCache).length;
-    const badge = document.getElementById('navPlayersBadge');
-    if(badge){ badge.textContent = uids.length; badge.style.display = uids.length > 0 ? 'inline-block' : 'none'; }
+    const el1 = document.getElementById('statChipsBought');
+    if(el1) el1.textContent = fmtChips(chipsBought);
+    const el2 = document.getElementById('statChipsWithdrawn');
+    if(el2) el2.textContent = fmt(chipsWithdrawn);
 }
 
 function renderTopPlayers(){
@@ -650,18 +665,15 @@ function renderTopPlayers(){
     el.innerHTML = list.map((p, i) => {
         const name = p.profile?.name || 'Аноним';
         const photo = p.profile?.photo || '';
-        const initials = name[0].toUpperCase();
-        const avatar = photo ? `<img src="${photo}">` : initials;
-        const money = p.game?.money || 0;
-        const chips = p.game?.chips || 0;
-        const rankIcon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '#' + (i+1);
+        const avatar = photo ? `<img src="${photo}">` : name[0].toUpperCase();
+        const rank = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '#' + (i+1);
         return `<div class="player-row" onclick="openPlayer('${p.uid}')">
-            <div style="font-size:22px;width:36px;text-align:center">${rankIcon}</div>
+            <div style="font-size:22px;width:36px;text-align:center">${rank}</div>
             <div class="player-avatar">${avatar}</div>
             <div class="player-info"><div class="player-name">${esc(name)}</div><div class="player-uid">${p.uid.slice(0,16)}...</div></div>
             <div class="player-stats">
-                <div class="player-stat money"><div class="val">${fmt(money)}</div><div class="lbl">₽</div></div>
-                <div class="player-stat chips"><div class="val">${fmtChips(chips)}</div><div class="lbl">🎰</div></div>
+                <div class="player-stat"><div class="val" style="color:var(--success)">${fmt(p.game?.money||0)}</div><div class="lbl">₽</div></div>
+                <div class="player-stat"><div class="val" style="color:var(--gold)">${fmtChips(p.game?.chips||0)}</div><div class="lbl">🎰</div></div>
             </div>
         </div>`;
     }).join('');
@@ -682,18 +694,14 @@ function renderPlayers(){
     list.innerHTML = entries.map(([uid, data]) => {
         const name = data.profile?.name || 'Аноним';
         const photo = data.profile?.photo || '';
-        const initials = name[0].toUpperCase();
-        const avatar = photo ? `<img src="${photo}">` : initials;
-        const money = data.game?.money || 0;
-        const chips = data.game?.chips || 0;
-        const level = data.game?.level || 1;
+        const avatar = photo ? `<img src="${photo}">` : name[0].toUpperCase();
         return `<div class="player-row" onclick="openPlayer('${uid}')">
             <div class="player-avatar">${avatar}</div>
             <div class="player-info"><div class="player-name">${esc(name)}</div><div class="player-uid">${uid.slice(0,16)}...</div></div>
             <div class="player-stats">
-                <div class="player-stat money"><div class="val">${fmt(money)}</div><div class="lbl">₽</div></div>
-                <div class="player-stat chips"><div class="val">${fmtChips(chips)}</div><div class="lbl">🎰</div></div>
-                <div class="player-stat level"><div class="val">${level}</div><div class="lbl">Ур.</div></div>
+                <div class="player-stat"><div class="val" style="color:var(--success)">${fmt(data.game?.money||0)}</div><div class="lbl">₽</div></div>
+                <div class="player-stat"><div class="val" style="color:var(--gold)">${fmtChips(data.game?.chips||0)}</div><div class="lbl">🎰</div></div>
+                <div class="player-stat"><div class="val" style="color:var(--primary)">${data.game?.level || 1}</div><div class="lbl">Ур.</div></div>
             </div>
         </div>`;
     }).join('');
@@ -703,16 +711,20 @@ function openPlayer(uid){
     const data = playersCache[uid];
     if(!data) return;
     currentPlayerUid = uid;
+    const g = data.game || {};
     document.getElementById('modalPlayerName').textContent = data.profile?.name || 'Аноним';
     document.getElementById('mUid').value = uid;
-    document.getElementById('mMoney').value = data.game?.money || 0;
-    document.getElementById('mChips').value = data.game?.chips || 0;
-    document.getElementById('mLevel').value = data.game?.level || 1;
-    document.getElementById('mGameDay').value = data.game?.gameDay || 1;
+    document.getElementById('mMoney').value = g.money || 0;
+    document.getElementById('mChips').value = g.chips || 0;
+    document.getElementById('mLevel').value = g.level || 1;
+    document.getElementById('mGameDay').value = g.gameDay || 1;
     document.getElementById('mName').value = data.profile?.name || '';
-    document.getElementById('mCity').value = data.game?.currentCity || '';
-    document.getElementById('mInvCount').value = (data.game?.inventory || []).length;
-    document.getElementById('mWithdrawnToday').value = data.game?.chipsWithdrawnToday || 0;
+    document.getElementById('mSeasonLevel').value = g.seasonLevel || 1;
+    document.getElementById('mSeasonXP').value = g.seasonXP || 0;
+    document.getElementById('mArenaWins').value = g.arenaWins || 0;
+    document.getElementById('mArenaLosses').value = g.arenaLosses || 0;
+    document.getElementById('mInvCount').value = (g.inventory || []).length;
+    document.getElementById('mCarsCount').value = (g.cars || []).length;
     fbDB.ref('bans/' + uid).once('value').then(snap => {
         const banned = snap.val();
         const st = document.getElementById('mBanStatus');
@@ -724,18 +736,21 @@ function openPlayer(uid){
 function closePlayerModal(){ document.getElementById('playerModal').classList.remove('show'); currentPlayerUid = null; }
 function savePlayerChanges(){
     if(!currentPlayerUid) return;
-    const money = parseInt(document.getElementById('mMoney').value) || 0;
-    const chips = parseInt(document.getElementById('mChips').value) || 0;
-    const level = parseInt(document.getElementById('mLevel').value) || 1;
-    const gameDay = parseInt(document.getElementById('mGameDay').value) || 1;
-    const name = document.getElementById('mName').value.trim() || 'Аноним';
-    const city = document.getElementById('mCity').value.trim() || 'Москва';
-    fbDB.ref('users/' + currentPlayerUid).update({
-        'profile/name': name, 'profile/level': level,
-        'game/money': money, 'game/chips': chips,
-        'game/level': level, 'game/gameDay': gameDay,
-        'game/currentCity': city
-    }).then(() => { toast('✅ Сохранено', 'success'); closePlayerModal(); });
+    const updates = {
+        'profile/name': document.getElementById('mName').value.trim() || 'Аноним',
+        'game/money': parseInt(document.getElementById('mMoney').value) || 0,
+        'game/chips': parseInt(document.getElementById('mChips').value) || 0,
+        'game/level': parseInt(document.getElementById('mLevel').value) || 1,
+        'game/gameDay': parseInt(document.getElementById('mGameDay').value) || 1,
+        'game/seasonLevel': parseInt(document.getElementById('mSeasonLevel').value) || 1,
+        'game/seasonXP': parseInt(document.getElementById('mSeasonXP').value) || 0,
+        'game/arenaWins': parseInt(document.getElementById('mArenaWins').value) || 0,
+        'game/arenaLosses': parseInt(document.getElementById('mArenaLosses').value) || 0
+    };
+    fbDB.ref('users/' + currentPlayerUid).update(updates).then(() => {
+        toast('✅ Сохранено', 'success');
+        closePlayerModal();
+    });
 }
 function givePlayerMoney(amount){
     if(!currentPlayerUid) return;
@@ -772,43 +787,33 @@ function toggleBan(){
     });
 }
 
-function drawJackpotNow(){
-    if(!confirm('Разыграть джекпот прямо сейчас?')) return;
-    const tickets = jackpotCache.tickets || {};
-    const entries = Object.entries(tickets);
-    if(!entries.length){ toast('❌ Нет билетов', 'danger'); return; }
-    let total = 0;
-    entries.forEach(([, n]) => total += n);
-    let rnd = Math.random() * total;
-    let winnerUid = null;
-    for(const [uid, n] of entries){
-        rnd -= n;
-        if(rnd <= 0){ winnerUid = uid; break; }
-    }
-    if(!winnerUid){ toast('❌ Не удалось выбрать победителя', 'danger'); return; }
-    const prize = jackpotCache.amount || 0;
-    const winnerMoney = playersCache[winnerUid]?.game?.money || 0;
-    fbDB.ref('users/' + winnerUid + '/game/money').set(winnerMoney + prize).then(() => {
-        fbDB.ref('jackpot').set({amount: 0, tickets: {}, lastWinner: winnerUid, lastDraw: Date.now()});
-        const winnerName = playersCache[winnerUid]?.profile?.name || 'Аноним';
-        toast('💎 Джекпот ' + fmtChips(prize) + ' → ' + winnerName, 'gold');
-        fbDB.ref('globalChat').push({uid:'SYSTEM', name:'🛡️ Система', text:'💎 Джекпот ' + fmtChips(prize) + ' выиграл ' + winnerName + '!', time: Date.now(), isSystem: true});
-    });
-}
-function resetJackpot(){
-    if(!confirm('Обнулить джекпот?')) return;
-    fbDB.ref('jackpot').set({amount: 0, tickets: {}}).then(() => toast('🗑️ Джекпот обнулён', 'warning'));
-}
-function addToJackpot(){
-    const amt = prompt('Сколько фишек добавить?', '10000');
-    if(!amt) return;
-    fbDB.ref('jackpot/amount').transaction(cur => (cur || 0) + parseInt(amt)).then(() => toast('✅ Добавлено', 'gold'));
-}
-function saveCasinoLimits(){
-    const min = parseInt(document.getElementById('cfgMinBet').value);
-    const max = parseInt(document.getElementById('cfgMaxBet').value);
-    const wd = parseInt(document.getElementById('cfgWithdrawLimit').value);
-    fbDB.ref('config/casino').set({minBet: min, maxBet: max, withdrawLimit: wd}).then(() => toast('✅ Лимиты сохранены', 'success'));
+function renderAnalytics(cat){
+    const el = document.getElementById('analyticsList');
+    const entries = Object.entries(playersCache).map(([uid, d]) => ({uid, ...d}));
+    let sorted, fmtFn, label;
+    if(cat === 'money'){ sorted = entries.sort((a,b) => (b.game?.money||0) - (a.game?.money||0)); fmtFn = fmt; label = '₽'; }
+    else if(cat === 'chips'){ sorted = entries.sort((a,b) => (b.game?.chips||0) - (a.game?.chips||0)); fmtFn = fmtChips; label = '🎰'; }
+    else if(cat === 'level'){ sorted = entries.sort((a,b) => (b.game?.level||0) - (a.game?.level||0)); fmtFn = v => v; label = 'Ур.'; }
+    else if(cat === 'cars'){ sorted = entries.sort((a,b) => ((b.game?.cars||[]).length) - ((a.game?.cars||[]).length)); fmtFn = v => v; label = '🚗'; }
+    else if(cat === 'arena'){ sorted = entries.sort((a,b) => (b.game?.arenaWins||0) - (a.game?.arenaWins||0)); fmtFn = v => v; label = 'побед'; }
+    else if(cat === 'season'){ sorted = entries.sort((a,b) => (b.game?.seasonLevel||0) - (a.game?.seasonLevel||0)); fmtFn = v => v; label = 'ур.'; }
+    if(!sorted.length){ el.innerHTML = '<div class="empty">Нет игроков</div>'; return; }
+    el.innerHTML = sorted.slice(0, 30).map((p, i) => {
+        let val = 0;
+        if(cat === 'money') val = p.game?.money || 0;
+        else if(cat === 'chips') val = p.game?.chips || 0;
+        else if(cat === 'level') val = p.game?.level || 1;
+        else if(cat === 'cars') val = (p.game?.cars || []).length;
+        else if(cat === 'arena') val = p.game?.arenaWins || 0;
+        else if(cat === 'season') val = p.game?.seasonLevel || 1;
+        const name = p.profile?.name || 'Аноним';
+        return `<div class="player-row" onclick="openPlayer('${p.uid}')">
+            <div style="font-size:18px;width:32px;text-align:center;font-weight:800">${i+1}</div>
+            <div class="player-avatar">${name[0].toUpperCase()}</div>
+            <div class="player-info"><div class="player-name">${esc(name)}</div></div>
+            <div style="font-weight:900;color:var(--gold);font-size:14px">${fmtFn(val)} ${label}</div>
+        </div>`;
+    }).join('');
 }
 
 function renderQuests(){
@@ -820,18 +825,17 @@ function renderQuests(){
         const name = d.profile?.name || 'Аноним';
         const quests = d.game.dailyQuests || [];
         const done = quests.filter(q => q.done && !q.claimed).length;
-        const total = quests.length;
         return `<div class="player-row" onclick="openPlayer('${uid}')">
             <div class="player-avatar">${name[0].toUpperCase()}</div>
-            <div class="player-info"><div class="player-name">${esc(name)}</div><div class="player-uid">Выполнено: ${done}/${total}</div></div>
+            <div class="player-info"><div class="player-name">${esc(name)}</div><div class="player-uid">Выполнено: ${done}/${quests.length}</div></div>
         </div>`;
     }).join('');
 }
 function resetAllQuests(){
-    if(!confirm('Сбросить дейлики у ВСЕХ игроков?')) return;
+    if(!confirm('Сбросить дейлики у ВСЕХ?')) return;
     const updates = {};
     Object.keys(playersCache).forEach(uid => { updates['users/' + uid + '/game/dailyQuests'] = null; });
-    fbDB.ref().update(updates).then(() => toast('🔄 Дейлики сброшены', 'warning'));
+    fbDB.ref().update(updates).then(() => toast('🔄 Сброшено', 'warning'));
 }
 function giveChipsAll(amount){
     if(!confirm('Выдать ' + fmtChips(amount) + ' ВСЕМ?')) return;
@@ -841,7 +845,169 @@ function giveChipsAll(amount){
         updates['users/' + uid + '/game/chips'] = cur + amount;
     });
     if(!Object.keys(updates).length){ toast('❌ Нет игроков', 'danger'); return; }
-    fbDB.ref().update(updates).then(() => toast('✅ Выдано ' + fmtChips(amount), 'gold'));
+    fbDB.ref().update(updates).then(() => toast('✅ Выдано', 'gold'));
+}
+
+function renderCarsTab(){
+    const el = document.getElementById('carsList');
+    if(!el) return;
+    const entries = Object.entries(playersCache).filter(([, d]) => (d.game?.cars || []).length > 0);
+    if(!entries.length){ el.innerHTML = '<div class="empty">Ни у кого нет авто</div>'; return; }
+    el.innerHTML = entries.map(([uid, d]) => {
+        const name = d.profile?.name || 'Аноним';
+        const cars = d.game.cars || [];
+        return `<div class="section" style="padding:14px;margin-bottom:10px">
+            <div style="font-weight:800;margin-bottom:8px">${esc(name)} (${cars.length})</div>
+            ${cars.map(c => `<div style="font-size:12px;color:var(--text-sec);padding:6px 0">${c.brandLogo || '🚗'} ${esc(c.brandName||'')} ${esc(c.fullName||'')} · ${fmt(c.buyPrice||0)}</div>`).join('')}
+        </div>`;
+    }).join('');
+}
+
+function renderUsedTab(){
+    const el = document.getElementById('usedList');
+    if(!el) return;
+    let total = 0, broken = 0;
+    Object.values(playersCache).forEach(d => {
+        const inv = d.game?.inventory || [];
+        total += inv.length;
+        broken += inv.filter(i => (i.brokenParts||[]).length > 0).length;
+    });
+    const e1 = document.getElementById('usedTotal');
+    if(e1) e1.textContent = total;
+    const e2 = document.getElementById('usedBroken');
+    if(e2) e2.textContent = broken;
+    const entries = Object.entries(playersCache).filter(([, d]) => (d.game?.inventory || []).length > 0);
+    if(!entries.length){ el.innerHTML = '<div class="empty">Ни у кого нет товаров</div>'; return; }
+    el.innerHTML = entries.slice(0, 20).map(([uid, d]) => {
+        const name = d.profile?.name || 'Аноним';
+        const inv = d.game.inventory || [];
+        const brokenCount = inv.filter(i => (i.brokenParts||[]).length > 0).length;
+        return `<div class="player-row" onclick="openPlayer('${uid}')">
+            <div class="player-avatar">${name[0].toUpperCase()}</div>
+            <div class="player-info"><div class="player-name">${esc(name)}</div><div class="player-uid">Товаров: ${inv.length} · Сломанных: ${brokenCount}</div></div>
+        </div>`;
+    }).join('');
+}
+
+function renderRepairTab(){
+    const el = document.getElementById('repairList');
+    if(!el) return;
+    const entries = Object.entries(playersCache).filter(([, d]) => (d.game?.inventory || []).some(i => (i.brokenParts||[]).length > 0));
+    if(!entries.length){ el.innerHTML = '<div class="empty">Нет сломанных товаров</div>'; return; }
+    el.innerHTML = entries.map(([uid, d]) => {
+        const name = d.profile?.name || 'Аноним';
+        const broken = (d.game.inventory || []).filter(i => (i.brokenParts||[]).length > 0);
+        return `<div class="player-row" onclick="openPlayer('${uid}')">
+            <div class="player-avatar">${name[0].toUpperCase()}</div>
+            <div class="player-info"><div class="player-name">${esc(name)}</div><div class="player-uid">Сломанных: ${broken.length}</div></div>
+        </div>`;
+    }).join('');
+}
+
+function renderBusinessTab(){
+    const el = document.getElementById('businessList');
+    if(!el) return;
+    const entries = Object.entries(playersCache).filter(([, d]) => (d.game?.businesses || []).length > 0);
+    if(!entries.length){ el.innerHTML = '<div class="empty">Ни у кого нет бизнесов</div>'; return; }
+    el.innerHTML = entries.map(([uid, d]) => {
+        const name = d.profile?.name || 'Аноним';
+        const biz = d.game.businesses || [];
+        return `<div class="player-row" onclick="openPlayer('${uid}')">
+            <div class="player-avatar">${name[0].toUpperCase()}</div>
+            <div class="player-info"><div class="player-name">${esc(name)}</div><div class="player-uid">Бизнесов: ${biz.length}</div></div>
+        </div>`;
+    }).join('');
+}
+
+function renderExchangeTab(){
+    const el = document.getElementById('exchangeRates');
+    if(!el) return;
+    const sample = Object.values(playersCache).find(d => d.game?.exchangeRates);
+    const rates = sample?.game?.exchangeRates || {usd: 90, cny: 12.5, eur: 100};
+    el.innerHTML = `
+        <div class="list-item" style="background:var(--surface2);padding:12px;border-radius:12px;margin-bottom:8px;display:flex;justify-content:space-between"><span>🇺🇸 USD</span><b>${rates.usd.toFixed(1)} ₽</b></div>
+        <div class="list-item" style="background:var(--surface2);padding:12px;border-radius:12px;margin-bottom:8px;display:flex;justify-content:space-between"><span>🇨🇳 CNY</span><b>${rates.cny.toFixed(1)} ₽</b></div>
+        <div class="list-item" style="background:var(--surface2);padding:12px;border-radius:12px;display:flex;justify-content:space-between"><span>🇪🇺 EUR</span><b>${rates.eur.toFixed(1)} ₽</b></div>
+    `;
+}
+
+function renderArenaTab(){
+    const el = document.getElementById('arenaList');
+    if(!el) return;
+    const sorted = Object.entries(playersCache).map(([uid, d]) => ({uid, ...d})).sort((a,b) => (b.game?.arenaWins||0) - (a.game?.arenaWins||0)).slice(0, 30);
+    if(!sorted.length){ el.innerHTML = '<div class="empty">Нет данных</div>'; return; }
+    el.innerHTML = sorted.map((p, i) => {
+        const name = p.profile?.name || 'Аноним';
+        const wins = p.game?.arenaWins || 0;
+        const losses = p.game?.arenaLosses || 0;
+        return `<div class="player-row" onclick="openPlayer('${p.uid}')">
+            <div style="font-size:18px;width:32px;text-align:center;font-weight:800">${i+1}</div>
+            <div class="player-avatar">${name[0].toUpperCase()}</div>
+            <div class="player-info"><div class="player-name">${esc(name)}</div></div>
+            <div style="font-weight:800"><span style="color:var(--success)">${wins}</span> / <span style="color:var(--danger)">${losses}</span></div>
+        </div>`;
+    }).join('');
+}
+
+function renderWorldTab(){
+    const el = document.getElementById('worldList');
+    if(!el) return;
+    const entries = Object.entries(playersCache).filter(([, d]) => d.game?.visas && Object.keys(d.game.visas).length > 0);
+    if(!entries.length){ el.innerHTML = '<div class="empty">Ни у кого нет виз</div>'; return; }
+    el.innerHTML = entries.map(([uid, d]) => {
+        const name = d.profile?.name || 'Аноним';
+        const visas = Object.keys(d.game.visas).join(', ');
+        return `<div class="player-row" onclick="openPlayer('${uid}')">
+            <div class="player-avatar">${name[0].toUpperCase()}</div>
+            <div class="player-info"><div class="player-name">${esc(name)}</div><div class="player-uid">Визы: ${visas.toUpperCase()}</div></div>
+        </div>`;
+    }).join('');
+}
+
+function renderSeasonTab(){
+    const el = document.getElementById('seasonList');
+    if(!el) return;
+    const sorted = Object.entries(playersCache).map(([uid, d]) => ({uid, ...d})).sort((a,b) => (b.game?.seasonLevel||0) - (a.game?.seasonLevel||0)).slice(0, 30);
+    if(!sorted.length){ el.innerHTML = '<div class="empty">Нет данных</div>'; return; }
+    el.innerHTML = sorted.map((p, i) => {
+        const name = p.profile?.name || 'Аноним';
+        const lvl = p.game?.seasonLevel || 1;
+        const xp = p.game?.seasonXP || 0;
+        return `<div class="player-row" onclick="openPlayer('${p.uid}')">
+            <div style="font-size:18px;width:32px;text-align:center;font-weight:800">${i+1}</div>
+            <div class="player-avatar">${name[0].toUpperCase()}</div>
+            <div class="player-info"><div class="player-name">${esc(name)}</div><div class="player-uid">${xp} XP</div></div>
+            <div style="font-weight:900;color:var(--gold);font-size:16px">Ур. ${lvl}</div>
+        </div>`;
+    }).join('');
+}
+
+function drawJackpotNow(){
+    if(!confirm('Разыграть джекпот сейчас?')) return;
+    const tickets = jackpotCache.tickets || {};
+    const entries = Object.entries(tickets);
+    if(!entries.length){ toast('❌ Нет билетов', 'danger'); return; }
+    let total = 0;
+    entries.forEach(([, n]) => total += n);
+    let rnd = Math.random() * total;
+    let winnerUid = null;
+    for(const [uid, n] of entries){
+        rnd -= n;
+        if(rnd <= 0){ winnerUid = uid; break; }
+    }
+    if(!winnerUid){ toast('❌ Не удалось', 'danger'); return; }
+    const prize = jackpotCache.amount || 0;
+    const winnerMoney = playersCache[winnerUid]?.game?.money || 0;
+    fbDB.ref('users/' + winnerUid + '/game/money').set(winnerMoney + prize).then(() => {
+        fbDB.ref('jackpot').set({amount: 0, tickets: {}, lastWinner: winnerUid, lastDraw: Date.now()});
+        const winnerName = playersCache[winnerUid]?.profile?.name || 'Аноним';
+        toast('💎 ' + fmt(prize) + ' → ' + winnerName, 'gold');
+        fbDB.ref('globalChat').push({uid:'SYSTEM', name:'🛡️ Система', text:'💎 Джекпот ' + fmt(prize) + ' выиграл ' + winnerName + '!', time: Date.now(), isSystem: true});
+    });
+}
+function resetJackpot(){
+    if(!confirm('Обнулить джекпот?')) return;
+    fbDB.ref('jackpot').set({amount: 0, tickets: {}}).then(() => toast('🗑️ Обнулён', 'warning'));
 }
 
 function createGameEvent(){
@@ -851,7 +1017,7 @@ function createGameEvent(){
     if(!name){ toast('❌ Введите название', 'danger'); return; }
     const id = 'event_' + Date.now();
     fbDB.ref('events/' + id).set({id, name, multiplier: mult, createdAt: Date.now(), endsAt: Date.now() + hours*3600000, active: true})
-        .then(() => { toast('🎉 Ивент "' + name + '" запущен', 'success'); document.getElementById('eventName').value = ''; });
+        .then(() => { toast('🎉 Запущен', 'success'); document.getElementById('eventName').value = ''; });
 }
 function renderEvents(){
     const el = document.getElementById('eventsList');
@@ -867,7 +1033,7 @@ function renderEvents(){
         </div><button class="btn btn-sm btn-danger" onclick="deleteEvent('${id}')">🗑️</button></div>`;
     }).join('');
 }
-function deleteEvent(id){ if(!confirm('Удалить ивент?')) return; fbDB.ref('events/' + id).remove().then(() => toast('🗑️ Удалён', 'warning')); }
+function deleteEvent(id){ if(!confirm('Удалить?')) return; fbDB.ref('events/' + id).remove().then(() => toast('🗑️ Удалён', 'warning')); }
 
 function createPromo(){
     const code = document.getElementById('promoCode').value.trim().toUpperCase();
@@ -899,21 +1065,17 @@ function renderPromos(){
 }
 function deletePromo(code){ if(!confirm('Удалить ' + code + '?')) return; fbDB.ref('promos/' + code).remove().then(() => toast('🗑️ Удалён', 'warning')); }
 
-function saveGameDayConfig(){
-    const min = parseInt(document.getElementById('cfgGameDayMinutes').value) || 15;
-    fbDB.ref('config/gameDay').set({minutes: min}).then(() => toast('✅ Сохранено', 'success'));
-}
 function advanceDayAll(days = 1){
-    if(!confirm('Продвинуть время на +' + days + ' день(ей) ВСЕМ?')) return;
+    if(!confirm('Продвинуть +' + days + ' день ВСЕМ?')) return;
     const updates = {};
     Object.keys(playersCache).forEach(uid => {
         const cur = playersCache[uid]?.game?.gameDay || 1;
         updates['users/' + uid + '/game/gameDay'] = cur + days;
     });
-    fbDB.ref().update(updates).then(() => toast('⏩ Продвинуто на ' + days, 'success'));
+    fbDB.ref().update(updates).then(() => toast('⏩ Продвинуто', 'success'));
 }
 function resetDayAll(){
-    if(!confirm('Сбросить счётчики игрового дня у всех?')) return;
+    if(!confirm('Сбросить счётчики дня?')) return;
     const updates = {};
     Object.keys(playersCache).forEach(uid => {
         updates['users/' + uid + '/game/gameDay'] = 1;
@@ -926,43 +1088,17 @@ function resetDayAll(){
 function broadcastMessage(){
     const text = document.getElementById('broadcastText').value.trim();
     if(!text){ toast('❌ Введите текст', 'danger'); return; }
-    if(!confirm('Отправить всем:\n\n' + text)) return;
+    if(!confirm('Отправить:\n\n' + text)) return;
     fbDB.ref('globalChat').push({uid:'SYSTEM', name:'🛡️ Система', photo:'', text, time: Date.now(), isSystem: true})
         .then(() => { toast('📢 Отправлено', 'success'); document.getElementById('broadcastText').value = ''; });
 }
 function sendDirect(){
     const uid = document.getElementById('directUid').value.trim();
     const text = document.getElementById('directText').value.trim();
-    if(!uid || !text){ toast('❌ Заполните поля', 'danger'); return; }
+    if(!uid || !text){ toast('❌ Заполните', 'danger'); return; }
     if(!playersCache[uid]){ toast('❌ Игрок не найден', 'danger'); return; }
     fbDB.ref('users/' + uid + '/messages').push({from: '🛡️ Система', text, date: Date.now(), read: false})
         .then(() => { toast('📩 Отправлено', 'success'); document.getElementById('directText').value = ''; });
-}
-
-function renderAnalytics(category){
-    const el = document.getElementById('analyticsList');
-    if(!el) return;
-    const entries = Object.entries(playersCache).map(([uid, d]) => ({uid, ...d}));
-    let sorted, label, fmtFn;
-    if(category === 'money'){ sorted = entries.sort((a,b) => (b.game?.money||0) - (a.game?.money||0)); label = '₽'; fmtFn = fmt; }
-    else if(category === 'chips'){ sorted = entries.sort((a,b) => (b.game?.chips||0) - (a.game?.chips||0)); label = '🎰'; fmtFn = fmtChips; }
-    else if(category === 'level'){ sorted = entries.sort((a,b) => (b.game?.level||0) - (a.game?.level||0)); label = 'Ур.'; fmtFn = v => v; }
-    else if(category === 'inventory'){ sorted = entries.sort((a,b) => ((b.game?.inventory||[]).length) - ((a.game?.inventory||[]).length)); label = '📦'; fmtFn = v => v; }
-    if(!sorted.length){ el.innerHTML = '<div class="empty">Нет игроков</div>'; return; }
-    el.innerHTML = sorted.slice(0, 20).map((p, i) => {
-        let val;
-        if(category === 'money') val = p.game?.money || 0;
-        else if(category === 'chips') val = p.game?.chips || 0;
-        else if(category === 'level') val = p.game?.level || 1;
-        else val = (p.game?.inventory || []).length;
-        const name = p.profile?.name || 'Аноним';
-        return `<div class="player-row" onclick="openPlayer('${p.uid}')">
-            <div style="font-size:18px;width:32px;text-align:center;font-weight:800">${i+1}</div>
-            <div class="player-avatar">${name[0].toUpperCase()}</div>
-            <div class="player-info"><div class="player-name">${esc(name)}</div><div class="player-uid">${p.uid.slice(0,16)}...</div></div>
-            <div style="font-weight:900;color:var(--gold);font-size:15px">${fmtFn(val)} ${label}</div>
-        </div>`;
-    }).join('');
 }
 
 function giveAll(amount){
@@ -973,14 +1109,14 @@ function giveAll(amount){
         updates['users/' + uid + '/game/money'] = cur + amount;
     });
     if(!Object.keys(updates).length){ toast('❌ Нет игроков', 'danger'); return; }
-    fbDB.ref().update(updates).then(() => toast('✅ Выдано всем', 'success'));
+    fbDB.ref().update(updates).then(() => toast('✅ Выдано', 'success'));
 }
 function refreshAll(){ toast('🔄 Обновление...'); runDiagnostics(); loadAll(); }
 function rebuildLeaderboard(){
     if(!confirm('Пересобрать лидерборд?')) return;
     const updates = {};
     Object.entries(playersCache).forEach(([uid, d]) => {
-        updates['leaderboard/' + uid] = {name: d.profile?.name || 'Аноним', photo: d.profile?.photo || '', money: d.game?.money || 0, level: d.game?.level || 1, city: d.game?.currentCity || 'Москва', updatedAt: Date.now()};
+        updates['leaderboard/' + uid] = {name: d.profile?.name || 'Аноним', photo: d.profile?.photo || '', money: d.game?.money || 0, level: d.game?.level || 1, updatedAt: Date.now()};
     });
     fbDB.ref().update(updates).then(() => toast('🏆 Пересобран', 'success'));
 }
@@ -1000,7 +1136,7 @@ function exportAll(){
 function clearAll(){
     if(!confirm('Удалить ВСЮ базу?')) return;
     if(!confirm('Последнее предупреждение!')) return;
-    fbDB.ref().remove().then(() => { toast('💣 База очищена', 'danger'); setTimeout(() => location.reload(), 2000); });
+    fbDB.ref().remove().then(() => { toast('💣 Очищено', 'danger'); setTimeout(() => location.reload(), 2000); });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
